@@ -4,7 +4,7 @@
 ![Python 3.12](https://img.shields.io/badge/python-3.12-4584b6?logo=python&labelColor=ffde57)
 ![GitHub License](https://img.shields.io/github/license/marcofarina/python-doesnt-byte?color=lightgreen)
 
-_Python doesn't byte_ è un corso di Python per la scuola secondaria di secondo grado.
+_Python doesn't byte_ è un libro open source di informatica su Python per la scuola secondaria di secondo grado.
 
 ## Perché questo libro?
 Ho scritto questo libro come risposta alla crescente necessità di modernizzare l'insegnamento dell'informatica per gli studenti delle scuole superiori, e in particolare l'indirizzo "Informatica" degli Istituti Tecnici e l'articolazione "Scienze Applicate" del Liceo Scientifico. Mentre i libri di testo cartacei tradizionali possono risultare antiquati nel contesto veloce e dinamico dell'informatica, ho scelto di adottare un approccio innovativo attraverso la pubblicazione online di un sito statico basato su Markdown.
