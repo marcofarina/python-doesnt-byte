@@ -10,4 +10,8 @@
         <description>Created after removal of "Empty XML Topic" from Help Instance</description>
         <accepts>Empty-XML-Topic.html</accepts>
     </rule>
+    <rule id="7c861ed0">
+        <description>Created after removal of "Esercizio N - Titolo" from Help Instance</description>
+        <accepts>Esercizio.html</accepts>
+    </rule>
 </rules>

@@ -2,8 +2,15 @@
 <!DOCTYPE instance-profile
         SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
 
-<instance-profile id="hi" name="Help Instance"
-                 start-page="">
+<instance-profile id="hi" name="Python doesn't byte"
+                 start-page="Programmare-in-Python.md">
 
-    <toc-element topic="Programmare-in-Python.md"/>
+    <toc-element topic="Programmare-in-Python.md">
+        <toc-element topic="Uso-di-Replit.md"/>
+    </toc-element>
+    <toc-element topic="input-elaborazione-output.md">
+        <toc-element topic="Output.md"/>
+        <toc-element topic="Variabili.md"/>
+        <toc-element topic="Esercizio-1.1-Operazioni-sui-rettangoli.md"/>
+    </toc-element>
 </instance-profile>
