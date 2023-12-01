@@ -7,7 +7,7 @@ Nel processo di elaborazione dei dati all'interno di un programma, il computer h
 Analogamente, il programma affronta problemi computazionali e ha bisogno di un luogo per "memorizzare" temporaneamente i dati. Puoi immaginare queste aree di memoria virtuali come delle "scatole" all'interno delle quali si possono inserire dei valori, consentendo al programma di salvare i risultati intermedi, le informazioni di input e i dati di elaborazione. Come uno studente annota i passaggi intermedi durante la risoluzione del problema alla lavagna, così il programma usa le "scatole" come dei segnaposti che consentono di lavorare con i dati in modo dinamico. <tooltip term="IDE">IDE</tooltip>
 
 <note>
-    <p>In informatica queste aree di memoria vengono chiamate <emphasis>variabili</emphasis> a indicare il fatto che i valori contenuti in esse possono cambiare nel tempo.</p>
+    <p>In informatica queste aree di memoria vengono chiamate <b>variabili</b> a indicare il fatto che i valori contenuti in esse possono cambiare nel tempo.</p>
 </note>
 
 ### Dare un nome alle variabili
@@ -19,8 +19,9 @@ Allo stesso modo devi avere particolare cura nel _naming_ delle variabili. I nom
 
 Prendi in considerazione i due seguenti script. È lo stesso identico programma, ma il secondo codice è molto più facile da capire del primo, anche senza l'uso di commenti.
 
-<compare type="top-bottom" first-title="Pessimo naming" second-title="Ottimo naming">
-    <code-block lang="python">
+<tabs>
+    <tab title="Pessimo">
+        <code-block lang="python">
         x = 5
         y = 3
         z = 8
@@ -34,23 +35,26 @@ Prendi in considerazione i due seguenti script. È lo stesso identico programma,
         print(f"Risultato B: {b}")
         print(f"Risultato C: {c}")
         print(f"Risultato D: {d}")
-    </code-block>
-    <code-block lang="python">
-        lunghezza_rettangolo = 5
-        larghezza_rettangolo = 3
-        altezza_prisma = 8
-        base_triangolo = 4
-        raggio_cerchio = 2
-        area_rettangolo = lunghezza_rettangolo * larghezza_rettangolo
-        volume_prisma = area_rettangolo * altezza_prisma
-        area_triangolo = 0.5 * base_triangolo * altezza_prisma
-        circonferenza_cerchio = 2 * 3.14 * raggio_cerchio
-        print(f"L'area del rettangolo è: {area_rettangolo}")
-        print(f"Il volume del prisma è: {volume_prisma}")
-        print(f"L'area del triangolo è: {area_triangolo}")
-        print(f"La circonferenza del cerchio è: {circonferenza_cerchio}")
-    </code-block>
-</compare>
+        </code-block>
+    </tab>
+    <tab title="Ottimo">
+        <code-block lang="python">
+            lunghezza_rettangolo = 5
+            larghezza_rettangolo = 3
+            altezza_prisma = 8
+            base_triangolo = 4
+            raggio_cerchio = 2
+            area_rettangolo = lunghezza_rettangolo * larghezza_rettangolo
+            volume_prisma = area_rettangolo * altezza_prisma
+            area_triangolo = 0.5 * base_triangolo * altezza_prisma
+            circonferenza_cerchio = 2 * 3.14 * raggio_cerchio
+            print(f"L'area del rettangolo è: {area_rettangolo}")
+            print(f"Il volume del prisma è: {volume_prisma}")
+            print(f"L'area del triangolo è: {area_triangolo}")
+            print(f"La circonferenza del cerchio è: {circonferenza_cerchio}")
+        </code-block>
+    </tab>
+</tabs>
 
 ### Regole sul naming
 Ci sono alcune regole da seguire quando si sceglie un nome per una variabile:
@@ -78,25 +82,23 @@ testo = "hello"  # tipo str
 condizione = True  # tipo bool
 ```
 
-<note>
-Se vuoi conoscere il tipo di una variabile, puoi usare la funzione `type()`:
-    <tabs>
-        <tab title="Codice">
-            <code-block lang="python">
-                esempio1 = 10
-                esempio2 = "10"
-                print(type(esempio1))
-                print(type(esempio2))
-            </code-block>
-        </tab>
-        <tab title="Output">
-            <code-block lang="bash">
-                &lt;class 'int'&gt;
-                &lt;class 'str'&gt;
-            </code-block>
-        </tab>
-    </tabs>
-</note>
+Se vuoi conoscere il tipo di una variabile, puoi usare la funzione <code>type()</code>:
+<tabs>
+    <tab title="Codice">
+        <code-block lang="python">
+            esempio1 = 10
+            esempio2 = "10"
+            print(type(esempio1))
+            print(type(esempio2))
+        </code-block>
+    </tab>
+    <tab title="Output">
+        <code-block lang="bash">
+            &lt;class 'int'&gt;
+            &lt;class 'str'&gt;
+        </code-block>
+    </tab>
+</tabs>
 
 Conoscere il tipo di una variabile è importante perché determina le operazioni che possono essere eseguite su quella variabile. Osserva il seguente esempio:
 <tabs>
