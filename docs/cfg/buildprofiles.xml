@@ -4,7 +4,7 @@
 
     <variables>
         <header-logo>python-doesnt-byte_512.png</header-logo>
-        <custom-favicons>python-doesnt-byte_500.png,python-doesnt-byte_300.png,python-doesnt-byte_93.png,python-doesnt-byte_32.png,python-doesnt-byte_16.png</custom-favicons>
+        <custom-favicons>python-doesnt-byte_500.png,python-doesnt-byte_300.png,python-doesnt-byte_96.png,python-doesnt-byte_32.png,python-doesnt-byte_16.png</custom-favicons>
         <enable-browser-edits>true</enable-browser-edits>
     </variables>
     <build-profile instance="hi">
