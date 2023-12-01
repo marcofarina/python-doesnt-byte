@@ -6,3 +6,7 @@ Thumbs.db
 
 # Writerside
 .idea/
+
+# Replit
+.replit
+replit.nix

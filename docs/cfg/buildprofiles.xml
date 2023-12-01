@@ -11,6 +11,7 @@
         </variables>
     </build-profile>
     <footer>
-        <copyright>2023</copyright>
+        <copyright>2023 • Rainbow Bits</copyright>
+        <link href="https://github.com/marcofarina/python-doesnt-byte">GitHub</link>
     </footer>
 </buildprofiles>
