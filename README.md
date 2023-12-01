@@ -1,10 +1,14 @@
 # Python doesn't byte 
-![Version](https://img.shields.io/badge/version-0.1-red)
-![Made with Markdown](https://img.shields.io/badge/-Markdown-2E639C?logo=markdown)
-![Python 3.12](https://img.shields.io/badge/python-3.12-4584b6?logo=python&labelColor=ffde57)
-![GitHub License](https://img.shields.io/github/license/marcofarina/python-doesnt-byte?color=lightgreen)
 
-_Python doesn't byte_ è un libro open source di informatica su Python per la scuola secondaria di secondo grado.
+![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github&link=https%3A%2F%2Fmarcofarina.github.io%2Fpython-doesnt-byte%2F)
+![Made with Markdown](https://img.shields.io/badge/Made%20with-Markdown-blue?logo=markdown)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/marcofarina/python-doesnt-byte/.github%2Fworkflows%2Fdeploy.yml)
+
+![Version](https://img.shields.io/badge/Book%20version-0.1%20(beta)-red)
+![Python 3.12](https://img.shields.io/badge/Python-3.12-4584b6?logo=python&labelColor=ffde57)
+
+
+_[Python doesn't byte](https://marcofarina.github.io/python-doesnt-byte/)_ è un libro open source di informatica su Python per la scuola secondaria di secondo grado.
 
 ## Perché questo libro?
 Ho scritto questo libro come risposta alla crescente necessità di modernizzare l'insegnamento dell'informatica per gli studenti delle scuole superiori, e in particolare l'indirizzo "Informatica" degli Istituti Tecnici e l'articolazione "Scienze Applicate" del Liceo Scientifico. Mentre i libri di testo cartacei tradizionali possono risultare antiquati nel contesto veloce e dinamico dell'informatica, ho scelto di adottare un approccio innovativo attraverso la pubblicazione online di un sito statico basato su Markdown.
@@ -16,8 +20,6 @@ Oltre a ciò, l'approccio digitale permette l'integrazione di elementi multimedi
 Un altro vantaggio significativo è la natura pubblica e accessibile del sito. Gli studenti possono accedervi da qualsiasi luogo e in qualsiasi momento, eliminando le limitazioni spaziali e temporali associate ai libri di testo tradizionali. Questa accessibilità è cruciale per favorire un apprendimento continuo e autonomo.
 
 Infine, essendo un forte sostenitore della libertà dell'informazione, ho scelto di rilasciare il libro con una licenza _open source_ per promuovere la condivisione e la collaborazione. Chiunque può contribuire al miglioramento del materiale, garantendo una prospettiva diversificata e arricchente. Inoltre, l'accesso gratuito al libro supporta l'idea di rendere l'istruzione informatica più accessibile a un pubblico più ampio.
-
-Secondo il principio del _value for value_, se ritieni che questo progetto educativo ti abbia arricchito, puoi considerare la possibilità di sostenerlo restituendo quel valore attraverso una donazione. Ogni contributo, per quanto modesto, rappresenta un riconoscimento dell'impegno per la crescita e il miglioramento della condivisione della conoscenza nella comunità educativa.
 
 ## Descrizione del Corso
 
@@ -34,9 +36,12 @@ Questo è un progetto open source! Se hai suggerimenti, correzioni o nuovi mater
 Per domande o ulteriori informazioni puoi contattare l'autore scrivendo all'indirizzo e-mail marco.farina@jcmaxwell.it.
 
 ## License
-<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><span property="dct:title">Python Doesn't Byte</span> by <span property="cc:attributionName">Marco Farina</span> is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-SA 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p>
+<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><span property="dct:title">Python Doesn't Byte</span> by <span property="cc:attributionName">Marco Farina</span> is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-SA 4.0 <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p>
 
 ## Donazioni
+
+Secondo il principio del _value for value_, se ritieni che questo progetto educativo ti abbia arricchito culturalmente, puoi considerare la possibilità di sostenerlo restituendo quel valore attraverso una donazione. Ogni contributo, per quanto modesto, rappresenta un riconoscimento dell'impegno per la crescita e il miglioramento della condivisione della conoscenza nella comunità educativa.
+
 ![Donazione Bitcoin](https://img.shields.io/badge/-Bitcoin-orange?logo=bitcoin)
-![Donazione Lightning](https://img.shields.io/badge/-Lightning-yellow?logo=lightning)
-![Donazione PayPal](https://img.shields.io/badge/-PayPal-blue?logo=paypal)
+[![Donazione Lightning](https://img.shields.io/badge/-Lightning-yellow?logo=lightning)](https://getalby.com/p/marcofarina)
+[![Donazione PayPal](https://img.shields.io/badge/-PayPal-blue?logo=paypal)](https://paypal.me/marcofarina84)
