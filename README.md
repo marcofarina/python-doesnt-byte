@@ -21,9 +21,9 @@ Un altro vantaggio significativo è la natura pubblica e accessibile del sito. G
 
 Infine, essendo un forte sostenitore della libertà dell'informazione, ho scelto di rilasciare il libro con una licenza _open source_ per promuovere la condivisione e la collaborazione. Chiunque può contribuire al miglioramento del materiale, garantendo una prospettiva diversificata e arricchente. Inoltre, l'accesso gratuito al libro supporta l'idea di rendere l'istruzione informatica più accessibile a un pubblico più ampio.
 
-## Descrizione del Corso
+## Descrizione del libro
 
-Questo corso è progettato per fornire agli studenti una solida base nelle logiche della programmazione linguaggio Python. Le lezioni sono strutturate per essere accessibili anche a chi si avvicina per la prima volta all'informatica, partendo dai meccanismi che stanno alla base del _problem solving_.
+Questo libro è progettato per fornire agli studenti una solida base nelle logiche della programmazione linguaggio Python. I capitoli sono strutturati per essere accessibili anche a chi si avvicina per la prima volta all'informatica, partendo dai meccanismi che stanno alla base del _problem solving_.
 
 Non sono quindi necessarie conoscenze pregresse di programmazione, ma è consigliato avere una buona comprensione dei concetti matematici di base e un pc per svolgere gli esercizi.
 

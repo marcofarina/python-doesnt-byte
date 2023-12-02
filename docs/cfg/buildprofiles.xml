@@ -4,6 +4,7 @@
 
     <variables>
         <header-logo>python-doesnt-byte_512.png</header-logo>
+        <product-web-url>https://marcofarina.github.io/python-doesnt-byte/</product-web-url>
         <custom-favicons>python-doesnt-byte_500.png,python-doesnt-byte_300.png,python-doesnt-byte_96.png,python-doesnt-byte_32.png,python-doesnt-byte_16.png</custom-favicons>
         <enable-browser-edits>true</enable-browser-edits>
         <browser-edits-url>https://github.com/marcofarina/python-doesnt-byte/edit/main/docs/</browser-edits-url>

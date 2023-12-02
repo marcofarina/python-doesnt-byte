@@ -3,8 +3,12 @@
         SYSTEM "https://resources.jetbrains.com/writerside/1.0/product-profile.dtd">
 
 <instance-profile id="hi" name="Python doesn't byte"
-                 start-page="Programmare-in-Python.md">
+                 start-page="Python-Doesn-t-Byte.topic">
 
+    <toc-element topic="Python-Doesn-t-Byte.topic">
+        <toc-element topic="Perche-questo-libro.md"/>
+        <toc-element topic="Come-contribuire.md"/>
+    </toc-element>
     <toc-element topic="Programmare-in-Python.md">
         <toc-element topic="Uso-di-Replit.md"/>
     </toc-element>

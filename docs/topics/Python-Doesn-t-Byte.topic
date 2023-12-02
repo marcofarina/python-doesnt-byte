@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic
+        SYSTEM "https://resources.jetbrains.com/writerside/1.0/xhtml-entities.dtd">
+<topic xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/topic.v2.xsd"
+       title="Python Doesn&apos;t Byte" id="Python-Doesn-t-Byte">
+
+    <section-starting-page>
+        <title>Python Doesn't Byte</title>
+        <description>
+            Un libro open source di informatica su Python per la scuola secondaria di secondo grado.
+        </description>
+        <spotlight>
+            <a href="Perche-questo-libro.md"
+               type="library"
+               summary="Questo libro &egrave; una risposta alla crescente necessit&agrave; di modernizzare il materiale didattico informatico per gli studenti delle scuole superiori.">
+               Perché questo libro?
+            </a>
+            <a href="Come-contribuire.md"
+               type="branch"
+                summary="Aiuta il progetto a crescere secondo il principio del value for value.">
+               Contribuire al progetto
+            </a>
+        </spotlight>
+        <primary><title>Inizia da qui</title>
+            <a href="Programmare-in-Python.md" summary="Perch&eacute; usare Python a scuola? &Egrave; utile nella didattica?">Programmare in Python</a>
+            <a href="Uso-di-Replit.md" summary="Impara ad usare Replit, un comodo ambiente di sviluppo cloud.">Usare un IDE</a>
+        </primary>
+        <secondary>
+            <title>Indice</title>
+            <a href="input-elaborazione-output.md" summary="I tre passaggi fondamentali di ogni semplice programma">Input, elaborazione, output</a>
+        </secondary>
+    </section-starting-page>
+</topic>
