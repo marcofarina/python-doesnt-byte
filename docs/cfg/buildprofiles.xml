@@ -6,6 +6,7 @@
         <header-logo>python-doesnt-byte_512.png</header-logo>
         <custom-favicons>python-doesnt-byte_500.png,python-doesnt-byte_300.png,python-doesnt-byte_96.png,python-doesnt-byte_32.png,python-doesnt-byte_16.png</custom-favicons>
         <enable-browser-edits>true</enable-browser-edits>
+        <browser-edits-url>https://github.com/marcofarina/python-doesnt-byte/edit/main/docs/</browser-edits-url>
     </variables>
     <build-profile instance="hi">
         <variables>
@@ -13,6 +14,7 @@
         </variables>
     </build-profile>
     <footer>
+        <social type="email" href="mailto:marco.farina@jcmaxwell.it">email</social>
         <copyright>2023 • Rainbow Bits</copyright>
         <link href="https://github.com/marcofarina/python-doesnt-byte">GitHub</link>
     </footer>
