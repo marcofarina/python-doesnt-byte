@@ -1,4 +1,4 @@
-# Input, elaborazione ed output
+# Output ed elaborazione dei dati
 
 In questo capitolo, esploreremo i concetti fondamentali che costituiscono i tre passi fondamentali di esecuzione di ogni programma, nonché la base del linguaggio Python: **input**, **elaborazione** e **output**. Per comprenderli appieno, immaginate il vostro programma come un cervello e queste tre componenti come i suoi principali meccanismi di ragionamento e di rapporto con il mondo esterno.
 

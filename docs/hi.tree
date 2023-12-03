@@ -12,13 +12,13 @@
     <toc-element topic="Programmare-in-Python.md">
         <toc-element topic="Uso-di-Replit.md"/>
     </toc-element>
-    <toc-element topic="input-elaborazione-output.md">
+    <toc-element topic="output-elaborazione-dati.md">
         <toc-element topic="Output.md"/>
         <toc-element topic="Variabili.md"/>
         <toc-element topic="Esercizio-1.1-Operazioni-sui-rettangoli.md"/>
     </toc-element>
-    <toc-element topic="Organizzare-i-dati-in-strutture.md">
-        <toc-element topic="Le-liste.md"/>
+    <toc-element topic="Le-liste.md">
         <toc-element topic="Principali-funzioni-delle-liste.md"/>
+        <toc-element topic="Funzioni-avanzate.md"/>
     </toc-element>
 </instance-profile>

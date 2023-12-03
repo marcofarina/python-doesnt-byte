@@ -28,7 +28,8 @@
         </primary>
         <secondary>
             <title>Indice</title>
-            <a href="input-elaborazione-output.md" summary="I tre passaggi fondamentali di ogni semplice programma">Input, elaborazione, output</a>
+            <a href="output-elaborazione-dati.md" summary="I tre passaggi fondamentali di ogni semplice programma">Input, elaborazione, output</a>
+            <a href="Le-liste.md" summary="Creare e manipolare liste di dati">Le liste</a>
         </secondary>
     </section-starting-page>
 </topic>

@@ -1,3 +1,0 @@
-# Organizzare i dati in strutture
-
-Start typing here...
