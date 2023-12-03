@@ -19,5 +19,6 @@
     </toc-element>
     <toc-element topic="Organizzare-i-dati-in-strutture.md">
         <toc-element topic="Le-liste.md"/>
+        <toc-element topic="Principali-funzioni-delle-liste.md"/>
     </toc-element>
 </instance-profile>
