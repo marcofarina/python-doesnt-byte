@@ -3,6 +3,7 @@
 ![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github&link=https%3A%2F%2Fmarcofarina.github.io%2Fpython-doesnt-byte%2F)
 ![Made with Markdown](https://img.shields.io/badge/Made%20with-Markdown-blue?logo=markdown)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/marcofarina/python-doesnt-byte/.github%2Fworkflows%2Fdeploy.yml)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
 ![Version](https://img.shields.io/badge/Book%20version-0.1%20(beta)-red)
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-4584b6?logo=python&labelColor=ffde57)
