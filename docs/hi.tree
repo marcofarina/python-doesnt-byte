@@ -21,4 +21,8 @@
         <toc-element topic="Principali-funzioni-delle-liste.md"/>
         <toc-element topic="Funzioni-avanzate.md"/>
     </toc-element>
+    <toc-element topic="Code-Combat.md">
+        <toc-element topic="Code-Combat-compito-1.md"/>
+        <toc-element topic="Code-Combat-compito-2.md"/>
+    </toc-element>
 </instance-profile>
