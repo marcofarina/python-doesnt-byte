@@ -24,5 +24,6 @@
     <toc-element topic="Code-Combat.md">
         <toc-element topic="Code-Combat-compito-1.md"/>
         <toc-element topic="Code-Combat-compito-2.md"/>
+        <toc-element topic="Code-Combat-compito-3.md"/>
     </toc-element>
 </instance-profile>

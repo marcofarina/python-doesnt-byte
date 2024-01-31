@@ -1,5 +1,11 @@
 # Code Combat: compito 2
 
+> Prerequisiti:
+> - tutti i prerequisiti dei compiti precedenti
+> - uso dell'`or`
+>
+{style="note"}
+
 ## Background
 In questo esercizio introduciamo un secondo personaggio e qualche statistica in più per ognuno di loro.
 
@@ -31,39 +37,42 @@ Il programma è diviso in tre parti principali.
 
 3. **Fase di output**: al termine del _game loop_ è necessario determinare quale dei due player ha vinto la sfida, stabilendo chi dei due ha i punti vita maggiori di zero. È da tenere in conto anche la possibilità che entrambi i player perdano nello stesso turno. In questo caso si tratta di un pareggio.
 
-    - visualizzare in output quale dei due player ha vinto (o se c'è stato un pareggio) e quanti turni sono passati. 
+    - visualizzare in output quale dei due player ha vinto (o se c'è stato un pareggio) e quanti turni sono passati.
+    > Dal punto di vista logico, ricorda che il player 1 vince se il player 2 è sconfitto, non se la sua vita è maggiore di zero. Rifletti su come scrivere correttamente le condizioni degli `if`.
 
 ## Esempio di output
 
 ```Bash
-Player1 starting health: 85
-Player1 shield: 9
-Player2 starting health: 100
-Player2 shield: 9
+Player1 starting health: 95
+Player1 shield: 6
+Player2 starting health: 86
+Player2 shield: 6
 
+***Turn 1***
+[Player1] Damage: 17 (23-6)
+[Player2] Health: 69
+	---
+[Player2] Damage: 10 (16-6)
+[Player1] Health: 85
 
-[Player1] Damage: 2
-[Player2] Health: 98
+***Turn 2***
+[Player1] Damage: 10 (16-6)
+[Player2] Health: 59
+	---
+[Player2] Damage: 10 (16-6)
+[Player1] Health: 75
 
-[Player2] Damage: 3
-[Player1] Health: 82
+...
 
-[Player1] Damage: 2
-[Player2] Health: 96
-
-[...]
-
-[Player2] Damage: 0
-[Player1] Health: 12
-
-[Player1] Damage: 2
+***Turn 10***
+[Player1] Damage: 6 (12-6)
 [Player2] Health: -1
+	---
+[Player2] Damage: 9 (15-6)
+[Player1] Health: -7
 
-[Player2] Damage: 6
-[Player1] Health: 6
-
-Turns played: 25
-Player1 wins.
+Game ended. Turns played: 11
+Draw. Both players are defeated.
 ```
 > Per brevità la parte intermedia dell'output è stata tagliata.
 
