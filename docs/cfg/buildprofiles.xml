@@ -8,6 +8,9 @@
         <custom-favicons>python-doesnt-byte_500.png,python-doesnt-byte_300.png,python-doesnt-byte_96.png,python-doesnt-byte_32.png,python-doesnt-byte_16.png</custom-favicons>
         <enable-browser-edits>true</enable-browser-edits>
         <browser-edits-url>https://github.com/marcofarina/python-doesnt-byte/edit/main/docs/</browser-edits-url>
+        <download-title>Rainbow Bits</download-title>
+        <download-page>https://rainbowbits.cloud</download-page>
+        <showDownloadButton>true</showDownloadButton>
     </variables>
     <build-profile instance="hi">
         <variables>
