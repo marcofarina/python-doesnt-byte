@@ -15,7 +15,6 @@
     <toc-element topic="output-elaborazione-dati.md">
         <toc-element topic="Output.md"/>
         <toc-element topic="Variabili.md"/>
-        <toc-element topic="Esercizio-1.1-Operazioni-sui-rettangoli.md"/>
     </toc-element>
     <toc-element topic="Le-liste.md">
         <toc-element topic="Principali-funzioni-delle-liste.md"/>
@@ -25,5 +24,8 @@
         <toc-element topic="Code-Combat-compito-1.md"/>
         <toc-element topic="Code-Combat-compito-2.md"/>
         <toc-element topic="Code-Combat-compito-3.md"/>
+    </toc-element>
+    <toc-element topic="Esercizi.md">
+        <toc-element topic="Esercizio-1.1-Operazioni-sui-rettangoli.md"/>
     </toc-element>
 </instance-profile>

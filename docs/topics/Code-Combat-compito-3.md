@@ -13,7 +13,7 @@ In questo esercizio introduciamo i nomi dei personaggi e un meccanismo più comp
 _Player1_ e _Player2_ non sono dei nomi molto significativi per i nostri personaggi. In ogni gioco di ruolo che si rispetti i personaggi devono avere dei roboanti nomi fantasy! Per rendere sempre diversi i nomi implementeremo un meccanismo di generazione casuale a partire da un insieme di nomi e di cognomi prestabiliti.
 
 ### Notazione dei dadi: risultato selettivo
-La notazione "xdy" ha diverse estensioni per specificare come modificare il lancio dei dadi. In questo compito useremo il _risultato selettivo_, ovvero la selezione di un insieme di dadi da tenere e un insieme da scartare. Nel nostro caso scarteremo i dadi con il valore più alto e più basso tra quelli usciti.
+La notazione "xdy" ha diverse estensioni per specificare come modificare il lancio dei dadi. In questo compito useremo il [_risultato selettivo_](https://en.wikipedia.org/wiki/Dice_notation#Selective_results), ovvero la selezione di un insieme di dadi da tenere e un insieme da scartare. Nel nostro caso scarteremo i dadi con il valore più alto e più basso tra quelli usciti.
 
 Nella notazione si aggiunge la lettera _k_ per indicare i dadi che vanno tenuti (dall'inglese _keep_) e _d_ per i dadi che vanno scartati (dall'inglese _drop_). Questa lettera va in combinazione con _h_ per indicare il risultato più alto (_high_) e _l_ (_low_) per quello più basso.
 

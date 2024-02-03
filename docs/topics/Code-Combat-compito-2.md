@@ -2,7 +2,7 @@
 
 > Prerequisiti:
 > - tutti i prerequisiti dei compiti precedenti
-> - uso dell'`or`
+> - uso dell'`and` per controllare più condizioni contemporaneamente
 >
 {style="note"}
 
@@ -23,22 +23,22 @@ Il programma è diviso in tre parti principali.
    - l giocatore 1 attacca con 4d6, mentre il giocatore 2 attacca con 2d12.
 2. **Game loop**: in questa fase si volge l'attività principale del gioco in cui i due player si attaccano a vicenda:
    - Impostare il ciclo `while` in cui si controlla contemporaneamente che i punti vita di entrambi i player siano maggiori di zero;
-   
+
    Poi, per ogni player:
    - calcolare il valore di attacco sommando i valori di tutti i dadi lanciati;
    - calcolare il danno da infliggere sottraendo il valore dello scudo;
-   
+
    > Attenzione a controllare i valori ottenuti. Cosa succede ai punti vita dell'avversario se lo scudo è maggiore del danno?
    >
    {style="warning"}
-    
+
    - sottrarre ai punti vita dell'avversario il danno calcolato;
    - ripetere questi passaggi per il secondo giocatore.
 
 3. **Fase di output**: al termine del _game loop_ è necessario determinare quale dei due player ha vinto la sfida, stabilendo chi dei due ha i punti vita maggiori di zero. È da tenere in conto anche la possibilità che entrambi i player perdano nello stesso turno. In questo caso si tratta di un pareggio.
 
-    - visualizzare in output quale dei due player ha vinto (o se c'è stato un pareggio) e quanti turni sono passati.
-    > Dal punto di vista logico, ricorda che il player 1 vince se il player 2 è sconfitto, non se la sua vita è maggiore di zero. Rifletti su come scrivere correttamente le condizioni degli `if`.
+   - visualizzare in output quale dei due player ha vinto (o se c'è stato un pareggio) e quanti turni sono passati.
+   > Dal punto di vista logico, ricorda che il player 1 vince se il player 2 è sconfitto, non se la sua vita è maggiore di zero. Rifletti su come scrivere correttamente le condizioni degli `if`.
 
 ## Esempio di output
 
