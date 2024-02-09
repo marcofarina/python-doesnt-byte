@@ -25,5 +25,6 @@
     </toc-element>
     <toc-element topic="Esercizi.md">
         <toc-element topic="Esercizio-1.1-Operazioni-sui-rettangoli.md"/>
+        <toc-element topic="La-successione-di-Fibonacci.md"/>
     </toc-element>
 </instance-profile>
