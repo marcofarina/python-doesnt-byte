@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE terms SYSTEM "https://resources.jetbrains.com/writerside/1.0/glossary.dtd">
-<terms>
-    <term name="IDE">"Integrated Development Environment", ovvero "Ambiente di sviluppo integrato"</term>
-    <term name="ordinato">Il termine "ordinato" indica che gli elementi hanno una posizione precisa e che questa non può cambiare</term>
-    <term name="sequenza">Una sequenza è una struttura dati in cui gli elemeni sono ordinati. Ne sono un esempio le stringhe, le liste e le tuple</term>
-</terms>
