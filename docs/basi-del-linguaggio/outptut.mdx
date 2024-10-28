@@ -1,0 +1,78 @@
+---
+sidebar_position: 1
+---
+
+# Output
+
+:::info[TL;DR]
+La funzione per visualizzare l'output è `print("messaggio di testo")`
+:::
+
+La visualizzazione dell'output in Python è comunemente gestita attraverso l'uso del comando `print()`. Questa funzionalità consente di stampare su schermo sia righe di testo che il risultato di espressioni, facilitando la comunicazione dei dati del programma verso gli utenti.
+
+:::tip[Le funzioni predefinite]
+In Python, come in tutti i linguaggi di programmazione, esistono delle **funzioni** predefinite, ovvero delle funzionalità incluse nel linguaggio, che eseguono un'azione specifica. Puoi riconoscere le funzioni perché sono sempre scritte seguendo la sintassi `nome_della_funzione(eventuali_argomenti)`. In generale, puoi distinguere le funzioni dal resto del codice perché sono sempre seguite da una coppia di parentesi tonde.
+:::
+
+In questo libro esploreremo diverse tecniche per formattare e presentare l'output utilizzando il comando `print()`.
+
+## Le stringhe
+Nei linguaggi di programmazione, per poter definire un testo è necessario usare una sintassi ben precisa per creare una **stringa**. Nell'informatica una stringa è infatti una sequenza di caratteri, come lettere, cifre o simboli, racchiusa tra apici singoli (`'`) o doppi (`"`). Le stringhe sono uno dei tipi di dati fondamentali in molti linguaggi di programmazione, incluso Python. Esse consentono di manipolare e rappresentare dati testuali all'interno di un programma. In questo testo, a meno che non sia necessario diversamente, useremo sempre la notazione con il doppio apice.
+
+```py
+# Il nostro primo output
+print("Hello world!")
+```
+:::tip[Commenti]
+Avrai notato la prima riga nel codice qui sopra: è un **commento**. In Python, come in tutti i linguaggi di programmazione, è possibile usare il carattere `#` per creare dei commenti, ovvero righe o porzioni di codice che vengono ignorate dall'interprete. I commenti sono utili ai programmatori per scrivere note e piccole spiegazioni del proprio codice.
+:::
+
+### Prova tu
+All'interno di questo libro troverai spesso esempi di codice che potrai eseguire direttamente nel tuo browser. Prova a completare il codice qui sotto per visualizzare il tuo primo output in Python.
+
+```py live_py
+# Completa il codice per stampare il tuo nome
+print("Benvenuti al corso di Python!")
+print()
+print("Il mio nome è ")
+```
+:::tip[Stampare una riga vuota]
+È possibile stampare una riga vuota utilizzando il comando `print()` senza argomenti. Può essere utile per separare visivamente le varie parti di un output.
+:::
+
+## Il parametro `end`
+Il comando `print()` accetta un parametro opzionale chiamato `end`, che consente di specificare il carattere o la sequenza di caratteri da stampare alla fine della stringa. Di default, il valore di `end` è il carattere di nuova riga `\n`, che fa sì che la riga successiva venga stampata su una nuova linea. Tuttavia, è possibile modificare questo comportamento specificando un valore diverso per il parametro `end`.
+
+Prova a eseguire il codice: cosa succede se modifichi il valore del parametro `end`?
+
+```py live_py
+print("1", end=", ")
+print("2", end=", ")
+print("3")
+```
+
+## Unire più stringhe: la concatenazione
+La **concatenazione** di stringhe è una pratica comune in programmazione e consiste nell'unire due o più stringhe per formarne una più lunga. Questa operazione è utile quando si desidera costruire un messaggio o una frase combinando parti di testo. Python offre diverse modalità per eseguire la concatenazione, una delle quali è l'utilizzo dell'operatore `+`. Ecco un esempio:
+
+``` py live_py
+# Concatenazione di stringhe
+saluto = "Ciao"
+nome = "Mario"
+messaggio = saluto + ", " + nome + "!"
+print(messaggio)
+```
+## Formatted String (f-string)
+
+Nonostante sia ampiamente utilizzata in tutti i linguaggi di programmazione, la concatenazione di stringhe può essere scomoda da usare, soprattutto quando si devono unire tante parti.
+
+Nella versione 3.6 di Python è stato introdotto un nuovo tipo di stringa, chiamato **f-string**, che consente di incorporare valori di variabili ed espressioni all'interno di stringhe in modo più conciso e leggibile. Le f-string sono definite anteponendo la lettera `f` prima delle virgolette di apertura della stringa.
+
+### Sintassi
+
+La sintassi di base di una f-string è la seguente:
+```python
+f"Testo normale {espressione} altro testo"
+```
+Dove `{espressione}` può essere sostituito con qualsiasi espressione Python valida, comprese variabili, operazioni, chiamate di funzioni, ecc.
+
+### Esempi

@@ -15,7 +15,7 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'Rainbow Bits', // Usually your GitHub org/user name.
+  organizationName: 'marcofarina', // Usually your GitHub org/user name.
   projectName: 'python-doesnt-byte', // Usually your repo name.
 
   onBrokenLinks: 'throw',
@@ -66,9 +66,9 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Python Doesn\'t Byte',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Python Doesn\'t Byte Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -76,14 +76,23 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Libro',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
-          label: 'GitHub',
+          to: '/blog',
+          label: 'Blog',
+          position: 'left'},
+        {
+          href: 'https://rainbowbits.cloud',
+          label: 'Rainbow Bits',
           position: 'right',
         },
+        {
+          href: 'https://github.com/marcofarina/python-doesnt-byte',
+          position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
+        }
       ],
     },
     footer: {

@@ -1,0 +1,9 @@
+marco:
+  name: Marco Farina
+  title: Il Prof.
+  url: https://github.com/marcofarina
+  image_url: https://github.com/yangshun.png
+  page: false
+  socials:
+    nostr: marcofarina@nos.social
+    github: marcofarina
