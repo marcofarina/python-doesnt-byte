@@ -34,6 +34,7 @@ Nella mia cantina, ad esempio, ho uno scatolone con scritto in pennarello `Decor
 Allo stesso modo devi avere particolare cura nel _naming_ delle variabili. I nomi devono essere sufficientemente **descrittivi** da non richiedere l'uso di commenti per capire lo scopo per cui la variabile è stata creata.
 
 Prendi in considerazione i due seguenti script. È lo stesso identico programma, ma il secondo codice è molto più facile da capire del primo, anche senza l'uso di commenti.
+
 <Tabs>
     <TabItem value="bad" label="Bad" default>
         ```python
@@ -123,5 +124,24 @@ Questo esempio mostra come l'operazione di moltiplicazione abbia comportamenti d
 ### Tipizzazione dinamica
 
 Python è un linguaggio a tipizzazione dinamica. Questo significa principalmente due cose:
-- il tipo di una variabile è determinato durante l'esecuzione del programma, basandosi sul valore assegnato a quella variabile: Python "guarda" il tipo di quel valore e assegna dinamicamente il tipo alla variabile;
+- l'interprete determina durante l'esecuzione il tipo delle variabili, deducendolo dal tipo di dato che le viene assegnato;
 - il tipo di una variabile può cambiare durante l'esecuzione del programma. A differenza di linguaggi a tipizzazione statica, dove il tipo di una variabile deve essere dichiarato esplicitamente e non può cambiare, Python consente ai tipi delle variabili di essere determinati dinamicamente in base al valore assegnato.
+
+### Annotazioni
+Anche se Python è un linguaggio a tipizzazione dinamica, è possibile specificare il tipo di una variabile utilizzando le **annotazioni**. Le annotazioni sono una funzionalità introdotta in Python 3.6 che consente di specificare esplicitamente il tipo di una variabile. Le annotazioni possono essere utili per migliorare la leggibilità del codice e per strumenti che lo analizzano, come ad esempio gli IDE, che sfruttano queste informazioni per fornire suggerimenti e controlli di tipo.
+
+:::warning
+Le annotazioni del tipo non influenzano in alcun modo l'esecuzione del programma, ma servono come documentazione e guida per chi legge il codice.
+:::
+
+Per aggiungere un'annotazione del tipo ad una variabile si utilizza la sintassi `nome_variabile: tipo`.
+
+Esempio:
+
+```python
+# Annotazione del tipo per una variabile intera
+numero: int = 10
+
+# Annotazione del tipo per una variabile stringa
+testo: str = "Adoro le annotazioni!"
+```

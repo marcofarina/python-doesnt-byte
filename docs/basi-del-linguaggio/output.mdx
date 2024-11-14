@@ -50,29 +50,3 @@ print("1", end=", ")
 print("2", end=", ")
 print("3")
 ```
-
-## Unire più stringhe: la concatenazione
-La **concatenazione** di stringhe è una pratica comune in programmazione e consiste nell'unire due o più stringhe per formarne una più lunga. Questa operazione è utile quando si desidera costruire un messaggio o una frase combinando parti di testo. Python offre diverse modalità per eseguire la concatenazione, una delle quali è l'utilizzo dell'operatore `+`. Ecco un esempio:
-
-``` py live_py
-# Concatenazione di stringhe
-saluto = "Ciao"
-nome = "Mario"
-messaggio = saluto + ", " + nome + "!"
-print(messaggio)
-```
-## Formatted String (f-string)
-
-Nonostante sia ampiamente utilizzata in tutti i linguaggi di programmazione, la concatenazione di stringhe può essere scomoda da usare, soprattutto quando si devono unire tante parti.
-
-Nella versione 3.6 di Python è stato introdotto un nuovo tipo di stringa, chiamato **f-string**, che consente di incorporare valori di variabili ed espressioni all'interno di stringhe in modo più conciso e leggibile. Le f-string sono definite anteponendo la lettera `f` prima delle virgolette di apertura della stringa.
-
-### Sintassi
-
-La sintassi di base di una f-string è la seguente:
-```python
-f"Testo normale {espressione} altro testo"
-```
-Dove `{espressione}` può essere sostituito con qualsiasi espressione Python valida, comprese variabili, operazioni, chiamate di funzioni, ecc.
-
-### Esempi

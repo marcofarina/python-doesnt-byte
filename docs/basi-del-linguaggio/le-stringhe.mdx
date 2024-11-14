@@ -1,0 +1,90 @@
+---
+sidebar_position: 3
+---
+
+# Le stringhe
+Come già introdotto nella sezione sull'[output](output.mdx), le stringhe rappresentano una delle strutture dati più utilizzate in qualsiasi programma poiché consentono di lavorare con testi e sequenze di caratteri. Quasi tutti i programmi, indipendentemente dal contesto, hanno bisogno di manipolare qualche tipo di testo, che sia input dell'utente, etichette su componenti grafici come bottoni o box, password, messaggi, e-mail o interi documenti.
+
+Manipolare le stringhe è dunque essenziale in molti ambiti dell'informatica, come ad esempio:
+- **interazione con l'utente**: i programmi spesso ricevono input in forma testuale dagli utenti;
+- **analisi e ricerca**: individuazione di parole chiave o specifici frammenti di testo in documenti, email o dati non strutturati;
+- **elaborazione di file**: lettura e scrittura di file di testo, come documenti, fogli di calcolo, log, ecc.;
+- **formattazione**: creazione di output strutturati, come report, messaggi, pagine web, ecc.
+
+## Creare una stringa
+
+In Python, le stringhe sono un vero e proprio **tipo di dato** e mettono a disposizione molte funzionalità che facilitano queste operazioni. Come già visto in precedenza, la sintassi per definire una stringa è molto semplice: basta racchiudere il testo tra apici singoli `'` o doppi `"`. Ad esempio:
+```python
+player1 = "Mario"
+player2 = 'Luigi'
+```
+:::danger[Attenzione]
+In Python, le stringhe definite con apici singoli e doppi sono equivalenti e possono essere usate indifferentemente. Bisogna però fare attenzione nel caso in cui si voglia includere un apice all'interno della stringa: in questo caso, è necessario usare l'apice opposto per racchiudere la stringa. Se fosse necessario includere entrambi gli apici, è possibile utilizzare il carattere di escape `\` per evitare conflitti. Ad esempio:
+```python
+hacker = "Kevin \"Condor\" Mitnick"
+```
+:::
+
+## Unire più stringhe: la concatenazione
+La **concatenazione** di stringhe è una pratica comune in programmazione e consiste nell'unire due o più stringhe per formarne una più lunga. Questa operazione è utile quando si desidera costruire un messaggio o una frase combinando parti di testo. Python offre diverse modalità per eseguire la concatenazione, una delle quali è l'utilizzo dell'operatore `+`. Ecco un esempio:
+
+``` py live_py
+# Esempio di concatenazione di stringhe
+greeting = "It's-a me"
+name = "Mario"
+message = greeting + ", " + name + "!"
+print(message)
+```
+
+Oltre all'operatore `+`, in alcune occasioni può essere utile l'operatore `*`, che consente di ripetere una stringa un certo numero di volte. Ad esempio:
+```py live_py
+lol = "😂" * 10
+print(lol)
+```
+
+## Formatted String (f-string)
+Nonostante sia ampiamente utilizzata in tutti i linguaggi di programmazione, la concatenazione di stringhe può essere scomoda da usare, soprattutto quando si devono unire tante parti.
+
+Nella [versione 3.6](https://docs.python.org/3/tutorial/inputoutput.html#formatted-string-literals) di Python è stato introdotto un nuovo tipo di stringa, chiamato _formatted string_ e solitamente abbreviato in **f-string**, che consente di incorporare valori di variabili ed espressioni all'interno di stringhe in modo più conciso e leggibile. Le f-string sono definite anteponendo la lettera `f` prima delle virgolette di apertura della stringa.
+
+La sintassi di base di una f-string è la seguente:
+```python
+f"Testo normale {espressione} altro testo"
+```
+Dove `{espressione}` può essere sostituito con qualsiasi espressione Python valida, comprese variabili, operazioni, chiamate di funzioni, ecc.
+
+```py live_py
+name1 = "Tony"
+name2 = "Steve"
+message = f"{name1} and {name2} are BFFs"
+print(message)
+```
+
+## Funzioni utili
+Python mette a disposizione una serie di funzionalità per manipolare le stringhe in modo semplice e veloce. Queste "funzionalità" in informatica si chiamano, appunto, funzioni (o "metodi"; scopriremo nel dettaglio più avanti cosa sono). Per il momento possiamo vederle come se fossero delle azioni che si possono far compiere al programma. Per richiamare una funzione di una stringa, nella maggior parte dei casi basta scrivere il nome della variabile che la contiene seguito da un punto e il nome della funzione.
+
+Vediamo di seguito alcune delle più utili e comuni.
+
+### `len()`
+La funzione `len(stringa)` restituisce la lunghezza di una stringa, ovvero il numero di caratteri che la compongono. Ad esempio:
+```py live_py
+motto = "supercalifragilistichespiralidoso"
+print(f"{motto} ha {len(motto)} caratteri")
+```
+:::info
+A differenza degli altri metodi, `len()` è una funzione propria di Python e non appartiene solo alle stringhe. Si applica passando la stringa come parametro tra le parentesi tonde: `len(string)` e non `string.len()`.
+:::
+
+### `upper()` e `lower()`
+Le funzioni `upper()` e `lower()`, che al contrario di `len()` sono funzioni specifiche delle stringhe, permettono di convertire una stringa in maiuscolo o minuscolo rispettivamente. Ad esempio:
+```py live_py
+message = "A vEry sTrAnge mEsSaGe"
+print(f"'{message.upper()}' is the same as '{message.lower()}'")
+```
+
+### `replace()`
+La funzione `replace(old, new)` serve a rimpiazzare una parte di una stringa con un'altra. Questa funzione ha una particolarità: riceve in input due parametri e non uno solo. I parametri vanno elencati separandoli con una virgola. Il parametro `old` rappresenta la parte della stringa da cercare e sostituire, mentre `new` rappresenta la parte di stringa nuova. Ad esempio:
+```py live_py
+name = "Mario"
+print(name.replace("M", "W"))
+```

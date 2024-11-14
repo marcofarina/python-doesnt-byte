@@ -10,32 +10,29 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'Facile da usare',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Python Doesn't Byte è progettato per essere facile da usare. Basato su Docusaurus, un framework React open source, è consultabile online da qualsiasi dispositivo e in qualsiasi momento.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Concentrati sulle cose importanti',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Python Doesn't Byte è un libro pensato per essere un riferimento per tutti gli studenti delle scuole superiori che voglio imparare Python, senza i fronzoli di un libro di testo tradizionale.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'Come un libro dovrebbe essere',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        I libri di testo cartacei non sono adatti all'insegnamento della programmazione nell'era digitale. Python Doesn't Byte è un libro digitale, con esempi interattivi e codice eseguibile.
       </>
     ),
   },

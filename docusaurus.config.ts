@@ -78,49 +78,54 @@ const config: Config = {
           position: 'left',
           label: 'Libro',
         },
-        {
+/*        {
           to: '/blog',
           label: 'Blog',
-          position: 'left'},
+          position: 'left'},*/
         {
-          href: 'https://rainbowbits.cloud',
-          label: 'Rainbow Bits',
+          to: '/support/',
+          label: 'Support',
           position: 'right',
+          className: 'sponsorship-link',
         },
         {
-          href: 'https://github.com/marcofarina/python-doesnt-byte',
+          to: 'https://github.com/marcofarina/python-doesnt-byte',
+          label: 'GitHub',
           position: 'right',
-          className: 'header-github-link',
+          target: '_blank',
+          className: 'github-link',
           'aria-label': 'GitHub repository',
-        }
+        },
+        {
+          to: 'https://www.rainbowbits.cloud',
+          label: 'Rainbow Bits',
+          position: 'right',
+          target: '_blank',
+          className: 'rainbowbits-link',
+        },
       ],
     },
     footer: {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Rainbow Bits',
           items: [
             {
-              label: 'Tutorial',
+              label: 'Python Doesn\'t Byte',
               to: '/docs/intro',
             },
           ],
         },
         {
-          title: 'Community',
+          title: 'Contribuisci',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              html: '<span style="display: block">Bitcoin on-chain</span><span style="font-family: monospace; font-size: small;">bc1qhll2p0geaeqn4qskl2fk9gnlqusrcqja0v8p2d</span>'
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              label: 'Buy me a coffee',
+              href: 'https://ko-fi.com/marcofarina',
             },
           ],
         },
@@ -133,12 +138,19 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/marcofarina/',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Python Doesn't Byte from Rainbow Bits. Built with Docusaurus.`,
+      logo: {
+        alt: 'Rainbow Bits Logo',
+        src: 'img/rb-hero-logo-dark.svg',
+        href: 'https://www.rainbowbits.cloud',
+        width: 160,
+        height: 51,
+      },
+      copyright: `Except where otherwise noted, content on this site is licensed under a<br>Creative Commons Attribution - Non-commercial - Share Alike 4.0 International license. ${new Date().getFullYear()}.<br>Built with Docusaurus. Icons by Font Awesome.`,
     },
     prism: {
       theme: prismThemes.github,
