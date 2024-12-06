@@ -6,27 +6,58 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-color-primary: #1d68e1;
+  --ifm-color-primary-dark: #1a5ecb;
+  --ifm-color-primary-darker: #1958bf;
+  --ifm-color-primary-darkest: #14499d;
+  --ifm-color-primary-light: #3377e5;
+  --ifm-color-primary-lighter: #3e7ee6;
+  --ifm-color-primary-lightest: #6095ea;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-heading-font-family: "Optimistic Display", sistem-ui, -apple-system, sans-serif;
+  --ifm-heading-color: #011D4A;
+
+  --home-hero-grid-icon-background: #f8f9fa;
+  --home-hero-grid-icon: #e1e4e8;
+  --home-hero-grid-grid: #ced4da;
+  @media (max-width: 900px) {
+    --home-hero-grid-icon: transparent;
+    --home-hero-grid-icon-background: transparent;
+  }
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
+  --ifm-color-primary: #75a3ed;
+  --ifm-color-primary-dark: #568ee9;
+  --ifm-color-primary-darker: #4684e7;
+  --ifm-color-primary-darkest: #1d66db;
+  --ifm-color-primary-light: #94b8f1;
+  --ifm-color-primary-lighter: #a4c2f3;
+  --ifm-color-primary-lightest: #d3e2f9;
+  --ifm-heading-color: white;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+
+  --home-hero-grid-icon-background: #1e2025;
+  --home-hero-grid-icon: #282c36;
+  --home-hero-grid-grid: #30363d;
+  @media (max-width: 900px) {
+    --home-hero-grid-icon: transparent;
+    --home-hero-grid-icon-background: transparent;
+  }
+}
+
+/* Hero customization */
+html[data-theme='light'] .hero {
+  --ifm-hero-background-color: white;
+}
+html[data-theme='dark'] .hero{
+  --ifm-hero-background-color: #1b1b1b;
+}
+
+.hero__subtitle{
+  font-weight: 400;
 }
 
 /*
@@ -191,4 +222,30 @@ html[data-theme='light'] .discord-link {
   a {
     margin-inline-start: 0.25rem;
   }
+}
+
+/* Font */
+
+@font-face {
+  font-family: "Optimistic Display";
+  src: url("https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayLight-199be98cf48e5b4c688356b08a02362c.woff2")
+  format("woff2");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Optimistic Display";
+  src: url("https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayRegular-b0e4e99f91efd0021c3ab8e4df0e6e1b.woff2")
+  format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Optimistic Display";
+  src: url("https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayBold-3a50548145f36de582c3b36d9626f4d6.woff2")
+  format("woff2");
+  font-weight: 700;
+  font-style: normal;
 }

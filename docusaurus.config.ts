@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Python Doesn\'t Byte',
-  tagline: 'Programmare in Python senza farsi male',
+  tagline: 'Il libro di testo, reinventato.',
   favicon: 'img/icons/favicon.ico',
 
   // Set the production url of your site here

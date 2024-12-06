@@ -3,11 +3,16 @@
  * and scoped locally.
  */
 
+.container {
+  height: 500px;
+}
+
 .heroBanner {
   padding: 4rem 0;
   text-align: center;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 @media screen and (max-width: 996px) {
@@ -20,4 +25,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.backgroundContainer {
+  position: absolute;
+  z-index: -1;
+  overflow: hidden;
+  width: 100%;
+}
+
+.gridBackground {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 600px;
+}
+
+.content {
+  position: relative;
+  top: 82px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 1;
 }
