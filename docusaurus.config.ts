@@ -15,8 +15,10 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'marcofarina', // Usually your GitHub org/user name.
+  organizationName: 'marcofarina', // Usually your GitHub org/username.
   projectName: 'python-doesnt-byte', // Usually your repo name.
+  deploymentBranch: 'gh-pages',
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -132,10 +134,10 @@ const config: Config = {
         {
           title: 'More',
           items: [
-            {
+/*            {
               label: 'Blog',
               to: '/blog',
-            },
+            },*/
             {
               label: 'GitHub',
               href: 'https://github.com/marcofarina/',
