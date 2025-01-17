@@ -20,8 +20,8 @@ function Chapters() {
             <div className={styles.cardContainer}>
                 <div className={styles.card}>
                     <ThemeImage
-                        lightSrc="/img/homepage/ide.svg"
-                        darkSrc="/img/homepage/ide.svg"
+                        lightSrc="/python-doesnt-byte/img/homepage/IDE.svg"
+                        darkSrc="/python-doesnt-byte/img/homepage/IDE.svg"
                         className={styles.cardImage}
                         alt="Icon of a terminal window with input and output"
                     />
@@ -34,8 +34,8 @@ function Chapters() {
                 </div>
                 <div className={styles.card}>
                     <ThemeImage
-                        lightSrc="/img/homepage/input-output_dark.svg"
-                        darkSrc="/img/homepage/input-output_dark.svg"
+                        lightSrc="/python-doesnt-byte/img/homepage/input-output_dark.svg"
+                        darkSrc="/python-doesnt-byte/img/homepage/input-output_dark.svg"
                         className={styles.cardImage}
                         alt=""
                     />
