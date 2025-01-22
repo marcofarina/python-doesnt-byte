@@ -1,7 +1,3 @@
----
-sidebar_position: 3
----
-
 # Le stringhe
 Come già introdotto nella sezione sull'[output](output.mdx), le stringhe rappresentano una delle strutture dati più utilizzate in qualsiasi programma poiché consentono di lavorare con testi e sequenze di caratteri. Quasi tutti i programmi, indipendentemente dal contesto, hanno bisogno di manipolare qualche tipo di testo, che sia input dell'utente, etichette su componenti grafici come bottoni o box, password, messaggi, e-mail o interi documenti.
 
@@ -18,7 +14,7 @@ In Python, le stringhe sono un vero e proprio **tipo di dato** e mettono a dispo
 player1 = "Mario"
 player2 = 'Luigi'
 ```
-:::danger[Attenzione]
+:::danger[Virgolette dentro le stringhe]
 In Python, le stringhe definite con apici singoli e doppi sono equivalenti e possono essere usate indifferentemente. Bisogna però fare attenzione nel caso in cui si voglia includere un apice all'interno della stringa: in questo caso, è necessario usare l'apice opposto per racchiudere la stringa. Se fosse necessario includere entrambi gli apici, è possibile utilizzare il carattere di escape `\` per evitare conflitti. Ad esempio:
 ```python
 hacker = "Kevin \"Condor\" Mitnick"
@@ -58,6 +54,20 @@ name1 = "Tony"
 name2 = "Steve"
 message = f"{name1} and {name2} are BFFs"
 print(message)
+```
+
+## Accedere ai caratteri di una stringa
+Per accedere ai singoli caratteri di una stringa, è possibile utilizzare un meccanismo particolare chiamato **indicizzazione**. In Python, le stringhe sono **sequenze** di caratteri, ovvero una collezione ordinata di elementi, e ogni elemento può essere individuato tramite un **indice numerico**.
+
+:::warning[Gli indici partono sempre da 0]
+In Python, come in molti altri linguaggi di programmazione, gli indici delle sequenze partono sempre da 0. Questo significa che il primo elemento di una sequenza ha indice 0, il secondo indice 1, e così via.
+:::
+
+La sintassi per accedere a un carattere di una stringa è `stringa[indice]`. Ad esempio:
+```python live_py
+name = "Luigi"
+first_letter = name[0]
+print(first_letter)
 ```
 
 ## Funzioni utili

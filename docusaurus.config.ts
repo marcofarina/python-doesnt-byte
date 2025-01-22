@@ -39,8 +39,7 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/marcofarina/python-doesnt-byte',
+          editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
         },
         blog: {
           showReadingTime: true,
@@ -67,6 +66,11 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
+    docs: {
+      sidebar: {
+        autoCollapseCategories: true,
+      },
+    },
     navbar: {
       title: 'Python Doesn\'t Byte',
       logo: {
@@ -76,7 +80,7 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'docs',
           position: 'left',
           label: 'Libro',
         },

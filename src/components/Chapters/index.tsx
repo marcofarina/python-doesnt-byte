@@ -18,7 +18,7 @@ function Chapters() {
                 }
             />
             <div className={styles.cardContainer}>
-                <div className={styles.card}>
+                <a href="/python-doesnt-byte/docs/category/fondamenti-di-python" className={styles.card}>
                     <ThemeImage
                         lightSrc="/python-doesnt-byte/img/homepage/IDE.svg"
                         darkSrc="/python-doesnt-byte/img/homepage/IDE.svg"
@@ -31,8 +31,8 @@ function Chapters() {
                             Come installare e usare Python, cos'è un IDE, come si scrive e si esegue un programma.
                         </p>
                     </div>
-                </div>
-                <div className={styles.card}>
+                </a>
+                <a href="/python-doesnt-byte/docs/category/le-basi-del-linguaggio" className={styles.card}>
                     <ThemeImage
                         lightSrc="/python-doesnt-byte/img/homepage/input-output_dark.svg"
                         darkSrc="/python-doesnt-byte/img/homepage/input-output_dark.svg"
@@ -47,7 +47,7 @@ function Chapters() {
                             Input e output, le variabili, i tipi di dati, le operazioni aritmetiche e le espressioni.
                         </p>
                     </div>
-                </div>
+                </a>
             </div>
         </Section>
     );
