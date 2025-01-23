@@ -1,0 +1,87 @@
+# Input
+
+L'input è un aspetto fondamentale della programmazione: permette di ricevere dati dall'utente per elaborarli nel programma. In Python, questa operazione è resa semplice dalla funzione integrata `input()`.
+
+## La funzione `input()`
+Diversamente dalla funzione `print()`, la funzione `input()` restituisce un valore inserito dall'utente. Questo valore dovrebbe essere sempre memorizzato in una variabile per essere utilizzato in seguito. Un tipico errore è infatti richiamare la funzione `input()`, ma dimenticarsi di salvare il valore digitato dall'utente in una variabile.
+
+La sintassi base della funzione `input()` è dunque:
+
+```python
+variabile = input("Messaggio per l'utente: ")
+```
+
+- Il messaggio, ovvero la stringa passata come parametro alla funzione, è opzionale, ma è opportuno scriverla per visualizza istruzioni che aiutino l'utente a fornire un input corretto.
+- La funzione restituisce **sempre** una stringa, indipendentemente dal tipo di dato inserito dall'utente.
+
+### Esempio
+
+```py live_py
+name = input("Come ti chiami? ")
+print(f"Ciao, {name}!")
+```
+
+Questo programma:
+1. Mostra il messaggio `Come ti chiami?`.
+2. Attende che l'utente inserisca il proprio nome.
+3. Salva il valore inserito nella variabile `name`.
+4. Stampa un saluto personalizzato utilizzando il valore di `name`.
+
+## Conversione dei tipi di dato
+
+Se si desidera ricevere un numero come input, è necessario convertirlo da stringa a un tipo numerico (ad esempio, `int` o `float`). Python mette a disposizione delle funzioni di conversione per trasformare un tipo di dato in un altro. Vediamo quali sono le più comuni:
+| Funzione      | Descrizione   |
+| ------------- | ------------- |
+| `int()`       | Converte il dato in intero  |
+| `str()`       | Converte il dato in stringa |
+| `float()`     | Converte il dato in decimale |
+| `bytes()`     | Converte il dato in sequenza di byte |
+| `hex()`       | Converte il dato in esadecimale |
+
+:::danger[Valori non validi]
+Se si inserisce un valore non valido per la conversione (ad esempio, testo anziché numeri), il programma genererà un errore, interrompendo l'esecuzione. Più avanti impareremo come gestire questi errori.
+:::
+
+### Esempio con numeri interi:
+
+```py live_py
+age = input("Quanti anni hai? ")
+year_of_birth = 2025 - int(age)  # Converte la stringa in un intero
+print(f"Sei nato nell'anno {year_of_birth}.")
+```
+
+### Esempio con numeri decimali:
+
+```py live_py
+height = input("Qual è la tua altezza in metri? ")
+height = float(height)  # Converte la stringa in un numero decimale
+print(f"La tua altezza in centimetri è {height * 100}.")
+```
+:::warning[Usa il punto come separatore]
+In Python, essendo un linguaggio internazionale, il separatore decimale è il punto (`.`), non la virgola. Quando inserisci un numero decimale, assicurati dunque di usare il punto come separatore. Ad esempio, `3.14` anziché `3,14`.
+:::
+
+
+### Comporre le funzioni di conversione con `input()`
+È possibile comporre le funzioni di conversione direttamente con la funzione `input()`, per rendere il codice più compatto. Ad esempio:
+
+```python
+age = int(input("Quanti anni hai? "))
+```
+In generale, è sempre possibile comporre più funzioni in una singola riga di codice, purché il codice rimanga leggibile.
+
+---
+## Ricorda che...
+:::tip[Ricorda che]
+- La funzione `input()` restituisce sempre una stringa.
+- È necessario convertire manualmente la stringa in un tipo numerico se si desidera eseguire operazioni matematiche.
+- È importante scrivere messaggi chiari per guidare l'utente nell'inserimento dei dati.
+- È possibile chiedere più input in un singolo programma per raccogliere diverse informazioni dall'utente. Ad esempio:
+```python
+name = input("Come ti chiami? ")
+age = int(input("Quanti anni hai? "))
+city = input("Dove vivi? ")
+
+print(f"Ciao, {name}! Hai {age} anni e vivi a {city}.")
+```
+:::

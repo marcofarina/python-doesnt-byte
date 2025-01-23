@@ -40,6 +40,7 @@ const sidebars: SidebarsConfig = {
         'basi-del-linguaggio/output',
         'basi-del-linguaggio/le-variabili',
         'basi-del-linguaggio/le-stringhe',
+        'basi-del-linguaggio/input',
       ]
     },
   ],

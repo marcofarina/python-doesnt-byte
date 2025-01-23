@@ -1,3 +1,0 @@
-# Esercizi
-
-Start typing here...
