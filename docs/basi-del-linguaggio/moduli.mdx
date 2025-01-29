@@ -1,0 +1,108 @@
+# I moduli
+
+Python, come molti altri linguaggi di programmazione, offre un meccanismo per organizzare e riutilizzare il codice: i **moduli**. Un modulo non è altro che un file che contiene codice scritto in Python. I moduli permettono di suddividere un programma in parti più gestibili e di riutilizzare codice già scritto (da se sessi o da altri) senza doverlo riscrivere ogni volta.
+
+L'uso dei moduli ha diversi vantaggi:
+- **riusabilità**: evita la duplicazione del codice e favorisce la manutenzione;
+- **organizzazione**: aiuta a strutturare programmi complessi suddividendoli in componenti più piccoli e comprensibili;
+- **collaborazione**: facilita il lavoro in team, permettendo di sviluppare parti del programma in moduli separati;
+- **efficienza**: i moduli possono essere caricati solo quando servono, migliorando le prestazioni complessive del programma.
+
+Esistono due tipi principali di moduli:
+- **moduli standard**: sono inclusi direttamente in Python e possono essere utilizzati senza bisogno di installazioni aggiuntive;
+- **moduli di terze parti**: vengono creati dalla comunità o da sviluppatori esterni e devono essere installati separatamente.
+
+Python dispone di una vasta libreria standard che copre molte esigenze comuni, come la generazione di numeri casuali e operazioni matematiche avanzate.
+
+### Ricerca dei moduli
+Quando si importa un modulo, Python lo cerca in diversi percorsi in un ordine specifico:
+1. **la cartella del file in esecuzione**: se esiste un modulo con lo stesso nome nella stessa cartella dello script principale, verrà caricato prima di qualsiasi altro;
+2. **la libreria standard di Python**: se il modulo è parte della libreria standard, Python lo carica automaticamente;
+3. **percorsi aggiuntivi definiti in `sys.path`**: Python mantiene un elenco di cartelle dove cerca i moduli. Questo elenco può essere visualizzato ed eventualmente modificato con:
+
+```python
+import sys
+print(sys.path)
+```
+
+Se un modulo non viene trovato in nessuno di questi percorsi, Python genera un errore `ModuleNotFoundError`.
+
+## Uso e sintassi
+
+Per utilizzare un modulo in Python, si usa la parola chiave `import` seguita dal nome del modulo.
+
+Esempio:
+```python
+import modulo  # Importa il modulo random
+```
+
+Per accedere a un "elemento" di un modulo, si utilizza la notazione `modulo.elemento`. Questi elementi in informatica vengono chiamate "funzioni", proprio perché eseguono una funzionalità specifica. Molto spesso le funzioni devono lavorare sui dati, e per fare ciò hanno bisogno di riceverli in qualche modo. Questi dati vengono chiamati **parametri** sono valori che vengono **passati** alla funzione per permetterle di svolgere il proprio compito. La sintassi completa per l'importazione di un modulo e l'uso di una funzione è la seguente:
+```python
+import modulo  # Importa il modulo
+modulo.funzione(parametro1, parametro2, ...)  # Utilizza la funzione del modulo
+```
+
+Si può anche importare solo una parte specifica di un modulo usando `from ... import ...`:
+```python
+from modulo import funzione
+funzione(parametro1, parametro2, ...)
+```
+:::tip[Perché usare il `from`]
+Usando la sintassi `from ... import ...` non è necessario specificare il nome del modulo quando si chiama la funzione. Quando si usano solo poche funzioni di un modulo, questo metodo può rendere il codice più leggibile.
+:::
+
+Un altro metodo per semplificare l'uso è assegnare un alias a un modulo:
+```python
+import modulo as alias
+alias.funzione(parametro1, parametro2, ...)
+```
+Vediamo ora due esempi pratici di moduli estremamente utili e comuni in Python. Il modulo `random` per la generazione di numeri casuali e il modulo `math` per operazioni matematiche avanzate.
+
+## Il modulo `random` e la funzione `randint`
+
+Il modulo `random` consente di generare numeri casuali. Una delle funzioni più utili è `randint`, che restituisce un numero intero casuale compreso tra due valori specificati.
+
+Esempio:
+```python
+import random
+numero = random.randint(1, 6)  # Simula il lancio di un dado
+print("Numero casuale:", numero)
+```
+:::warning[Salvare il valore restituito]
+È importante ricordare che se una funzione calcola qualcosa e restituisce un valore, è necessario **salvare** quel valore in una variabile per poterlo utilizzare in seguito. Se non si salva il valore restituito da una funzione, esso andrà perso e non sarà più accessibile dal programma. Nell'esempio precedente, il valore restituito da `random.randint(1, 6)` viene salvato nella variabile `numero`.
+:::
+
+Ci occuperemo più avanti di studiare altre importanti funzioni del modulo `random`.
+
+## Il modulo `math` e le funzioni principali
+
+Il modulo `math` fornisce funzioni matematiche avanzate.
+
+Esempio di utilizzo:
+```python
+import math
+radice = math.sqrt(25)  # Calcola la radice quadrata di 25
+print("Radice quadrata di 25:", radice)
+```
+
+Altre funzioni comuni del modulo `math`:
+- `math.pi`: restituisce il valore di π (pi greco). NB: `pi` è una costante, non una funzione, quindi non ha bisogno delle parentesi tonde.
+- `math.pow(base, esponente)`: calcola la potenza di un numero.
+- `math.floor(x)`: arrotonda per difetto un numero.
+- `math.ceil(x)`: arrotonda per eccesso un numero.
+
+Esempio:
+```python
+import math
+print(math.pi)  # Stampa il valore di pi greco
+print(math.pow(2, 3))  # Calcola 2^3
+print(math.floor(3.7))  # Restituisce 3
+print(math.ceil(3.2))  # Restituisce 4
+```
+---
+## Ricorda che...
+:::tip[Ricorda che]
+- I moduli sono file che contengono codice Python e permettono di organizzare e riutilizzare il codice.
+- Esistono moduli standard inclusi in Python e moduli di terze parti che devono essere installati separatamente.
+- Per utilizzare un modulo è necessario usare la parola chiave `import` seguita dal nome del modulo.
+- Se la funzione restituisce un valore, è necessario salvarlo in una variabile per poterlo utilizzare.

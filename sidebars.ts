@@ -41,6 +41,7 @@ const sidebars: SidebarsConfig = {
         'basi-del-linguaggio/le-variabili',
         'basi-del-linguaggio/le-stringhe',
         'basi-del-linguaggio/input',
+        'basi-del-linguaggio/moduli'
       ]
     },
   ],
