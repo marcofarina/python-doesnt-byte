@@ -6,3 +6,7 @@ Thumbs.db
 
 # Docusaurus
 .docusaurus
+node_modules
+
+# IDE
+.idea

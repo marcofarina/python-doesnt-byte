@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
-function ThemeImage({lightSrc, darkSrc, className, alt}) {
+function ThemeImage({ lightSrc, darkSrc, className, alt }) {
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    const themeObserver = new MutationObserver(mutations => {
-      mutations.forEach(mutation => {
+    const themeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
         if (
           mutation.type === 'attributes' &&
           mutation.attributeName === 'data-theme'

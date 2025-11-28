@@ -7,9 +7,7 @@ type LogoProps = {
 };
 
 const Logo: React.FC<LogoProps> = ({ width = '250px', height = '250px' }) => {
-  return (
-      <LogoSVG width={width} height={height} />
-  );
+  return <LogoSVG width={width} height={height} />;
 };
 
 export default Logo;
