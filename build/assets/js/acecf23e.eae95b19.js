@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkpython_doesnt_byte=self.webpackChunkpython_doesnt_byte||[]).push([[903],{1912:t=>{t.exports=JSON.parse('{"blogBasePath":"/blog","blogTitle":"Blog","authorsListPath":"/blog/authors"}')}}]);
