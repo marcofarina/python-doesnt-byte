@@ -33,7 +33,7 @@ function Chapters() {
           </div>
         </Link>
         <Link
-          to="/docs/category/le-basi-del-linguaggio"
+          to="/docs/category/basi-del-linguaggio"
           className={styles.card}
         >
           <ThemeImage
