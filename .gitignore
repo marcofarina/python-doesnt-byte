@@ -39,3 +39,7 @@ coverage/
 
 # Misc
 *.log
+
+# Claude Code auto-generated context
+CLAUDE.md
+CLAUDE.local.md
