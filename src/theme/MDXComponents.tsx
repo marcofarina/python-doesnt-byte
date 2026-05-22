@@ -7,6 +7,11 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 
 import InlineCode from '@site/src/components/InlineCode';
 import Tooltip from '@site/src/components/Tooltip';
+import Quiz, {
+  QuizQuestion,
+  QuizOption,
+  QuizFeedback,
+} from '@site/src/components/Quiz';
 
 library.add(fab, fas);
 
@@ -15,4 +20,8 @@ export default {
   FAIcon: FontAwesomeIcon,
   InlineCode,
   Tooltip,
+  Quiz,
+  QuizQuestion,
+  QuizOption,
+  QuizFeedback,
 };

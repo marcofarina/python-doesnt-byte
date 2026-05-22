@@ -40,7 +40,48 @@ Premi `Esc` o clicca fuori dal popover per chiuderlo.
 
 ## Verifiche di apprendimento
 
-Alla fine di molte sezioni troverai un piccolo quiz inline per verificare al volo di aver capito i concetti chiave. *(Componente in arrivo — questa sezione sarà completata a breve.)*
+Alla fine di molte sezioni trovi un piccolo quiz inline per verificare al volo di aver capito i concetti chiave. Clicca la risposta che ritieni corretta: se sbagli, ti spiego perché e puoi riprovare.
+
+<Quiz>
+  <QuizQuestion>
+    A che cosa serve la chiamata <InlineCode kind="function">super().\_\_init\_\_(...)</InlineCode> dentro il costruttore di una sottoclasse?
+  </QuizQuestion>
+
+  <QuizOption>
+    A creare un secondo oggetto, della classe base, separato da quello che si sta costruendo.
+    <QuizFeedback>
+      <InlineCode kind="function">super()</InlineCode> non crea un nuovo oggetto: lavora sull'oggetto corrente, richiamando il codice della classe base.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    A eseguire il costruttore della classe base, così da riusarne il codice senza riscriverlo.
+    <QuizFeedback>
+      <InlineCode kind="function">super()</InlineCode> risale alla classe base e ne richiama il costruttore: gli attributi comuni vengono inizializzati lì, una volta sola.
+
+      ```python
+      class Cane(Animale):
+          def __init__(self, nome, razza):
+              super().__init__(nome)
+              self.razza = razza
+      ```
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    A dare alla sottoclasse la precedenza sulla classe base quando due metodi hanno lo stesso nome.
+    <QuizFeedback>
+      La precedenza della sottoclasse è automatica nell'override; non dipende da <InlineCode kind="function">super()</InlineCode>.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    A rendere pubblici gli attributi privati che la classe base tiene protetti.
+    <QuizFeedback>
+      <InlineCode kind="function">super()</InlineCode> non cambia la visibilità degli attributi: serve solo a richiamare metodi della classe base.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
 
 ## Navigazione
 
