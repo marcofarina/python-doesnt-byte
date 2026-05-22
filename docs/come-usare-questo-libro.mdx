@@ -1,0 +1,53 @@
+---
+title: Come usare questo libro
+sidebar_label: Come usare questo libro
+sidebar_position: 0
+slug: /come-usare-questo-libro
+description: Convenzioni tipografiche, elementi interattivi e suggerimenti per ottenere il massimo da questo libro digitale.
+---
+
+# Come usare questo libro
+
+Benvenuto. Prima di immergerti nei capitoli, ti conviene dedicare qualche minuto a questa pagina: ti spiego come è organizzato il libro, quali elementi interattivi troverai e qualche convenzione che useremo ovunque.
+
+## Per chi è scritto
+
+Questo libro è pensato per studenti di scuola secondaria di secondo grado che affrontano la programmazione per la prima volta — in particolare per i corsi di **Informatica** degli Istituti Tecnici e l'articolazione **Scienze Applicate** del Liceo Scientifico. Non serve nessuna conoscenza pregressa: ti accompagnerò passo dopo passo dal primo `print` fino alla programmazione orientata agli oggetti.
+
+## Convenzioni tipografiche
+
+Nel testo userò spesso porzioni di codice. Quando sono brevi le scrivo *inline*, cioè dentro la riga: per esempio una variabile come `nome`, una funzione che hai appena visto come <InlineCode kind="function">print()</InlineCode>, una parola chiave del linguaggio come <InlineCode kind="keyword">if</InlineCode>, o una stringa di testo come <InlineCode kind="string">"Hello, World!"</InlineCode>. Ogni colore ha un significato preciso:
+
+- <InlineCode>identificatore</InlineCode> — nomi di variabili o riferimenti generici
+- <InlineCode kind="keyword">keyword</InlineCode> — parole chiave riservate di Python (<InlineCode kind="keyword">def</InlineCode>, <InlineCode kind="keyword">if</InlineCode>, <InlineCode kind="keyword">for</InlineCode>, <InlineCode kind="keyword">return</InlineCode>, …)
+- <InlineCode kind="string">"stringa"</InlineCode> — valori di tipo testo
+- <InlineCode kind="function">funzione()</InlineCode> — chiamate a funzioni built-in o definite da noi
+
+Quando invece il codice è più lungo lo trovi in un blocco a parte, con tanto di numerazione di riga e — quando ha senso — un pulsante per eseguirlo direttamente nella pagina:
+
+```python
+# Il tuo primo programma
+nome = input("Come ti chiami? ")
+print(f"Ciao, {nome}!")
+print("Benvenuto in Python.")
+```
+
+## Definizioni a portata di click
+
+I termini tecnici importanti sono sottolineati con un tratteggio: cliccandoli si apre una breve definizione, così non devi interrompere la lettura per cercare altrove. Per esempio, durante il libro ti parlerò spesso di <Tooltip def="Software il cui codice sorgente è accessibile liberamente a chiunque voglia leggerlo, modificarlo e distribuirlo, di solito sotto una licenza che ne garantisce questi diritti.">open source</Tooltip>, di linguaggi <Tooltip def="Un linguaggio è 'interpretato' quando il codice viene eseguito da un altro programma (l'interprete) riga per riga, senza un passaggio di compilazione esplicito a codice macchina.">interpretati</Tooltip> e di programmazione <Tooltip def="Stile di programmazione che organizza il codice attorno a 'oggetti', che combinano dati (attributi) e comportamenti (metodi).">orientata agli oggetti</Tooltip>.
+
+Premi `Esc` o clicca fuori dal popover per chiuderlo.
+
+## Verifiche di apprendimento
+
+Alla fine di molte sezioni troverai un piccolo quiz inline per verificare al volo di aver capito i concetti chiave. *(Componente in arrivo — questa sezione sarà completata a breve.)*
+
+## Navigazione
+
+- La **barra laterale** elenca tutti i capitoli e le sezioni del libro. Si può collassare per leggere a tutto schermo.
+- In alto a destra trovi un'icona luna/sole per passare dalla modalità chiara a quella scura.
+- I link `Precedente` / `Successivo` in fondo a ogni pagina ti portano avanti e indietro nel libro seguendo l'ordine di lettura.
+
+## Licenza e contributi
+
+Il libro è rilasciato sotto licenza **Creative Commons BY-NC-SA 4.0**: sei libero di leggerlo, condividerlo e adattarlo per scopi non commerciali, citando la fonte. Il codice sorgente del sito è su [GitHub](https://github.com/marcofarina/python-doesnt-byte): se trovi un errore o vuoi suggerire un miglioramento, apri pure una *issue*.

@@ -17,6 +17,7 @@ const sidebars: SidebarsConfig = {
   // But you can create a sidebar manually
 
   docs: [
+    'come-usare-questo-libro',
     'intro',
     {
       type: 'category',

@@ -376,6 +376,29 @@ html[data-theme='light'] .github-link {
   font-style: normal;
 }
 
+/* ─────────────── Atmospheric — Inline code (markdown backticks) ─────────────── */
+
+:where(.markdown :not(pre) > code) {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  padding: 1.5px 7px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.045);
+  border: 1px solid var(--at-border);
+  border-bottom: 1px solid rgba(2, 132, 199, 0.45);
+  color: #27272a;
+  white-space: nowrap;
+  letter-spacing: 0;
+  vertical-align: baseline;
+  line-height: 1.5;
+}
+
+:where(html[data-theme='dark'] .markdown :not(pre) > code) {
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom-color: rgba(56, 189, 248, 0.35);
+  color: #e4e4e7;
+}
+
 /* ─────────────── Atmospheric — Navbar ─────────────── */
 
 .navbar {

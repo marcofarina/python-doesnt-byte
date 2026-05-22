@@ -1,0 +1,55 @@
+.wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.trigger {
+  display: inline;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  color: var(--at-accent);
+  font-weight: 500;
+  border-bottom: 1px dashed var(--at-accent);
+  line-height: inherit;
+}
+
+.trigger:hover,
+.trigger:focus-visible {
+  color: var(--at-accent-soft);
+  border-bottom-color: var(--at-accent-soft);
+  outline: none;
+}
+
+.popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  width: 240px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--at-fg);
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--at-border-strong);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  text-align: left;
+  white-space: normal;
+}
+
+html[data-theme='dark'] .popover {
+  background: rgba(9, 9, 11, 0.95);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 24px rgba(56, 189, 248, 0.15);
+}
