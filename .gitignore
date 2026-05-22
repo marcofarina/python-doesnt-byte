@@ -43,3 +43,4 @@ coverage/
 # Claude Code auto-generated context
 CLAUDE.md
 CLAUDE.local.md
+.claude/
