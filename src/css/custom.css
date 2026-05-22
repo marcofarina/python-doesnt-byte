@@ -6,8 +6,8 @@
 
 /* ─────────────── Atmospheric design tokens ─────────────── */
 :root {
-  --font-display: 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
-  --font-body: 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
+  --font-display: 'Crimson Pro', 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
+  --font-body: 'Crimson Pro', 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
