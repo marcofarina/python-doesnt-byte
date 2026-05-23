@@ -378,9 +378,9 @@ html[data-theme='light'] .github-link {
 
 /* ─────────────── Atmospheric — Inline code (markdown backticks) ─────────────── */
 
-:where(.markdown :not(pre) > code) {
+.markdown :not(pre) > code {
   font-family: var(--font-mono);
-  font-size: 0.86em;
+  font-size: 0.82em;
   padding: 1.5px 7px;
   border-radius: 5px;
   background: rgba(0, 0, 0, 0.045);
@@ -393,7 +393,7 @@ html[data-theme='light'] .github-link {
   line-height: 1.5;
 }
 
-:where(html[data-theme='dark'] .markdown :not(pre) > code) {
+html[data-theme='dark'] .markdown :not(pre) > code {
   background: rgba(255, 255, 255, 0.06);
   border-bottom-color: rgba(56, 189, 248, 0.35);
   color: #e4e4e7;
@@ -483,4 +483,145 @@ html[data-theme='light'] .github-link {
 html[data-theme='light'] .footer__logo {
   filter: invert(1) hue-rotate(180deg);
   opacity: 0.7;
+}
+
+/* ─────────────── Doc page title (swizzle DocItem/Content) ─────────────── */
+.theme-doc-markdown > .doc-chapter-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--at-accent);
+  margin: 0 0 0.75rem 0;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--at-accent-chip-border);
+  border-radius: 999px;
+  background: var(--at-accent-chip);
+  line-height: 1.4;
+}
+
+.theme-doc-markdown.doc-has-chapter-kicker > .doc-chapter-kicker + h1,
+.theme-doc-markdown > header > h1 {
+  background: var(--at-grad-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  padding-bottom: 0.18em;
+  margin-bottom: 0.5em;
+}
+
+/* ─────────────── Atmospheric — Reading view (doc markdown) ─────────────── */
+
+.theme-doc-markdown {
+  font-family: var(--font-body);
+  font-size: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
+  line-height: 1.75;
+  color: var(--at-fg-body);
+  max-width: 72ch;
+}
+
+.theme-doc-markdown p {
+  margin: 0 0 1.15em;
+}
+
+.theme-doc-markdown h2,
+.theme-doc-markdown h3,
+.theme-doc-markdown h4,
+.theme-doc-markdown h5,
+.theme-doc-markdown h6 {
+  font-family: var(--font-display);
+  color: var(--at-fg-strong);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  scroll-margin-top: 6rem;
+}
+
+.theme-doc-markdown h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin: 2.75em 0 0.6em;
+}
+
+.theme-doc-markdown h3 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  margin: 2em 0 0.5em;
+}
+
+.theme-doc-markdown h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 1.6em 0 0.4em;
+}
+
+.theme-doc-markdown h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 1.5em 0 0.3em;
+  color: var(--at-muted-soft);
+}
+
+.theme-doc-markdown h6 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 1.4em 0 0.3em;
+  color: var(--at-muted-soft);
+}
+
+.theme-doc-markdown ul,
+.theme-doc-markdown ol {
+  margin: 0 0 1.15em;
+  padding-left: 1.4em;
+}
+
+.theme-doc-markdown li {
+  margin-bottom: 0.35em;
+}
+
+.theme-doc-markdown li > p {
+  margin-bottom: 0.5em;
+}
+
+.theme-doc-markdown a:not(.button) {
+  color: var(--at-accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--at-accent-chip-border);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.theme-doc-markdown a:not(.button):hover {
+  color: var(--at-accent-soft);
+  border-bottom-color: var(--at-accent);
+}
+
+.theme-doc-markdown blockquote {
+  font-style: italic;
+  color: var(--at-muted-soft);
+  border-left: 3px solid var(--at-accent);
+  margin: 1.5em 0;
+  padding: 0.25em 0 0.25em 1.2em;
+  background: transparent;
+}
+
+.theme-doc-markdown hr {
+  border: none;
+  border-top: 1px solid var(--at-border);
+  margin: 2.5em 0;
+}
+
+.theme-doc-markdown strong {
+  color: var(--at-fg-strong);
+  font-weight: 700;
 }
