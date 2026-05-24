@@ -4,8 +4,8 @@ import type {SidebarsConfig} from '@docusaurus/plugin-content-docs';
 // Una sidebar per percorso. Lo stesso doc può comparire in più percorsi
 // con label/categoria diverse: l'URL del doc resta unico.
 const sidebars: SidebarsConfig = {
-  it: ['intro'],
-  liceo: ['intro'],
+  it: ['intro', 'variabili'],
+  liceo: ['intro', 'variabili'],
   its: ['intro'],
 };
 
