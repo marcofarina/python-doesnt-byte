@@ -10,6 +10,8 @@ import type {
   PropSidebarItem,
 } from '@docusaurus/plugin-content-docs';
 
+import OffPathBanner from '@site/src/components/OffPathBanner';
+
 function useSyntheticTitle(): string | null {
   const {metadata, frontMatter, contentTitle} = useDoc();
   const shouldRender =
@@ -62,6 +64,7 @@ export default function DocItemContent({children}: Props): ReactNode {
         'markdown',
         kicker && 'doc-has-chapter-kicker',
       )}>
+      <OffPathBanner />
       {kicker && <p className="doc-chapter-kicker">{kicker}</p>}
       {syntheticTitle && (
         <header>

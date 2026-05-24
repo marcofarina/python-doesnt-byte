@@ -13,6 +13,7 @@ import {
   useAllDocsData,
 } from '@docusaurus/plugin-content-docs/client';
 import {usePathContext, type VolumeId} from '@site/src/contexts/PathContext';
+import {pathLabel} from '@site/src/contexts/pathLabels';
 
 import styles from './styles.module.css';
 
@@ -21,17 +22,6 @@ const VOLUMES: ReadonlySet<string> = new Set([
   'artefice',
   'archivista',
 ]);
-
-// Etichetta umana del percorso, mostrata nel toggle.
-const PATH_LABEL: Record<string, string> = {
-  it: 'IT',
-  liceo: 'Liceo',
-  its: 'ITS',
-};
-
-function labelFor(pathId: string): string {
-  return PATH_LABEL[pathId] ?? pathId;
-}
 
 export default function PathSelector(): ReactNode {
   const activePlugin = useActivePlugin();
@@ -66,7 +56,7 @@ export default function PathSelector(): ReactNode {
           className={`${styles.btn} ${id === active ? styles.active : ''}`}
           aria-pressed={id === active}
           onClick={() => setPath(volumeId, id)}>
-          {labelFor(id)}
+          {pathLabel(id, true)}
         </button>
       ))}
     </div>
