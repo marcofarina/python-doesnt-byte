@@ -126,10 +126,35 @@ const config: Config = {
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'docs',
+          type: 'dropdown',
+          label: 'Libri',
           position: 'left',
-          label: 'Libro',
+          items: [
+            {
+              type: 'doc',
+              docId: 'intro',
+              docsPluginId: 'programmatore',
+              label: 'Manuale del Programmatore',
+            },
+            {
+              type: 'doc',
+              docId: 'intro',
+              docsPluginId: 'artefice',
+              label: 'Manuale dell\'Artefice',
+            },
+            {
+              type: 'doc',
+              docId: 'intro',
+              docsPluginId: 'archivista',
+              label: 'Manuale dell\'Archivista',
+            },
+            // Vecchia versione, sarà rimossa dopo la migrazione dei
+            // contenuti attuali dentro Programmatore.
+            {
+              to: '/docs/intro',
+              label: 'Versione precedente',
+            },
+          ],
         },
         /*        {
                   to: '/blog',
