@@ -175,6 +175,7 @@ const config: Config = {
           label: 'Offrimi un caffè',
           position: 'right',
           className: 'sponsorship-link',
+          'aria-label': 'Offrimi un caffè',
         },
         {
           to: 'https://github.com/marcofarina/python-doesnt-byte',

@@ -245,13 +245,42 @@ html[data-theme='dark'] .hero {
   margin-bottom: 10px;
 }*/
 
-/* Header icons — line-style, follow `color` via mask + currentColor */
+/* Header icons — circular buttons (stile ColorModeToggle) with neon
+   popup tooltip on hover. The visible link text is squashed to 0 so
+   we keep accessibility (aria-label + DOM text) while the user sees
+   only the icon glyph; the human label lives in the ::after popup. */
 
-.github-link,
-.sponsorship-link {
+@keyframes pdb-iconPopupPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.navbar__link.github-link,
+.navbar__link.sponsorship-link {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  padding: 0 !important;
+  margin: 0 2px;
+  border-radius: 50%;
+  display: inline-flex;
   align-items: center;
-  display: flex;
-  transition: color 0.15s ease;
+  justify-content: center;
+  font-size: 0;
+  transition:
+    background var(--ifm-transition-fast),
+    color 0.15s ease;
+}
+
+.navbar__link.github-link:hover,
+.navbar__link.sponsorship-link:hover {
+  background: var(--at-bg-subtle);
+  color: var(--at-accent);
 }
 
 .github-link::before,
@@ -260,7 +289,7 @@ html[data-theme='dark'] .hero {
   display: inline-block;
   width: 18px;
   height: 18px;
-  margin-right: 0.45rem;
+  margin: 0;
   background-color: currentColor;
   -webkit-mask-size: contain;
   mask-size: contain;
@@ -280,9 +309,65 @@ html[data-theme='dark'] .hero {
   mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M10 2v2'/><path d='M14 2v2'/><path d='M6 2v2'/><path d='M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1'/></svg>");
 }
 
-.github-link:hover,
-.sponsorship-link:hover {
-  color: var(--at-accent);
+/* ── Neon popup tooltips for navbar icon-buttons ───────────────── */
+
+.github-link::after,
+.sponsorship-link::after {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  transform: translate(0, 4px);
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(7, 9, 13, 0.92);
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+  z-index: 100;
+  border: 1px solid;
+}
+
+.github-link::after {
+  content: 'GitHub';
+  color: var(--at-accent-soft);
+  border-color: var(--at-accent);
+  text-shadow:
+    0 0 8px var(--at-accent),
+    0 0 16px rgba(56, 189, 248, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.2),
+    0 0 18px -2px var(--at-accent),
+    0 0 32px -8px var(--at-accent-soft),
+    inset 0 0 8px rgba(56, 189, 248, 0.08);
+}
+
+.sponsorship-link::after {
+  content: 'Offrimi un caffè';
+  color: #f0b072;
+  border-color: #c8845c;
+  text-shadow:
+    0 0 8px #c8845c,
+    0 0 16px rgba(180, 83, 9, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(200, 132, 92, 0.25),
+    0 0 18px -2px #c8845c,
+    0 0 32px -8px #b45309,
+    inset 0 0 8px rgba(180, 83, 9, 0.1);
+}
+
+.github-link:hover::after,
+.github-link:focus-visible::after,
+.sponsorship-link:hover::after,
+.sponsorship-link:focus-visible::after {
+  opacity: 1;
+  transform: translate(0, 0);
 }
 
 /* Font */
