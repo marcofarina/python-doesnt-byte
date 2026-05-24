@@ -170,21 +170,9 @@ const config: Config = {
                   to: '/blog',
                   label: 'Blog',
                   position: 'left'},*/
-        {
-          to: '/support/',
-          label: 'Offrimi un caffè',
-          position: 'right',
-          className: 'sponsorship-link',
-          'aria-label': 'Offrimi un caffè',
-        },
-        {
-          to: 'https://github.com/marcofarina/python-doesnt-byte',
-          label: 'GitHub',
-          position: 'right',
-          target: '_blank',
-          className: 'github-link',
-          'aria-label': 'GitHub repository',
-        },
+        // GitHub e "Offrimi un caffè" sono renderizzati come icone+popup
+        // (NavbarIconButton) dal swizzle src/theme/Navbar/Content, non
+        // tramite navbar items standard.
       ],
     },
     footer: {

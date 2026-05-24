@@ -24,6 +24,7 @@ import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
 
 import PathSelector from '@site/src/components/PathSelector';
+import NavbarIconButton from '@site/src/components/NavbarIconButton';
 
 import styles from './styles.module.css';
 
@@ -103,6 +104,24 @@ export default function NavbarContent(): ReactNode {
       right={
         <>
           <NavbarItems items={rightItems} />
+          <NavbarIconButton
+            to="https://github.com/marcofarina/python-doesnt-byte"
+            target="_blank"
+            rel="noopener noreferrer"
+            ariaLabel="Repository GitHub"
+            tooltip="GitHub"
+            icon={['fab', 'github']}
+            iconSize={18}
+            accent="cyan"
+          />
+          <NavbarIconButton
+            to="/support/"
+            ariaLabel="Offrimi un caffè"
+            tooltip="Offrimi un caffè"
+            icon={['fas', 'mug-hot']}
+            iconSize={20}
+            accent="amber"
+          />
           <NavbarColorModeToggle className={styles.colorModeToggle} />
           {!searchBarItem && (
             <NavbarSearch>

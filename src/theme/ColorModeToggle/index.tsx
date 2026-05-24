@@ -1,9 +1,7 @@
 import React, {type ReactNode} from 'react';
 import clsx from 'clsx';
 import useIsBrowser from '@docusaurus/useIsBrowser';
-import IconLightMode from '@theme/Icon/LightMode';
-import IconDarkMode from '@theme/Icon/DarkMode';
-import IconSystemColorMode from '@theme/Icon/SystemColorMode';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import type {Props} from '@theme/ColorModeToggle';
 import type {ColorMode} from '@docusaurus/theme-common';
 
@@ -43,15 +41,18 @@ function getSpell(nextMode: ColorMode | null): string {
 function CurrentColorModeIcon(): ReactNode {
   return (
     <>
-      <IconLightMode
+      <FontAwesomeIcon
+        icon={['fas', 'sun']}
         aria-hidden
         className={clsx(styles.toggleIcon, styles.lightToggleIcon)}
       />
-      <IconDarkMode
+      <FontAwesomeIcon
+        icon={['fas', 'moon']}
         aria-hidden
         className={clsx(styles.toggleIcon, styles.darkToggleIcon)}
       />
-      <IconSystemColorMode
+      <FontAwesomeIcon
+        icon={['fas', 'circle-half-stroke']}
         aria-hidden
         className={clsx(styles.toggleIcon, styles.systemToggleIcon)}
       />

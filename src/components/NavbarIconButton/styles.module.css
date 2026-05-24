@@ -1,0 +1,153 @@
+@keyframes navIconPopupPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.btn {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  margin: 0 2px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--at-muted);
+  transition:
+    background var(--ifm-transition-fast),
+    color 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--at-bg-subtle);
+  color: var(--at-fg-strong);
+  text-decoration: none;
+}
+
+.icon {
+  display: block;
+}
+
+/* ── Neon tooltip with caret pointing to the button ─────────── */
+
+.tooltip {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  transform: translate(0, 4px);
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(7, 9, 13, 0.92);
+  border: 1px solid;
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+  z-index: 100;
+}
+
+/* Caret: outer triangle = border color, inner triangle = bg color
+   stacked just inside. The button is 32px wide and the tooltip is
+   anchored to the right edge, so right-offset ≈ button-half-width. */
+.tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 10px;
+  border: 6px solid transparent;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 11px;
+  margin-top: 1px;
+  border: 5px solid transparent;
+  border-bottom-color: rgba(7, 9, 13, 0.92);
+}
+
+.tooltipGlow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 10px;
+  filter: blur(8px);
+  z-index: -1;
+  animation: navIconPopupPulse 2.2s ease-in-out infinite;
+}
+
+.tooltipText {
+  position: relative;
+  z-index: 1;
+}
+
+.btn:hover .tooltip,
+.btn:focus-visible .tooltip {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ── Accent variants ───────────────────────────────────────── */
+
+.cyan .tooltip {
+  border-color: var(--at-accent);
+  color: var(--at-accent-soft);
+  text-shadow:
+    0 0 8px var(--at-accent),
+    0 0 16px rgba(56, 189, 248, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.2),
+    0 0 18px -2px var(--at-accent),
+    0 0 32px -8px var(--at-accent-soft),
+    inset 0 0 8px rgba(56, 189, 248, 0.08);
+}
+
+.cyan .tooltip::before {
+  border-bottom-color: var(--at-accent);
+  filter: drop-shadow(0 0 4px var(--at-accent));
+}
+
+.cyan .tooltipGlow {
+  background: radial-gradient(
+    closest-side,
+    rgba(56, 189, 248, 0.35),
+    transparent 70%
+  );
+}
+
+.amber .tooltip {
+  border-color: #c8845c;
+  color: #f0b072;
+  text-shadow:
+    0 0 8px #c8845c,
+    0 0 16px rgba(180, 83, 9, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(200, 132, 92, 0.25),
+    0 0 18px -2px #c8845c,
+    0 0 36px -8px #b45309,
+    inset 0 0 10px rgba(180, 83, 9, 0.1);
+}
+
+.amber .tooltip::before {
+  border-bottom-color: #c8845c;
+  filter: drop-shadow(0 0 4px #c8845c);
+}
+
+.amber .tooltipGlow {
+  background: radial-gradient(
+    closest-side,
+    rgba(200, 132, 92, 0.4),
+    transparent 70%
+  );
+}
