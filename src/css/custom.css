@@ -503,17 +503,16 @@ html[data-theme='light'] .footer__logo {
 /* ─────────────── Doc page title (swizzle DocItem/Content) ─────────────── */
 .theme-doc-markdown > .doc-chapter-kicker {
   font-family: var(--font-mono-ui);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--at-accent);
-  margin: 0 0 0.75rem 0;
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid var(--at-accent-chip-border);
-  border-radius: 999px;
-  background: var(--at-accent-chip);
+  margin: 0 0 0.6rem;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
   line-height: 1.4;
 }
 
@@ -599,12 +598,19 @@ html[data-theme='light'] .footer__logo {
   padding-left: 1.4em;
 }
 
+.theme-doc-markdown p + ul,
+.theme-doc-markdown p + ol {
+  margin-top: -0.6em;
+}
+
 .theme-doc-markdown li {
   margin-bottom: 0.35em;
+  line-height: 1.4;
 }
 
 .theme-doc-markdown li > p {
   margin-bottom: 0.5em;
+  line-height: 1.4;
 }
 
 .theme-doc-markdown a:not(.button) {

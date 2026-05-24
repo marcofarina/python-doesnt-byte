@@ -17,16 +17,27 @@ function useSyntheticTitle(): string | null {
   return shouldRender ? metadata.title : null;
 }
 
-function collectDocIds(items: PropSidebar): string[] {
-  const ids: string[] = [];
+// Map every descendant docId of each top-level category to that category's
+// 1-based chapter index (counting only top-level categories).
+function buildChapterMap(items: PropSidebar): Map<string, number> {
+  const map = new Map<string, number>();
+  let chapter = 0;
+  const collect = (xs: readonly PropSidebarItem[], n: number) => {
+    for (const item of xs) {
+      if (item.type === 'link' && item.docId) {
+        map.set(item.docId, n);
+      } else if (item.type === 'category') {
+        collect(item.items, n);
+      }
+    }
+  };
   for (const item of items as PropSidebarItem[]) {
-    if (item.type === 'link' && item.docId) {
-      ids.push(item.docId);
-    } else if (item.type === 'category') {
-      ids.push(...collectDocIds(item.items));
+    if (item.type === 'category') {
+      chapter += 1;
+      collect(item.items, chapter);
     }
   }
-  return ids;
+  return map;
 }
 
 function useChapterNumber(): number | null {
@@ -35,9 +46,8 @@ function useChapterNumber(): number | null {
   if ((frontMatter as {hide_chapter_kicker?: boolean}).hide_chapter_kicker)
     return null;
   if (!sidebar) return null;
-  const ids = collectDocIds(sidebar.items);
-  const idx = ids.indexOf(metadata.id);
-  return idx >= 0 ? idx + 1 : null;
+  const chapterMap = buildChapterMap(sidebar.items);
+  return chapterMap.get(metadata.id) ?? null;
 }
 
 export default function DocItemContent({children}: Props): ReactNode {
