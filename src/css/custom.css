@@ -54,6 +54,7 @@ html[data-theme='light'] {
   --at-beam-opacity: 0.65;
   --at-logo-shadow: 0 8px 24px rgba(2, 132, 199, 0.25);
   --at-spot-bg: rgba(2, 132, 199, 0.08);
+  --at-bg-glass: rgba(250, 250, 249, 0.72);
 }
 
 html[data-theme='dark'] {
@@ -98,6 +99,7 @@ html[data-theme='dark'] {
   --at-beam-opacity: 0.9;
   --at-logo-shadow: 0 0 40px rgba(56, 189, 248, 0.4);
   --at-spot-bg: rgba(56, 189, 248, 0.15);
+  --at-bg-glass: rgba(9, 9, 11, 0.6);
 }
 
 @property --at-angle {
@@ -380,7 +382,7 @@ html[data-theme='light'] .github-link {
 
 .markdown :not(pre) > code {
   font-family: var(--font-mono);
-  font-size: 0.82em;
+  font-size: 0.78em;
   padding: 1.5px 7px;
   border-radius: 5px;
   background: rgba(0, 0, 0, 0.045);
@@ -402,7 +404,7 @@ html[data-theme='dark'] .markdown :not(pre) > code {
 /* ─────────────── Atmospheric — Navbar ─────────────── */
 
 .navbar {
-  background: var(--at-bg-panel);
+  background: var(--at-bg-glass);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--at-border);
@@ -435,7 +437,9 @@ html[data-theme='dark'] .markdown :not(pre) > code {
 /* ─────────────── Atmospheric — Footer ─────────────── */
 
 .footer {
-  background: var(--at-bg);
+  background: var(--at-bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   color: var(--at-fg-body);
   border-top: 1px solid var(--at-border);
   padding: 48px 0 32px;
@@ -523,7 +527,7 @@ html[data-theme='light'] .footer__logo {
 .theme-doc-markdown {
   font-family: var(--font-body);
   font-size: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
-  line-height: 1.75;
+  line-height: 1.6;
   color: var(--at-fg-body);
   max-width: 72ch;
 }
@@ -624,4 +628,223 @@ html[data-theme='light'] .footer__logo {
 .theme-doc-markdown strong {
   color: var(--at-fg-strong);
   font-weight: 700;
+}
+
+/* ─────────────── Atmospheric — Base background ─────────────── */
+
+html,
+html[data-theme='light'],
+html[data-theme='dark'] {
+  background: var(--at-bg);
+}
+
+/* ─────────────── Atmospheric — Stage light on doc pages ─────────────── */
+
+body:has(.theme-doc-sidebar-container)::before {
+  content: '';
+  position: fixed;
+  top: -400px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2200px;
+  max-width: 140vw;
+  height: 1400px;
+  background: var(--at-stage);
+  opacity: calc(var(--at-stage-opacity) * 0.6);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─────────────── Atmospheric — DocSidebar ─────────────── */
+
+.theme-doc-sidebar-container {
+  background: var(--at-bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--at-border);
+}
+
+.theme-doc-sidebar-menu {
+  counter-reset: pdb-chapter;
+  padding: 20px 0 !important;
+  font-family: var(--font-body);
+}
+
+.theme-doc-sidebar-menu > .menu__list-item {
+  counter-increment: pdb-chapter;
+  margin: 0;
+}
+
+.theme-doc-sidebar-menu .menu__link {
+  border-radius: 0;
+  border-left: 2px solid transparent;
+  padding: 7px 20px 7px 18px;
+  font-size: 15.5px;
+  font-weight: 400;
+  color: var(--at-muted-soft);
+  line-height: 1.35;
+  background: transparent;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.theme-doc-sidebar-menu .menu__list-item-collapsible {
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+.theme-doc-sidebar-menu .menu__list-item-collapsible .menu__link {
+  flex: 1;
+}
+
+.theme-doc-sidebar-menu > .menu__list-item > .menu__link::before,
+.theme-doc-sidebar-menu > .menu__list-item > .menu__list-item-collapsible .menu__link::before {
+  content: counter(pdb-chapter, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--at-faint);
+  margin-right: 12px;
+  display: inline-block;
+  min-width: 22px;
+}
+
+.theme-doc-sidebar-menu .menu__link:hover {
+  background: var(--at-bg-subtle);
+  color: var(--at-fg);
+}
+
+.theme-doc-sidebar-menu .menu__list-item-collapsible:hover {
+  background: var(--at-bg-subtle);
+}
+
+.theme-doc-sidebar-menu .menu__list-item-collapsible:hover .menu__link {
+  color: var(--at-fg);
+}
+
+.theme-doc-sidebar-menu .menu__link--active,
+.theme-doc-sidebar-menu .menu__list-item-collapsible--active .menu__link {
+  background: var(--at-accent-bg);
+  border-left-color: var(--at-accent);
+  color: var(--at-accent-soft);
+  font-weight: 600;
+}
+
+.theme-doc-sidebar-menu .menu__list-item-collapsible--active {
+  background: var(--at-accent-bg);
+}
+
+.theme-doc-sidebar-menu > .menu__list-item > .menu__link--active::before,
+.theme-doc-sidebar-menu
+  > .menu__list-item
+  > .menu__list-item-collapsible--active
+  .menu__link::before {
+  color: var(--at-accent);
+}
+
+/* Sub-items (level 2+) — indented, smaller, no number */
+.theme-doc-sidebar-menu .menu__list .menu__list {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.theme-doc-sidebar-menu
+  .theme-doc-sidebar-item-link-level-2
+  > .menu__link,
+.theme-doc-sidebar-menu
+  .theme-doc-sidebar-item-category-level-2
+  > .menu__list-item-collapsible {
+  padding: 4px 20px 4px 52px;
+  font-size: 14.5px;
+  color: var(--at-muted);
+  border-left: 2px solid transparent;
+}
+
+.theme-doc-sidebar-menu
+  .theme-doc-sidebar-item-link-level-2
+  > .menu__link--active {
+  color: var(--at-accent);
+  background: transparent;
+  border-left-color: var(--at-accent);
+  font-weight: 500;
+}
+
+/* Caret (collapse arrow) — minimal, no pill background */
+.theme-doc-sidebar-menu .menu__caret {
+  padding: 0 14px;
+  background: transparent;
+  border-radius: 0;
+  transition: opacity 0.15s ease;
+  opacity: 0.5;
+}
+
+.theme-doc-sidebar-menu .menu__caret:hover {
+  background: transparent;
+  opacity: 1;
+}
+
+.theme-doc-sidebar-menu .menu__list-item-collapsible:hover .menu__caret {
+  opacity: 1;
+}
+
+.theme-doc-sidebar-menu .menu__caret::before {
+  background-size: 1.4rem 1.4rem;
+}
+
+.theme-doc-sidebar-menu .menu__link--sublist-caret::after {
+  filter: opacity(0.6);
+}
+
+/* ─────────────── Atmospheric — Table of contents (right rail) ─────────────── */
+
+.theme-doc-toc-desktop,
+.theme-doc-toc-mobile,
+.table-of-contents,
+.table-of-contents__link {
+  font-family: var(--font-body);
+}
+
+.table-of-contents {
+  font-size: 14.5px;
+  line-height: 1.35;
+}
+
+.table-of-contents li {
+  margin: 0;
+}
+
+.table-of-contents__link {
+  padding: 4px 0;
+  display: block;
+}
+
+/* ─────────────── Atmospheric — Generated index pages (category landings) ─────────────── */
+
+main [class*='generatedIndexPage'] > header > h1,
+main [class*='generatedIndexPage'] > h1 {
+  background: var(--at-grad-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  padding-bottom: 0.18em;
+  margin-bottom: 0.5em;
+}
+
+main [class*='generatedIndexPage'] > header > p,
+main [class*='generatedIndexPage'] > p {
+  font-family: var(--font-body);
+  font-size: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
+  line-height: 1.6;
+  color: var(--at-fg-body);
+  max-width: 72ch;
 }
