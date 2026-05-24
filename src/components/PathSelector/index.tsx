@@ -21,6 +21,7 @@ const VOLUMES: ReadonlySet<string> = new Set([
   'programmatore',
   'artefice',
   'archivista',
+  'apprendista',
 ]);
 
 export default function PathSelector(): ReactNode {

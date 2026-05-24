@@ -30,6 +30,7 @@ const VOLUMES: ReadonlySet<string> = new Set([
   'programmatore',
   'artefice',
   'archivista',
+  'apprendista',
 ]);
 
 function useResolvedSidebar(defaultName: string | undefined) {

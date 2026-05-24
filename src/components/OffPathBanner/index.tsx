@@ -18,6 +18,7 @@ const VOLUMES: ReadonlySet<string> = new Set([
   'programmatore',
   'artefice',
   'archivista',
+  'apprendista',
 ]);
 
 function sidebarContainsDoc(items: PropSidebar, docId: string): boolean {

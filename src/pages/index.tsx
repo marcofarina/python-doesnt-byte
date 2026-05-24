@@ -28,6 +28,26 @@ function BoxIcon() {
   );
 }
 
+function DatabaseIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5" />
+      <path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6" />
+    </svg>
+  );
+}
+
+function FlaskIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 3h6" />
+      <path d="M10 3v6L4.5 18.5A2 2 0 0 0 6.3 21.5h11.4a2 2 0 0 0 1.8-3L14 9V3" />
+      <path d="M7 14h10" />
+    </svg>
+  );
+}
+
 const HERO_CODE = `# Il tuo primo programma
 nome = input("Come ti chiami? ")
 print(f"Ciao, {nome}!")
@@ -88,20 +108,36 @@ export default function Home(): JSX.Element {
             style={{ animationDelay: '0.4s' }}
           >
             <VolumeCard
-              to="/docs/category/fondamenti-di-python"
+              to="/programmatore"
               kicker="Volume 1"
-              title="Fondamenti di Programmazione"
-              desc="Variabili, controllo di flusso, funzioni."
+              title="Manuale del Programmatore"
+              desc="Fondamenti del linguaggio: dati, controllo di flusso, funzioni."
               icon={<TerminalIcon />}
               accent="blue"
             />
             <VolumeCard
-              to="/docs/intro"
+              to="/artefice"
               kicker="Volume 2"
-              title="Programmazione ad Oggetti"
-              desc="Classi, ereditarietà, design pattern."
+              title="Manuale dell'Artefice"
+              desc="Programmazione ad oggetti: classi, ereditarietà, design pattern."
               icon={<BoxIcon />}
               accent="pink"
+            />
+            <VolumeCard
+              to="/archivista"
+              kicker="Volume 3"
+              title="Manuale dell'Archivista"
+              desc="Dati e persistenza: file, SQLite, ORM, integrazione."
+              icon={<DatabaseIcon />}
+              accent="amber"
+            />
+            <VolumeCard
+              to="/apprendista"
+              kicker="Volume 4"
+              title="Biblioteca dell'Apprendista"
+              desc="Esercizi, sfide e progetti di laboratorio."
+              icon={<FlaskIcon />}
+              accent="green"
             />
           </div>
         </section>

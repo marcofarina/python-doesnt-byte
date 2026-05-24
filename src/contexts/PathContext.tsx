@@ -14,7 +14,11 @@ import React, {
   type ReactNode,
 } from 'react';
 
-export type VolumeId = 'programmatore' | 'artefice' | 'archivista';
+export type VolumeId =
+  | 'programmatore'
+  | 'artefice'
+  | 'archivista'
+  | 'apprendista';
 
 const STORAGE_PREFIX = 'pdb:path';
 const storageKey = (volume: VolumeId) => `${STORAGE_PREFIX}:${volume}`;
@@ -35,7 +39,12 @@ const PathContext = createContext<PathContextValue | null>(null);
 function readInitialState(): PathState {
   if (typeof window === 'undefined') return {};
   const out: PathState = {};
-  for (const v of ['programmatore', 'artefice', 'archivista'] as VolumeId[]) {
+  for (const v of [
+    'programmatore',
+    'artefice',
+    'archivista',
+    'apprendista',
+  ] as VolumeId[]) {
     try {
       const raw = window.localStorage.getItem(storageKey(v));
       if (raw) out[v] = raw;

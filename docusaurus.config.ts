@@ -108,6 +108,16 @@ const config: Config = {
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
       },
     ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'apprendista',
+        path: 'volumes/apprendista',
+        routeBasePath: 'apprendista',
+        sidebarPath: './sidebars/apprendista.ts',
+        editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+      },
+    ],
   ],
 
   themeConfig: {
@@ -147,6 +157,12 @@ const config: Config = {
               docId: 'intro',
               docsPluginId: 'archivista',
               label: 'Manuale dell\'Archivista',
+            },
+            {
+              type: 'doc',
+              docId: 'intro',
+              docsPluginId: 'apprendista',
+              label: 'Biblioteca dell\'Apprendista',
             },
             // Vecchia versione, sarà rimossa dopo la migrazione dei
             // contenuti attuali dentro Programmatore.
