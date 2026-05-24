@@ -1,62 +1,66 @@
 .banner {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  margin: 0 0 28px;
-  border-radius: 10px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  margin: 0 0 24px;
+  border-radius: 8px;
   background: rgba(245, 158, 11, 0.06);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-left-width: 3px;
   color: var(--at-fg-body);
   font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 html[data-theme='dark'] .banner {
-  background: rgba(251, 191, 36, 0.06);
+  background: rgba(251, 191, 36, 0.05);
   border-color: rgba(251, 191, 36, 0.28);
 }
 
 .icon {
-  flex-shrink: 0;
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
   color: #d97706;
-  background: rgba(245, 158, 11, 0.12);
+  font-size: 15px;
+  flex-shrink: 0;
 }
 
 html[data-theme='dark'] .icon {
   color: #fbbf24;
-  background: rgba(251, 191, 36, 0.12);
 }
 
-.body {
+.banner > .message {
   flex: 1;
-  min-width: 0;
-}
-
-.title {
-  font-size: 0.95rem;
-  font-weight: 500;
-  line-height: 1.45;
-  margin: 0 0 4px;
-  color: var(--at-fg-strong);
-}
-
-.title strong {
-  font-family: var(--font-mono-ui);
-  font-weight: 600;
-  letter-spacing: 0.03em;
-}
-
-.detail {
-  font-size: 0.875rem;
-  line-height: 1.5;
   margin: 0;
-  color: var(--at-muted-soft);
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--at-fg);
+}
+
+.tag {
+  font-family: var(--font-mono-ui);
+  font-size: 0.82em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+}
+
+html[data-theme='dark'] .tag {
+  background: rgba(251, 191, 36, 0.14);
+  color: #fbbf24;
+}
+
+.sep {
+  display: inline-block;
+  margin: 0 8px;
+  color: var(--at-faint);
+}
+
+.minisep {
+  color: var(--at-faint);
 }
 
 .switch {
@@ -67,7 +71,7 @@ html[data-theme='dark'] .icon {
   margin: 0;
   font: inherit;
   font-family: var(--font-mono-ui);
-  font-size: 0.85em;
+  font-size: 0.88em;
   letter-spacing: 0.02em;
   color: var(--at-accent);
   cursor: pointer;

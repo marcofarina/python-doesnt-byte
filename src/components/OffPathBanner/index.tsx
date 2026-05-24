@@ -8,6 +8,7 @@
 import React, {type ReactNode} from 'react';
 import {useDoc, useDocsVersion} from '@docusaurus/plugin-content-docs/client';
 import type {PropSidebar, PropSidebarItem} from '@docusaurus/plugin-content-docs';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {usePathContext, type VolumeId} from '@site/src/contexts/PathContext';
 import {pathLabel} from '@site/src/contexts/pathLabels';
 
@@ -68,39 +69,45 @@ export default function OffPathBanner(): ReactNode {
       className={styles.banner}
       role="note"
       aria-label="Avviso sul percorso">
-      <span className={styles.icon} aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="8" x2="12" y2="12"/>
-          <line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-      </span>
-      <div className={styles.body}>
-        <p className={styles.title}>
-          Questa lezione non fa parte del percorso{' '}
-          <strong>{pathLabel(chosen)}</strong>.
-        </p>
+      <FontAwesomeIcon
+        icon={['fas', 'circle-info']}
+        className={styles.icon}
+        aria-hidden="true"
+      />
+      <p className={styles.message}>
+        Lezione fuori dal percorso{' '}
+        <strong className={styles.tag}>{pathLabel(chosen)}</strong>
         {availableIn.length > 0 ? (
-          <p className={styles.detail}>
-            È disponibile in:{' '}
+          <>
+            <span className={styles.sep} aria-hidden="true">
+              ·
+            </span>
+            Disponibile in{' '}
             {availableIn.map((p, i) => (
               <React.Fragment key={p}>
-                {i > 0 && ' · '}
+                {i > 0 && (
+                  <span className={styles.minisep} aria-hidden="true">
+                    {' '}·{' '}
+                  </span>
+                )}
                 <button
                   type="button"
                   className={styles.switch}
                   onClick={() => setPath(volumeId, p)}>
-                  passa a {pathLabel(p)}
+                  {pathLabel(p)}
                 </button>
               </React.Fragment>
             ))}
-          </p>
+          </>
         ) : (
-          <p className={styles.detail}>
-            Non è inclusa in nessuno degli altri percorsi disponibili.
-          </p>
+          <>
+            <span className={styles.sep} aria-hidden="true">
+              ·
+            </span>
+            Non inclusa in nessun altro percorso
+          </>
         )}
-      </div>
+      </p>
     </aside>
   );
 }
