@@ -32,7 +32,7 @@
 }
 
 .kicker {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono-ui);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -109,7 +109,7 @@
   border-radius: 50%;
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
-  font-family: var(--font-mono);
+  font-family: var(--font-mono-ui);
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--at-muted-soft);
@@ -195,7 +195,7 @@
 .status {
   font-size: 0.88rem;
   color: var(--at-muted-soft);
-  font-family: var(--font-mono);
+  font-family: var(--font-mono-ui);
 }
 
 .reset {

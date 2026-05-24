@@ -18,7 +18,7 @@
   color: var(--at-muted);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-ui);
   margin: 0;
   font-weight: 600;
 }
@@ -26,7 +26,7 @@
 .count {
   font-size: 12px;
   color: var(--at-muted);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-ui);
 }
 
 .list {
@@ -84,7 +84,7 @@
   font-size: 12px;
   color: var(--at-muted);
   min-width: 28px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-ui);
   letter-spacing: 0.05em;
 }
 

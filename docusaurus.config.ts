@@ -70,10 +70,12 @@ const config: Config = {
 
   stylesheets: [
     {
-      href: 'https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300..700;1,300..600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..600&family=JetBrains+Mono:wght@300;400;500;700&display=swap',
+      href: 'https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300..700;1,300..600&display=swap',
       rel: 'stylesheet',
     },
   ],
+
+  clientModules: ['./src/fonts.ts'],
 
   themeConfig: {
     // Replace with your project's social card

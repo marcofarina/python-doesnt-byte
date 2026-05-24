@@ -90,7 +90,7 @@
   font-size: 11px;
   color: var(--at-muted);
   letter-spacing: 0.15em;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-ui);
   margin-bottom: 8px;
 }
 

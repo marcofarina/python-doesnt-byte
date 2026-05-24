@@ -42,43 +42,48 @@ Premi `Esc` o clicca fuori dal popover per chiuderlo.
 
 Alla fine di molte sezioni trovi un piccolo quiz inline per verificare al volo di aver capito i concetti chiave. Clicca la risposta che ritieni corretta: se sbagli, ti spiego perché e puoi riprovare.
 
+
 <Quiz>
   <QuizQuestion>
-    A che cosa serve la chiamata <InlineCode kind="function">super().\_\_init\_\_(...)</InlineCode> dentro il costruttore di una sottoclasse?
+    Quale di queste firme di funzione è corretta in Python per indicare che la funzione restituisce un intero?
   </QuizQuestion>
 
   <QuizOption>
-    A creare un secondo oggetto, della classe base, separato da quello che si sta costruendo.
+    <InlineCode>def somma(a, b) => int:</InlineCode>
     <QuizFeedback>
-      <InlineCode kind="function">super()</InlineCode> non crea un nuovo oggetto: lavora sull'oggetto corrente, richiamando il codice della classe base.
+      In Python `=>` non è un operatore valido. Per l'annotazione del tipo di ritorno si usa la freccia `->`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    <InlineCode>def somma(a, b) :: int:</InlineCode>
+    <QuizFeedback>
+      `::` è la sintassi usata in Haskell o Rust, non in Python. La sintassi Python per il tipo di ritorno è `->`.
     </QuizFeedback>
   </QuizOption>
 
   <QuizOption correct>
-    A eseguire il costruttore della classe base, così da riusarne il codice senza riscriverlo.
+    <InlineCode>def somma(a, b) -> int:</InlineCode>
     <QuizFeedback>
-      <InlineCode kind="function">super()</InlineCode> risale alla classe base e ne richiama il costruttore: gli attributi comuni vengono inizializzati lì, una volta sola.
+      L'annotazione del tipo di ritorno si scrive con la freccia `->` subito prima dei due punti. Esempio completo con annotazioni anche sui parametri:
 
       ```python
-      class Cane(Animale):
-          def __init__(self, nome, razza):
-              super().__init__(nome)
-              self.razza = razza
+      def somma(a: int, b: int) -> int:
+          return a + b
+
+      def confronta(x: int, y: int) -> bool:
+          # restituisce True se i due numeri sono uguali e diversi da zero
+          return x == y and x != 0 and y >= 0
       ```
+
+      Nota: nei blocchi di codice qui sopra le sequenze `->`, `==`, `!=`, `>=` vengono rese come legature tipografiche se il font le supporta.
     </QuizFeedback>
   </QuizOption>
 
   <QuizOption>
-    A dare alla sottoclasse la precedenza sulla classe base quando due metodi hanno lo stesso nome.
+    <InlineCode>def somma(a, b) returns int:</InlineCode>
     <QuizFeedback>
-      La precedenza della sottoclasse è automatica nell'override; non dipende da <InlineCode kind="function">super()</InlineCode>.
-    </QuizFeedback>
-  </QuizOption>
-
-  <QuizOption>
-    A rendere pubblici gli attributi privati che la classe base tiene protetti.
-    <QuizFeedback>
-      <InlineCode kind="function">super()</InlineCode> non cambia la visibilità degli attributi: serve solo a richiamare metodi della classe base.
+      In Python non esiste la parola chiave `returns` per dichiarare il tipo di ritorno: l'annotazione corretta è `->`.
     </QuizFeedback>
   </QuizOption>
 </Quiz>
