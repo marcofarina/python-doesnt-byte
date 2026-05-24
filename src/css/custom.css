@@ -387,10 +387,10 @@ html[data-theme='light'] .github-link {
 
 .markdown :not(pre) > code {
   font-family: var(--font-mono);
-  font-variant-ligatures: none;
+  font-variant-ligatures: no-common-ligatures contextual;
   font-feature-settings:
     'liga' 0,
-    'calt' 0;
+    'calt' 1;
   font-size: 0.78em;
   padding: 1.5px 7px;
   border-radius: 5px;
@@ -430,7 +430,9 @@ html[data-theme='dark'] .markdown :not(pre) > code {
 
 .navbar__link {
   color: var(--at-muted);
+  font-family: var(--font-mono-ui);
   font-weight: 500;
+  font-size: 13.5px;
 }
 
 .navbar__link:hover,
@@ -645,6 +647,7 @@ html,
 html[data-theme='light'],
 html[data-theme='dark'] {
   background: var(--at-bg);
+  scrollbar-gutter: stable;
 }
 
 /* ─────────────── Atmospheric — Stage light on doc pages ─────────────── */
@@ -693,6 +696,7 @@ body:has(.theme-doc-sidebar-container)::before {
   color: var(--at-muted-soft);
   line-height: 1.35;
   background: transparent;
+  align-items: baseline;
   transition:
     color 0.15s ease,
     background 0.15s ease,
@@ -720,6 +724,7 @@ body:has(.theme-doc-sidebar-container)::before {
   margin-right: 12px;
   display: inline-block;
   min-width: 22px;
+  align-self: baseline;
 }
 
 .theme-doc-sidebar-menu .menu__link:hover {
@@ -810,7 +815,9 @@ body:has(.theme-doc-sidebar-container)::before {
 
 /* ─────────────── Atmospheric — Monaspace bindings ─────────────── */
 
-/* Code blocks (Prism) — Monaspace Neon, no ligatures, no italics */
+/* Code blocks (Prism) — Monaspace Neon, no ligatures, no italics,
+   texture healing on (calt redistributes whitespace around narrow chars
+   like i/l/j/f without combining glyphs) */
 .theme-code-block,
 .theme-code-block pre,
 .theme-code-block code,
@@ -819,10 +826,10 @@ pre code,
 .prism-code,
 .prism-code .token {
   font-family: var(--font-mono);
-  font-variant-ligatures: none;
+  font-variant-ligatures: no-common-ligatures contextual;
   font-feature-settings:
     'liga' 0,
-    'calt' 0;
+    'calt' 1;
   font-style: normal !important;
 }
 
@@ -844,12 +851,12 @@ pre code,
 .theme-doc-toc-mobile,
 .table-of-contents,
 .table-of-contents__link {
-  font-family: var(--font-body);
+  font-family: var(--font-mono-ui);
 }
 
 .table-of-contents {
-  font-size: 14.5px;
-  line-height: 1.35;
+  font-size: 12.5px;
+  line-height: 1.4;
 }
 
 .table-of-contents li {
