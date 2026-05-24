@@ -25,12 +25,35 @@
 
 .btn:hover {
   background: var(--at-bg-subtle);
-  color: var(--at-fg-strong);
   text-decoration: none;
 }
 
 .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.icon > svg {
+  width: 20px;
+  height: 20px;
   display: block;
+}
+
+/* Accent hover color — solo l'icona si tinge, il glyph default è muted */
+.cyan:hover {
+  color: var(--at-accent);
+}
+
+.amber:hover {
+  color: #c8845c;
+}
+
+.red:hover {
+  color: #ef4444;
 }
 
 /* ── Neon tooltip with caret pointing to the button ─────────── */
@@ -148,6 +171,32 @@
   background: radial-gradient(
     closest-side,
     rgba(200, 132, 92, 0.4),
+    transparent 70%
+  );
+}
+
+.red .tooltip {
+  border-color: #ef4444;
+  color: #fca5a5;
+  text-shadow:
+    0 0 8px #ef4444,
+    0 0 16px rgba(220, 38, 38, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(239, 68, 68, 0.25),
+    0 0 18px -2px #ef4444,
+    0 0 36px -8px #dc2626,
+    inset 0 0 10px rgba(220, 38, 38, 0.1);
+}
+
+.red .tooltip::before {
+  border-bottom-color: #ef4444;
+  filter: drop-shadow(0 0 4px #ef4444);
+}
+
+.red .tooltipGlow {
+  background: radial-gradient(
+    closest-side,
+    rgba(239, 68, 68, 0.4),
     transparent 70%
   );
 }

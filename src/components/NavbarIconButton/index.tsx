@@ -6,21 +6,17 @@
  */
 import React, {type ReactNode} from 'react';
 import Link from '@docusaurus/Link';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import type {IconProp} from '@fortawesome/fontawesome-svg-core';
 
 import styles from './styles.module.css';
 
-export type IconButtonAccent = 'cyan' | 'amber';
+export type IconButtonAccent = 'cyan' | 'amber' | 'red';
 
 interface Props {
   to: string;
   ariaLabel: string;
   tooltip: string;
-  /** FontAwesome icon, es. `['fab', 'github']`. */
-  icon: IconProp;
-  /** Una taglia extra-larga è utile per icone con elementi sopra (es. mug-hot). */
-  iconSize?: number;
+  /** L'icona da renderizzare (FA, SVG importato, qualsiasi ReactNode). */
+  icon: ReactNode;
   accent?: IconButtonAccent;
   target?: string;
   rel?: string;
@@ -31,7 +27,6 @@ export default function NavbarIconButton({
   ariaLabel,
   tooltip,
   icon,
-  iconSize = 18,
   accent = 'cyan',
   target,
   rel,
@@ -43,11 +38,9 @@ export default function NavbarIconButton({
       rel={rel}
       aria-label={ariaLabel}
       className={`${styles.btn} ${styles[accent]}`}>
-      <FontAwesomeIcon
-        icon={icon}
-        className={styles.icon}
-        style={{fontSize: iconSize}}
-      />
+      <span className={styles.icon} aria-hidden="true">
+        {icon}
+      </span>
       <span className={styles.tooltip} aria-hidden="true">
         <span className={styles.tooltipGlow} />
         <span className={styles.tooltipText}>{tooltip}</span>

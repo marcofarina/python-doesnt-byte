@@ -5,6 +5,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import type {Props} from '@theme/ColorModeToggle';
 import type {ColorMode} from '@docusaurus/theme-common';
 
+import Starfighter from '@site/src/icons/starfighter.svg';
+import Sith from '@site/src/icons/user-sith.svg';
+
 import styles from './styles.module.css';
 
 function getNextColorMode(
@@ -29,9 +32,9 @@ function getNextColorMode(
 function getSpell(nextMode: ColorMode | null): string {
   switch (nextMode) {
     case 'light':
-      return 'Lumos!';
+      return 'Light side';
     case 'dark':
-      return 'Nox!';
+      return 'Dark side';
     case null:
     default:
       return 'Auto';
@@ -41,13 +44,11 @@ function getSpell(nextMode: ColorMode | null): string {
 function CurrentColorModeIcon(): ReactNode {
   return (
     <>
-      <FontAwesomeIcon
-        icon={['fas', 'sun']}
+      <Sith
         aria-hidden
         className={clsx(styles.toggleIcon, styles.lightToggleIcon)}
       />
-      <FontAwesomeIcon
-        icon={['fas', 'moon']}
+      <Starfighter
         aria-hidden
         className={clsx(styles.toggleIcon, styles.darkToggleIcon)}
       />

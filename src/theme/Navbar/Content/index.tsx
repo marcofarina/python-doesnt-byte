@@ -25,6 +25,8 @@ import NavbarSearch from '@theme/Navbar/Search';
 
 import PathSelector from '@site/src/components/PathSelector';
 import NavbarIconButton from '@site/src/components/NavbarIconButton';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import MugSaucer from '@site/src/icons/mug-saucer.svg';
 
 import styles from './styles.module.css';
 
@@ -110,16 +112,14 @@ export default function NavbarContent(): ReactNode {
             rel="noopener noreferrer"
             ariaLabel="Repository GitHub"
             tooltip="GitHub"
-            icon={['fab', 'github']}
-            iconSize={18}
+            icon={<FontAwesomeIcon icon={['fab', 'github']} />}
             accent="cyan"
           />
           <NavbarIconButton
             to="/support/"
             ariaLabel="Offrimi un caffè"
             tooltip="Offrimi un caffè"
-            icon={['fas', 'mug-hot']}
-            iconSize={20}
+            icon={<MugSaucer />}
             accent="amber"
           />
           <NavbarColorModeToggle className={styles.colorModeToggle} />
