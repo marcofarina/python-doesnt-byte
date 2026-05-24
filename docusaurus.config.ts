@@ -77,6 +77,39 @@ const config: Config = {
 
   clientModules: ['./src/fonts.ts'],
 
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'programmatore',
+        path: 'volumes/programmatore',
+        routeBasePath: 'programmatore',
+        sidebarPath: './sidebars/programmatore.ts',
+        editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'artefice',
+        path: 'volumes/artefice',
+        routeBasePath: 'artefice',
+        sidebarPath: './sidebars/artefice.ts',
+        editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'archivista',
+        path: 'volumes/archivista',
+        routeBasePath: 'archivista',
+        sidebarPath: './sidebars/archivista.ts',
+        editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+      },
+    ],
+  ],
+
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
