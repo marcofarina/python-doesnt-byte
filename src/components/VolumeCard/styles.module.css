@@ -1,0 +1,131 @@
+.card {
+  position: relative;
+  display: block;
+  border-radius: 16px;
+  background: var(--at-bg-panel);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--at-border);
+  padding: 20px 22px;
+  text-decoration: none;
+  color: inherit;
+  isolation: isolate;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transform: perspective(1100px) rotateX(0deg) rotateY(0deg) translateZ(0);
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.5s ease,
+    border-color 0.4s ease;
+  will-change: transform;
+}
+
+.card:hover {
+  text-decoration: none;
+  color: inherit;
+  border-color: var(--vol-ring);
+  box-shadow: 0 30px 60px -20px var(--vol-shadow);
+}
+
+/* Cursor-tracking radial glow */
+.glow {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    520px circle at var(--vol-mx, 50%) var(--vol-my, 50%),
+    var(--vol-glow) 0%,
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card:hover .glow {
+  opacity: 1;
+}
+
+.inner {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  position: relative;
+  z-index: 2;
+  transform-style: preserve-3d;
+}
+
+.iconBox {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  background: var(--vol-icon-bg);
+  border: 1px solid var(--vol-icon-border);
+  color: var(--vol-icon-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.5s ease;
+}
+
+.card:hover .iconBox {
+  transform: translateZ(40px) scale(1.08) rotate(-4deg);
+  box-shadow: 0 18px 36px -10px var(--vol-glow);
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.kicker {
+  font-size: 11px;
+  color: var(--vol-kicker-color);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-family: var(--font-mono-ui);
+  margin-bottom: 6px;
+  transition: letter-spacing 0.5s ease;
+}
+.card:hover .kicker {
+  letter-spacing: 0.18em;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--at-fg-strong);
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.card:hover .title {
+  transform: translateZ(20px);
+}
+
+.desc {
+  font-size: 13px;
+  color: var(--at-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.arrow {
+  color: var(--at-muted);
+  display: flex;
+  opacity: 0.5;
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.3s ease;
+}
+.card:hover .arrow {
+  transform: translateZ(30px) translateX(8px);
+  opacity: 1;
+}

@@ -1,14 +1,27 @@
 // Import the original mapper
 import MDXComponents from '@theme-original/MDXComponents';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the FontAwesomeIcon component.
-import { library } from '@fortawesome/fontawesome-svg-core'; // Import the library component.
-import { fab } from '@fortawesome/free-brands-svg-icons'; // Import all brands icons.
-import { fas } from '@fortawesome/free-solid-svg-icons'; // Import all solid icons.
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
-library.add(fab, fas); // Add all icons to the library so you can use them without importing them individually.
+import InlineCode from '@site/src/components/InlineCode';
+import Tooltip from '@site/src/components/Tooltip';
+import Quiz, {
+  QuizQuestion,
+  QuizOption,
+  QuizFeedback,
+} from '@site/src/components/Quiz';
+
+library.add(fab, fas);
 
 export default {
-  // Re-use the default mapping
   ...MDXComponents,
-  FAIcon: FontAwesomeIcon, // Make the FontAwesomeIcon component available in MDX as <icon />.
+  FAIcon: FontAwesomeIcon,
+  InlineCode,
+  Tooltip,
+  Quiz,
+  QuizQuestion,
+  QuizOption,
+  QuizFeedback,
 };

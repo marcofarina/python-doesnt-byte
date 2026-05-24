@@ -1,0 +1,153 @@
+/* Base toggle button — copied from theme-classic */
+.toggle {
+  width: 2rem;
+  height: 2rem;
+}
+
+.toggleButton {
+  -webkit-tap-highlight-color: transparent;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transition: background var(--ifm-transition-fast);
+  position: relative;
+}
+
+.toggleButton:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.toggleIcon {
+  display: none;
+}
+
+[data-theme-choice='system'] .systemToggleIcon,
+[data-theme-choice='light'] .lightToggleIcon,
+[data-theme-choice='dark'] .darkToggleIcon {
+  display: initial;
+}
+
+.toggleButtonDisabled {
+  cursor: not-allowed;
+}
+
+/* ── Neon spell tooltip ───────────────────────────────────── */
+
+@keyframes spellPulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.spellTooltip {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  transform: translate(0, 4px);
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(7, 9, 13, 0.92);
+  border: 1px solid var(--at-accent);
+  color: var(--at-accent-soft);
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+  z-index: 100;
+  text-shadow:
+    0 0 8px var(--at-accent),
+    0 0 16px rgba(56, 189, 248, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.2),
+    0 0 18px -2px var(--at-accent),
+    0 0 32px -8px var(--at-accent-soft),
+    inset 0 0 8px rgba(56, 189, 248, 0.08);
+}
+
+/* Caret arrow pointing to the button (button is ~32px wide,
+   right edge of tooltip aligned to right edge of button) */
+.spellTooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 10px;
+  border: 6px solid transparent;
+  border-bottom-color: var(--at-accent);
+  filter: drop-shadow(0 0 4px var(--at-accent));
+}
+
+.spellTooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  right: 11px;
+  margin-top: 1px;
+  border: 5px solid transparent;
+  border-bottom-color: rgba(7, 9, 13, 0.92);
+}
+
+/* Soft neon halo behind the tooltip box */
+.spellGlow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 10px;
+  background: radial-gradient(
+    closest-side,
+    rgba(56, 189, 248, 0.35),
+    transparent 70%
+  );
+  filter: blur(8px);
+  z-index: -1;
+  animation: spellPulse 2.2s ease-in-out infinite;
+}
+
+.spellText {
+  position: relative;
+  z-index: 1;
+}
+
+.toggleButton:hover .spellTooltip,
+.toggleButton:focus-visible .spellTooltip {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* Magenta accent when going dark (Nox!), cyan when going light (Lumos!) */
+.toggleButton[data-next-mode='dark'] .spellTooltip {
+  border-color: #c084fc;
+  color: #f0abfc;
+  text-shadow:
+    0 0 8px #c084fc,
+    0 0 18px rgba(236, 72, 153, 0.55);
+  box-shadow:
+    0 0 0 1px rgba(192, 132, 252, 0.25),
+    0 0 18px -2px #c084fc,
+    0 0 36px -8px #ec4899,
+    inset 0 0 10px rgba(192, 132, 252, 0.1);
+}
+
+.toggleButton[data-next-mode='dark'] .spellTooltip::before {
+  border-bottom-color: #c084fc;
+  filter: drop-shadow(0 0 4px #c084fc);
+}
+
+.toggleButton[data-next-mode='dark'] .spellGlow {
+  background: radial-gradient(
+    closest-side,
+    rgba(192, 132, 252, 0.4),
+    transparent 70%
+  );
+}
