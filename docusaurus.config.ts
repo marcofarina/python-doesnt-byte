@@ -164,12 +164,6 @@ const config: Config = {
               docsPluginId: 'apprendista',
               label: 'Biblioteca dell\'Apprendista',
             },
-            // Vecchia versione, sarà rimossa dopo la migrazione dei
-            // contenuti attuali dentro Programmatore.
-            {
-              to: '/docs/intro',
-              label: 'Versione precedente',
-            },
           ],
         },
         /*        {
@@ -178,7 +172,7 @@ const config: Config = {
                   position: 'left'},*/
         {
           to: '/support/',
-          label: 'Support',
+          label: 'Offrimi un caffè',
           position: 'right',
           className: 'sponsorship-link',
         },
@@ -189,13 +183,6 @@ const config: Config = {
           target: '_blank',
           className: 'github-link',
           'aria-label': 'GitHub repository',
-        },
-        {
-          to: 'https://www.rainbowbits.cloud',
-          label: 'Rainbow Bits',
-          position: 'right',
-          target: '_blank',
-          className: 'rainbowbits-link',
         },
       ],
     },
