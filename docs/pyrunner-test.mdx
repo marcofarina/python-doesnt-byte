@@ -56,6 +56,7 @@ for i in range(3):
 
 `maxLines=5` limita l'altezza dell'editor: il codice qui ha ~15 righe, quindi
 deve comparire una scrollbar verticale interna al box, senza espandere la pagina.
+Quando l'editor scrolla, deve comparire anche il bottone _fullscreen_ in toolbar.
 
 ```py live maxLines=5
 def saluta(nome):
@@ -73,4 +74,48 @@ saluta("Lia")
 saluta("Marco")
 print("2 + 3 =", somma(2, 3))
 print("5! =", fattoriale(5))
+```
+
+## 8. "Spiegamelo facile" — prompt di default
+
+Cliccando l'icona ✨ in toolbar viene copiato negli appunti un prompt didattico
+che usa il titolo di questa pagina come `{contextTitle}` e il codice corrente
+(edit-aware).
+
+```py live
+parola = "ciao"
+print(parola.upper())
+print(parola[::-1])
+```
+
+## 9. "Spiegamelo facile" con prompt custom
+
+```py live
+n = 5
+print(sum(range(n + 1)))
+```
+
+import PyRunnerCustom from '@theme/PyRunner';
+
+<PyRunnerCustom
+  code={`# Lezione sulle list comprehension
+quadrati = [x * x for x in range(5)]
+print(quadrati)`}
+  explainPrompt={`Sto imparando le list comprehension in Python. Spiega il codice qui sotto in 3 frasi, in italiano, indicando come si tradurrebbe nello stesso codice scritto con un ciclo \`for\` esplicito.\n\nCodice:\n\`\`\`python\n{code}\n\`\`\`\n`}
+/>
+
+## 10. `noExplain` — niente icona spiega
+
+```py live noExplain
+print("Niente bottone bacchetta magica qui.")
+```
+
+## 11. Fullscreen forzato (`maxLines=3` per attivare overflow)
+
+```py live maxLines=3
+print("Riga 1")
+print("Riga 2")
+print("Riga 3")
+print("Riga 4")
+print("Riga 5")
 ```

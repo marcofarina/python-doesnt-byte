@@ -4,6 +4,8 @@ import {
   faPlay,
   faRotateLeft,
   faStop,
+  faExpand,
+  faWandMagicSparkles,
 } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import IconCopy from '@theme/Icon/Copy';
@@ -57,6 +59,10 @@ export interface ToolbarProps {
   code: string;
   onRun: () => void;
   onReset: () => void;
+  showFullscreen?: boolean;
+  onFullscreen?: () => void;
+  showExplain?: boolean;
+  onExplain?: () => void;
 }
 
 export function Toolbar({
@@ -66,6 +72,10 @@ export function Toolbar({
   code,
   onRun,
   onReset,
+  showFullscreen,
+  onFullscreen,
+  showExplain,
+  onExplain,
 }: ToolbarProps) {
   const isRunning = status === 'running';
   return (
@@ -79,6 +89,28 @@ export function Toolbar({
         {title && <span className={styles.toolbarTitle}>{title}</span>}
       </div>
       <div className={styles.toolbarRight}>
+        {showExplain && onExplain && (
+          <button
+            type="button"
+            className={clsx(styles.iconBtn, styles.iconBtnExplain)}
+            onClick={onExplain}
+            aria-label="Spiegamelo facile (copia prompt)"
+            title="Copia un prompt per chiedere a un'IA di spiegarti questo codice"
+          >
+            <FontAwesomeIcon icon={faWandMagicSparkles} />
+          </button>
+        )}
+        {showFullscreen && onFullscreen && (
+          <button
+            type="button"
+            className={clsx(styles.iconBtn, styles.iconBtnFs)}
+            onClick={onFullscreen}
+            aria-label="Apri a tutto schermo"
+            title="Apri questo codice nel playground a tutto schermo"
+          >
+            <FontAwesomeIcon icon={faExpand} />
+          </button>
+        )}
         <CopyCodeButton code={code} />
         <button
           type="button"

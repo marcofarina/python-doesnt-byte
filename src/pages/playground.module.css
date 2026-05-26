@@ -1,0 +1,32 @@
+.page {
+  /* Sotto la navbar Docusaurus (var --ifm-navbar-height ≈ 60px). */
+  height: calc(100vh - var(--ifm-navbar-height));
+  display: flex;
+  flex-direction: column;
+  background: var(--at-bg-base, var(--ifm-background-color));
+}
+
+.host {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.host > * {
+  flex: 1;
+  min-height: 0;
+}
+
+.empty {
+  margin: auto;
+  padding: 2rem;
+  max-width: 520px;
+  text-align: center;
+  color: var(--at-muted-soft, var(--ifm-color-emphasis-700));
+  font-family: var(--ifm-font-family-base);
+}
+
+.empty h2 {
+  font-family: 'Crimson Pro', serif;
+  margin-bottom: 0.4em;
+}
