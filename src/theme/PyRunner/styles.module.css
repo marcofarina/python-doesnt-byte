@@ -1,0 +1,355 @@
+/* PyRunner — esecuzione Python in-pagina, look Atmospheric */
+
+.runner {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--at-border);
+  border-radius: 14px;
+  background: var(--at-bg-panel);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  margin: 1.4em 0;
+  font-family: var(--ifm-font-family-base);
+}
+
+/* Toolbar */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--at-border);
+  background: var(--at-bg-subtle);
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Pallini stile macOS (puramente decorativi) */
+
+.trafficLights {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tlDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+}
+
+.tlClose {
+  background: #ff5f57;
+}
+
+.tlMin {
+  background: #febc2e;
+}
+
+.tlMax {
+  background: #28c840;
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toolbarTitle {
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: var(--at-muted-soft);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--at-border-strong);
+  background: var(--at-bg-chip);
+  color: var(--at-fg);
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.iconBtn:hover:not(:disabled) {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-fg-strong);
+}
+
+.iconBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.iconBtnLabel {
+  display: inline;
+}
+
+@media (max-width: 600px) {
+  .iconBtnLabel {
+    display: none;
+  }
+  .iconBtn {
+    padding: 0 8px;
+    width: 30px;
+    justify-content: center;
+  }
+}
+
+.iconBtnRun {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-accent);
+}
+
+.iconBtnRun:hover:not(:disabled) {
+  background: var(--at-accent-bg);
+  color: var(--at-accent-soft);
+}
+
+.iconBtnReset {
+  /* default style */
+}
+
+/* Copy button (transizione icona → check verde, mutua dal CodeBlock Docusaurus) */
+
+.copyBtn {
+  width: 30px;
+  padding: 0;
+  justify-content: center;
+}
+
+.copyBtnIcons {
+  position: relative;
+  width: 0.95rem;
+  height: 0.95rem;
+  display: inline-block;
+}
+
+.copyBtnIcon,
+.copyBtnSuccess {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  transition: all var(--ifm-transition-fast) ease;
+}
+
+.copyBtnSuccess {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.33);
+  opacity: 0;
+  color: #22c55e;
+}
+
+.copyBtnCopied .copyBtnIcon {
+  transform: scale(0.33);
+  opacity: 0;
+}
+
+.copyBtnCopied .copyBtnSuccess {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  transition-delay: 0.075s;
+}
+
+/* Editor */
+
+.editorWrap {
+  position: relative;
+  overflow: auto;
+}
+
+.editor {
+  /* CodeMirror gestisce il proprio sizing; il wrapper ha lo scroll. */
+}
+
+.editor :global(.cm-editor) {
+  height: 100%;
+}
+
+/* Output */
+
+.output {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--at-border);
+  background: var(--at-bg-subtle);
+}
+
+.outputHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  line-height: 1;
+  border-bottom: 1px solid var(--at-border);
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.74rem;
+  color: var(--at-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.statusDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--at-faint);
+  flex-shrink: 0;
+  display: inline-block;
+  align-self: center;
+  position: relative;
+  top: 0;
+}
+
+.statusDot_idle {
+  background: var(--at-faint);
+}
+
+.statusDot_running {
+  background: var(--at-accent);
+  box-shadow: 0 0 8px var(--at-accent);
+  animation: pyrPulse 1.2s ease-in-out infinite;
+}
+
+.statusDot_done {
+  background: #22c55e;
+}
+
+.statusDot_error {
+  background: #ef4444;
+}
+
+@keyframes pyrPulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.statusLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.outputBody {
+  display: block;
+  padding: 10px 14px;
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--at-fg-body);
+  min-height: 2.6em;
+  max-height: 14em;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.outputLine {
+  white-space: pre-wrap;
+}
+
+.outputLineErr {
+  color: #f87171;
+}
+
+.outputPlaceholder {
+  color: var(--at-faint);
+  font-style: italic;
+}
+
+.placeholderChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-style: normal;
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.78rem;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: var(--at-accent-chip);
+  border: 1px solid var(--at-accent-chip-border);
+  color: var(--at-accent);
+  vertical-align: -3px;
+}
+
+.placeholderChip svg {
+  font-size: 0.7em;
+}
+
+.outputEmpty .outputBody {
+  /* placeholder visibile, niente extra padding */
+}
+
+/* Fallback SSR */
+
+.fallback {
+  background: var(--at-bg-subtle);
+  border: 1px solid var(--at-border);
+  border-radius: 12px;
+  padding: 14px;
+  font-family: 'Monaspace Neon', ui-monospace, monospace;
+  font-size: 0.9rem;
+  overflow: auto;
+}
+
+.error {
+  border: 1px solid #ef4444;
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.85rem;
+}
+
+/* Light / Dark color tokens per il theme CodeMirror */
+
+:global([data-theme='light']) .runner {
+  --py-kw: #7c3aed;
+  --py-str: #15803d;
+  --py-cmt: #71717a;
+  --py-num: #c2410c;
+  --py-fn: #0369a1;
+  --py-def: #be185d;
+  --py-op: #52525b;
+  --py-id: #27272a;
+}
+
+:global([data-theme='dark']) .runner,
+.runner {
+  --py-kw: #c084fc;
+  --py-str: #86efac;
+  --py-cmt: #71717a;
+  --py-num: #fdba74;
+  --py-fn: #7dd3fc;
+  --py-def: #f0abfc;
+  --py-op: #94a3b8;
+  --py-id: #e4e4e7;
+}

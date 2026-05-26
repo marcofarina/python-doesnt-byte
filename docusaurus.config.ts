@@ -2,6 +2,9 @@ import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const remarkPyRunner = require('./plugins/pyrunner/remark.js');
+
 const config: Config = {
   title: 'Python Doesn\'t Byte',
   tagline: 'Il libro di testo, reinventato.',
@@ -45,6 +48,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+          beforeDefaultRemarkPlugins: [remarkPyRunner],
         },
         blog: {
           showReadingTime: true,
@@ -79,6 +83,14 @@ const config: Config = {
 
   plugins: [
     [
+      './plugins/pyrunner/index.js',
+      {
+        // Convivenza temporanea con docusaurus-live-brython (PR1).
+        // In PR2 verrà rimosso l'upstream e questa opzione tolta.
+        skipScriptInjection: true,
+      },
+    ],
+    [
       '@docusaurus/plugin-content-docs',
       {
         id: 'programmatore',
@@ -86,6 +98,7 @@ const config: Config = {
         routeBasePath: 'programmatore',
         sidebarPath: './sidebars/programmatore.ts',
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+        beforeDefaultRemarkPlugins: [remarkPyRunner],
       },
     ],
     [
@@ -96,6 +109,7 @@ const config: Config = {
         routeBasePath: 'artefice',
         sidebarPath: './sidebars/artefice.ts',
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+        beforeDefaultRemarkPlugins: [remarkPyRunner],
       },
     ],
     [
@@ -106,6 +120,7 @@ const config: Config = {
         routeBasePath: 'archivista',
         sidebarPath: './sidebars/archivista.ts',
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+        beforeDefaultRemarkPlugins: [remarkPyRunner],
       },
     ],
     [
@@ -116,6 +131,7 @@ const config: Config = {
         routeBasePath: 'apprendista',
         sidebarPath: './sidebars/apprendista.ts',
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+        beforeDefaultRemarkPlugins: [remarkPyRunner],
       },
     ],
   ],

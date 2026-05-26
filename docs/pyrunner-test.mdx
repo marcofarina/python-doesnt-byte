@@ -1,0 +1,76 @@
+---
+unlisted: true
+title: PyRunner — pagina di test
+description: Sandbox di verifica del componente PyRunner (PR1)
+---
+
+# PyRunner — sandbox di test
+
+Pagina temporanea per validare la PR1 del nuovo PyRunner. Non è linkata dalla sidebar (`unlisted: true`).
+
+## 1. Fence inline `py live` — esempio base
+
+```py live
+nome = "Lia"
+print(f"Ciao, {nome}!")
+print("Questo è il primo esempio.")
+```
+
+## 2. Da file `.py` esterno
+
+import PyRunner from '@theme/PyRunner';
+
+<PyRunner src="_test/hello.py" />
+
+## 3. File `.py` con `### PRE` / `### POST`
+
+Il blocco `PRE` definisce `risultato_atteso`, il blocco `POST` non c'è. Solo il corpo è visibile/editabile.
+
+<PyRunner src="_test/somma.py" title="Test PRE/POST" />
+
+## 4. Fence con errore runtime (deve mostrare stderr in rosso)
+
+```py live
+def dividi(a, b):
+    return a / b
+
+print(dividi(10, 2))
+print(dividi(5, 0))  # ZeroDivisionError
+```
+
+## 5. Snippet a una riga (no line numbers attesi)
+
+```py live
+print("Una riga sola, niente gutter.")
+```
+
+## 6. Readonly
+
+```py live readonly
+# Questo non si edita.
+for i in range(3):
+    print(f"iterazione {i}")
+```
+
+## 7. maxLines piccolo per forzare scroll interno
+
+`maxLines=5` limita l'altezza dell'editor: il codice qui ha ~15 righe, quindi
+deve comparire una scrollbar verticale interna al box, senza espandere la pagina.
+
+```py live maxLines=5
+def saluta(nome):
+    print(f"Ciao, {nome}!")
+
+def somma(a, b):
+    return a + b
+
+def fattoriale(n):
+    if n <= 1:
+        return 1
+    return n * fattoriale(n - 1)
+
+saluta("Lia")
+saluta("Marco")
+print("2 + 3 =", somma(2, 3))
+print("5! =", fattoriale(5))
+```
