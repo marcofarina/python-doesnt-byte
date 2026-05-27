@@ -60,6 +60,16 @@ html[data-theme='light'] {
   --at-logo-shadow: 0 8px 24px rgba(2, 132, 199, 0.25);
   --at-spot-bg: rgba(2, 132, 199, 0.08);
   --at-bg-glass: rgba(250, 250, 249, 0.72);
+
+  /* Python syntax palette — match Prism Github (light) */
+  --py-kw: #00009f;
+  --py-str: #e3116c;
+  --py-cmt: #998877;
+  --py-num: #36acaa;
+  --py-fn: #00009f;
+  --py-def: #393a34;
+  --py-op: #393a34;
+  --py-id: #393a34;
 }
 
 html[data-theme='dark'] {
@@ -105,6 +115,16 @@ html[data-theme='dark'] {
   --at-logo-shadow: 0 0 40px rgba(56, 189, 248, 0.4);
   --at-spot-bg: rgba(56, 189, 248, 0.15);
   --at-bg-glass: rgba(9, 9, 11, 0.6);
+
+  /* Python syntax palette — match Prism Dracula (dark) */
+  --py-kw: #bd93f9;
+  --py-str: #ff79c6;
+  --py-cmt: #6272a4;
+  --py-num: #f8f8f2;
+  --py-fn: #bd93f9;
+  --py-def: #f8f8f2;
+  --py-op: #f8f8f2;
+  --py-id: #f8f8f2;
 }
 
 @property --at-angle {
@@ -183,7 +203,7 @@ html[data-theme='dark'] {
   --ifm-color-primary-light: #3377e5;
   --ifm-color-primary-lighter: #3e7ee6;
   --ifm-color-primary-lightest: #6095ea;
-  --ifm-code-font-size: 95%;
+  --ifm-code-font-size: 80%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
   --ifm-heading-font-family:
     'Optimistic Display', sistem-ui, -apple-system, sans-serif;

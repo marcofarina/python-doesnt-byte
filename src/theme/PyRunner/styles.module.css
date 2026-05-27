@@ -243,7 +243,7 @@
   display: inline-block;
   align-self: center;
   position: relative;
-  top: 0;
+  top: -1px;
 }
 
 .statusDot_idle {
@@ -398,27 +398,5 @@
   font-size: 0.85rem;
 }
 
-/* Light / Dark color tokens per il theme CodeMirror */
-
-:global([data-theme='light']) .runner {
-  --py-kw: #7c3aed;
-  --py-str: #15803d;
-  --py-cmt: #71717a;
-  --py-num: #c2410c;
-  --py-fn: #0369a1;
-  --py-def: #be185d;
-  --py-op: #52525b;
-  --py-id: #27272a;
-}
-
-:global([data-theme='dark']) .runner,
-.runner {
-  --py-kw: #c084fc;
-  --py-str: #86efac;
-  --py-cmt: #71717a;
-  --py-num: #fdba74;
-  --py-fn: #7dd3fc;
-  --py-def: #f0abfc;
-  --py-op: #94a3b8;
-  --py-id: #e4e4e7;
-}
+/* Palette --py-* definita globalmente in src/css/custom.css per uniformare
+   con i code-block Prism (Github light / Dracula dark) */

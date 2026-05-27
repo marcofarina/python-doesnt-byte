@@ -26,10 +26,10 @@ import styles from './styles.module.css';
 const atmosphericTheme = EditorView.theme(
   {
     '&': {
-      color: 'var(--at-fg-strong)',
+      color: 'var(--py-def, var(--at-fg-strong))',
       backgroundColor: 'transparent',
       fontFamily: '"Monaspace Neon", ui-monospace, monospace',
-      fontSize: '0.85rem',
+      fontSize: '1.05rem',
       fontVariantLigatures: 'none',
     },
     '.cm-content': {
@@ -80,17 +80,22 @@ const atmosphericTheme = EditorView.theme(
 );
 
 const atmosphericHighlight = HighlightStyle.define([
-  { tag: t.keyword, color: 'var(--py-kw, #c084fc)', fontWeight: '500' },
-  { tag: [t.string, t.special(t.string)], color: 'var(--py-str, #84cc16)' },
-  { tag: t.comment, color: 'var(--py-cmt, #71717a)', fontStyle: 'normal' },
-  { tag: [t.number, t.bool, t.null], color: 'var(--py-num, #fb923c)' },
-  { tag: t.function(t.variableName), color: 'var(--py-fn, #38bdf8)' },
-  { tag: t.definition(t.variableName), color: 'var(--py-def, #f0abfc)' },
-  { tag: t.operator, color: 'var(--py-op, #94a3b8)' },
-  { tag: t.variableName, color: 'var(--py-id, #e4e4e7)' },
-  { tag: t.propertyName, color: 'var(--py-id, #e4e4e7)' },
-  { tag: t.className, color: 'var(--py-fn, #38bdf8)' },
-  { tag: t.typeName, color: 'var(--py-fn, #38bdf8)' },
+  { tag: t.keyword, color: 'var(--py-kw)' },
+  { tag: [t.string, t.special(t.string)], color: 'var(--py-str)' },
+  {
+    tag: t.comment,
+    color: 'var(--py-cmt)',
+    fontStyle: 'normal',
+    fontFamily: '"Monaspace Radon", "Monaspace Neon", ui-monospace, monospace',
+  },
+  { tag: [t.number, t.bool, t.null], color: 'var(--py-num)' },
+  { tag: t.function(t.variableName), color: 'var(--py-fn)' },
+  { tag: t.definition(t.variableName), color: 'var(--py-def)' },
+  { tag: t.operator, color: 'var(--py-op)' },
+  { tag: t.variableName, color: 'var(--py-id)' },
+  { tag: t.propertyName, color: 'var(--py-id)' },
+  { tag: t.className, color: 'var(--py-def)' },
+  { tag: t.typeName, color: 'var(--py-def)' },
 ]);
 
 export interface EditorProps {
