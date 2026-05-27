@@ -10,9 +10,8 @@ const DEFAULT_OPTIONS = {
   libDir: 'bry-libs',
   examplesDir: 'py-examples',
   /**
-   * Se `true` evita di iniettare gli script Brython (utile quando coesistiamo
-   * temporaneamente con `docusaurus-live-brython` che li inietta già).
-   * Da rimuovere/impostare a false in PR2 dopo aver rimosso il plugin upstream.
+   * Se `true` evita di iniettare gli script Brython in <head>: utile se un
+   * altro plugin li sta già caricando, o per test. Default: iniezione attiva.
    */
   skipScriptInjection: false,
 };

@@ -82,14 +82,7 @@ const config: Config = {
   clientModules: ['./src/fonts.ts'],
 
   plugins: [
-    [
-      './plugins/pyrunner/index.js',
-      {
-        // Convivenza temporanea con docusaurus-live-brython (PR1).
-        // In PR2 verrà rimosso l'upstream e questa opzione tolta.
-        skipScriptInjection: true,
-      },
-    ],
+    './plugins/pyrunner/index.js',
     [
       '@docusaurus/plugin-content-docs',
       {
@@ -238,9 +231,6 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
-  themes: [
-    'docusaurus-live-brython'
-  ],
 };
 
 export default config;
