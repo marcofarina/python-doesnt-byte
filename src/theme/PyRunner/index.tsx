@@ -72,6 +72,12 @@ function makeCodeId(seed: string): string {
   return `pyr_${h}`;
 }
 
+// Cap di sicurezza sull'output: un `while True: print(...)` riempirebbe la
+// memoria del browser. Quando si superano, aggiungiamo una riga finale e
+// smettiamo di accettare nuovi log per questa esecuzione.
+const MAX_LOG_ENTRIES = 1000;
+const MAX_LOG_BYTES = 256 * 1024;
+
 function PyRunnerInner(props: PyRunnerProps) {
   const data = usePluginData('pyrunner') as PyRunnerGlobalData | undefined;
   const libUrl = data?.libUrl ?? '';
@@ -132,6 +138,13 @@ function PyRunnerInner(props: PyRunnerProps) {
     setStatus('running');
     setDuration(null);
 
+    // Tracciamo `entries` e `bytes` fuori dall'updater di setLogs: dentro
+    // l'updater non possiamo fidarci di `prev.length`, perché React 18 batcha
+    // gli aggiornamenti e con molte onLog ravvicinate `prev` è stale.
+    let truncated = false;
+    let entries = 0;
+    let bytes = 0;
+
     cleanupRef.current?.();
     cleanupRef.current = runPython(current, {
       codeId,
@@ -140,8 +153,26 @@ function PyRunnerInner(props: PyRunnerProps) {
       libUrl,
       onStart: () => {
         setLogs([]);
+        truncated = false;
+        entries = 0;
+        bytes = 0;
       },
       onLog: (kind, text) => {
+        if (truncated) return;
+        entries += 1;
+        bytes += text.length;
+        if (entries > MAX_LOG_ENTRIES || bytes > MAX_LOG_BYTES) {
+          truncated = true;
+          setLogs((prev) => [
+            ...prev,
+            {
+              kind: 'stderr',
+              text: `[PyRunner] Output troncato (limite ${MAX_LOG_ENTRIES} righe / ${Math.round(MAX_LOG_BYTES / 1024)} KB).\n`,
+            },
+          ]);
+          setStatus('error');
+          return;
+        }
         setLogs((prev) => [...prev, { kind, text }]);
         if (kind === 'stderr') setStatus('error');
       },
@@ -192,19 +223,12 @@ function PyRunnerInner(props: PyRunnerProps) {
       params.set('code', encodeCode(currentCode));
     }
     if (title) params.set('title', title);
-    if (props.explainPrompt) {
-      params.set('p', encodeCode(props.explainPrompt));
-    }
+    // Volutamente non propaghiamo `explainPrompt` via URL: è una prop MDX
+    // controllata dagli autori, non un parametro condivisibile. Vedi audit
+    // di sicurezza (clipboard-poisoning via ?p=).
     const url = `${playgroundUrl}?${params.toString()}`;
     window.open(url, '_blank', 'noopener,noreferrer');
-  }, [
-    props.src,
-    props.explainPrompt,
-    hasEdits,
-    currentCode,
-    title,
-    playgroundUrl,
-  ]);
+  }, [props.src, hasEdits, currentCode, title, playgroundUrl]);
 
   const handleExplain = useCallback(() => {
     const template = props.explainPrompt ?? DEFAULT_EXPLAIN_PROMPT;

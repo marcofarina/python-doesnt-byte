@@ -7,6 +7,12 @@ const DEFAULT_OPTIONS = {
   brythonSrc: 'https://cdn.jsdelivr.net/npm/brython@3.12.4/brython.min.js',
   brythonStdlibSrc:
     'https://cdn.jsdelivr.net/npm/brython@3.12.4/brython_stdlib.js',
+  // SRI hash dei bundle pinnati a 3.12.4. Se la CDN serve un file diverso
+  // (compromissione, MITM, mismatch di versione) il browser rifiuta lo script.
+  brythonIntegrity:
+    'sha384-7rPpfu6/m4Kt9MXKynqy9O9qlPkNnbNhhorIn114kwlsCY3AI3T9eXt+UgVcQ9Qg',
+  brythonStdlibIntegrity:
+    'sha384-JEgOSQ3kchBXLE0JDMOoSxjkqHdd8vNq3SY6/2KA4aPvCimeLMmt+cMnHIb0I4bw',
   libDir: 'bry-libs',
   examplesDir: 'py-examples',
   /**
@@ -62,26 +68,20 @@ module.exports = function pyrunnerPlugin(context, pluginOptions = {}) {
 
     injectHtmlTags() {
       if (opts.skipScriptInjection) return { headTags: [] };
+      const scriptTag = (src, integrity) => ({
+        tagName: 'script',
+        attributes: {
+          src,
+          ...(integrity ? { integrity } : {}),
+          crossorigin: 'anonymous',
+          referrerpolicy: 'no-referrer',
+          defer: 'defer',
+        },
+      });
       return {
         headTags: [
-          {
-            tagName: 'script',
-            attributes: {
-              src: opts.brythonSrc,
-              crossorigin: 'anonymous',
-              referrerpolicy: 'no-referrer',
-              defer: 'defer',
-            },
-          },
-          {
-            tagName: 'script',
-            attributes: {
-              src: opts.brythonStdlibSrc,
-              crossorigin: 'anonymous',
-              referrerpolicy: 'no-referrer',
-              defer: 'defer',
-            },
-          },
+          scriptTag(opts.brythonSrc, opts.brythonIntegrity),
+          scriptTag(opts.brythonStdlibSrc, opts.brythonStdlibIntegrity),
         ],
       };
     },

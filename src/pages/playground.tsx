@@ -10,7 +10,6 @@ interface PlaygroundParams {
   src?: string;
   code?: string;
   title?: string;
-  explainPrompt?: string;
   error?: string;
 }
 
@@ -19,13 +18,11 @@ function parseParams(): PlaygroundParams {
   const q = new URLSearchParams(window.location.search);
   const src = q.get('src') ?? undefined;
   const rawCode = q.get('code');
-  const rawPrompt = q.get('p');
   const title = q.get('title') ?? undefined;
   try {
     return {
       src,
       code: rawCode ? decodeCode(rawCode) : undefined,
-      explainPrompt: rawPrompt ? decodeCode(rawPrompt) : undefined,
       title,
     };
   } catch {
@@ -55,16 +52,39 @@ function PlaygroundInner() {
     );
   }
 
+  // `?src=` punta a un file `.py` whitelisted nel repo (build-time).
+  // `?code=` può venire da qualunque link condiviso → potenzialmente non
+  // fidato: avvisiamo l'utente prima di lasciarlo eseguire.
+  const fromUntrustedUrl = !params.src && typeof params.code === 'string';
+
   return (
-    <div className={styles.host}>
-      <PyRunner
-        src={params.src}
-        code={params.code}
-        title={params.title}
-        explainPrompt={params.explainPrompt}
-        embedded
-      />
-    </div>
+    <>
+      {fromUntrustedUrl && (
+        <div
+          className={styles.untrustedBanner}
+          role="alert"
+          aria-live="polite"
+        >
+          <span className={styles.untrustedBannerIcon} aria-hidden="true">
+            ⚠️
+          </span>
+          <div className={styles.untrustedBannerBody}>
+            <strong>Codice da un link esterno</strong>
+            Questo codice arriva da un URL e non dal manuale. Leggilo prima
+            di premere <em>Esegui</em>: gira nel tuo browser e può fare
+            tutto quello che il codice Python può fare in una pagina web.
+          </div>
+        </div>
+      )}
+      <div className={styles.host}>
+        <PyRunner
+          src={params.src}
+          code={params.code}
+          title={params.title}
+          embedded
+        />
+      </div>
+    </>
   );
 }
 

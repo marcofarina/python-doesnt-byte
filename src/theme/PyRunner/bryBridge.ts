@@ -64,9 +64,16 @@ function ensureCommunicatorDiv(codeId: string): HTMLDivElement {
   return div;
 }
 
-function sanitizePyScript(s: string): string {
-  // Replica della sanitization upstream: i triple-quote nel codice utente
-  // romperebbero il wrapper run("""...""").
+/**
+ * Escape per inserire un sorgente Python *arbitrario* dentro la triple-quoted
+ * string del wrapper `run("""...""")`. Non è un security boundary: il codice
+ * viene comunque eseguito via `exec` per design. Serve solo a evitare che
+ * triple-quote dell'utente rompano la sintassi del wrapper.
+ *
+ * L'ordine dei replace è importante: prima i `\` (così `\"\"\"` introdotti
+ * dopo non vengono raddoppiati), poi i `"""`.
+ */
+function escapeForTripleQuote(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/"""/g, '\\"\\"\\"');
 }
 
@@ -81,6 +88,14 @@ export function runPython(code: string, opts: RunOptions): () => void {
     onDone,
     onError,
   } = opts;
+
+  // Difensivo: `codeId` viene interpolato in un sorgente Python che poi
+  // andiamo a `exec`-utare. Oggi è sempre generato da `makeCodeId` (prefisso
+  // + djb2 in base36), ma se un giorno la sorgente di `codeId` cambiasse
+  // questo assert impedisce un'iniezione silenziosa nel template.
+  if (!/^pyr_[a-z0-9]+$/.test(codeId)) {
+    throw new Error(`PyRunner: codeId non valido (${codeId})`);
+  }
 
   const startTime = Date.now();
   const div = ensureCommunicatorDiv(codeId);
@@ -117,7 +132,7 @@ export function runPython(code: string, opts: RunOptions): () => void {
   const userCode = `${pre}${code}${post}`;
   // Newline di sicurezza prima della chiusura del triple-quote: se userCode
   // termina con `"`, evita la concatenazione `"` + `"""` → SyntaxError.
-  const wrapped = `from brython_runner import run\nrun("""${sanitizePyScript(userCode)}\n""", '${codeId}', ${lineShift})\n`;
+  const wrapped = `from brython_runner import run\nrun("""${escapeForTripleQuote(userCode)}\n""", '${codeId}', ${lineShift})\n`;
 
   ensureBrython(libUrl)
     .then(() => {
