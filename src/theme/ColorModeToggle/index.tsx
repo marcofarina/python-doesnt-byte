@@ -1,11 +1,12 @@
 import React, {type ReactNode} from 'react';
 import clsx from 'clsx';
 import useIsBrowser from '@docusaurus/useIsBrowser';
-import IconLightMode from '@theme/Icon/LightMode';
-import IconDarkMode from '@theme/Icon/DarkMode';
-import IconSystemColorMode from '@theme/Icon/SystemColorMode';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import type {Props} from '@theme/ColorModeToggle';
 import type {ColorMode} from '@docusaurus/theme-common';
+
+import Starfighter from '@site/src/icons/starfighter.svg';
+import Sith from '@site/src/icons/user-sith.svg';
 
 import styles from './styles.module.css';
 
@@ -31,9 +32,9 @@ function getNextColorMode(
 function getSpell(nextMode: ColorMode | null): string {
   switch (nextMode) {
     case 'light':
-      return 'Lumos!';
+      return 'Light side';
     case 'dark':
-      return 'Nox!';
+      return 'Dark side';
     case null:
     default:
       return 'Auto';
@@ -43,15 +44,16 @@ function getSpell(nextMode: ColorMode | null): string {
 function CurrentColorModeIcon(): ReactNode {
   return (
     <>
-      <IconLightMode
+      <Sith
         aria-hidden
         className={clsx(styles.toggleIcon, styles.lightToggleIcon)}
       />
-      <IconDarkMode
+      <Starfighter
         aria-hidden
         className={clsx(styles.toggleIcon, styles.darkToggleIcon)}
       />
-      <IconSystemColorMode
+      <FontAwesomeIcon
+        icon={['fas', 'circle-half-stroke']}
         aria-hidden
         className={clsx(styles.toggleIcon, styles.systemToggleIcon)}
       />

@@ -12,6 +12,7 @@ import Quiz, {
   QuizOption,
   QuizFeedback,
 } from '@site/src/components/Quiz';
+import PyRunner from '@site/src/theme/PyRunner';
 
 library.add(fab, fas);
 
@@ -24,4 +25,5 @@ export default {
   QuizQuestion,
   QuizOption,
   QuizFeedback,
+  PyRunner,
 };

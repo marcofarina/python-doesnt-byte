@@ -12,16 +12,38 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  transition: background var(--ifm-transition-fast);
+  transition:
+    background var(--ifm-transition-fast),
+    color 0.15s ease;
   position: relative;
+  color: var(--at-muted);
 }
 
 .toggleButton:hover {
-  background: var(--ifm-color-emphasis-200);
+  background: var(--at-bg-subtle);
+}
+
+/* Hover color follows the next-mode: clicking → dark = red (Sith),
+   clicking → light = cyan (Jedi). */
+.toggleButton[data-next-mode='light']:hover {
+  color: var(--at-accent);
+}
+
+.toggleButton[data-next-mode='dark']:hover {
+  color: #ef4444;
 }
 
 .toggleIcon {
   display: none;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.toggleIcon > svg,
+svg.toggleIcon {
+  width: 20px;
+  height: 20px;
 }
 
 [data-theme-choice='system'] .systemToggleIcon,
@@ -125,29 +147,30 @@
   transform: translate(0, 0);
 }
 
-/* Magenta accent when going dark (Nox!), cyan when going light (Lumos!) */
+/* Red lightsaber accent when going dark (Dark side), cyan when
+   going light (Light side, default). */
 .toggleButton[data-next-mode='dark'] .spellTooltip {
-  border-color: #c084fc;
-  color: #f0abfc;
+  border-color: #ef4444;
+  color: #fca5a5;
   text-shadow:
-    0 0 8px #c084fc,
-    0 0 18px rgba(236, 72, 153, 0.55);
+    0 0 8px #ef4444,
+    0 0 18px rgba(220, 38, 38, 0.55);
   box-shadow:
-    0 0 0 1px rgba(192, 132, 252, 0.25),
-    0 0 18px -2px #c084fc,
-    0 0 36px -8px #ec4899,
-    inset 0 0 10px rgba(192, 132, 252, 0.1);
+    0 0 0 1px rgba(239, 68, 68, 0.25),
+    0 0 18px -2px #ef4444,
+    0 0 36px -8px #dc2626,
+    inset 0 0 10px rgba(239, 68, 68, 0.1);
 }
 
 .toggleButton[data-next-mode='dark'] .spellTooltip::before {
-  border-bottom-color: #c084fc;
-  filter: drop-shadow(0 0 4px #c084fc);
+  border-bottom-color: #ef4444;
+  filter: drop-shadow(0 0 4px #ef4444);
 }
 
 .toggleButton[data-next-mode='dark'] .spellGlow {
   background: radial-gradient(
     closest-side,
-    rgba(192, 132, 252, 0.4),
+    rgba(239, 68, 68, 0.4),
     transparent 70%
   );
 }

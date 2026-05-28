@@ -2,6 +2,9 @@ import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const remarkPyRunner = require('./plugins/pyrunner/remark.js');
+
 const config: Config = {
   title: 'Python Doesn\'t Byte',
   tagline: 'Il libro di testo, reinventato.',
@@ -45,6 +48,7 @@ const config: Config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+          beforeDefaultRemarkPlugins: [remarkPyRunner],
         },
         blog: {
           showReadingTime: true,
@@ -77,6 +81,54 @@ const config: Config = {
 
   clientModules: ['./src/fonts.ts'],
 
+  plugins: [
+    './plugins/pyrunner/index.js',
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'programmatore',
+        path: 'volumes/programmatore',
+        routeBasePath: 'programmatore',
+        sidebarPath: './sidebars/programmatore.ts',
+        editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+        beforeDefaultRemarkPlugins: [remarkPyRunner],
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'artefice',
+        path: 'volumes/artefice',
+        routeBasePath: 'artefice',
+        sidebarPath: './sidebars/artefice.ts',
+        editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+        beforeDefaultRemarkPlugins: [remarkPyRunner],
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'archivista',
+        path: 'volumes/archivista',
+        routeBasePath: 'archivista',
+        sidebarPath: './sidebars/archivista.ts',
+        editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+        beforeDefaultRemarkPlugins: [remarkPyRunner],
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'apprendista',
+        path: 'volumes/apprendista',
+        routeBasePath: 'apprendista',
+        sidebarPath: './sidebars/apprendista.ts',
+        editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+        beforeDefaultRemarkPlugins: [remarkPyRunner],
+      },
+    ],
+  ],
+
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
@@ -93,36 +145,43 @@ const config: Config = {
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'docs',
+          type: 'dropdown',
+          label: 'Libri',
           position: 'left',
-          label: 'Libro',
+          items: [
+            {
+              type: 'doc',
+              docId: 'intro',
+              docsPluginId: 'programmatore',
+              label: 'Manuale del Programmatore',
+            },
+            {
+              type: 'doc',
+              docId: 'intro',
+              docsPluginId: 'artefice',
+              label: 'Manuale dell\'Artefice',
+            },
+            {
+              type: 'doc',
+              docId: 'intro',
+              docsPluginId: 'archivista',
+              label: 'Manuale dell\'Archivista',
+            },
+            {
+              type: 'doc',
+              docId: 'intro',
+              docsPluginId: 'apprendista',
+              label: 'Biblioteca dell\'Apprendista',
+            },
+          ],
         },
         /*        {
                   to: '/blog',
                   label: 'Blog',
                   position: 'left'},*/
-        {
-          to: '/support/',
-          label: 'Support',
-          position: 'right',
-          className: 'sponsorship-link',
-        },
-        {
-          to: 'https://github.com/marcofarina/python-doesnt-byte',
-          label: 'GitHub',
-          position: 'right',
-          target: '_blank',
-          className: 'github-link',
-          'aria-label': 'GitHub repository',
-        },
-        {
-          to: 'https://www.rainbowbits.cloud',
-          label: 'Rainbow Bits',
-          position: 'right',
-          target: '_blank',
-          className: 'rainbowbits-link',
-        },
+        // GitHub e "Offrimi un caffè" sono renderizzati come icone+popup
+        // (NavbarIconButton) dal swizzle src/theme/Navbar/Content, non
+        // tramite navbar items standard.
       ],
     },
     footer: {
@@ -172,9 +231,6 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
-  themes: [
-    'docusaurus-live-brython'
-  ],
 };
 
 export default config;

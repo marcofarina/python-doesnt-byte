@@ -1,0 +1,8 @@
+{
+  "name": "pyrunner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Docusaurus plugin per esecuzione in-pagina di Python via Brython, con sorgente da .py asset",
+  "main": "./index.js",
+  "license": "MIT"
+}
