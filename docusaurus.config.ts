@@ -5,6 +5,23 @@ import type * as Preset from '@docusaurus/preset-classic';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const remarkPyRunner = require('./plugins/pyrunner/remark.js');
 
+// Keyword admonition custom (Notion-style callouts). Vedi
+// src/theme/Admonition/index.tsx per il registry di titoli + icone PNG.
+const admonitions = {
+  keywords: [
+    'prereq',
+    'learn',
+    'exercise',
+    'definition',
+    'history',
+    'code',
+    'cleancode',
+    'nutshell',
+    'mindmap',
+  ],
+  extendDefaults: true,
+};
+
 const config: Config = {
   title: 'Python Doesn\'t Byte',
   tagline: 'Il libro di testo, reinventato.',
@@ -49,6 +66,7 @@ const config: Config = {
           // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
           beforeDefaultRemarkPlugins: [remarkPyRunner],
+          admonitions,
         },
         blog: {
           showReadingTime: true,
@@ -92,6 +110,7 @@ const config: Config = {
         sidebarPath: './sidebars/programmatore.ts',
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
         beforeDefaultRemarkPlugins: [remarkPyRunner],
+        admonitions,
       },
     ],
     [
@@ -103,6 +122,7 @@ const config: Config = {
         sidebarPath: './sidebars/artefice.ts',
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
         beforeDefaultRemarkPlugins: [remarkPyRunner],
+        admonitions,
       },
     ],
     [
@@ -114,6 +134,7 @@ const config: Config = {
         sidebarPath: './sidebars/archivista.ts',
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
         beforeDefaultRemarkPlugins: [remarkPyRunner],
+        admonitions,
       },
     ],
     [
@@ -125,6 +146,7 @@ const config: Config = {
         sidebarPath: './sidebars/apprendista.ts',
         editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
         beforeDefaultRemarkPlugins: [remarkPyRunner],
+        admonitions,
       },
     ],
   ],

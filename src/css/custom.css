@@ -809,3 +809,148 @@ main [class*='generatedIndexPage'] > p {
   color: var(--at-fg-body);
   max-width: 72ch;
 }
+
+/* ─────────────── Notion-style callouts (admonition swizzle) ───────────────
+   Palette per tipo: --callout-<tipo>-bg (sfondo blocco) e
+   --callout-<tipo>-fg (titolo). I PNG sono multicolore: niente tint.
+   Light/dark gestiti via override delle variabili sotto [data-theme='dark'].
+*/
+
+:root {
+  --callout-prereq-bg:     oklch(96% 0.025 240);
+  --callout-prereq-fg:     oklch(48% 0.16 240);
+  --callout-learn-bg:      oklch(96% 0.025 350);
+  --callout-learn-fg:      oklch(52% 0.18 350);
+  --callout-exercise-bg:   oklch(95% 0.03 320);
+  --callout-exercise-fg:   oklch(52% 0.2 320);
+  --callout-definition-bg: oklch(95% 0.04 70);
+  --callout-definition-fg: oklch(48% 0.13 70);
+  --callout-history-bg:    oklch(94% 0.045 35);
+  --callout-history-fg:    oklch(48% 0.16 35);
+  --callout-code-bg:       oklch(95% 0 0);
+  --callout-code-fg:       oklch(40% 0 0);
+  --callout-cleancode-bg:  oklch(95% 0.025 270);
+  --callout-cleancode-fg:  oklch(48% 0.18 270);
+  --callout-nutshell-bg:   oklch(95% 0.03 55);
+  --callout-nutshell-fg:   oklch(46% 0.09 55);
+  --callout-mindmap-bg:    oklch(95% 0.04 175);
+  --callout-mindmap-fg:    oklch(46% 0.13 175);
+  --callout-info-bg:       oklch(95% 0.04 145);
+  --callout-info-fg:       oklch(46% 0.14 145);
+  --callout-tip-bg:        oklch(96% 0.05 90);
+  --callout-tip-fg:        oklch(52% 0.15 85);
+  --callout-warning-bg:    oklch(94% 0.05 55);
+  --callout-warning-fg:    oklch(56% 0.17 50);
+  --callout-danger-bg:     oklch(93% 0.04 15);
+  --callout-danger-fg:     oklch(48% 0.22 18);
+  --callout-note-bg:       oklch(95% 0 0);
+  --callout-note-fg:       oklch(45% 0 0);
+}
+
+[data-theme='dark'] {
+  --callout-prereq-bg:     oklch(26% 0.04 245);
+  --callout-prereq-fg:     oklch(78% 0.12 240);
+  --callout-learn-bg:      oklch(27% 0.05 350);
+  --callout-learn-fg:      oklch(82% 0.11 350);
+  --callout-exercise-bg:   oklch(26% 0.06 320);
+  --callout-exercise-fg:   oklch(80% 0.14 320);
+  --callout-definition-bg: oklch(26% 0.045 70);
+  --callout-definition-fg: oklch(82% 0.1 70);
+  --callout-history-bg:    oklch(26% 0.06 35);
+  --callout-history-fg:    oklch(78% 0.13 35);
+  --callout-code-bg:       oklch(28% 0 0);
+  --callout-code-fg:       oklch(82% 0 0);
+  --callout-cleancode-bg:  oklch(26% 0.05 270);
+  --callout-cleancode-fg:  oklch(80% 0.13 270);
+  --callout-nutshell-bg:   oklch(26% 0.035 55);
+  --callout-nutshell-fg:   oklch(80% 0.07 55);
+  --callout-mindmap-bg:    oklch(26% 0.05 175);
+  --callout-mindmap-fg:    oklch(80% 0.12 175);
+  --callout-info-bg:       oklch(26% 0.05 145);
+  --callout-info-fg:       oklch(82% 0.13 145);
+  --callout-tip-bg:        oklch(27% 0.05 90);
+  --callout-tip-fg:        oklch(85% 0.13 90);
+  --callout-warning-bg:    oklch(27% 0.08 55);
+  --callout-warning-fg:    oklch(82% 0.15 50);
+  --callout-danger-bg:     oklch(28% 0.08 15);
+  --callout-danger-fg:     oklch(78% 0.18 18);
+  --callout-note-bg:       oklch(26% 0 0);
+  --callout-note-fg:       oklch(78% 0 0);
+}
+
+.callout {
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin: 1.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--ifm-font-color-base);
+}
+
+.callout__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.callout__icon {
+  width: auto;
+  height: auto;
+  max-width: 30px;
+  max-height: 30px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.callout .callout__title {
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.callout .callout__body {
+  line-height: 1.4;
+}
+
+.callout__body > :last-child {
+  margin-bottom: 0;
+}
+
+.callout__body ul,
+.callout__body ol {
+  margin: 0.25rem 0 0;
+  padding-left: 1.25rem;
+}
+
+/* Mapping tipo → bg + fg titolo. L'icona PNG ha colore proprio. */
+.callout--prereq     { background: var(--callout-prereq-bg); }
+.callout--prereq     .callout__title { color: var(--callout-prereq-fg); }
+.callout--learn      { background: var(--callout-learn-bg); }
+.callout--learn      .callout__title { color: var(--callout-learn-fg); }
+.callout--exercise   { background: var(--callout-exercise-bg); }
+.callout--exercise   .callout__title { color: var(--callout-exercise-fg); }
+.callout--definition { background: var(--callout-definition-bg); }
+.callout--definition .callout__title { color: var(--callout-definition-fg); }
+.callout--history    { background: var(--callout-history-bg); }
+.callout--history    .callout__title { color: var(--callout-history-fg); }
+.callout--code       { background: var(--callout-code-bg); }
+.callout--code       .callout__title { color: var(--callout-code-fg); }
+.callout--cleancode  { background: var(--callout-cleancode-bg); }
+.callout--cleancode  .callout__title { color: var(--callout-cleancode-fg); }
+.callout--nutshell   { background: var(--callout-nutshell-bg); }
+.callout--nutshell   .callout__title { color: var(--callout-nutshell-fg); }
+.callout--mindmap    { background: var(--callout-mindmap-bg); }
+.callout--mindmap    .callout__title { color: var(--callout-mindmap-fg); }
+.callout--info       { background: var(--callout-info-bg); }
+.callout--info       .callout__title { color: var(--callout-info-fg); }
+.callout--tip        { background: var(--callout-tip-bg); }
+.callout--tip        .callout__title { color: var(--callout-tip-fg); }
+.callout--warning    { background: var(--callout-warning-bg); }
+.callout--warning    .callout__title { color: var(--callout-warning-fg); }
+.callout--danger     { background: var(--callout-danger-bg); }
+.callout--danger     .callout__title { color: var(--callout-danger-fg); }
+.callout--note       { background: var(--callout-note-bg); }
+.callout--note       .callout__title { color: var(--callout-note-fg); }
