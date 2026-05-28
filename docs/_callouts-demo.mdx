@@ -1,0 +1,84 @@
+---
+title: Callouts — demo visivo
+slug: /_callouts-demo
+sidebar_class_name: hidden
+---
+
+Pagina temporanea per QA visivo dei 13 callout Notion-style.
+Non è linkata in nessuna sidebar; raggiungibile solo via URL diretto `/_callouts-demo`.
+Eliminare a feature accettata (o spostare in `docs/reference/callouts.mdx`).
+
+## Nuovi tipi (9)
+
+:::prereq
+Quali esercizi devono essere già stati completati e quali parti di teoria devono essere già state studiate per riuscire a portare a termine l'esercizio.
+:::
+
+:::learn
+Un elenco dei concetti che verranno messi in pratica e delle competenze da sviluppare.
+:::
+
+:::exercise
+Un elenco dei concetti che verranno messi in pratica con questo esercizio e delle competenze da sviluppare.
+:::
+
+:::definition
+Qui troverai le (poche) definizioni di teoria.
+:::
+
+:::history
+Qui troverai approfondimenti storici sui concetti esposti o collegamenti interdisciplinari con altre materie.
+:::
+
+:::code
+Questi sono dettagli aggiuntivi sulla sintassi nel linguaggio di programmazione o inviti a provare del codice.
+:::
+
+:::cleancode
+Questi sono consigli su come scrivere e organizzare in modo efficace il codice.
+:::
+
+:::nutshell
+- Questo callout contiene un elenco puntato dei concetti chiave visti nella lezione
+- Per poter comparire nell'indice, il titolo è un H1
+:::
+
+:::mindmap
+Questo blocco contiene il codice mermaid di una mappa mentale. Per ora è solo il contenitore — l'integrazione mermaid arriverà in un PR separato.
+:::
+
+## Tipi default ristilizzati (4)
+
+:::info
+Queste sono generiche informazioni utili sulla programmazione o sull'informatica in generale.
+:::
+
+:::tip
+Un consiglio mirato. Equivalente all'uso storico di `:::tip[Ricorda che]`.
+:::
+
+:::warning
+Queste sono avvertenze su qualcosa in cui bisogna fare molta attenzione per evitare di commettere errori.
+:::
+
+:::danger
+Escalation più severa: errori che bloccano del tutto l'esecuzione o causano comportamenti imprevisti gravi.
+:::
+
+## Override del titolo
+
+Tutti i callout accettano un titolo custom con la sintassi `:::tipo[Titolo]`.
+
+:::prereq[Conoscenze richieste]
+Esempio con titolo override.
+:::
+
+:::warning[Salvare il valore restituito]
+Esempio retro-compatibile con i `.mdx` esistenti.
+:::
+
+## Fallback (tipo `note`, senza icona)
+
+:::note
+Tenuto come fallback minimale per `:::note`. Non ha icona dedicata (nessun PNG in `static/img/callouts/`).
+:::
