@@ -1,11 +1,11 @@
 ---
 title: Callouts — demo visivo
-slug: /_callouts-demo
-sidebar_class_name: hidden
+slug: /callouts-demo
+unlisted: true
 ---
 
 Pagina temporanea per QA visivo dei 13 callout Notion-style.
-Non è linkata in nessuna sidebar; raggiungibile solo via URL diretto `/_callouts-demo`.
+`unlisted: true` la tiene fuori da sidebar e sitemap; raggiungibile solo via URL diretto `/docs/callouts-demo`.
 Eliminare a feature accettata (o spostare in `docs/reference/callouts.mdx`).
 
 ## Nuovi tipi (9)
@@ -31,7 +31,22 @@ Qui troverai approfondimenti storici sui concetti esposti o collegamenti interdi
 :::
 
 :::code
-Questi sono dettagli aggiuntivi sulla sintassi nel linguaggio di programmazione o inviti a provare del codice.
+Questi sono dettagli aggiuntivi sulla sintassi nel linguaggio di programmazione o inviti a provare del codice. Esempio:
+
+```python
+def saluta(nome: str) -> str:
+    return f"Ciao, {nome}!"
+
+print(saluta("mondo"))
+```
+
+E un esempio di fence eseguibile col PyRunner:
+
+```py live
+nomi = ["Luca", "Anna", "Marco"]
+for n in nomi:
+    print(f"Ciao, {n}!")
+```
 :::
 
 :::cleancode

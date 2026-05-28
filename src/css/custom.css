@@ -827,20 +827,20 @@ main [class*='generatedIndexPage'] > p {
   --callout-definition-fg: oklch(48% 0.13 70);
   --callout-history-bg:    oklch(94% 0.045 35);
   --callout-history-fg:    oklch(48% 0.16 35);
-  --callout-code-bg:       oklch(95% 0.025 270);
-  --callout-code-fg:       oklch(48% 0.18 270);
-  --callout-cleancode-bg:  oklch(96% 0.025 200);
-  --callout-cleancode-fg:  oklch(48% 0.13 200);
+  --callout-code-bg:       oklch(95% 0 0);
+  --callout-code-fg:       oklch(40% 0 0);
+  --callout-cleancode-bg:  oklch(95% 0.025 270);
+  --callout-cleancode-fg:  oklch(48% 0.18 270);
   --callout-nutshell-bg:   oklch(95% 0.03 55);
   --callout-nutshell-fg:   oklch(46% 0.09 55);
   --callout-mindmap-bg:    oklch(95% 0.04 175);
   --callout-mindmap-fg:    oklch(46% 0.13 175);
-  --callout-info-bg:       oklch(96% 0.05 90);
-  --callout-info-fg:       oklch(52% 0.15 85);
-  --callout-tip-bg:        oklch(95% 0.04 145);
-  --callout-tip-fg:        oklch(46% 0.14 145);
-  --callout-warning-bg:    oklch(94% 0.04 30);
-  --callout-warning-fg:    oklch(54% 0.2 30);
+  --callout-info-bg:       oklch(95% 0.04 145);
+  --callout-info-fg:       oklch(46% 0.14 145);
+  --callout-tip-bg:        oklch(96% 0.05 90);
+  --callout-tip-fg:        oklch(52% 0.15 85);
+  --callout-warning-bg:    oklch(94% 0.05 55);
+  --callout-warning-fg:    oklch(56% 0.17 50);
   --callout-danger-bg:     oklch(93% 0.04 15);
   --callout-danger-fg:     oklch(48% 0.22 18);
   --callout-note-bg:       oklch(95% 0 0);
@@ -858,20 +858,20 @@ main [class*='generatedIndexPage'] > p {
   --callout-definition-fg: oklch(82% 0.1 70);
   --callout-history-bg:    oklch(26% 0.06 35);
   --callout-history-fg:    oklch(78% 0.13 35);
-  --callout-code-bg:       oklch(26% 0.05 270);
-  --callout-code-fg:       oklch(80% 0.13 270);
-  --callout-cleancode-bg:  oklch(26% 0.04 200);
-  --callout-cleancode-fg:  oklch(82% 0.1 200);
+  --callout-code-bg:       oklch(28% 0 0);
+  --callout-code-fg:       oklch(82% 0 0);
+  --callout-cleancode-bg:  oklch(26% 0.05 270);
+  --callout-cleancode-fg:  oklch(80% 0.13 270);
   --callout-nutshell-bg:   oklch(26% 0.035 55);
   --callout-nutshell-fg:   oklch(80% 0.07 55);
   --callout-mindmap-bg:    oklch(26% 0.05 175);
   --callout-mindmap-fg:    oklch(80% 0.12 175);
-  --callout-info-bg:       oklch(27% 0.05 90);
-  --callout-info-fg:       oklch(85% 0.13 90);
-  --callout-tip-bg:        oklch(26% 0.05 145);
-  --callout-tip-fg:        oklch(82% 0.13 145);
-  --callout-warning-bg:    oklch(27% 0.07 30);
-  --callout-warning-fg:    oklch(80% 0.16 30);
+  --callout-info-bg:       oklch(26% 0.05 145);
+  --callout-info-fg:       oklch(82% 0.13 145);
+  --callout-tip-bg:        oklch(27% 0.05 90);
+  --callout-tip-fg:        oklch(85% 0.13 90);
+  --callout-warning-bg:    oklch(27% 0.08 55);
+  --callout-warning-fg:    oklch(82% 0.15 50);
   --callout-danger-bg:     oklch(28% 0.08 15);
   --callout-danger-fg:     oklch(78% 0.18 18);
   --callout-note-bg:       oklch(26% 0 0);
@@ -891,27 +891,28 @@ main [class*='generatedIndexPage'] > p {
 .callout__header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .callout__icon {
   width: auto;
   height: auto;
-  max-width: 22px;
-  max-height: 22px;
+  max-width: 30px;
+  max-height: 30px;
   flex-shrink: 0;
   display: block;
 }
 
-.callout__title {
+.callout .callout__title {
+  margin: 0;
+  padding: 0;
   font-weight: 700;
-  font-size: 0.98rem;
-  line-height: 1.3;
+  font-size: 1.5rem;
+  line-height: 1;
 }
 
-.callout__body {
-  font-size: 0.95rem;
-  line-height: 1.55;
+.callout .callout__body {
+  line-height: 1.4;
 }
 
 .callout__body > :last-child {

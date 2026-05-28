@@ -53,7 +53,7 @@ export default function Admonition(props: AdmonitionProps): ReactNode {
             className="callout__icon"
           />
         )}
-        <span className="callout__title">{title ?? entry.defaultTitle}</span>
+        <h4 className="callout__title">{title ?? entry.defaultTitle}</h4>
       </div>
       <div className="callout__body">{children}</div>
     </aside>
