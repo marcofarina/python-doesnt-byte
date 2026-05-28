@@ -1,24 +1,56 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Link from '@docusaurus/Link';
+import clsx from 'clsx';
 import styles from './styles.module.css';
 
 interface Chapter {
   title: string;
   to: string;
-  sections: number;
 }
 
-const CHAPTERS: Chapter[] = [
-  { title: 'Introduzione', to: '/docs/intro', sections: 1 },
+interface Volume {
+  id: string;
+  short: string;
+  label: string;
+  accent: 'blue' | 'pink' | 'amber' | 'green';
+  chapters: Chapter[];
+  draft?: boolean;
+}
+
+const VOLUMES: Volume[] = [
   {
-    title: 'Fondamenti di Python',
-    to: '/docs/category/fondamenti-di-python',
-    sections: 1,
+    id: 'programmatore',
+    short: 'Programmatore',
+    label: 'Manuale del Programmatore',
+    accent: 'blue',
+    chapters: [
+      { title: 'Introduzione', to: '/programmatore/intro' },
+      { title: 'Variabili', to: '/programmatore/variabili' },
+    ],
   },
   {
-    title: 'Le basi del linguaggio',
-    to: '/docs/basi-del-linguaggio',
-    sections: 5,
+    id: 'artefice',
+    short: 'Artefice',
+    label: 'Manuale dell’Artefice',
+    accent: 'pink',
+    chapters: [{ title: 'Introduzione', to: '/artefice/intro' }],
+    draft: true,
+  },
+  {
+    id: 'archivista',
+    short: 'Archivista',
+    label: 'Manuale dell’Archivista',
+    accent: 'amber',
+    chapters: [{ title: 'Introduzione', to: '/archivista/intro' }],
+    draft: true,
+  },
+  {
+    id: 'apprendista',
+    short: 'Apprendista',
+    label: 'Biblioteca dell’Apprendista',
+    accent: 'green',
+    chapters: [{ title: 'Introduzione', to: '/apprendista/intro' }],
+    draft: true,
   },
 ];
 
@@ -57,9 +89,6 @@ function Row({ chapter, index }: { chapter: Chapter; index: number }) {
           {String(index + 1).padStart(2, '0')}
         </span>
         <span className={styles.title}>{chapter.title}</span>
-        <span className={styles.sections}>
-          {chapter.sections} {chapter.sections === 1 ? 'sezione' : 'sezioni'}
-        </span>
         <span className={styles.arrow}>
           <ArrowRight />
         </span>
@@ -69,16 +98,70 @@ function Row({ chapter, index }: { chapter: Chapter; index: number }) {
 }
 
 export default function ChapterIndex() {
+  const [active, setActive] = useState(0);
+  const panelId = 'chapter-index-panel';
+
+  function onKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      setActive((a) => (a + 1) % VOLUMES.length);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      setActive((a) => (a - 1 + VOLUMES.length) % VOLUMES.length);
+    }
+  }
+
+  const current = VOLUMES[active];
+
   return (
     <section className={styles.wrap}>
       <div className={styles.head}>
         <h2 className={styles.label}>Indice</h2>
-        <span className={styles.count}>{CHAPTERS.length} capitoli</span>
+        <span className={styles.count}>{current.label}</span>
       </div>
-      <div className={styles.list}>
-        {CHAPTERS.map((ch, i) => (
-          <Row key={ch.to} chapter={ch} index={i} />
+      <div
+        className={styles.tabs}
+        role="tablist"
+        aria-label="Volumi del libro"
+        onKeyDown={onKeyDown}
+      >
+        {VOLUMES.map((v, i) => (
+          <button
+            key={v.id}
+            type="button"
+            role="tab"
+            aria-selected={i === active}
+            aria-controls={panelId}
+            tabIndex={i === active ? 0 : -1}
+            onClick={() => setActive(i)}
+            className={clsx(
+              styles.tab,
+              styles[`accent_${v.accent}`],
+              i === active && styles.tabActive,
+            )}
+          >
+            {v.short}
+          </button>
         ))}
+      </div>
+      <div
+        id={panelId}
+        role="tabpanel"
+        aria-label={current.label}
+        className={styles.panel}
+      >
+        <div key={active} className={styles.panelSlot}>
+          <div className={styles.list}>
+            {current.chapters.map((ch, i) => (
+              <Row key={ch.to} chapter={ch} index={i} />
+            ))}
+          </div>
+          {current.draft && (
+            <div className={styles.draftNote}>
+              Volume in stesura — nuovi capitoli in arrivo.
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
