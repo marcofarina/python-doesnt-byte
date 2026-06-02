@@ -81,32 +81,3 @@ html[data-theme='dark'] .logo {
   }
 }
 
-.codeSection {
-  padding: 40px 32px 80px;
-  max-width: 680px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-
-.codeHeader {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  font-size: 12px;
-  color: var(--at-muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-family: 'JetBrains Mono', monospace;
-  justify-content: center;
-}
-
-.codeHeader::before,
-.codeHeader::after {
-  content: '';
-  width: 30px;
-  height: 1px;
-  background: var(--at-border);
-}
-

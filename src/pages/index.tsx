@@ -3,7 +3,6 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import Layout from '@theme/Layout';
 
 import VolumeCard from '@site/src/components/VolumeCard';
-import CodeWindow from '@site/src/components/CodeWindow';
 import BentoFeatures from '@site/src/components/BentoFeatures';
 import ChapterIndex from '@site/src/components/ChapterIndex';
 
@@ -47,15 +46,6 @@ function FlaskIcon() {
     </svg>
   );
 }
-
-const HERO_CODE = `# Il tuo primo programma
-nome = input("Come ti chiami? ")
-print(f"Ciao, {nome}!")
-print("Benvenuto in Python.")`;
-
-const HERO_OUTPUT = `Come ti chiami? Marco
-Ciao, Marco!
-Benvenuto in Python.`;
 
 export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
@@ -140,15 +130,6 @@ export default function Home(): JSX.Element {
               accent="green"
             />
           </div>
-        </section>
-
-        {/* CODE PREVIEW */}
-        <section
-          className={`${styles.codeSection} at-fade-up`}
-          style={{ animationDelay: '0.6s' }}
-        >
-          <div className={styles.codeHeader}>Read &amp; Run</div>
-          <CodeWindow code={HERO_CODE} output={HERO_OUTPUT} />
         </section>
 
         <BentoFeatures />
