@@ -98,7 +98,7 @@ export default function Home(): JSX.Element {
             style={{ animationDelay: '0.4s' }}
           >
             <VolumeCard
-              to="/programmatore"
+              to="/programmatore/"
               kicker="Volume 1"
               title="Manuale del Programmatore"
               desc="Fondamenti del linguaggio: dati, controllo di flusso, funzioni."
@@ -106,7 +106,7 @@ export default function Home(): JSX.Element {
               accent="blue"
             />
             <VolumeCard
-              to="/artefice"
+              to="/artefice/"
               kicker="Volume 2"
               title="Manuale dell'Artefice"
               desc="Programmazione ad oggetti: classi, ereditarietà, design pattern."
@@ -114,7 +114,7 @@ export default function Home(): JSX.Element {
               accent="pink"
             />
             <VolumeCard
-              to="/archivista"
+              to="/archivista/"
               kicker="Volume 3"
               title="Manuale dell'Archivista"
               desc="Dati e persistenza: file, SQLite, ORM, integrazione."
@@ -122,7 +122,7 @@ export default function Home(): JSX.Element {
               accent="amber"
             />
             <VolumeCard
-              to="/apprendista"
+              to="/apprendista/"
               kicker="Volume 4"
               title="Biblioteca dell'Apprendista"
               desc="Esercizi, sfide e progetti di laboratorio."
