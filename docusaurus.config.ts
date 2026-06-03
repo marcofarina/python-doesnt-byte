@@ -36,7 +36,7 @@ export default async function createConfig(): Promise<Config> {
   const { default: smartypants } = await import('remark-smartypants');
 
   const config: Config = {
-    title: "Python Doesn't Byte",
+    title: 'Python Doesn’t Byte',
     tagline: 'Il libro di testo, reinventato.',
     favicon: 'img/icons/favicon.ico',
 
@@ -179,9 +179,9 @@ export default async function createConfig(): Promise<Config> {
         },
       },
       navbar: {
-        title: "Python Doesn't Byte",
+        title: 'Python Doesn’t Byte',
         logo: {
-          alt: "Python Doesn't Byte Logo",
+          alt: 'Python Doesn’t Byte Logo',
           src: 'img/logo.svg',
         },
         items: [
@@ -200,19 +200,19 @@ export default async function createConfig(): Promise<Config> {
                 type: 'doc',
                 docId: 'intro',
                 docsPluginId: 'artefice',
-                label: "Manuale dell'Artefice",
+                label: 'Manuale dell’Artefice',
               },
               {
                 type: 'doc',
                 docId: 'intro',
                 docsPluginId: 'archivista',
-                label: "Manuale dell'Archivista",
+                label: 'Manuale dell’Archivista',
               },
               {
                 type: 'doc',
                 docId: 'intro',
                 docsPluginId: 'apprendista',
-                label: "Biblioteca dell'Apprendista",
+                label: 'Biblioteca dell’Apprendista',
               },
             ],
           },
@@ -231,7 +231,7 @@ export default async function createConfig(): Promise<Config> {
             title: 'Rainbow Bits',
             items: [
               {
-                label: "Python Doesn't Byte",
+                label: 'Python Doesn’t Byte',
                 to: '/docs/intro',
               },
             ],
