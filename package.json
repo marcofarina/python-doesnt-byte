@@ -52,6 +52,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "prettier": "^3.7.1",
+    "remark-smartypants": "^3.0.2",
     "typescript": "~5.5.2"
   },
   "overrides": {
