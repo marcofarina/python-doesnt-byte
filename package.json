@@ -15,7 +15,8 @@
     "typecheck": "tsc",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,mdx}\""
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,mdx}\"",
+    "version": "node scripts/sync-pm-version.mjs"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.3",
