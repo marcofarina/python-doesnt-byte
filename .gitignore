@@ -44,3 +44,6 @@ coverage/
 CLAUDE.md
 CLAUDE.local.md
 .claude/
+
+# Project management (local, non committato)
+pm/
