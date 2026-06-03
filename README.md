@@ -1,48 +1,95 @@
-# Python doesn't byte 
+# Python doesn’t byte
 
-![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue?logo=github&link=https%3A%2F%2Fmarcofarina.github.io%2Fpython-doesnt-byte%2F)
-![Made with Markdown](https://img.shields.io/badge/Made%20with-Markdown-blue?logo=markdown)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/marcofarina/python-doesnt-byte/.github%2Fworkflows%2Fdeploy.yml)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+> Il libro di testo, reinventato.
 
-![Version](https://img.shields.io/badge/Book%20version-0.1%20(beta)-red)
+[![Sito](https://img.shields.io/badge/Sito-rainbowbits.cloud-1d68e1?logo=googlechrome&logoColor=white)](https://www.rainbowbits.cloud/python-doesnt-byte/)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/marcofarina/python-doesnt-byte/.github%2Fworkflows%2Fdeploy.yml?label=deploy)
+![Version](https://img.shields.io/badge/Book%20version-0.2.0-orange)
+![Docusaurus](https://img.shields.io/badge/Built%20with-Docusaurus%203-3ECC5F?logo=docusaurus&logoColor=white)
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-4584b6?logo=python&labelColor=ffde57)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
+**[Python doesn’t byte](https://www.rainbowbits.cloud/python-doesnt-byte/)** è un libro di testo digitale e open source per imparare Python, pensato per gli studenti della scuola secondaria di secondo grado — in particolare l’indirizzo _Informatica_ degli Istituti Tecnici e l’articolazione _Scienze Applicate_ del Liceo Scientifico.
 
-_[Python doesn't byte](https://marcofarina.github.io/python-doesnt-byte/)_ è un libro open source di informatica su Python per la scuola secondaria di secondo grado.
+Non è un PDF né un sito di sole pagine statiche: ogni esempio di codice **si esegue direttamente nel browser** (niente da installare), con un editor in-pagina e la possibilità di modificare, rieseguire e sperimentare.
 
 ## Perché questo libro?
-Ho scritto questo libro come risposta alla crescente necessità di modernizzare l'insegnamento dell'informatica per gli studenti delle scuole superiori, e in particolare l'indirizzo "Informatica" degli Istituti Tecnici e l'articolazione "Scienze Applicate" del Liceo Scientifico. Mentre i libri di testo cartacei tradizionali possono risultare antiquati nel contesto veloce e dinamico dell'informatica, ho scelto di adottare un approccio innovativo attraverso la pubblicazione online di un sito statico basato su Markdown.
 
-Il passaggio a un formato digitale offre diversi vantaggi. In primo luogo, il sito web consente una flessibilità totale nell'adattare i contenuti didattici ai miei corsi specifici. Posso aggiornare e modificare facilmente il materiale per riflettere gli ultimi sviluppi nel campo dell'informatica, garantendo che gli studenti abbiano accesso alla versione più aggiornata e pertinente del corso in ogni momento.
+Ho scritto questo libro come risposta alla crescente necessità di modernizzare l’insegnamento dell’informatica nelle scuole superiori. Mentre i libri di testo cartacei tradizionali possono risultare antiquati nel contesto veloce e dinamico dell’informatica, qui adotto un approccio diverso: un libro digitale, interattivo e in continua evoluzione.
 
-Oltre a ciò, l'approccio digitale permette l'integrazione di elementi multimediali, arricchendo l'esperienza di apprendimento degli studenti. Posso incorporare video, esempi interattivi e altri materiali che favoriscono un apprendimento più coinvolgente e pratico.
+Il formato digitale offre diversi vantaggi:
 
-Un altro vantaggio significativo è la natura pubblica e accessibile del sito. Gli studenti possono accedervi da qualsiasi luogo e in qualsiasi momento, eliminando le limitazioni spaziali e temporali associate ai libri di testo tradizionali. Questa accessibilità è cruciale per favorire un apprendimento continuo e autonomo.
+- **Flessibilità** — posso aggiornare e adattare i contenuti ai miei corsi e agli ultimi sviluppi del linguaggio in qualsiasi momento.
+- **Interattività** — esempi di codice eseguibili in-pagina, futuri algoritmi animati e materiali multimediali rendono l’apprendimento più pratico e coinvolgente.
+- **Accessibilità** — gli studenti vi accedono da qualsiasi luogo e in qualsiasi momento, gratuitamente.
+- **Apertura** — la licenza _open source_ promuove condivisione, collaborazione e revisione da parte della comunità.
 
-Infine, essendo un forte sostenitore della libertà dell'informazione, ho scelto di rilasciare il libro con una licenza _open source_ per promuovere la condivisione e la collaborazione. Chiunque può contribuire al miglioramento del materiale, garantendo una prospettiva diversificata e arricchente. Inoltre, l'accesso gratuito al libro supporta l'idea di rendere l'istruzione informatica più accessibile a un pubblico più ampio.
+## I quattro volumi
 
-## Descrizione del libro
+Il libro è organizzato in volumi indipendenti, ciascuno con la propria sidebar e il proprio percorso:
 
-Questo libro è progettato per fornire agli studenti una solida base nelle logiche della programmazione linguaggio Python. I capitoli sono strutturati per essere accessibili anche a chi si avvicina per la prima volta all'informatica, partendo dai meccanismi che stanno alla base del _problem solving_.
+| Volume | Titolo | Argomenti |
+|--------|--------|-----------|
+| 1 | **Manuale del Programmatore** | Fondamenti del linguaggio: dati, controllo di flusso, funzioni |
+| 2 | **Manuale dell’Artefice** | Programmazione ad oggetti: classi, ereditarietà, design pattern |
+| 3 | **Manuale dell’Archivista** | Dati e persistenza: file, SQLite, ORM, integrazione |
+| 4 | **Biblioteca dell’Apprendista** | Esercizi, sfide e progetti di laboratorio |
 
-Non sono quindi necessarie conoscenze pregresse di programmazione, ma è consigliato avere una buona comprensione dei concetti matematici di base e un pc per svolgere gli esercizi.
+> Il progetto è in fase di sviluppo attivo: alcuni volumi sono ancora in via di popolamento.
+
+## Stack tecnologico
+
+- **[Docusaurus 3](https://docusaurus.io/)** (React 18 + TypeScript) come generatore di sito statico.
+- **PyRunner** — runtime custom in-repo per eseguire Python nel browser, basato su **[Brython](https://brython.info/)** 3.12 + **[CodeMirror 6](https://codemirror.net/)**. Espone il fence ` ```py live ` e il componente `<PyRunner />` in MDX.
+- Contenuti in **MDX** (italiano), con componenti didattici custom (callout Notion-style, quiz, tooltip, indice dei capitoli).
+- **Smart quotes** tipografici applicati automaticamente in build (`remark-smartypants`).
+- Deploy automatico su **GitHub Pages** (dominio custom `www.rainbowbits.cloud`) via GitHub Actions.
+
+## Sviluppo locale
+
+Requisiti: **Node.js ≥ 20** e **npm**.
+
+```bash
+# Installa le dipendenze
+npm install
+
+# Avvia il dev server (hot-reload) su http://localhost:3000/python-doesnt-byte/
+npm start
+
+# Build di produzione (la stessa che gira in CI)
+npm run build
+
+# Servi localmente il sito buildato
+npm run serve
+```
+
+Controlli qualità:
+
+```bash
+npm run typecheck   # tsc
+npm run lint        # ESLint
+npm run format      # Prettier
+npm run clear       # svuota la cache di Docusaurus (.docusaurus/)
+```
 
 ## Contributi
 
-Questo è un progetto open source! Se hai suggerimenti, correzioni o nuovi materiali da condividere, sentiti libero di aprire una nuova issue o inviare una pull request.
+Questo è un progetto open source! Se hai suggerimenti, correzioni o nuovi materiali da condividere, sentiti libero di aprire una _issue_ o inviare una _pull request_. Prima di contribuire, dai un’occhiata al [Code of Conduct](code_of_conduct.md).
 
 ## Contatti
 
-Per domande o ulteriori informazioni puoi contattare l'autore scrivendo all'indirizzo e-mail marco.farina@jcmaxwell.it.
+Per domande o ulteriori informazioni puoi scrivere all’autore: **marco.farina@jcmaxwell.it**.
 
-## License
-<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><span property="dct:title">Python Doesn't Byte</span> by <span property="cc:attributionName">Marco Farina</span> is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-SA 4.0 <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p>
+## Licenza
+
+<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><span property="dct:title">Python Doesn’t Byte</span> by <span property="cc:attributionName">Marco Farina</span> is licensed under <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC-SA 4.0 <img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/sa.svg?ref=chooser-v1"></a></p>
 
 ## Donazioni
 
-Secondo il principio del _value for value_, se ritieni che questo progetto educativo ti abbia arricchito culturalmente, puoi considerare la possibilità di sostenerlo restituendo quel valore attraverso una donazione. Ogni contributo, per quanto modesto, rappresenta un riconoscimento dell'impegno per la crescita e il miglioramento della condivisione della conoscenza nella comunità educativa.
+Secondo il principio del _value for value_, se ritieni che questo progetto educativo ti abbia arricchito culturalmente, puoi considerare di sostenerlo restituendo quel valore attraverso una donazione. Ogni contributo, per quanto modesto, è un riconoscimento dell’impegno per la condivisione della conoscenza.
 
 ![Donazione Bitcoin](https://img.shields.io/badge/-Bitcoin-orange?logo=bitcoin)
 [![Donazione Lightning](https://img.shields.io/badge/-Lightning-yellow?logo=lightning)](https://getalby.com/p/marcofarina)
+[![Ko-fi](https://img.shields.io/badge/-Ko--fi-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/marcofarina)
 [![Donazione PayPal](https://img.shields.io/badge/-PayPal-blue?logo=paypal)](https://paypal.me/marcofarina84)
