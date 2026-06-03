@@ -33,7 +33,7 @@ export default function NavbarLogo(): ReactNode {
       )}
       <b className={`navbar__title text--truncate ${styles.title}`}>
         <span className={styles.brand}>Python</span>{' '}
-        <span className={styles.tagline}>doesn't byte</span>
+        <span className={styles.tagline}>doesn’t byte</span>
       </b>
     </Link>
   );
