@@ -598,8 +598,14 @@ body:has(.theme-doc-sidebar-container)::before {
 }
 
 .theme-doc-sidebar-menu > .menu__list-item {
-  counter-increment: pdb-chapter;
   margin: 0;
+}
+
+/* Solo le categorie top-level sono capitoli numerati: i link top-level di
+   servizio (Come usare, Introduzione) restano senza numero, in linea col
+   kicker "Capitolo NN" della pagina (che conta solo le categorie). */
+.theme-doc-sidebar-menu > .menu__list-item:has(> .menu__list-item-collapsible) {
+  counter-increment: pdb-chapter;
 }
 
 .theme-doc-sidebar-menu .menu__link {
@@ -628,7 +634,6 @@ body:has(.theme-doc-sidebar-container)::before {
   flex: 1;
 }
 
-.theme-doc-sidebar-menu > .menu__list-item > .menu__link::before,
 .theme-doc-sidebar-menu > .menu__list-item > .menu__list-item-collapsible .menu__link::before {
   content: counter(pdb-chapter, decimal-leading-zero);
   font-family: var(--font-mono-ui);
@@ -667,7 +672,6 @@ body:has(.theme-doc-sidebar-container)::before {
   background: var(--at-accent-bg);
 }
 
-.theme-doc-sidebar-menu > .menu__list-item > .menu__link--active::before,
 .theme-doc-sidebar-menu
   > .menu__list-item
   > .menu__list-item-collapsible--active
