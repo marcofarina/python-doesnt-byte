@@ -95,7 +95,7 @@ export function Toolbar({
             className={clsx(styles.iconBtn, styles.iconBtnExplain)}
             onClick={onExplain}
             aria-label="Spiegamelo facile (copia prompt)"
-            title="Copia un prompt per chiedere a un'IA di spiegarti questo codice"
+            title="Copia un prompt per chiedere a un’IA di spiegarti questo codice"
           >
             <FontAwesomeIcon icon={faWandMagicSparkles} />
           </button>

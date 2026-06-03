@@ -81,7 +81,7 @@ export default function Home(): JSX.Element {
             <span className="at-grad-text">Python</span>
             <br />
             <span className={`${styles.titleSecondary} at-grad-blue`}>
-              doesn't byte.
+              doesn’t byte.
             </span>
           </h1>
 
@@ -108,7 +108,7 @@ export default function Home(): JSX.Element {
             <VolumeCard
               to="/artefice/"
               kicker="Volume 2"
-              title="Manuale dell'Artefice"
+              title="Manuale dell’Artefice"
               desc="Programmazione ad oggetti: classi, ereditarietà, design pattern."
               icon={<BoxIcon />}
               accent="pink"
@@ -116,7 +116,7 @@ export default function Home(): JSX.Element {
             <VolumeCard
               to="/archivista/"
               kicker="Volume 3"
-              title="Manuale dell'Archivista"
+              title="Manuale dell’Archivista"
               desc="Dati e persistenza: file, SQLite, ORM, integrazione."
               icon={<DatabaseIcon />}
               accent="amber"
@@ -124,7 +124,7 @@ export default function Home(): JSX.Element {
             <VolumeCard
               to="/apprendista/"
               kicker="Volume 4"
-              title="Biblioteca dell'Apprendista"
+              title="Biblioteca dell’Apprendista"
               desc="Esercizi, sfide e progetti di laboratorio."
               icon={<FlaskIcon />}
               accent="green"
