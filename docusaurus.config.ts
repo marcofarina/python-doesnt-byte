@@ -56,6 +56,7 @@ export default async function createConfig(): Promise<Config> {
     onBrokenLinks: 'throw',
 
     markdown: {
+      mermaid: true,
       hooks: {
         onBrokenMarkdownLinks: 'warn',
       },
@@ -169,6 +170,8 @@ export default async function createConfig(): Promise<Config> {
         },
       ],
     ],
+
+    themes: ['@docusaurus/theme-mermaid'],
 
     themeConfig: {
       // Replace with your project's social card

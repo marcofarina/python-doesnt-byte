@@ -26,6 +26,7 @@
     "@codemirror/view": "^6.43.0",
     "@docusaurus/core": "^3.10.1",
     "@docusaurus/preset-classic": "^3.10.1",
+    "@docusaurus/theme-mermaid": "^3.10.1",
     "@fontsource/monaspace-argon": "^5.2.5",
     "@fontsource/monaspace-neon": "^5.2.5",
     "@fontsource/monaspace-radon": "^5.2.5",
