@@ -176,6 +176,13 @@ export default async function createConfig(): Promise<Config> {
     themeConfig: {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
+      mermaid: {
+        theme: {light: 'neutral', dark: 'dark'},
+        options: {
+          fontFamily: "'Monaspace Argon', ui-monospace, SFMono-Regular, monospace",
+          fontSize: 14,
+        },
+      },
       docs: {
         sidebar: {
           autoCollapseCategories: true,

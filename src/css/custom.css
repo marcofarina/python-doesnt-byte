@@ -958,3 +958,10 @@ main [class*='generatedIndexPage'] > p {
 .callout--danger     .callout__title { color: var(--callout-danger-fg); }
 .callout--note       { background: var(--callout-note-bg); }
 .callout--note       .callout__title { color: var(--callout-note-fg); }
+
+/* ─────────────── Mermaid diagrams ─────────────── */
+.docusaurus-mermaid-container {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
