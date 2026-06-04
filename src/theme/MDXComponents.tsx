@@ -6,6 +6,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 
 import InlineCode from '@site/src/components/InlineCode';
+import Epigraph from '@site/src/components/Epigraph';
 import Tooltip from '@site/src/components/Tooltip';
 import Quiz, {
   QuizDeck,
@@ -21,6 +22,7 @@ export default {
   ...MDXComponents,
   FAIcon: FontAwesomeIcon,
   InlineCode,
+  Epigraph,
   Tooltip,
   Quiz,
   QuizDeck,
