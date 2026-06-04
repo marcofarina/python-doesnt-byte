@@ -1,6 +1,9 @@
 import {
   Children,
+  cloneElement,
   isValidElement,
+  useEffect,
+  useRef,
   useState,
   type ReactElement,
   type ReactNode,
@@ -17,7 +20,9 @@ interface MarkerComponent {
 }
 
 function makeMarker(role: QuizRole): MarkerComponent {
-  const C = (({ children }: { children?: ReactNode }) => <>{children}</>) as MarkerComponent;
+  const C = (({ children }: { children?: ReactNode }) => (
+    <>{children}</>
+  )) as MarkerComponent;
   C.__quizRole = role;
   return C;
 }
@@ -65,7 +70,15 @@ function parseOption(node: ReactElement): ParsedOption {
   return { correct: !!props.correct, answer, feedback };
 }
 
-export default function Quiz({ children }: { children?: ReactNode }) {
+interface QuizProps {
+  children?: ReactNode;
+  /** Reso all'interno di un <QuizDeck>: niente cornice, kicker e footer propri. */
+  bare?: boolean;
+  /** Notifica al deck quando la domanda è risolta, col numero di tentativi. */
+  onSolved?: (attempts: number) => void;
+}
+
+export default function Quiz({ children, bare = false, onSolved }: QuizProps) {
   const [picked, setPicked] = useState<number[]>([]);
 
   let question: ReactNode = null;
@@ -83,6 +96,17 @@ export default function Quiz({ children }: { children?: ReactNode }) {
   const solvedIndex = picked.find((i) => options[i]?.correct);
   const solved = solvedIndex !== undefined;
 
+  // Notifica il deck (se presente) alla transizione "risolto", una sola volta.
+  const notifiedRef = useRef(false);
+  useEffect(() => {
+    if (solved && !notifiedRef.current) {
+      notifiedRef.current = true;
+      onSolved?.(picked.length);
+    } else if (!solved) {
+      notifiedRef.current = false;
+    }
+  }, [solved, picked.length, onSolved]);
+
   function handlePick(i: number) {
     if (solved) return;
     if (picked.includes(i)) return;
@@ -94,8 +118,8 @@ export default function Quiz({ children }: { children?: ReactNode }) {
   }
 
   return (
-    <div className={styles.quiz}>
-      <div className={styles.kicker}>Verifica</div>
+    <div className={bare ? styles.quizBare : styles.quiz}>
+      {!bare && <div className={styles.kicker}>Verifica</div>}
       <div className={styles.question}>{question}</div>
       <ul className={styles.options}>
         {options.map((opt, i) => {
@@ -144,7 +168,7 @@ export default function Quiz({ children }: { children?: ReactNode }) {
           );
         })}
       </ul>
-      {picked.length > 0 && (
+      {!bare && picked.length > 0 && (
         <div className={styles.footer}>
           <span className={styles.status}>
             {solved
@@ -163,3 +187,176 @@ export default function Quiz({ children }: { children?: ReactNode }) {
     </div>
   );
 }
+(Quiz as unknown as { __isQuiz: boolean }).__isQuiz = true;
+
+/* ─────────────────────────── QuizDeck ─────────────────────────── */
+
+function isQuizElement(node: ReactNode): node is ReactElement<QuizProps> {
+  if (!isValidElement(node)) return false;
+  const type = node.type as { __isQuiz?: boolean } | undefined;
+  return type?.__isQuiz === true;
+}
+
+export function QuizDeck({ children }: { children?: ReactNode }) {
+  const quizzes = Children.toArray(children).filter(isQuizElement);
+  const total = quizzes.length;
+
+  const [current, setCurrent] = useState(0);
+  const [solved, setSolved] = useState<boolean[]>(() =>
+    Array(total).fill(false),
+  );
+  const [attempts, setAttempts] = useState<number[]>(() =>
+    Array(total).fill(0),
+  );
+  const [resetNonce, setResetNonce] = useState(0);
+  // Indice la cui soluzione è in attesa di far avanzare il deck (null = nessuno).
+  const [pendingAdvance, setPendingAdvance] = useState<number | null>(null);
+
+  // Avanzamento automatico: dopo una breve pausa per leggere il feedback,
+  // passa alla domanda successiva — ma solo se siamo ancora su quella risolta.
+  useEffect(() => {
+    if (pendingAdvance === null) return undefined;
+    const idx = pendingAdvance;
+    const t = setTimeout(() => {
+      setCurrent((c) => (c === idx ? c + 1 : c));
+      setPendingAdvance(null);
+    }, 900);
+    return () => clearTimeout(t);
+  }, [pendingAdvance]);
+
+  if (total === 0) return null;
+
+  const solvedCount = solved.filter(Boolean).length;
+  const allSolved = solvedCount === total;
+  const onSummary = current >= total;
+
+  function handleSolved(index: number, att: number) {
+    setSolved((prev) => {
+      if (prev[index]) return prev;
+      const next = [...prev];
+      next[index] = true;
+      return next;
+    });
+    setAttempts((prev) => {
+      const next = [...prev];
+      next[index] = att;
+      return next;
+    });
+    setPendingAdvance(index);
+  }
+
+  function goPrev() {
+    setPendingAdvance(null);
+    setCurrent((c) => Math.max(0, c - 1));
+  }
+
+  function goNext() {
+    setPendingAdvance(null);
+    setCurrent((c) => (c < total && solved[c] ? c + 1 : c));
+  }
+
+  function restart() {
+    setPendingAdvance(null);
+    setSolved(Array(total).fill(false));
+    setAttempts(Array(total).fill(0));
+    setCurrent(0);
+    setResetNonce((n) => n + 1);
+  }
+
+  const canGoPrev = current > 0;
+  const canGoNext = !onSummary && current < total && solved[current];
+  const percent = Math.round((solvedCount / total) * 100);
+  const firstTry = attempts.filter((a) => a === 1).length;
+
+  return (
+    <div className={styles.deck}>
+      <div className={styles.deckHeader}>
+        <div className={styles.deckMeta}>
+          <span className={styles.kicker}>Verifica</span>
+          <span className={styles.counter}>
+            {onSummary
+              ? `${total} / ${total}`
+              : `Domanda ${current + 1} / ${total}`}
+          </span>
+        </div>
+        <div
+          className={styles.progress}
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={total}
+          aria-valuenow={solvedCount}
+          aria-label="Avanzamento del quiz"
+        >
+          <div
+            className={styles.progressBar}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </div>
+
+      <div className={styles.stage}>
+        {quizzes.map((quiz, i) => (
+          <div
+            key={`${resetNonce}-${i}`}
+            className={styles.pane}
+            hidden={onSummary || i !== current}
+          >
+            {cloneElement(quiz, {
+              bare: true,
+              onSolved: (att: number) => handleSolved(i, att),
+            })}
+          </div>
+        ))}
+
+        {onSummary && (
+          <div className={styles.summary}>
+            <span className={styles.summaryIcon} aria-hidden="true">
+              <FontAwesomeIcon icon={['fas', 'trophy']} />
+            </span>
+            <div className={styles.summaryTitle}>Quiz completato!</div>
+            <div className={styles.summaryScore}>
+              {firstTry} / {total} risolte al primo tentativo
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.deckFooter}>
+        <button
+          type="button"
+          className={styles.navBtn}
+          onClick={goPrev}
+          disabled={!canGoPrev}
+        >
+          <FontAwesomeIcon icon={['fas', 'arrow-left']} />
+          <span>Indietro</span>
+        </button>
+
+        {onSummary || allSolved ? (
+          <button type="button" className={styles.restart} onClick={restart}>
+            <FontAwesomeIcon
+              icon={['fas', 'arrow-rotate-left']}
+              className={styles.resetIcon}
+            />
+            Ricomincia
+          </button>
+        ) : (
+          <span className={styles.hint}>
+            {solved[current] ? 'Risolta' : 'Scegli la risposta corretta'}
+          </span>
+        )}
+
+        <button
+          type="button"
+          className={styles.navBtn}
+          onClick={goNext}
+          disabled={!canGoNext}
+        >
+          <span>Avanti</span>
+          <FontAwesomeIcon icon={['fas', 'arrow-right']} />
+        </button>
+      </div>
+    </div>
+  );
+}
+QuizDeck.displayName = 'QuizDeck';

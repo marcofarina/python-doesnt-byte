@@ -8,6 +8,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import InlineCode from '@site/src/components/InlineCode';
 import Tooltip from '@site/src/components/Tooltip';
 import Quiz, {
+  QuizDeck,
   QuizQuestion,
   QuizOption,
   QuizFeedback,
@@ -22,6 +23,7 @@ export default {
   InlineCode,
   Tooltip,
   Quiz,
+  QuizDeck,
   QuizQuestion,
   QuizOption,
   QuizFeedback,

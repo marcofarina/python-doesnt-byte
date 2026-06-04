@@ -31,6 +31,12 @@
   pointer-events: none;
 }
 
+/* Variante "bare": il Quiz vive dentro un QuizDeck, che fornisce cornice,
+   kicker e footer; qui togliamo solo il contenitore esterno. */
+.quizBare {
+  position: relative;
+}
+
 .kicker {
   font-family: var(--font-mono-ui);
   font-size: 0.72rem;
@@ -41,7 +47,7 @@
 }
 
 .question {
-  font-size: 1.05rem;
+  font-size: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
   line-height: 1.55;
   color: var(--at-fg-strong);
   margin-bottom: 1.25rem;
@@ -269,4 +275,183 @@ html[data-theme='dark'] .feedbackWrong {
 .feedback :global(.theme-code-block) {
   margin: 0.6rem 0;
   font-size: 0.85em;
+}
+
+/* ─────────────────────────── QuizDeck ─────────────────────────── */
+
+.deck {
+  margin: 2rem 0;
+  padding: 1.5rem 1.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--at-border);
+  background: var(--at-bg-panel);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+}
+
+.deck::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  padding: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(2, 132, 199, 0.25) 0%,
+    transparent 60%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.deckHeader {
+  margin-bottom: 1.25rem;
+}
+
+.deckMeta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+}
+
+.counter {
+  font-family: var(--font-mono-ui);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--at-muted-soft);
+}
+
+.progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border);
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--at-accent), #0ea5e9);
+  transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.stage {
+  position: relative;
+}
+
+/* I .pane non attivi usano l'attributo [hidden] (display:none),
+   così restano montati e conservano lo stato delle domande già risposte. */
+
+.summary {
+  text-align: center;
+  padding: 1.5rem 1rem 1rem;
+}
+
+.summaryIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: rgba(21, 128, 61, 0.1);
+  color: #15803d;
+  font-size: 1.3rem;
+  margin-bottom: 0.75rem;
+}
+
+.summaryTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--at-fg-strong);
+  margin-bottom: 0.35rem;
+}
+
+.summaryScore {
+  font-family: var(--font-mono-ui);
+  font-size: 0.9rem;
+  color: var(--at-muted-soft);
+}
+
+.deckFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--at-border);
+}
+
+.navBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--at-border);
+  background: transparent;
+  color: var(--at-fg-body);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    opacity 160ms ease;
+}
+
+.navBtn:hover:not(:disabled) {
+  border-color: var(--at-accent-chip-border);
+  background: var(--at-accent-chip);
+  color: var(--at-accent);
+}
+
+.navBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.hint {
+  font-size: 0.82rem;
+  color: var(--at-muted-soft);
+  font-family: var(--font-mono-ui);
+  text-align: center;
+}
+
+.restart {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.4rem 0.95rem;
+  border-radius: 6px;
+  border: 1px solid var(--at-accent-chip-border);
+  background: var(--at-accent-chip);
+  color: var(--at-accent);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.restart:hover {
+  border-color: var(--at-accent);
+}
+
+html[data-theme='dark'] .summaryIcon {
+  background: rgba(134, 239, 172, 0.12);
+  color: #86efac;
 }
