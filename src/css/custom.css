@@ -817,7 +817,7 @@ main [class*='generatedIndexPage'] > p {
 /* ─────────────── Notion-style callouts (admonition swizzle) ───────────────
    Palette per tipo: --callout-<tipo>-bg (sfondo blocco) e
    --callout-<tipo>-fg (titolo). I PNG sono multicolore: niente tint.
-   Light/dark gestiti via override delle variabili sotto [data-theme='dark'].
+   Light/dark gestiti via override delle variabili sotto html[data-theme='dark'].
 */
 
 :root {
@@ -851,7 +851,12 @@ main [class*='generatedIndexPage'] > p {
   --callout-note-fg:       oklch(45% 0 0);
 }
 
-[data-theme='dark'] {
+/* html[…] per alzare la specificità a (0,1,1): il transform oklch→display-p3
+   emette i fallback P3 dei valori light in `@media (color-gamut: p3) :root {…}`
+   in coda al file. Con un `[data-theme='dark']` nudo (0,1,0) quei :root, a pari
+   specificità ma più in basso nel sorgente, vincono e su display P3 i callout
+   tornano chiari in dark mode. `html[data-theme='dark']` li batte sempre. */
+html[data-theme='dark'] {
   --callout-prereq-bg:     oklch(26% 0.04 245);
   --callout-prereq-fg:     oklch(78% 0.12 240);
   --callout-learn-bg:      oklch(27% 0.05 350);
