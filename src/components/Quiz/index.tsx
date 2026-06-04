@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import styles from './styles.module.css';
 
 type QuizRole = 'question' | 'option' | 'feedback';
@@ -25,6 +26,17 @@ function makeMarker(role: QuizRole): MarkerComponent {
   )) as MarkerComponent;
   C.__quizRole = role;
   return C;
+}
+
+/** Contenuto del kicker "Mettiti alla prova" con l'icona del quiz. */
+function QuizKicker() {
+  const icon = useBaseUrl('/img/icons/quiz.png');
+  return (
+    <>
+      <img src={icon} alt="" aria-hidden="true" className={styles.kickerIcon} />
+      Mettiti alla prova
+    </>
+  );
 }
 
 export const QuizQuestion = makeMarker('question');
@@ -119,7 +131,11 @@ export default function Quiz({ children, bare = false, onSolved }: QuizProps) {
 
   return (
     <div className={bare ? styles.quizBare : styles.quiz}>
-      {!bare && <div className={styles.kicker}>Verifica</div>}
+      {!bare && (
+        <div className={styles.kicker}>
+          <QuizKicker />
+        </div>
+      )}
       <div className={styles.question}>{question}</div>
       <ul className={styles.options}>
         {options.map((opt, i) => {
@@ -144,14 +160,16 @@ export default function Quiz({ children, bare = false, onSolved }: QuizProps) {
                 className={`${styles.option} ${state !== 'idle' ? styles[state] : ''}`}
                 aria-pressed={isPicked}
               >
-                <span className={styles.marker} aria-hidden="true">
-                  {state === 'correct' || state === 'reveal' ? (
-                    <FontAwesomeIcon icon={['fas', 'check']} />
-                  ) : state === 'wrong' ? (
-                    <FontAwesomeIcon icon={['fas', 'xmark']} />
-                  ) : (
-                    letter
-                  )}
+                <span className={styles.markerWrap} aria-hidden="true">
+                  <span className={styles.marker}>
+                    {state === 'correct' || state === 'reveal' ? (
+                      <FontAwesomeIcon icon={['fas', 'check']} />
+                    ) : state === 'wrong' ? (
+                      <FontAwesomeIcon icon={['fas', 'xmark']} />
+                    ) : (
+                      letter
+                    )}
+                  </span>
                 </span>
                 <span className={styles.answer}>{opt.answer}</span>
               </button>
@@ -272,7 +290,9 @@ export function QuizDeck({ children }: { children?: ReactNode }) {
     <div className={styles.deck}>
       <div className={styles.deckHeader}>
         <div className={styles.deckMeta}>
-          <span className={styles.kicker}>Verifica</span>
+          <span className={styles.kicker}>
+            <QuizKicker />
+          </span>
           <span className={styles.counter}>
             {onSummary
               ? `${total} / ${total}`
