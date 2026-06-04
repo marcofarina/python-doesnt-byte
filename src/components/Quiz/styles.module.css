@@ -1,7 +1,7 @@
 .quiz {
-  margin: 2rem 0;
-  padding: 1.5rem 1.75rem;
-  border-radius: 12px;
+  margin: 1.75rem 0;
+  padding: 1.1rem 1.3rem;
+  border-radius: 11px;
   border: 1px solid var(--at-border);
   background: var(--at-bg-panel);
   backdrop-filter: blur(20px);
@@ -37,20 +37,32 @@
   position: relative;
 }
 
+/* Stesso font/dimensione/peso dei titoli dei callout (.callout__title:
+   --font-display, 1.5rem, 700, line-height 1). */
 .kicker {
-  font-family: var(--font-mono-ui);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
   color: var(--at-accent);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.kickerIcon {
+  width: 1.6rem;
+  height: 1.6rem;
+  object-fit: contain;
+  display: block;
 }
 
 .question {
   font-size: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
   line-height: 1.55;
   color: var(--at-fg-strong);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .question > :last-child {
@@ -63,7 +75,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .optionRow {
@@ -75,10 +87,10 @@
 .option {
   display: flex;
   align-items: flex-start;
-  gap: 0.85rem;
+  gap: 0.7rem;
   width: 100%;
   text-align: left;
-  padding: 0.75rem 0.95rem;
+  padding: 0.6rem 0.8rem;
   border-radius: 9px;
   border: 1px solid var(--at-border);
   background: var(--at-bg-subtle);
@@ -105,10 +117,19 @@
   cursor: default;
 }
 
-.marker {
+/* Il wrapper è alto quanto una riga di testo dell'opzione (line-height 1.55):
+   così il tondo resta centrato verticalmente sulla prima riga, sia per
+   risposte a una riga sia per quelle che vanno a capo. */
+.markerWrap {
   flex: 0 0 auto;
-  width: 1.65rem;
-  height: 1.65rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: calc(1.55em);
+}
+
+.marker {
+  width: 1.5rem;
+  height: 1.5rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -116,7 +137,7 @@
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
   font-family: var(--font-mono-ui);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--at-muted-soft);
   line-height: 1;
@@ -165,11 +186,11 @@
 }
 
 .feedback {
-  margin: 0.5rem 0 0.25rem;
-  padding: 0.75rem 1rem;
+  margin: 0.4rem 0 0.2rem;
+  padding: 0.6rem 0.85rem;
   border-radius: 8px;
   border-left: 3px solid;
-  font-size: 0.95em;
+  font-size: 0.9em;
   line-height: 1.55;
   color: var(--at-fg-body);
 }
@@ -193,13 +214,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 1rem;
-  padding-top: 0.85rem;
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
   border-top: 1px dashed var(--at-border);
 }
 
 .status {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   color: var(--at-muted-soft);
   font-family: var(--font-mono-ui);
 }
@@ -209,8 +230,8 @@
   align-items: center;
   gap: 0.45rem;
   font: inherit;
-  font-size: 0.85rem;
-  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.8rem;
   border-radius: 6px;
   border: 1px solid var(--at-border);
   background: transparent;
@@ -280,9 +301,9 @@ html[data-theme='dark'] .feedbackWrong {
 /* ─────────────────────────── QuizDeck ─────────────────────────── */
 
 .deck {
-  margin: 2rem 0;
-  padding: 1.5rem 1.75rem;
-  border-radius: 12px;
+  margin: 1.75rem 0;
+  padding: 1.1rem 1.3rem;
+  border-radius: 11px;
   border: 1px solid var(--at-border);
   background: var(--at-bg-panel);
   backdrop-filter: blur(20px);
@@ -313,20 +334,20 @@ html[data-theme='dark'] .feedbackWrong {
 }
 
 .deckHeader {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .deckMeta {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.55rem;
 }
 
 .counter {
   font-family: var(--font-mono-ui);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   letter-spacing: 0.04em;
   color: var(--at-muted-soft);
 }
@@ -355,32 +376,32 @@ html[data-theme='dark'] .feedbackWrong {
 
 .summary {
   text-align: center;
-  padding: 1.5rem 1rem 1rem;
+  padding: 1.1rem 1rem 0.6rem;
 }
 
 .summaryIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: 2.6rem;
+  height: 2.6rem;
   border-radius: 50%;
   background: rgba(21, 128, 61, 0.1);
   color: #15803d;
-  font-size: 1.3rem;
-  margin-bottom: 0.75rem;
+  font-size: 1.15rem;
+  margin-bottom: 0.6rem;
 }
 
 .summaryTitle {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--at-fg-strong);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.3rem;
 }
 
 .summaryScore {
   font-family: var(--font-mono-ui);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--at-muted-soft);
 }
 
@@ -389,8 +410,8 @@ html[data-theme='dark'] .feedbackWrong {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-top: 1.25rem;
-  padding-top: 0.85rem;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
   border-top: 1px dashed var(--at-border);
 }
 
@@ -399,8 +420,8 @@ html[data-theme='dark'] .feedbackWrong {
   align-items: center;
   gap: 0.45rem;
   font: inherit;
-  font-size: 0.85rem;
-  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.8rem;
   border-radius: 6px;
   border: 1px solid var(--at-border);
   background: transparent;
@@ -424,7 +445,7 @@ html[data-theme='dark'] .feedbackWrong {
 }
 
 .hint {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--at-muted-soft);
   font-family: var(--font-mono-ui);
   text-align: center;
@@ -435,8 +456,8 @@ html[data-theme='dark'] .feedbackWrong {
   align-items: center;
   gap: 0.45rem;
   font: inherit;
-  font-size: 0.85rem;
-  padding: 0.4rem 0.95rem;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.9rem;
   border-radius: 6px;
   border: 1px solid var(--at-accent-chip-border);
   background: var(--at-accent-chip);
