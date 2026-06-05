@@ -1,0 +1,152 @@
+/* ─────────────── Epigrafe — Beam card ───────────────
+   Citazione d'apertura capitolo: card con bordo a fascio di luce animato,
+   watermark a virgolette e attribuzione come chip mono. Theme-aware tramite
+   le variabili --at-* del tema Atmospheric (vedi src/css/custom.css). */
+
+@property --epi-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes epi-rotate {
+  to {
+    --epi-angle: 360deg;
+  }
+}
+
+.figure {
+  position: relative;
+  isolation: isolate;
+  border-radius: 18px;
+  margin: 0 0 40px;
+  padding: 1.5px; /* spessore del fascio */
+  background: var(--at-bg-subtle);
+  /* colore del watermark, sovrascritto in dark più sotto */
+  --epi-mark: rgba(2, 132, 199, 0.1);
+}
+
+:global(html[data-theme='dark']) .figure {
+  --epi-mark: rgba(125, 211, 252, 0.1);
+}
+
+/* Bordo a fascio di luce animato (conic-gradient mascherato ad anello) */
+.figure::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--epi-angle),
+    transparent 58%,
+    var(--at-beam-1) 76%,
+    var(--at-beam-2) 88%,
+    var(--at-beam-3) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: epi-rotate 6s linear infinite;
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  overflow: hidden;
+  border-radius: 17px;
+  padding: 34px 40px 32px;
+  background: linear-gradient(
+    135deg,
+    var(--at-accent-bg),
+    var(--at-bg-panel) 60%
+  );
+}
+
+/* Watermark a virgolette */
+.mark {
+  position: absolute;
+  top: -26px;
+  left: 18px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 170px;
+  line-height: 1;
+  color: var(--epi-mark);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Citazione — selettore con specificità sufficiente a battere
+   `.theme-doc-markdown blockquote` di custom.css */
+.figure .quote {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.46;
+  color: var(--at-fg);
+  max-width: 34ch;
+}
+
+.figure .quote p {
+  margin: 0;
+}
+
+.figure .quote p + p {
+  margin-top: 0.6em;
+}
+
+/* Frase evidenziata via **grassetto** in MDX */
+.figure .quote strong {
+  color: var(--at-fg-strong);
+  font-weight: 600;
+}
+
+/* Attribuzione — chip mono */
+.author {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 24px;
+  padding: 6px 14px 6px 12px;
+  border-radius: 999px;
+  background: var(--at-accent-chip);
+  border: 1px solid var(--at-accent-chip-border);
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--at-accent-soft);
+}
+
+.authorIcon {
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .inner {
+    padding: 28px 24px 26px;
+  }
+  .figure .quote {
+    font-size: 21px;
+  }
+  .mark {
+    top: -18px;
+    left: 12px;
+    font-size: 120px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .figure::before {
+    animation: none;
+  }
+}
