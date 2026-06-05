@@ -31,15 +31,24 @@ const VOLUMES: Volume[] = [
   {
     id: 'artefice',
     short: 'Artefice',
-    label: 'Manuale dell\'Artefice',
+    label: "Manuale dell'Artefice",
     accent: 'pink',
-    chapters: [{ title: 'Introduzione', to: '/artefice/' }],
+    chapters: [
+      { title: 'Introduzione', to: '/artefice/' },
+      { title: 'Perché gli oggetti?', to: '/artefice/perche-gli-oggetti' },
+      { title: 'Classi, istanze e metodi', to: '/artefice/classi-e-istanze' },
+      {
+        title: 'Metodi di classe e statici',
+        to: '/artefice/metodi-di-classe-e-statici',
+      },
+      { title: 'Mostrare un oggetto', to: '/artefice/mostrare-un-oggetto' },
+    ],
     draft: true,
   },
   {
     id: 'archivista',
     short: 'Archivista',
-    label: 'Manuale dell\'Archivista',
+    label: "Manuale dell'Archivista",
     accent: 'amber',
     chapters: [{ title: 'Introduzione', to: '/archivista/' }],
     draft: true,
@@ -47,7 +56,7 @@ const VOLUMES: Volume[] = [
   {
     id: 'apprendista',
     short: 'Apprendista',
-    label: 'Biblioteca dell\'Apprendista',
+    label: "Biblioteca dell'Apprendista",
     accent: 'green',
     chapters: [{ title: 'Introduzione', to: '/apprendista/' }],
     draft: true,
@@ -85,9 +94,7 @@ function Row({ chapter, index }: { chapter: Chapter; index: number }) {
   return (
     <Link ref={ref} to={chapter.to} onMouseMove={onMove} className={styles.row}>
       <div className={styles.rowInner}>
-        <span className={styles.num}>
-          {String(index + 1).padStart(2, '0')}
-        </span>
+        <span className={styles.num}>{String(index + 1).padStart(2, '0')}</span>
         <span className={styles.title}>{chapter.title}</span>
         <span className={styles.arrow}>
           <ArrowRight />
