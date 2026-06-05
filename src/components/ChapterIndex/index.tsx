@@ -41,6 +41,7 @@ const VOLUMES: Volume[] = [
         title: 'Metodi di classe e statici',
         to: '/artefice/metodi-di-classe-e-statici',
       },
+      { title: 'Mostrare un oggetto', to: '/artefice/mostrare-un-oggetto' },
     ],
     draft: true,
   },
