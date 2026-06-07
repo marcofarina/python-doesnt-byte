@@ -205,8 +205,13 @@ html[data-theme='dark'] {
   --ifm-color-primary-lightest: #6095ea;
   --ifm-code-font-size: 80%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
-  --ifm-heading-font-family:
-    'Optimistic Display', sistem-ui, -apple-system, sans-serif;
+  /* Font di base dell'intero sito: serif editoriale (Crimson Pro) per il corpo
+     e i titoli. Così ogni pagina nuova — incluse le pagine standalone in
+     src/pages/ (es. /perche-python, /support) — eredita la tipografia del libro
+     senza override per-pagina. Le viste docs (.theme-doc-markdown) e la homepage
+     (.page) hanno comunque i propri override più specifici. */
+  --ifm-font-family-base: var(--font-body);
+  --ifm-heading-font-family: var(--font-display);
   --ifm-heading-color: #011d4a;
 
   --home-hero-grid-icon-background: #f8f9fa;
@@ -552,6 +557,67 @@ html[data-theme='light'] .footer__logo {
 }
 
 .theme-doc-markdown strong {
+  color: var(--at-fg-strong);
+  font-weight: 700;
+}
+
+/* ─────────────── Pagine MDX standalone (src/pages/*.mdx) ───────────────
+   Pagine come /perche-python e /support non ricevono la classe
+   .theme-doc-markdown delle docs, quindi cadrebbero sulla scala tipografica
+   di default Infima (corpo 16px, titoli più piccoli) risultando sproporzionate
+   rispetto al libro. Qui allineo la "reading view" a quella dei capitoli.
+   Tenere i valori in sync con il blocco .theme-doc-markdown qui sopra. */
+[class*='mdxPageWrapper'] article {
+  font-size: clamp(1.125rem, 1.05rem + 0.4vw, 1.3125rem);
+  line-height: 1.6;
+  color: var(--at-fg-body);
+}
+
+[class*='mdxPageWrapper'] article h1 {
+  background: var(--at-grad-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  padding-bottom: 0.18em;
+  margin-bottom: 0.5em;
+}
+
+[class*='mdxPageWrapper'] article h2 {
+  color: var(--at-fg-strong);
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 2.75em 0 0.6em;
+}
+
+[class*='mdxPageWrapper'] article h3 {
+  color: var(--at-fg-strong);
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 2em 0 0.5em;
+}
+
+[class*='mdxPageWrapper'] article a:not(.button) {
+  color: var(--at-accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--at-accent-chip-border);
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+[class*='mdxPageWrapper'] article a:not(.button):hover {
+  color: var(--at-accent-soft);
+  border-bottom-color: var(--at-accent);
+}
+
+[class*='mdxPageWrapper'] article strong {
   color: var(--at-fg-strong);
   font-weight: 700;
 }

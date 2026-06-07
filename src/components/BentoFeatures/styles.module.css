@@ -21,8 +21,8 @@
 }
 
 .subtitle {
-  color: var(--at-muted);
-  font-size: 16px;
+  color: var(--at-muted-soft);
+  font-size: 18px;
   max-width: 480px;
   margin: 0 auto;
   line-height: 1.6;
