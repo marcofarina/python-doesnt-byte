@@ -5,47 +5,59 @@ description: I pregiudizi più comuni su Python — lentezza, semplicità, “no
 
 # Perché Python?
 
+<Epigraph author="Guido van Rossum, creatore di Python">
+  Il codice viene **letto molto più spesso** di quanto venga scritto.
+</Epigraph>
+
 Quando si dice che si sta imparando a programmare in Python, prima o poi arriva qualcuno con la frase pronta: *“È lento”, “è un linguaggio per principianti”, “non è abbastanza serio per il lavoro vero”*. Sono giudizi che girano da anni, ripetuti con sicurezza. Eppure, appena si inizia a programmare sul serio, ci si accorge che la maggior parte di queste idee sono più **miti** che realtà.
 
 Vale la pena smontarli uno per uno — anche perché capire *perché* uno strumento è fatto in un certo modo è già un pezzo di educazione informatica.
 
-## “È lento”
+## “È lento” {#mito-velocita}
 
 È vero: nell’esecuzione pura, Python non è il linguaggio più rapido del mondo. Ma “velocità” non vuol dire una cosa sola. Esiste la velocità con cui un programma *gira*, e quella con cui un programma viene *scritto, capito e corretto*. Python eccelle nella seconda: meno codice, più chiaro, in meno tempo.
 
 E quasi sempre è la seconda quella che conta. Un programma che impiega qualche frazione di secondo in più a girare, ma che ti fa risparmiare giorni di sviluppo e di debugging, resta un affare enorme. Il tempo di una persona costa molto più di qualche ciclo di CPU.
 
-## “È interpretato, quindi non è professionale”
+## “È interpretato, quindi non è professionale” {#mito-interpretato}
 
 Che Python sia un linguaggio interpretato viene spesso citato come un difetto. In realtà è spesso il contrario: puoi scrivere una riga, eseguirla e vedere subito il risultato, senza aspettare lunghe compilazioni. Provi, sbagli, correggi, riprovi — in pochi secondi.
 
-Questa immediatezza è esattamente lo spirito di *Python doesn’t byte*: ogni blocco di codice che incontri lo puoi **eseguire e modificare direttamente nella pagina**, senza installare nulla. Non è una scorciatoia da principianti, è lo stesso modo di lavorare che si usa quando si costruisce un prototipo o un prodotto da far evolvere in fretta. Sperimentare senza attrito è un valore, non una mancanza.
+Questa immediatezza è esattamente lo spirito di *Python doesn’t byte*: ogni blocco di codice che incontri lo puoi **eseguire e modificare direttamente nella pagina**, senza installare nulla. Non è una scorciatoia da principianti, è lo stesso modo di lavorare che si usa quando si costruisce un prototipo o un prodotto da far evolvere in fretta. Sperimentare senza attrito è un valore, non una mancanza. Non ci credi? Eccone
+la prova: cambia il messaggio qui sotto e premi **Esegui**.
 
-## “È troppo semplice”
+<PyRunner
+  title="Il tuo primo Python, qui nella pagina"
+  noExplain
+  code={`messaggio = "L'ho eseguito io, senza installare niente!"
+print(messaggio)`}
+/>
+
+## “È troppo semplice” {#mito-semplice}
 
 C’è chi confonde la semplicità con il limite. Ma un linguaggio leggibile ti lascia concentrare sul **problema** invece che sui dettagli del linguaggio. La sintassi di Python somiglia tanto allo pseudocodice che si usa per ragionare su un algoritmo: questo significa che, mentre impari, stai imparando *i concetti* della programmazione — variabili, cicli, funzioni, oggetti — e non un mucchio di simboli da memorizzare.
 
 È un vantaggio doppio. Per chi inizia, perché l’attenzione resta sulla logica. E per chiunque, perché un codice leggibile contiene meno errori, è più facile da mantenere e si lascia leggere dai colleghi: programmare in gruppo diventa possibile. Quello che impari qui, poi, non resta chiuso in Python — i concetti si trasferiscono a qualsiasi altro linguaggio incontrerai dopo.
 
-## “Se è lento, com’è che muove l’intelligenza artificiale?”
+## “Se è lento, com’è che muove l’intelligenza artificiale?” {#mito-ia}
 
 È forse il paradosso più interessante. Come può un linguaggio “lento” essere così centrale nel campo che richiede i calcoli più pesanti al mondo?
 
 La risposta è che Python, in quei casi, quei calcoli non li fa quasi mai *direttamente*. Fa da **collante**: un’interfaccia comoda e leggibile verso librerie potentissime scritte in linguaggi molto più veloci (C, C++, Fortran). Tu scrivi poche righe chiare, e sotto il cofano girano motori ottimizzati al massimo. Python unisce la facilità d’uso in superficie e le alte prestazioni in profondità — ed è proprio questa combinazione a renderlo lo standard di fatto per dati e IA.
 
-## “Non regge le grandi applicazioni”
+## “Non regge le grandi applicazioni” {#mito-scala}
 
 Anche questa non sta in piedi. Quando un software diventa grande, il fattore decisivo non è tanto *quale linguaggio* hai scelto, ma *come* lo hai progettato. I sistemi moderni non sono un unico blocco monolitico: sono fatti di tanti servizi che collaborano, ciascuno con un compito preciso. In un’architettura del genere Python svolge benissimo il ruolo di coordinamento e di colla tra i pezzi — e infatti lo fa, dentro aziende che servono milioni di persone.
 
-## “La sintassi facile nasconde la vera programmazione”
+## “La sintassi facile nasconde la vera programmazione” {#mito-astrazione}
 
 L’ultima obiezione è quasi filosofica: nascondere la complessità non sarebbe “barare”? No. C’è una differenza tra complessità *essenziale* — quella del problema che stai risolvendo — e complessità *accidentale*, quella imposta dallo strumento. Togliere di mezzo la seconda non impoverisce il lavoro: lo rende più accessibile e ti permette di trasformare un’idea in qualcosa di concreto con meno ostacoli in mezzo. Che, alla fine, è il punto di tutta la programmazione.
 
-## E poi è libero
+## E poi è libero {#libero}
 
 C’è un ultimo motivo, che con questo libro condividiamo nel profondo: Python è **gratuito, open source e multipiattaforma**. Gira su Windows, macOS e Linux, non costa niente, e chiunque può leggerne e studiarne il funzionamento. Per la scuola è la condizione ideale: nessuna licenza da comprare, nessuna barriera economica tra uno studente e lo strumento. L’informazione — e gli strumenti per costruirla — vogliono essere liberi.
 
-## Il vero valore
+## Il vero valore {#valore}
 
 Il valore di Python, allora, non sta nell’essere il linguaggio più veloce o il più complicato. Sta nell’essere uno strumento **efficace, leggibile e versatile**: facile abbastanza da non spaventare chi inizia, potente abbastanza da costruirci cose reali. È per questo che resta, nonostante i pregiudizi, uno dei modi migliori per *imparare, sperimentare e costruire*.
 

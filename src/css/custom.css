@@ -622,6 +622,50 @@ html[data-theme='light'] .footer__logo {
   font-weight: 700;
 }
 
+/* ─── Icone duotone (FA Pro) accanto ai titoli di /perche-python ───
+   Rese via mask-image: prendono l'accent del sito (due toni grazie alle
+   opacity .4/1 dei layer duotone) e restano leggibili sia in dark che light.
+   L'icona di ogni sezione è scelta dalla custom property --sec-icon sul
+   rispettivo h2. Gli SVG stanno in src/css/icons/: webpack li impacchetta e gestisce il baseUrl. */
+[class*='mdxPageWrapper'] article h2[id^='mito-']::before,
+[class*='mdxPageWrapper'] article h2#libero::before,
+[class*='mdxPageWrapper'] article h2#valore::before {
+  content: '';
+  display: inline-block;
+  width: 0.95em;
+  height: 0.95em;
+  margin-right: 0.5em;
+  vertical-align: -0.04em;
+  background-color: var(--at-accent);
+  -webkit-mask: var(--sec-icon) center / contain no-repeat;
+  mask: var(--sec-icon) center / contain no-repeat;
+}
+
+[class*='mdxPageWrapper'] article h2#mito-velocita {
+  --sec-icon: url(./icons/perche-python/rabbit-running.svg);
+}
+[class*='mdxPageWrapper'] article h2#mito-interpretato {
+  --sec-icon: url(./icons/perche-python/square-terminal.svg);
+}
+[class*='mdxPageWrapper'] article h2#mito-semplice {
+  --sec-icon: url(./icons/perche-python/feather.svg);
+}
+[class*='mdxPageWrapper'] article h2#mito-ia {
+  --sec-icon: url(./icons/perche-python/microchip-ai.svg);
+}
+[class*='mdxPageWrapper'] article h2#mito-scala {
+  --sec-icon: url(./icons/perche-python/sitemap.svg);
+}
+[class*='mdxPageWrapper'] article h2#mito-astrazione {
+  --sec-icon: url(./icons/perche-python/layer-group.svg);
+}
+[class*='mdxPageWrapper'] article h2#libero {
+  --sec-icon: url(./icons/perche-python/lock-open.svg);
+}
+[class*='mdxPageWrapper'] article h2#valore {
+  --sec-icon: url(./icons/perche-python/gem.svg);
+}
+
 /* ─────────────── Atmospheric — Base background ─────────────── */
 
 html,
