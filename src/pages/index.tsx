@@ -1,5 +1,6 @@
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
 
 import VolumeCard from '@site/src/components/VolumeCard';
@@ -130,6 +131,17 @@ export default function Home(): JSX.Element {
               accent="green"
             />
           </div>
+
+          <p
+            className={`${styles.whyPython} at-fade-up`}
+            style={{ animationDelay: '0.55s' }}
+          >
+            Lento? Da principianti? Poco serio? I pregiudizi su Python sono più
+            miti che realtà.{' '}
+            <Link to="/perche-python" className={styles.whyPythonLink}>
+              Perché Python? →
+            </Link>
+          </p>
         </section>
 
         <BentoFeatures />
