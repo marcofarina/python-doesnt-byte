@@ -359,6 +359,10 @@ html[data-theme='dark'] .markdown :not(pre) > code {
   color: var(--at-fg-strong);
 }
 
+.dropdown__link {
+  font-size: 15px;
+}
+
 /* ─────────────── Atmospheric — Footer ─────────────── */
 
 .footer {

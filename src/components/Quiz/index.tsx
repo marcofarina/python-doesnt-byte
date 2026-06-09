@@ -238,7 +238,7 @@ export function QuizDeck({ children }: { children?: ReactNode }) {
     const t = setTimeout(() => {
       setCurrent((c) => (c === idx ? c + 1 : c));
       setPendingAdvance(null);
-    }, 900);
+    }, 5000);
     return () => clearTimeout(t);
   }, [pendingAdvance]);
 
@@ -348,8 +348,10 @@ export function QuizDeck({ children }: { children?: ReactNode }) {
           onClick={goPrev}
           disabled={!canGoPrev}
         >
-          <FontAwesomeIcon icon={['fas', 'arrow-left']} />
-          <span>Indietro</span>
+          <span className={styles.navBtnLabel}>
+            <FontAwesomeIcon icon={['fas', 'arrow-left']} />
+            <span>Indietro</span>
+          </span>
         </button>
 
         {onSummary || allSolved ? (
@@ -368,12 +370,17 @@ export function QuizDeck({ children }: { children?: ReactNode }) {
 
         <button
           type="button"
-          className={styles.navBtn}
+          className={`${styles.navBtn}${pendingAdvance === current ? ` ${styles.navBtnFill}` : ''}`}
           onClick={goNext}
           disabled={!canGoNext}
         >
-          <span>Avanti</span>
-          <FontAwesomeIcon icon={['fas', 'arrow-right']} />
+          {pendingAdvance === current && (
+            <span className={styles.fillBar} aria-hidden="true" />
+          )}
+          <span className={styles.navBtnLabel}>
+            <span>Avanti</span>
+            <FontAwesomeIcon icon={['fas', 'arrow-right']} />
+          </span>
         </button>
       </div>
     </div>
