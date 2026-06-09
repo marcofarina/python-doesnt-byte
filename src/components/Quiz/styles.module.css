@@ -418,10 +418,9 @@ html[data-theme='dark'] .feedbackWrong {
 .navBtn {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
   font: inherit;
-  font-size: 0.8rem;
-  padding: 0.35rem 0.8rem;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.9rem;
   border-radius: 6px;
   border: 1px solid var(--at-border);
   background: transparent;
@@ -433,6 +432,14 @@ html[data-theme='dark'] .feedbackWrong {
     opacity 160ms ease;
 }
 
+.navBtnLabel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .navBtn:hover:not(:disabled) {
   border-color: var(--at-accent-chip-border);
   background: var(--at-accent-chip);
@@ -442,6 +449,28 @@ html[data-theme='dark'] .feedbackWrong {
 .navBtn:disabled {
   opacity: 0.35;
   cursor: default;
+}
+
+/* Fill animation sul pulsante Avanti durante il countdown automatico */
+@keyframes navFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.navBtnFill {
+  position: relative;
+  overflow: hidden;
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-accent);
+}
+
+.fillBar {
+  position: absolute;
+  inset: 0;
+  background: var(--at-accent-chip);
+  transform-origin: left;
+  animation: navFill 5s linear forwards;
+  pointer-events: none;
 }
 
 .hint {
