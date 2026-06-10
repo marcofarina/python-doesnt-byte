@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { EditorState, Compartment } from '@codemirror/state';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { EditorState, Compartment, type Extension } from '@codemirror/state';
 import {
   EditorView,
   keymap,
@@ -104,6 +104,8 @@ export interface EditorProps {
   readonly?: boolean;
   onChange?: (code: string) => void;
   onRun?: () => void;
+  /** Estensione di linguaggio CodeMirror. Default: Python. */
+  language?: Extension;
 }
 
 export interface EditorHandle {
@@ -111,19 +113,28 @@ export interface EditorHandle {
   setCode: (next: string) => void;
 }
 
-export function Editor({
-  initialCode,
-  showLineNumbers,
-  readonly = false,
-  onChange,
-  onRun,
-  handleRef,
-}: EditorProps & {
-  handleRef?: { current: EditorHandle | null };
-}) {
+export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
+  { initialCode, showLineNumbers, readonly = false, onChange, onRun, language },
+  ref,
+) {
   const hostRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
   const readOnlyCompartment = useRef(new Compartment()).current;
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      getCode: () => viewRef.current?.state.doc.toString() ?? '',
+      setCode: (next: string) => {
+        const view = viewRef.current;
+        if (!view) return;
+        view.dispatch({
+          changes: { from: 0, to: view.state.doc.length, insert: next },
+        });
+      },
+    }),
+    [],
+  );
 
   useEffect(() => {
     if (!hostRef.current) return;
@@ -136,7 +147,7 @@ export function Editor({
       indentUnit.of('    '),
       highlightActiveLine(),
       syntaxHighlighting(atmosphericHighlight),
-      python(),
+      language ?? python(),
       keymap.of([
         ...defaultKeymap,
         ...historyKeymap,
@@ -168,22 +179,13 @@ export function Editor({
 
     viewRef.current = view;
 
-    if (handleRef) {
-      handleRef.current = {
-        getCode: () => view.state.doc.toString(),
-        setCode: (next: string) => {
-          view.dispatch({
-            changes: { from: 0, to: view.state.doc.length, insert: next },
-          });
-        },
-      };
-    }
-
     return () => {
       view.destroy();
       viewRef.current = null;
-      if (handleRef) handleRef.current = null;
     };
+    // Volutamente senza dipendenze: l'editor CodeMirror viene costruito una
+    // sola volta al mount (ricostruirlo a ogni cambio prop perderebbe undo
+    // history e cursore). readonly è gestito sotto via Compartment.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -199,4 +201,4 @@ export function Editor({
   }, [readonly, readOnlyCompartment]);
 
   return <div ref={hostRef} className={styles.editor} />;
-}
+});

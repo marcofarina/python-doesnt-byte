@@ -30,8 +30,6 @@ type PathContextValue = {
   getPath: (volume: VolumeId) => string | null;
   /** Imposta il percorso per un volume; persiste in localStorage. */
   setPath: (volume: VolumeId, path: string) => void;
-  /** Cancella la scelta per un volume (torna al default della sidebar). */
-  clearPath: (volume: VolumeId) => void;
 };
 
 const PathContext = createContext<PathContextValue | null>(null);
@@ -55,11 +53,15 @@ function readInitialState(): PathState {
   return out;
 }
 
-export function PathProvider({children}: {children: ReactNode}) {
-  const [state, setState] = useState<PathState>(() => readInitialState());
+export function PathProvider({ children }: { children: ReactNode }) {
+  // Parte sempre da {} (come il render server-side) per evitare hydration
+  // mismatch; il valore reale da localStorage arriva nell'effect al mount.
+  const [state, setState] = useState<PathState>({});
 
-  // Hydration: il primo render server-side restituisce {}, sincronizziamo al mount.
+  // Two-pass hydration: il setState sincrono al mount è voluto (è il pattern
+  // canonico per sincronizzare stato client-only dopo l'hydration SSR).
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setState(readInitialState());
   }, []);
 
@@ -69,7 +71,7 @@ export function PathProvider({children}: {children: ReactNode}) {
     const onStorage = (e: StorageEvent) => {
       if (!e.key?.startsWith(STORAGE_PREFIX + ':')) return;
       const v = e.key.slice(STORAGE_PREFIX.length + 1) as VolumeId;
-      setState((prev) => ({...prev, [v]: e.newValue ?? undefined}));
+      setState((prev) => ({ ...prev, [v]: e.newValue ?? undefined }));
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
@@ -81,7 +83,7 @@ export function PathProvider({children}: {children: ReactNode}) {
   );
 
   const setPath = useCallback((volume: VolumeId, path: string) => {
-    setState((prev) => ({...prev, [volume]: path}));
+    setState((prev) => ({ ...prev, [volume]: path }));
     try {
       window.localStorage.setItem(storageKey(volume), path);
     } catch {
@@ -89,23 +91,7 @@ export function PathProvider({children}: {children: ReactNode}) {
     }
   }, []);
 
-  const clearPath = useCallback((volume: VolumeId) => {
-    setState((prev) => {
-      const next = {...prev};
-      delete next[volume];
-      return next;
-    });
-    try {
-      window.localStorage.removeItem(storageKey(volume));
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  const value = useMemo(
-    () => ({getPath, setPath, clearPath}),
-    [getPath, setPath, clearPath],
-  );
+  const value = useMemo(() => ({ getPath, setPath }), [getPath, setPath]);
 
   return <PathContext.Provider value={value}>{children}</PathContext.Provider>;
 }

@@ -51,14 +51,20 @@ export function ensureBrython(libUrl: string): Promise<void> {
   window.__PYRUNNER_BOOTED__ = (async () => {
     // Se __BRYTHON__ è già inizializzato (es. perché docusaurus-live-brython
     // ha già chiamato brython()), non rifacciamo init: la sua libDir è la stessa.
-    if (window.__BRYTHON__ && typeof window.__BRYTHON__.runPythonSource === 'function') {
+    if (
+      window.__BRYTHON__ &&
+      typeof window.__BRYTHON__.runPythonSource === 'function'
+    ) {
       return;
     }
     // Altrimenti aspettiamo che brython() sia disponibile (script defer caricato)
     // e lo invochiamo noi una sola volta.
     await waitFor(() => typeof window.brython === 'function');
     // Re-check: durante l'await upstream potrebbe aver già chiamato brython()
-    if (window.__BRYTHON__ && typeof window.__BRYTHON__.runPythonSource === 'function') {
+    if (
+      window.__BRYTHON__ &&
+      typeof window.__BRYTHON__.runPythonSource === 'function'
+    ) {
       return;
     }
     window.brython!({

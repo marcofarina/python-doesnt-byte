@@ -15,7 +15,8 @@ class Rectangle():
         try:
             canvas = document[Config.CANVAS_ID]
             self.ctx = canvas.getContext('2d')
-        except:
+        except Exception:
+            # Niente canvas in pagina: la griglia resta solo "logica".
             pass
         self._color = color
         
@@ -48,7 +49,8 @@ class Rectangle():
             self.ctx.lineWidth = 0 # type: ignore
             self.ctx.fillStyle = self.color # type: ignore
             self.ctx.fillRect(x, y, scale, scale) # type: ignore
-        except:
+        except Exception:
+            # ctx assente (niente canvas): il draw è un no-op.
             pass
 
     def copy(self, grid):
@@ -204,7 +206,8 @@ class Grid():
             canvas = document[Config.CANVAS_ID]
             ctx = canvas.getContext('2d')
             ctx.clearRect(0, 0, Grid.WIDTH, Grid.HEIGHT) # type: ignore
-        except:
+        except Exception:
+            # Niente canvas in pagina: nulla da pulire.
             pass
 
 

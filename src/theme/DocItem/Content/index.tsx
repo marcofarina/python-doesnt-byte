@@ -1,10 +1,10 @@
-import React, {type ReactNode} from 'react';
+import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
-import {ThemeClassNames} from '@docusaurus/theme-common';
-import {useDoc, useDocsSidebar} from '@docusaurus/plugin-content-docs/client';
+import { ThemeClassNames } from '@docusaurus/theme-common';
+import { useDoc, useDocsSidebar } from '@docusaurus/plugin-content-docs/client';
 import Heading from '@theme/Heading';
 import MDXContent from '@theme/MDXContent';
-import type {Props} from '@theme/DocItem/Content';
+import type { Props } from '@theme/DocItem/Content';
 import type {
   PropSidebar,
   PropSidebarItem,
@@ -13,7 +13,7 @@ import type {
 import OffPathBanner from '@site/src/components/OffPathBanner';
 
 function useSyntheticTitle(): string | null {
-  const {metadata, frontMatter, contentTitle} = useDoc();
+  const { metadata, frontMatter, contentTitle } = useDoc();
   const shouldRender =
     !frontMatter.hide_title && typeof contentTitle === 'undefined';
   return shouldRender ? metadata.title : null;
@@ -51,16 +51,16 @@ function buildChapterMap(items: PropSidebar): Map<string, number> {
 }
 
 function useChapterNumber(): number | null {
-  const {metadata, frontMatter} = useDoc();
+  const { metadata, frontMatter } = useDoc();
   const sidebar = useDocsSidebar();
-  if ((frontMatter as {hide_chapter_kicker?: boolean}).hide_chapter_kicker)
+  if ((frontMatter as { hide_chapter_kicker?: boolean }).hide_chapter_kicker)
     return null;
   if (!sidebar) return null;
   const chapterMap = buildChapterMap(sidebar.items);
   return chapterMap.get(metadata.permalink) ?? null;
 }
 
-export default function DocItemContent({children}: Props): ReactNode {
+export default function DocItemContent({ children }: Props): ReactNode {
   const syntheticTitle = useSyntheticTitle();
   const chapter = useChapterNumber();
   const kicker =
@@ -71,7 +71,8 @@ export default function DocItemContent({children}: Props): ReactNode {
         ThemeClassNames.docs.docMarkdown,
         'markdown',
         kicker && 'doc-has-chapter-kicker',
-      )}>
+      )}
+    >
       <OffPathBanner />
       {kicker && <p className="doc-chapter-kicker">{kicker}</p>}
       {syntheticTitle && (

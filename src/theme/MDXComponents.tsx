@@ -1,9 +1,8 @@
 // Import the original mapper
 import MDXComponents from '@theme-original/MDXComponents';
+// La FontAwesome library (fab, fas) è registrata una sola volta in
+// src/theme/Root.tsx, che avvolge anche le pagine MDX.
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { fab } from '@fortawesome/free-brands-svg-icons';
-import { fas } from '@fortawesome/free-solid-svg-icons';
 
 import InlineCode from '@site/src/components/InlineCode';
 import Epigraph from '@site/src/components/Epigraph';
@@ -15,8 +14,7 @@ import Quiz, {
   QuizFeedback,
 } from '@site/src/components/Quiz';
 import PyRunner from '@site/src/theme/PyRunner';
-
-library.add(fab, fas);
+import SQLRunner from '@site/src/theme/SQLRunner';
 
 export default {
   ...MDXComponents,
@@ -30,4 +28,5 @@ export default {
   QuizOption,
   QuizFeedback,
   PyRunner,
+  SQLRunner,
 };

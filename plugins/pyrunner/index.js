@@ -24,7 +24,12 @@ const DEFAULT_OPTIONS = {
 
 function walkPyFiles(dir, baseDir) {
   const out = {};
-  if (!fs.existsSync(dir)) return out;
+  if (!fs.existsSync(dir)) {
+    console.warn(
+      `[pyrunner] Directory esempi non trovata: ${dir} — nessun file .py caricato.`,
+    );
+    return out;
+  }
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {

@@ -7,13 +7,13 @@
  * plugin-content-docs instance del volume attivo: ogni "sidebar name"
  * = un percorso.
  */
-import React, {type ReactNode} from 'react';
+import React, { type ReactNode } from 'react';
 import {
   useActivePlugin,
   useAllDocsData,
 } from '@docusaurus/plugin-content-docs/client';
-import {usePathContext, type VolumeId} from '@site/src/contexts/PathContext';
-import {pathLabel} from '@site/src/contexts/pathLabels';
+import { usePathContext, type VolumeId } from '@site/src/contexts/PathContext';
+import { pathLabel } from '@site/src/contexts/pathLabels';
 
 import styles from './styles.module.css';
 
@@ -27,7 +27,7 @@ const VOLUMES: ReadonlySet<string> = new Set([
 export default function PathSelector(): ReactNode {
   const activePlugin = useActivePlugin();
   const allData = useAllDocsData();
-  const {getPath, setPath} = usePathContext();
+  const { getPath, setPath } = usePathContext();
 
   if (!activePlugin || !VOLUMES.has(activePlugin.pluginId)) {
     return null;
@@ -56,11 +56,11 @@ export default function PathSelector(): ReactNode {
           type="button"
           className={`${styles.btn} ${id === active ? styles.active : ''}`}
           aria-pressed={id === active}
-          onClick={() => setPath(volumeId, id)}>
+          onClick={() => setPath(volumeId, id)}
+        >
           {pathLabel(id, true)}
         </button>
       ))}
     </div>
   );
 }
-

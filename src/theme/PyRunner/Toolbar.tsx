@@ -6,31 +6,28 @@ import {
   faStop,
   faExpand,
   faWandMagicSparkles,
+  faDatabase,
 } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import IconCopy from '@theme/Icon/Copy';
 import IconSuccess from '@theme/Icon/Success';
+import { copyToClipboard } from './clipboard';
 import styles from './styles.module.css';
 import type { RunStatus } from './types';
-
-async function copyToClipboard(text: string): Promise<void> {
-  if (navigator.clipboard) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-  const { default: copy } = await import('copy-text-to-clipboard');
-  copy(text);
-}
 
 function CopyCodeButton({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(timer.current), []);
   const handleClick = useCallback(() => {
-    copyToClipboard(code).then(() => {
-      setCopied(true);
-      timer.current = window.setTimeout(() => setCopied(false), 1000);
-    });
+    copyToClipboard(code)
+      .then(() => {
+        setCopied(true);
+        timer.current = window.setTimeout(() => setCopied(false), 1000);
+      })
+      .catch(() => {
+        // Niente feedback "copiato" se la copia è fallita.
+      });
   }, [code]);
   return (
     <button
@@ -63,6 +60,9 @@ export interface ToolbarProps {
   onFullscreen?: () => void;
   showExplain?: boolean;
   onExplain?: () => void;
+  /** Bottone "Reset DB" (usato da SQLRunner in modalità stateful). */
+  showResetDb?: boolean;
+  onResetDb?: () => void;
 }
 
 export function Toolbar({
@@ -76,6 +76,8 @@ export function Toolbar({
   onFullscreen,
   showExplain,
   onExplain,
+  showResetDb,
+  onResetDb,
 }: ToolbarProps) {
   const isRunning = status === 'running';
   return (
@@ -112,6 +114,18 @@ export function Toolbar({
           </button>
         )}
         <CopyCodeButton code={code} />
+        {showResetDb && onResetDb && (
+          <button
+            type="button"
+            className={clsx(styles.iconBtn, styles.iconBtnFs)}
+            onClick={onResetDb}
+            disabled={isRunning}
+            aria-label="Ripristina il database"
+            title="Riporta il database allo stato iniziale"
+          >
+            <FontAwesomeIcon icon={faDatabase} />
+          </button>
+        )}
         <button
           type="button"
           className={clsx(styles.iconBtn, styles.iconBtnReset)}
