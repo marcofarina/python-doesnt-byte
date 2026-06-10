@@ -5,6 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const remarkPyRunner = require('./plugins/pyrunner/remark.js');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
+const remarkSqlRunner = require('./plugins/sqlrunner/remark.js');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { protectCode, restoreCode } = require('./plugins/smartypants-guard.js');
 
 // Keyword admonition custom (Notion-style callouts). Vedi
@@ -79,7 +81,7 @@ export default async function createConfig(): Promise<Config> {
             // Please change this to your repo.
             // Remove this to remove the "edit this page" links.
             editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
-            beforeDefaultRemarkPlugins: [remarkPyRunner],
+            beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
             remarkPlugins: [protectCode, smartypants, restoreCode],
             admonitions,
           },
@@ -125,7 +127,7 @@ export default async function createConfig(): Promise<Config> {
           routeBasePath: 'programmatore',
           sidebarPath: './sidebars/programmatore.ts',
           editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
-          beforeDefaultRemarkPlugins: [remarkPyRunner],
+          beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
           remarkPlugins: [protectCode, smartypants, restoreCode],
           admonitions,
         },
@@ -138,7 +140,7 @@ export default async function createConfig(): Promise<Config> {
           routeBasePath: 'artefice',
           sidebarPath: './sidebars/artefice.ts',
           editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
-          beforeDefaultRemarkPlugins: [remarkPyRunner],
+          beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
           remarkPlugins: [protectCode, smartypants, restoreCode],
           admonitions,
         },
@@ -151,7 +153,7 @@ export default async function createConfig(): Promise<Config> {
           routeBasePath: 'archivista',
           sidebarPath: './sidebars/archivista.ts',
           editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
-          beforeDefaultRemarkPlugins: [remarkPyRunner],
+          beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
           remarkPlugins: [protectCode, smartypants, restoreCode],
           admonitions,
         },
@@ -164,7 +166,7 @@ export default async function createConfig(): Promise<Config> {
           routeBasePath: 'apprendista',
           sidebarPath: './sidebars/apprendista.ts',
           editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
-          beforeDefaultRemarkPlugins: [remarkPyRunner],
+          beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
           remarkPlugins: [protectCode, smartypants, restoreCode],
           admonitions,
         },

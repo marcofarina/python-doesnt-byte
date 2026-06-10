@@ -1,0 +1,119 @@
+/* SQLRunner — stili specifici (tabelle risultati, errori, notice).
+   La shell (runner, toolbar, output, toast) riusa le classi di
+   src/theme/PyRunner/styles.module.css. */
+
+.sqlOutputBody {
+  max-height: 24em;
+}
+
+/* Result table */
+
+.resultBlock {
+  margin: 4px 0 10px;
+}
+
+.resultBlock:last-child {
+  margin-bottom: 4px;
+}
+
+.tableScroll {
+  overflow-x: auto;
+  border: 1px solid var(--at-border);
+  border-radius: 10px;
+  background: var(--at-bg-panel);
+}
+
+.table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.84rem;
+  display: table; /* override del display: block dei table Infima */
+}
+
+.table th {
+  text-align: left;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--at-border-strong);
+  background: var(--at-bg-subtle);
+  color: var(--at-muted-soft);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 5px 12px;
+  border-bottom: 1px solid var(--at-border);
+  color: var(--at-fg-body);
+  white-space: nowrap;
+  border-top: none;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:nth-child(even) {
+  background: var(--at-bg-subtle);
+}
+
+.nullCell {
+  color: var(--at-faint);
+  font-style: italic;
+}
+
+.tableMeta {
+  padding: 4px 2px 0;
+  font-size: 0.74rem;
+  color: var(--at-muted);
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+}
+
+.truncatedNote {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #d97706;
+}
+
+/* Errori SQL */
+
+.sqlError {
+  margin: 4px 0;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 10px;
+  color: #f87171;
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.84rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Notice "database ripristinato" */
+
+.restoredNotice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 8px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--at-accent-chip);
+  border: 1px solid var(--at-accent-chip-border);
+  color: var(--at-accent-soft);
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.78rem;
+}
+
+/* Righe modificate (DML) */
+
+.rowsModified {
+  margin: 2px 0;
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: var(--at-muted-soft);
+}

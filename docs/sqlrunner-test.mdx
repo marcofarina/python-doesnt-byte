@@ -1,0 +1,183 @@
+---
+unlisted: true
+title: SQLRunner — pagina di test
+description: Sandbox di verifica del componente SQLRunner (SQL Live Blocks)
+---
+
+# SQLRunner — sandbox di test
+
+Pagina temporanea per validare gli SQL Live Blocks. Non è linkata dalla sidebar
+(`unlisted: true`). Il dataset di prova è `static/sql-datasets/archivista/biblioteca.sql`
+(autori, libri, prestiti). Il motore (sql.js, ~660 KB di WASM self-hosted) viene
+scaricato **solo al primo Esegui**: questa pagina a riposo non deve caricare nulla.
+
+## 1. Fence `sql live` — SELECT base con dataset
+
+```sql live dataset=archivista/biblioteca
+SELECT titolo, anno, genere
+FROM libri
+WHERE anno > 1950
+ORDER BY anno;
+```
+
+## 2. JOIN tra tabelle
+
+```sql live dataset=archivista/biblioteca title="Chi ha scritto cosa"
+SELECT l.titolo, a.nome AS autore, a.paese
+FROM libri AS l
+JOIN autori AS a ON a.id = l.autore_id
+ORDER BY a.nome;
+```
+
+## 3. Errore SQL (deve mostrare il messaggio in rosso)
+
+```sql live dataset=archivista/biblioteca
+SELECT titolo FROM romanzi;  -- la tabella si chiama "libri"!
+```
+
+## 4. Restore trasparente: DROP e poi riesegui
+
+Esegui il `DROP TABLE`, poi rimetti la `SELECT` originale (bottone ↺) e riesegui:
+la tabella **c'è di nuovo**. In modalità stateless il database riparte dal seed
+a ogni esecuzione, senza che lo studente debba fare nulla.
+
+```sql live dataset=archivista/biblioteca
+DROP TABLE prestiti;
+SELECT name FROM sqlite_master WHERE type = 'table';
+```
+
+## 5. Readonly
+
+```sql live dataset=archivista/biblioteca readonly
+SELECT COUNT(*) AS numero_libri FROM libri;
+```
+
+## 6. Stateful: lo stato sopravvive tra i run
+
+Con `stateful` il database **non** viene ripristinato a ogni esecuzione: esegui
+l'INSERT due volte e i conteggi crescono. In toolbar compare il bottone con il
+database per il reset esplicito; dopo il reset (o dopo un timeout) appare la
+notice «database ripristinato».
+
+```sql live dataset=archivista/biblioteca stateful title="biblioteca (stateful)"
+INSERT INTO prestiti (libro_id, studente, classe, data_prestito)
+VALUES (2, 'Nuovo Studente', '3A', '2026-06-10');
+
+SELECT COUNT(*) AS prestiti_totali FROM prestiti;
+```
+
+## 7. Troncamento risultati (`maxRows`)
+
+La CTE genera 1000 righe ma `maxRows=15`: il worker taglia il risultato prima
+di spedirlo alla pagina e compare il banner di troncamento.
+
+```sql live maxRows=15
+WITH RECURSIVE numeri(n) AS (
+    SELECT 1
+    UNION ALL
+    SELECT n + 1 FROM numeri WHERE n < 1000
+)
+SELECT n, n * n AS quadrato FROM numeri;
+```
+
+## 8. Query runaway → watchdog timeout
+
+Ricorsione senza condizione di stop: dopo 3 secondi il worker viene terminato,
+la pagina resta reattiva e il run successivo funziona normalmente.
+
+```sql live dataset=archivista/biblioteca timeout=3000 title="bomba ricorsiva"
+WITH RECURSIVE c(x) AS (
+    SELECT 1
+    UNION ALL
+    SELECT x + 1 FROM c
+)
+SELECT COUNT(*) FROM c;
+```
+
+## 9. Senza dataset: DB vuoto per lezioni su CREATE TABLE
+
+```sql live
+CREATE TABLE pianeti (
+    id     INTEGER PRIMARY KEY,
+    nome   TEXT NOT NULL,
+    lune   INTEGER DEFAULT 0
+);
+
+INSERT INTO pianeti (nome, lune) VALUES ('Marte', 2), ('Giove', 95);
+
+SELECT * FROM pianeti;
+```
+
+## 10. Vincoli: foreign key attive (`PRAGMA foreign_keys = ON`)
+
+L'INSERT viola la foreign key (`autore_id = 999` non esiste): deve fallire con
+un errore di vincolo, non inserire silenziosamente.
+
+```sql live dataset=archivista/biblioteca
+INSERT INTO libri (titolo, autore_id, anno)
+VALUES ('Libro fantasma', 999, 2026);
+```
+
+## 11. NULL e valori particolari
+
+I `NULL` (prestiti non ancora restituiti) devono comparire in corsivo tenue.
+
+```sql live dataset=archivista/biblioteca
+SELECT studente, data_prestito, data_restituzione
+FROM prestiti
+ORDER BY data_prestito;
+```
+
+## 12. Più statement → più tabelle di risultati
+
+```sql live dataset=archivista/biblioteca
+SELECT genere, COUNT(*) AS quanti FROM libri GROUP BY genere ORDER BY quanti DESC;
+SELECT paese, COUNT(*) AS autori FROM autori GROUP BY paese;
+```
+
+## 13. `maxLines` piccolo per forzare lo scroll interno
+
+```sql live dataset=archivista/biblioteca maxLines=5
+SELECT
+    a.nome,
+    COUNT(l.id)   AS libri_scritti,
+    MIN(l.anno)   AS primo_libro,
+    MAX(l.anno)   AS ultimo_libro
+FROM autori AS a
+LEFT JOIN libri AS l ON l.autore_id = a.id
+GROUP BY a.id
+HAVING libri_scritti > 1
+ORDER BY libri_scritti DESC;
+```
+
+## 14. `noExplain` — niente bacchetta magica
+
+```sql live dataset=archivista/biblioteca noExplain
+SELECT nome FROM autori WHERE paese = 'Italia';
+```
+
+## 15. Componente JSX diretto con prompt custom
+
+import SQLRunner from '@site/src/theme/SQLRunner';
+
+<SQLRunner
+  dataset="archivista/biblioteca"
+  title="Aggregazione guidata"
+  code={`SELECT classe, COUNT(*) AS prestiti
+FROM prestiti
+GROUP BY classe;`}
+  explainPrompt={`Sto imparando GROUP BY in SQL. Spiegami questa query in 3 frasi, in italiano, dicendo cosa finisce in ogni gruppo e cosa conta la COUNT.\n\nQuery:\n\`\`\`sql\n{code}\n\`\`\`\n`}
+/>
+
+## 16. `runOnMount` — esegue da solo al caricamento
+
+<SQLRunner
+  dataset="archivista/biblioteca"
+  runOnMount
+  readonly
+  title="prestiti aperti (auto-run)"
+  code={`SELECT l.titolo, p.studente
+FROM prestiti AS p
+JOIN libri AS l ON l.id = p.libro_id
+WHERE p.data_restituzione IS NULL;`}
+/>
