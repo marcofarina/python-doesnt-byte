@@ -5,12 +5,15 @@
  * un bottone per switchare il percorso (la sidebar si ricostruisce in
  * place senza navigare).
  */
-import React, {type ReactNode} from 'react';
-import {useDoc, useDocsVersion} from '@docusaurus/plugin-content-docs/client';
-import type {PropSidebar, PropSidebarItem} from '@docusaurus/plugin-content-docs';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {usePathContext, type VolumeId} from '@site/src/contexts/PathContext';
-import {pathLabel} from '@site/src/contexts/pathLabels';
+import React, { type ReactNode } from 'react';
+import { useDoc, useDocsVersion } from '@docusaurus/plugin-content-docs/client';
+import type {
+  PropSidebar,
+  PropSidebarItem,
+} from '@docusaurus/plugin-content-docs';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { usePathContext, type VolumeId } from '@site/src/contexts/PathContext';
+import { pathLabel } from '@site/src/contexts/pathLabels';
 
 import styles from './styles.module.css';
 
@@ -31,9 +34,9 @@ function sidebarContainsDoc(items: PropSidebar, docId: string): boolean {
 }
 
 function useOffPathInfo() {
-  const {metadata} = useDoc();
+  const { metadata } = useDoc();
   const version = useDocsVersion();
-  const {getPath} = usePathContext();
+  const { getPath } = usePathContext();
 
   if (!VOLUMES.has(version.pluginId)) return null;
   const volumeId = version.pluginId as VolumeId;
@@ -51,25 +54,25 @@ function useOffPathInfo() {
   const availableIn = Object.entries(sidebars)
     .filter(
       ([name, sb]) =>
-        name !== chosen &&
-        sidebarContainsDoc(sb as PropSidebar, metadata.id),
+        name !== chosen && sidebarContainsDoc(sb as PropSidebar, metadata.id),
     )
     .map(([name]) => name);
 
-  return {volumeId, chosen, availableIn};
+  return { volumeId, chosen, availableIn };
 }
 
 export default function OffPathBanner(): ReactNode {
   const info = useOffPathInfo();
-  const {setPath} = usePathContext();
+  const { setPath } = usePathContext();
   if (!info) return null;
-  const {volumeId, chosen, availableIn} = info;
+  const { volumeId, chosen, availableIn } = info;
 
   return (
     <aside
       className={styles.banner}
       role="note"
-      aria-label="Avviso sul percorso">
+      aria-label="Avviso sul percorso"
+    >
       <FontAwesomeIcon
         icon={['fas', 'circle-info']}
         className={styles.icon}
@@ -88,13 +91,15 @@ export default function OffPathBanner(): ReactNode {
               <React.Fragment key={p}>
                 {i > 0 && (
                   <span className={styles.minisep} aria-hidden="true">
-                    {' '}·{' '}
+                    {' '}
+                    ·{' '}
                   </span>
                 )}
                 <button
                   type="button"
                   className={styles.switch}
-                  onClick={() => setPath(volumeId, p)}>
+                  onClick={() => setPath(volumeId, p)}
+                >
                   {pathLabel(p)}
                 </button>
               </React.Fragment>

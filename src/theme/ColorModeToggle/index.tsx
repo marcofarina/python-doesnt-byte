@@ -1,9 +1,9 @@
-import React, {type ReactNode} from 'react';
+import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
 import useIsBrowser from '@docusaurus/useIsBrowser';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import type {Props} from '@theme/ColorModeToggle';
-import type {ColorMode} from '@docusaurus/theme-common';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { Props } from '@theme/ColorModeToggle';
+import type { ColorMode } from '@docusaurus/theme-common';
 
 import Starfighter from '@site/src/icons/starfighter.svg';
 import Sith from '@site/src/icons/user-sith.svg';
@@ -92,7 +92,8 @@ function ColorModeToggle({
         onClick={() => onChange(nextMode)}
         disabled={!isBrowser}
         aria-label={ariaLabel}
-        data-next-mode={nextMode ?? 'system'}>
+        data-next-mode={nextMode ?? 'system'}
+      >
         <CurrentColorModeIcon />
         <span className={styles.spellTooltip} aria-hidden="true">
           <span className={styles.spellGlow} />

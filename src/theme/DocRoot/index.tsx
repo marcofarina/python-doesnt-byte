@@ -11,9 +11,12 @@
  * mostriamo comunque la sidebar attiva: la lezione si rende a tutto schermo
  * senza essere evidenziata in sidebar (banner off-path: prossimo step).
  */
-import React, {type ReactNode} from 'react';
+import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
-import {HtmlClassNameProvider, ThemeClassNames} from '@docusaurus/theme-common';
+import {
+  HtmlClassNameProvider,
+  ThemeClassNames,
+} from '@docusaurus/theme-common';
 import {
   DocsSidebarProvider,
   useDocRootMetadata,
@@ -21,10 +24,10 @@ import {
 } from '@docusaurus/plugin-content-docs/client';
 import DocRootLayout from '@theme/DocRoot/Layout';
 import NotFoundContent from '@theme/NotFound/Content';
-import type {Props} from '@theme/DocRoot';
-import type {PropSidebar} from '@docusaurus/plugin-content-docs';
+import type { Props } from '@theme/DocRoot';
+import type { PropSidebar } from '@docusaurus/plugin-content-docs';
 
-import {usePathContext, type VolumeId} from '@site/src/contexts/PathContext';
+import { usePathContext, type VolumeId } from '@site/src/contexts/PathContext';
 
 const VOLUMES: ReadonlySet<string> = new Set([
   'programmatore',
@@ -35,7 +38,7 @@ const VOLUMES: ReadonlySet<string> = new Set([
 
 function useResolvedSidebar(defaultName: string | undefined) {
   const version = useDocsVersion();
-  const {getPath} = usePathContext();
+  const { getPath } = usePathContext();
   const pluginId = version.pluginId;
 
   if (!VOLUMES.has(pluginId)) {
@@ -47,7 +50,7 @@ function useResolvedSidebar(defaultName: string | undefined) {
   const sidebars = version.docsSidebars;
   if (!sidebars || !(chosen in sidebars)) return null;
   if (chosen === defaultName) return null;
-  return {name: chosen, items: sidebars[chosen]!};
+  return { name: chosen, items: sidebars[chosen]! };
 }
 
 export default function DocRoot(props: Props): ReactNode {
@@ -55,7 +58,7 @@ export default function DocRoot(props: Props): ReactNode {
   if (!currentDocRouteMetadata) {
     return <NotFoundContent />;
   }
-  const {docElement, sidebarName, sidebarItems} = currentDocRouteMetadata;
+  const { docElement, sidebarName, sidebarItems } = currentDocRouteMetadata;
   return (
     <HtmlClassNameProvider className={clsx(ThemeClassNames.page.docsDocPage)}>
       <DocRootInner

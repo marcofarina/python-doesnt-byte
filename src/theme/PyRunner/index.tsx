@@ -7,6 +7,8 @@ import { Editor, type EditorHandle } from './Editor';
 import { Output } from './Output';
 import { Toolbar } from './Toolbar';
 import { runPython, splitSource } from './bryBridge';
+import { coerceBool, coerceNumber } from './coerce';
+import { copyToClipboard } from './clipboard';
 import { encodeCode, DEFAULT_EXPLAIN_PROMPT, buildExplainText } from './share';
 import type { LogEntry, RunStatus } from './types';
 import styles from './styles.module.css';
@@ -36,21 +38,6 @@ export interface PyRunnerProps {
   embedded?: boolean;
 }
 
-function coerceBool(v: unknown): boolean {
-  if (typeof v === 'boolean') return v;
-  if (typeof v === 'string') return v === '' || v === 'true';
-  return false;
-}
-
-function coerceNumber(v: unknown, fallback: number): number {
-  if (typeof v === 'number') return v;
-  if (typeof v === 'string') {
-    const n = parseInt(v, 10);
-    return Number.isFinite(n) ? n : fallback;
-  }
-  return fallback;
-}
-
 interface PyRunnerGlobalData {
   libUrl: string;
   examplesDir: string;
@@ -77,6 +64,9 @@ function makeCodeId(seed: string): string {
 // smettiamo di accettare nuovi log per questa esecuzione.
 const MAX_LOG_ENTRIES = 1000;
 const MAX_LOG_BYTES = 256 * 1024;
+
+/** Durata del toast di feedback ("Prompt copiato", ecc.). */
+const TOAST_DURATION_MS = 2000;
 
 function PyRunnerInner(props: PyRunnerProps) {
   const data = usePluginData('pyrunner') as PyRunnerGlobalData | undefined;
@@ -210,7 +200,10 @@ function PyRunnerInner(props: PyRunnerProps) {
   const showToast = useCallback((msg: string) => {
     window.clearTimeout(toastTimerRef.current);
     setToast(msg);
-    toastTimerRef.current = window.setTimeout(() => setToast(null), 2000);
+    toastTimerRef.current = window.setTimeout(
+      () => setToast(null),
+      TOAST_DURATION_MS,
+    );
   }, []);
 
   useEffect(() => () => window.clearTimeout(toastTimerRef.current), []);
@@ -238,13 +231,7 @@ function PyRunnerInner(props: PyRunnerProps) {
     // tenere solo il nome della lezione.
     const contextTitle = rawTitle.split(' | ')[0].trim();
     const text = buildExplainText(template, currentCode, contextTitle);
-    const copy =
-      navigator.clipboard?.writeText.bind(navigator.clipboard) ??
-      (async (t: string) => {
-        const { default: c } = await import('copy-text-to-clipboard');
-        c(t);
-      });
-    Promise.resolve(copy(text))
+    copyToClipboard(text)
       .then(() => showToast('Prompt copiato'))
       .catch(() => showToast('Copia non riuscita'));
   }, [props.explainPrompt, currentCode, title, showToast]);
@@ -303,12 +290,12 @@ function PyRunnerInner(props: PyRunnerProps) {
         style={props.embedded ? undefined : { maxHeight }}
       >
         <Editor
+          ref={editorRef}
           initialCode={code}
           showLineNumbers={showLineNumbers}
           readonly={readonly}
           onChange={handleChange}
           onRun={handleRun}
-          handleRef={editorRef}
         />
       </div>
       <Output logs={logs} status={status} durationMs={duration} />

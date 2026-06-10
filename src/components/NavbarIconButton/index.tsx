@@ -4,7 +4,7 @@
  * con caret che punta al pulsante. Il colore del popup è parametrizzato
  * (es. cyan per link funzionali tipo GitHub, ambra per il caffè).
  */
-import React, {type ReactNode} from 'react';
+import React, { type ReactNode } from 'react';
 import Link from '@docusaurus/Link';
 
 import styles from './styles.module.css';
@@ -37,7 +37,8 @@ export default function NavbarIconButton({
       target={target}
       rel={rel}
       aria-label={ariaLabel}
-      className={`${styles.btn} ${styles[accent]}`}>
+      className={`${styles.btn} ${styles[accent]}`}
+    >
       <span className={styles.icon} aria-hidden="true">
         {icon}
       </span>

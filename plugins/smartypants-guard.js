@@ -19,8 +19,10 @@
 const CODE_COMPONENTS = new Set(['InlineCode']);
 
 // Placeholder: un carattere qualunque NON-apice, lunghezza 1, per preservare
-// la lunghezza del testo (smartypants splicea per indici).
-const PLACEHOLDER = '·'; // middle dot, improbabile nel codice sorgente
+// la lunghezza del testo (smartypants splicea per indici). Usiamo un code
+// point della Private Use Area: a differenza di un carattere "improbabile"
+// (es. ·), per definizione non può comparire in contenuto reale.
+const PLACEHOLDER = '';
 
 function collectProtectedTextNodes(node, inside, out) {
   if (!node || typeof node !== 'object') return;

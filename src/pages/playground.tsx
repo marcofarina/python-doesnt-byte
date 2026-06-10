@@ -60,19 +60,15 @@ function PlaygroundInner() {
   return (
     <>
       {fromUntrustedUrl && (
-        <div
-          className={styles.untrustedBanner}
-          role="alert"
-          aria-live="polite"
-        >
+        <div className={styles.untrustedBanner} role="alert" aria-live="polite">
           <span className={styles.untrustedBannerIcon} aria-hidden="true">
             ⚠️
           </span>
           <div className={styles.untrustedBannerBody}>
             <strong>Codice da un link esterno</strong>
-            Questo codice arriva da un URL e non dal manuale. Leggilo prima
-            di premere <em>Esegui</em>: gira nel tuo browser e può fare
-            tutto quello che il codice Python può fare in una pagina web.
+            Questo codice arriva da un URL e non dal manuale. Leggilo prima di
+            premere <em>Esegui</em>: gira nel tuo browser e può fare tutto
+            quello che il codice Python può fare in una pagina web.
           </div>
         </div>
       )}

@@ -5,7 +5,7 @@
  * non è dentro un volume, quindi sulle altre pagine la navbar resta vuota
  * al centro.
  */
-import React, {type ReactNode} from 'react';
+import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
 import {
   useThemeConfig,
@@ -16,7 +16,7 @@ import {
   splitNavbarItems,
   useNavbarMobileSidebar,
 } from '@docusaurus/theme-common/internal';
-import NavbarItem, {type Props as NavbarItemConfig} from '@theme/NavbarItem';
+import NavbarItem, { type Props as NavbarItemConfig } from '@theme/NavbarItem';
 import NavbarColorModeToggle from '@theme/Navbar/ColorModeToggle';
 import SearchBar from '@theme/SearchBar';
 import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
@@ -25,7 +25,7 @@ import NavbarSearch from '@theme/Navbar/Search';
 
 import PathSelector from '@site/src/components/PathSelector';
 import NavbarIconButton from '@site/src/components/NavbarIconButton';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MugSaucer from '@site/src/icons/mug-saucer.svg';
 
 import styles from './styles.module.css';
@@ -34,7 +34,7 @@ function useNavbarItems() {
   return useThemeConfig().navbar.items as NavbarItemConfig[];
 }
 
-function NavbarItems({items}: {items: NavbarItemConfig[]}): ReactNode {
+function NavbarItems({ items }: { items: NavbarItemConfig[] }): ReactNode {
   return (
     <>
       {items.map((item, i) => (
@@ -45,9 +45,10 @@ function NavbarItems({items}: {items: NavbarItemConfig[]}): ReactNode {
               `A theme navbar item failed to render.
 Please double-check the following navbar item (themeConfig.navbar.items) of your Docusaurus config:
 ${JSON.stringify(item, null, 2)}`,
-              {cause: error},
+              { cause: error },
             )
-          }>
+          }
+        >
           <NavbarItem {...item} />
         </ErrorCauseBoundary>
       ))}
@@ -70,7 +71,8 @@ function NavbarContentLayout({
         className={clsx(
           ThemeClassNames.layout.navbar.containerLeft,
           'navbar__items',
-        )}>
+        )}
+      >
         {left}
       </div>
       <div className="navbar__items navbar__items--center">{center}</div>
@@ -78,7 +80,8 @@ function NavbarContentLayout({
         className={clsx(
           ThemeClassNames.layout.navbar.containerRight,
           'navbar__items navbar__items--right',
-        )}>
+        )}
+      >
         {right}
       </div>
     </div>

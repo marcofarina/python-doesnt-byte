@@ -7,14 +7,14 @@
  *    navbar selector) can read/write the user's chosen path per
  *    volume.
  */
-import React, {type ReactNode} from 'react';
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {fab} from '@fortawesome/free-brands-svg-icons';
-import {fas} from '@fortawesome/free-solid-svg-icons';
-import {PathProvider} from '@site/src/contexts/PathContext';
+import React, { type ReactNode } from 'react';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { PathProvider } from '@site/src/contexts/PathContext';
 
 library.add(fab, fas);
 
-export default function Root({children}: {children: ReactNode}) {
+export default function Root({ children }: { children: ReactNode }) {
   return <PathProvider>{children}</PathProvider>;
 }
