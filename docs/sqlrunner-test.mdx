@@ -4,6 +4,8 @@ title: SQLRunner — pagina di test
 description: Sandbox di verifica del componente SQLRunner (SQL Live Blocks)
 ---
 
+import SQLRunner from '@site/src/theme/SQLRunner';
+
 # SQLRunner — sandbox di test
 
 Pagina temporanea per validare gli SQL Live Blocks. Non è linkata dalla sidebar
@@ -158,15 +160,11 @@ SELECT nome FROM autori WHERE paese = 'Italia';
 
 ## 15. Componente JSX diretto con prompt custom
 
-import SQLRunner from '@site/src/theme/SQLRunner';
-
 <SQLRunner
   dataset="archivista/biblioteca"
   title="Aggregazione guidata"
-  code={`SELECT classe, COUNT(*) AS prestiti
-FROM prestiti
-GROUP BY classe;`}
-  explainPrompt={`Sto imparando GROUP BY in SQL. Spiegami questa query in 3 frasi, in italiano, dicendo cosa finisce in ogni gruppo e cosa conta la COUNT.\n\nQuery:\n\`\`\`sql\n{code}\n\`\`\`\n`}
+  code={"SELECT classe, COUNT(*) AS prestiti\nFROM prestiti\nGROUP BY classe;"}
+  explainPrompt={"Sto imparando GROUP BY in SQL. Spiegami questa query in 3 frasi, in italiano, dicendo cosa finisce in ogni gruppo e cosa conta la COUNT.\n\nQuery:\n```sql\n{code}\n```\n"}
 />
 
 ## 16. `runOnMount` — esegue da solo al caricamento
@@ -176,8 +174,5 @@ GROUP BY classe;`}
   runOnMount
   readonly
   title="prestiti aperti (auto-run)"
-  code={`SELECT l.titolo, p.studente
-FROM prestiti AS p
-JOIN libri AS l ON l.id = p.libro_id
-WHERE p.data_restituzione IS NULL;`}
+  code={"SELECT l.titolo, p.studente\nFROM prestiti AS p\nJOIN libri AS l ON l.id = p.libro_id\nWHERE p.data_restituzione IS NULL;"}
 />
