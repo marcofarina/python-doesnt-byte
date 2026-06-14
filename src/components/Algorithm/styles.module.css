@@ -1,0 +1,489 @@
+/* ─────────────────────────────────────────────────────────────
+   <Algorithm> — animazioni di algoritmi, look coerente con
+   PyRunner / SQLRunner (Atmospheric). Tutta la tipografia è
+   Monaspace: Argon per la UI, Neon (tabellare) per i numeri,
+   Radon per le didascalie.
+   ───────────────────────────────────────────────────────────── */
+.card {
+  border: 1px solid var(--at-border);
+  border-radius: 14px;
+  background: var(--at-bg-panel);
+  backdrop-filter: blur(8px);
+  margin: 1.4em 0;
+  overflow: hidden;
+}
+
+/* Header / toolbar ------------------------------------------------ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--at-border);
+  background: var(--at-bg-subtle);
+  padding: 8px 12px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Pallini stile macOS (decorativi) — identici a PyRunner */
+.trafficLights {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tlDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+}
+
+.tlClose {
+  background: #ff5f57;
+}
+.tlMin {
+  background: #febc2e;
+}
+.tlMax {
+  background: #28c840;
+}
+
+.headerLabel {
+  font-family: var(--font-mono-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--at-fg-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-family: var(--font-mono-ui);
+  font-size: 0.8rem;
+  color: var(--at-muted);
+}
+
+/* Corpo / footer -------------------------------------------------- */
+.body {
+  padding: 16px;
+}
+
+.footer {
+  position: relative;
+  padding: 12px 12px 10px;
+}
+
+/* Progress bar minimale: È la linea di separazione body/footer.
+   Track = colore bordo, riempimento = accent. */
+.progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--at-border);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--at-accent);
+  border-radius: 0 2px 2px 0;
+  transition: width 240ms ease;
+}
+
+.caption {
+  font-family: var(--font-mono-comment);
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--at-muted);
+  text-align: center;
+  margin: 0.5em 0 1.4em;
+}
+
+.errorBox {
+  border: 1px solid #dc2626;
+  border-radius: 10px;
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  padding: 12px 16px;
+  margin: 1.4em 0;
+  font-family: var(--font-mono-ui);
+  font-size: 0.85rem;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Scena array
+   ───────────────────────────────────────────────────────────── */
+.sceneWrap {
+  overflow-x: auto;
+}
+
+.scene {
+  /* palette per identità (id % 10) — niente grigi: il grigio è
+     riservato alle barre «ordinate» (--alg-sorted). */
+  --alg-item-0: #4f46e5; /* indigo (era slate) */
+  --alg-item-1: #16a34a;
+  --alg-item-2: #dc2626;
+  --alg-item-3: #0d9488;
+  --alg-item-4: #2563eb;
+  --alg-item-5: #65a30d;
+  --alg-item-6: #ea580c;
+  --alg-item-7: #ca8a04;
+  --alg-item-8: #9333ea;
+  --alg-item-9: #db2777;
+  --alg-sorted: #cbd5e1;
+  --alg-sorted-text: #334155;
+  --alg-ok: #16a34a;
+  --alg-bar-text: #ffffff;
+
+  margin: 0 auto;
+  width: max-content;
+}
+
+:global(html[data-theme='dark']) .scene {
+  --alg-item-0: #818cf8;
+  --alg-item-1: #4ade80;
+  --alg-item-2: #f87171;
+  --alg-item-3: #2dd4bf;
+  --alg-item-4: #60a5fa;
+  --alg-item-5: #a3e635;
+  --alg-item-6: #fb923c;
+  --alg-item-7: #facc15;
+  --alg-item-8: #c084fc;
+  --alg-item-9: #f472b6;
+  --alg-sorted: #3f3f46;
+  --alg-sorted-text: #fafafa;
+  --alg-ok: #4ade80;
+  --alg-bar-text: #18181b;
+}
+
+.chipRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.targetChip {
+  display: inline-block;
+  font-family: var(--font-mono-ui);
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: var(--at-accent-chip);
+  border: 1px solid var(--at-accent-chip-border);
+  color: var(--at-fg);
+  white-space: nowrap;
+  transition:
+    border-color var(--alg-dur) ease,
+    box-shadow var(--alg-dur) ease;
+}
+
+.targetChipActive {
+  border-color: var(--at-accent);
+  box-shadow: 0 0 0 3px var(--at-accent-chip);
+}
+
+.stage {
+  position: relative;
+}
+
+/* Barre ----------------------------------------------------------- */
+.bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  border-radius: 8px 8px 5px 5px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 6px;
+  /* gradiente verticale soft: luce in alto, ombra sul fondo */
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--alg-bar) 80%, white) 0%,
+    var(--alg-bar) 55%,
+    color-mix(in srgb, var(--alg-bar) 86%, black) 100%
+  );
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  will-change: transform;
+  transition:
+    transform var(--alg-dur) ease,
+    height var(--alg-dur) ease,
+    opacity var(--alg-dur) ease,
+    box-shadow var(--alg-dur) ease;
+}
+
+:global(html[data-theme='dark']) .bar {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--alg-bar) 88%, white) 0%,
+    var(--alg-bar) 55%,
+    color-mix(in srgb, var(--alg-bar) 88%, black) 100%
+  );
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.barValue {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Confronto in corso: anello che cicla i 4 colori, stile «AI border»
+   dei pulsanti moderni Google. Ben visibile su barre già colorate
+   grazie allo stacco col colore del pannello. */
+.barComparing {
+  z-index: 2;
+  animation: algCompareRing 2.2s linear infinite;
+}
+
+@keyframes algCompareRing {
+  0% {
+    box-shadow:
+      0 0 0 2px var(--at-bg-panel),
+      0 0 0 4px #4285f4,
+      0 0 9px 3px rgba(66, 133, 244, 0.4);
+  }
+  25% {
+    box-shadow:
+      0 0 0 2px var(--at-bg-panel),
+      0 0 0 4px #ea4335,
+      0 0 9px 3px rgba(234, 67, 53, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px var(--at-bg-panel),
+      0 0 0 4px #fbbc05,
+      0 0 9px 3px rgba(251, 188, 5, 0.4);
+  }
+  75% {
+    box-shadow:
+      0 0 0 2px var(--at-bg-panel),
+      0 0 0 4px #34a853,
+      0 0 9px 3px rgba(52, 168, 83, 0.4);
+  }
+  100% {
+    box-shadow:
+      0 0 0 2px var(--at-bg-panel),
+      0 0 0 4px #4285f4,
+      0 0 9px 3px rgba(66, 133, 244, 0.4);
+  }
+}
+
+/* Esito ricerca: anello verde fisso. */
+.barFound {
+  z-index: 2;
+  box-shadow:
+    0 0 0 2px var(--at-bg-panel),
+    0 0 0 4px var(--alg-ok),
+    0 0 11px 3px color-mix(in srgb, var(--alg-ok) 45%, transparent);
+}
+
+/* Lane sotto la track: badge, graffa, etichette ------------------- */
+.badge {
+  position: absolute;
+  top: 184px; /* TRACK_H + 34 */
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 6px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border);
+  color: var(--at-fg);
+  transition: left var(--alg-dur) ease;
+}
+
+.range {
+  position: absolute;
+  top: 212px; /* TRACK_H + 62 */
+  height: 8px;
+  box-sizing: border-box;
+  border-left: 2px solid var(--at-muted);
+  border-right: 2px solid var(--at-muted);
+  border-bottom: 2px solid var(--at-muted);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  transition:
+    left var(--alg-dur) ease,
+    width var(--alg-dur) ease;
+}
+
+.rangeLabel {
+  position: absolute;
+  top: 224px; /* TRACK_H + 74 */
+  text-align: center;
+  font-family: var(--font-mono-ui);
+  font-size: 0.78rem;
+  color: var(--at-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Spiegazioni (solo study) — centrate sotto le barre
+   ───────────────────────────────────────────────────────────── */
+.explanation {
+  min-height: 3.2em;
+  margin-top: 14px;
+  text-align: center;
+}
+
+.phase {
+  font-family: var(--font-mono-ui);
+  font-size: 0.95rem;
+  color: var(--at-fg-strong);
+}
+
+.note {
+  font-family: var(--font-mono-comment);
+  font-size: 0.85rem;
+  color: var(--at-muted-soft);
+  margin-top: 3px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Pulsantiera — pill coerenti con PyRunner / SQLRunner
+   ───────────────────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.controlsLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border-strong);
+  color: var(--at-fg);
+  font-family: var(--font-mono-ui);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-fg-strong);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+.btnGlyph {
+  font-size: 0.95em;
+}
+
+.btnIcon {
+  width: 32px;
+  padding: 0;
+}
+
+.btnPrimary {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-accent);
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: var(--at-accent-bg);
+  color: var(--at-accent-soft);
+}
+
+.speedChip {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border-strong);
+  color: var(--at-fg);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
+}
+
+.speedChip:hover {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+}
+
+.speedChip:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+.stepIndicator {
+  font-family: var(--font-mono-ui);
+  font-size: 0.82rem;
+  color: var(--at-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Movimento ridotto: niente transizioni/animazioni
+   ───────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .scene *,
+  .progressFill,
+  .barComparing {
+    transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+}

@@ -1,6 +1,5 @@
 import { type CSSProperties } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { ArrayItem, ArraySceneState, CompareRef } from './types';
+import type { ArrayItem, ArraySceneState } from './types';
 import styles from './styles.module.css';
 
 const BAR_W = 38; // larghezza barra
@@ -8,10 +7,9 @@ const GAP = 8; // spazio tra barre
 const UNIT = BAR_W + GAP;
 const TRACK_H = 150; // altezza zona barre (allineate in basso)
 const EXTRACT_DY = 52; // quanto scende l'elemento estratto
-const LANE_H = 96; // zona sotto la track: bilancia/badge/graffa/estratto
+const LANE_H = 96; // zona sotto la track: badge/graffa/estratto
 const BADGE_W = 20;
 const BADGE_OFFSET = 22;
-const TARGET_CHIP_W = 96; // stima per centrare la bilancia sul chip target
 
 const x = (i: number) => i * UNIT;
 const slotCenter = (i: number) => x(i) + BAR_W / 2;
@@ -71,51 +69,42 @@ export default function ArrayScene({ state, target, label }: ArraySceneProps) {
     const h = barHeight(item.value);
     const tx = x(slot);
     const ty = isExtracted ? TRACK_H - h + EXTRACT_DY : TRACK_H - h;
-    const style: CSSProperties = {
+    // `--alg-bar` = tinta dell'elemento; il gradiente moderno è composto in CSS.
+    const style: CSSProperties & Record<'--alg-bar', string> = {
       transform: `translate(${tx}px, ${ty}px)`,
       height: h,
       width: BAR_W,
+      '--alg-bar': `var(--alg-item-${item.id % 10})`,
     };
 
     const isSorted = !isExtracted && sortedSet.has(slot);
     if (isSorted) {
-      style.background = 'var(--av-sorted)';
-      style.color = 'var(--av-sorted-text)';
+      style['--alg-bar'] = 'var(--alg-sorted)';
+      style.color = 'var(--alg-sorted-text)';
     } else {
-      style.background = `var(--av-item-${item.id % 10})`;
-      style.color = 'var(--av-bar-text)';
+      style.color = 'var(--alg-bar-text)';
     }
 
     if (!isExtracted && (fadedSet.has(slot) || !inRange(slot))) {
       style.opacity = 0.35;
     }
 
-    const isComparing = isExtracted
-      ? comparingExtracted
-      : comparingSlots.has(slot);
+    return style;
+  }
+
+  // Stato di evidenziazione → classe (anello animato gestito in CSS).
+  function barClass({ slot, isExtracted }: Entry): string {
     const isFound =
       !isExtracted &&
       state.outcome !== null &&
       state.outcome.found &&
       state.outcome.i === slot;
-    if (isFound) style.boxShadow = '0 0 0 3px var(--av-ok)';
-    else if (isComparing) style.boxShadow = '0 0 0 2px var(--at-accent)';
-
-    return style;
-  }
-
-  // Bilancia: centrata alla x media dei due riferimenti.
-  function refCenterX(ref: CompareRef): number {
-    if (ref.kind === 'item') return slotCenter(ref.i);
-    if (ref.kind === 'extracted') {
-      return state.extracted ? slotCenter(state.extracted.overIndex) : 0;
-    }
-    return sceneWidth - TARGET_CHIP_W / 2; // target chip
-  }
-  let balanceX: number | null = null;
-  if (state.comparing) {
-    balanceX =
-      (refCenterX(state.comparing.a) + refCenterX(state.comparing.b)) / 2;
+    if (isFound) return `${styles.bar} ${styles.barFound}`;
+    const isComparing = isExtracted
+      ? comparingExtracted
+      : comparingSlots.has(slot);
+    if (isComparing) return `${styles.bar} ${styles.barComparing}`;
+    return styles.bar;
   }
 
   // Badge pointer raggruppati per slot.
@@ -162,21 +151,12 @@ export default function ArrayScene({ state, target, label }: ArraySceneProps) {
         {entries.map((entry) => (
           <div
             key={entry.item.id}
-            className={styles.bar}
+            className={barClass(entry)}
             style={barStyle(entry)}
           >
             <span className={styles.barValue}>{entry.item.value}</span>
           </div>
         ))}
-
-        {balanceX !== null && (
-          <div
-            className={styles.balance}
-            style={{ transform: `translateX(${balanceX}px) translateX(-50%)` }}
-          >
-            <FontAwesomeIcon icon={['fas', 'scale-balanced']} />
-          </div>
-        )}
 
         {badges.map((b) => (
           <div key={b.key} className={styles.badge} style={{ left: b.left }}>

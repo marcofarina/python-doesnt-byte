@@ -15,7 +15,7 @@ import Quiz, {
 } from '@site/src/components/Quiz';
 import PyRunner from '@site/src/theme/PyRunner';
 import SQLRunner from '@site/src/theme/SQLRunner';
-import AlgoViz from '@site/src/components/AlgoViz';
+import Algorithm from '@site/src/components/Algorithm';
 
 export default {
   ...MDXComponents,
@@ -30,5 +30,5 @@ export default {
   QuizFeedback,
   PyRunner,
   SQLRunner,
-  AlgoViz,
+  Algorithm,
 };

@@ -1,12 +1,11 @@
 import { type Dispatch } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import type { IconName } from '@fortawesome/fontawesome-svg-core';
-import type { AlgoVizMode } from './types';
+import Icon, { type IconName } from './Icon';
+import type { AlgorithmMode } from './types';
 import type { PlayerAction } from './Player';
 import styles from './styles.module.css';
 
 interface ControlsProps {
-  mode: AlgoVizMode;
+  mode: AlgorithmMode;
   stepIndex: number;
   total: number;
   playing: boolean;
@@ -22,19 +21,23 @@ interface BtnProps {
   onClick: () => void;
   disabled?: boolean;
   primary?: boolean;
+  /** Solo icona (label come aria-label, non visibile). */
+  iconOnly?: boolean;
 }
 
-function Btn({ icon, label, onClick, disabled, primary }: BtnProps) {
+function Btn({ icon, label, onClick, disabled, primary, iconOnly }: BtnProps) {
   return (
     <button
       type="button"
-      className={`${styles.btn} ${primary ? styles.btnPrimary : ''}`}
+      className={`${styles.btn} ${primary ? styles.btnPrimary : ''} ${
+        iconOnly ? styles.btnIcon : ''
+      }`}
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
     >
-      <FontAwesomeIcon icon={['fas', icon]} />
-      <span>{label}</span>
+      <Icon name={icon} className={styles.btnGlyph} />
+      {!iconOnly && <span>{label}</span>}
     </button>
   );
 }
@@ -60,6 +63,7 @@ export default function Controls({
           label="Reset"
           onClick={() => dispatch({ type: 'RESET' })}
           disabled={atStart}
+          iconOnly
         />
         {mode === 'study' && (
           <Btn
@@ -67,6 +71,7 @@ export default function Controls({
             label="Indietro"
             onClick={() => dispatch({ type: 'BACK' })}
             disabled={atStart}
+            iconOnly
           />
         )}
 

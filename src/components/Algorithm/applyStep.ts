@@ -4,7 +4,7 @@ import type { ArraySceneState, ArrayStep, ArrayTrace } from './types';
 function devWarn(message: string): void {
   if (process.env.NODE_ENV !== 'production') {
     // eslint-disable-next-line no-console
-    console.warn(`[AlgoViz] ${message}`);
+    console.warn(`[Algorithm] ${message}`);
   }
 }
 

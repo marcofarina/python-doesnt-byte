@@ -83,4 +83,4 @@ export interface GeneratorDef {
   generate: (input: GeneratorInput) => ArrayTrace;
 }
 
-export type AlgoVizMode = 'study' | 'lab';
+export type AlgorithmMode = 'study' | 'lab';

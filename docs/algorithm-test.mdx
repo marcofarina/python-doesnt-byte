@@ -1,75 +1,75 @@
 ---
 unlisted: true
-title: AlgoViz — pagina di test
-description: Sandbox di verifica del componente AlgoViz (animazioni di algoritmi)
+title: Algorithm — pagina di test
+description: Sandbox di verifica del componente Algorithm (animazioni di algoritmi)
 ---
 
-# AlgoViz — sandbox di test
+# Algorithm — sandbox di test
 
 Pagina temporanea per validare le animazioni di algoritmi. Non è linkata dalla
-sidebar (`unlisted: true`): la raggiungi solo via URL `/docs/algoviz-test`. Il
-componente `<AlgoViz>` è registrato in `MDXComponents`, quindi qui sotto lo si usa
+sidebar (`unlisted: true`): la raggiungi solo via URL `/docs/algorithm-test`. Il
+componente `<Algorithm>` è registrato in `MDXComponents`, quindi qui sotto lo si usa
 direttamente. In modalità **studio** si avanza passo-passo con le spiegazioni; in
 modalità **lab** parte l'autoplay con dati casuali.
 
 ## 1. Bubble sort (studio)
 
-<AlgoViz algo="bubble-sort" />
+<Algorithm name="bubble-sort" />
 
 ## 2. Selection sort (studio)
 
-<AlgoViz algo="selection-sort" />
+<Algorithm name="selection-sort" />
 
 ## 3. Insertion sort (studio)
 
-<AlgoViz algo="insertion-sort" />
+<Algorithm name="insertion-sort" />
 
 ## 4. Ricerca lineare (studio)
 
-<AlgoViz algo="linear-search" />
+<Algorithm name="linear-search" />
 
 ## 5. Ricerca binaria (studio)
 
-<AlgoViz algo="binary-search" />
+<Algorithm name="binary-search" />
 
 ## 6. Quicksort (studio)
 
-<AlgoViz algo="quicksort" />
+<Algorithm name="quicksort" />
 
 ## 7. Lab — autoplay e dati casuali
 
 Bubble sort con nove valori casuali:
 
-<AlgoViz algo="bubble-sort" mode="lab" shuffle={9} />
+<Algorithm name="bubble-sort" mode="lab" shuffle={9} />
 
 Quicksort con otto valori casuali:
 
-<AlgoViz algo="quicksort" mode="lab" shuffle={8} />
+<Algorithm name="quicksort" mode="lab" shuffle={8} />
 
 Ricerca binaria in lab (verifica `prepare` che ordina e target casuale):
 
-<AlgoViz algo="binary-search" mode="lab" shuffle={9} />
+<Algorithm name="binary-search" mode="lab" shuffle={9} />
 
 ## 8. Casi limite
 
 Ricerca binaria su dati **non ordinati** (`prepare` deve ordinarli prima):
 
-<AlgoViz algo="binary-search" data={[9, 2, 7, 1]} />
+<Algorithm name="binary-search" data={[9, 2, 7, 1]} />
 
 Ricerca lineare con target assente → esito «non trovato»:
 
-<AlgoViz algo="linear-search" target={99} />
+<Algorithm name="linear-search" target={99} />
 
 Bubble sort con dodici elementi (overflow orizzontale della scena):
 
-<AlgoViz
-  algo="bubble-sort"
+<Algorithm
+  name="bubble-sort"
   data={[12, 5, 9, 1, 7, 3, 11, 2, 8, 4, 10, 6]}
 />
 
 Algoritmo inesistente (deve comparire il box d'errore, **senza** rompere la build):
 
-<AlgoViz algo="non-esiste" />
+<Algorithm name="non-esiste" />
 
 ## Nota per la verifica
 

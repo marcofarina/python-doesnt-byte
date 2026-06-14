@@ -1,12 +1,12 @@
 import { useMemo, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getGenerator } from './generators';
 import { mulberry32, shuffledRange } from './prng';
 import Player from './Player';
-import type { AlgoVizMode } from './types';
+import Icon from './Icon';
+import type { AlgorithmMode } from './types';
 import styles from './styles.module.css';
 
-const SPEED_IDX: Record<NonNullable<AlgoVizProps['speed']>, number> = {
+const SPEED_IDX: Record<NonNullable<AlgorithmProps['speed']>, number> = {
   slow: 0,
   normal: 1,
   fast: 2,
@@ -15,11 +15,11 @@ const SPEED_IDX: Record<NonNullable<AlgoVizProps['speed']>, number> = {
 const clamp = (v: number, lo: number, hi: number) =>
   Math.max(lo, Math.min(hi, v));
 
-interface AlgoVizProps {
+interface AlgorithmProps {
   /** Id del generatore registrato (vedi generators/index.ts). */
-  algo: string;
+  name: string;
   /** 'study' (default): passo-passo con spiegazioni. 'lab': autoplay e dati casuali. */
-  mode?: AlgoVizMode;
+  mode?: AlgorithmMode;
   /** Valori espliciti (interi 1–99, max 12 elementi). */
   data?: number[];
   /** In alternativa a data: n valori casuali (permutazione di 1..n, clamp 4–10). */
@@ -32,18 +32,18 @@ interface AlgoVizProps {
   caption?: string;
 }
 
-export default function AlgoViz({
-  algo,
+export default function Algorithm({
+  name,
   mode = 'study',
   data,
   shuffle,
   target,
   speed = 'normal',
   caption,
-}: AlgoVizProps) {
+}: AlgorithmProps) {
   // Seed iniziale fisso (1): markup server e client coincidono (hydration).
   const [seed, setSeed] = useState(1);
-  const gen = getGenerator(algo);
+  const gen = getGenerator(name);
 
   const trace = useMemo(() => {
     if (!gen) return null;
@@ -55,7 +55,7 @@ export default function AlgoViz({
       if (d.length > 12) {
         // eslint-disable-next-line no-console
         console.warn(
-          `[AlgoViz] data troncato a 12 elementi (ne aveva ${d.length}).`,
+          `[Algorithm] data troncato a 12 elementi (ne aveva ${d.length}).`,
         );
         d = d.slice(0, 12);
       }
@@ -80,10 +80,10 @@ export default function AlgoViz({
 
   if (!gen || !trace) {
     // eslint-disable-next-line no-console
-    console.error(`[AlgoViz] algoritmo "${algo}" non registrato.`);
+    console.error(`[Algorithm] algoritmo "${name}" non registrato.`);
     return (
       <div className={styles.errorBox}>
-        AlgoViz: algoritmo “{algo}” non registrato
+        Algorithm: algoritmo “{name}” non registrato
       </div>
     );
   }
@@ -95,11 +95,16 @@ export default function AlgoViz({
     <>
       <div className={styles.card}>
         <div className={styles.header}>
-          <span className={styles.headerLabel}>{gen.label}</span>
+          <div className={styles.headerLeft}>
+            <span className={styles.trafficLights} aria-hidden="true">
+              <span className={`${styles.tlDot} ${styles.tlClose}`} />
+              <span className={`${styles.tlDot} ${styles.tlMin}`} />
+              <span className={`${styles.tlDot} ${styles.tlMax}`} />
+            </span>
+            <span className={styles.headerLabel}>{gen.label}</span>
+          </div>
           <span className={styles.modeChip}>
-            <FontAwesomeIcon
-              icon={['fas', mode === 'study' ? 'book-open' : 'flask']}
-            />
+            <Icon name={mode === 'study' ? 'book-open' : 'flask'} />
             {mode === 'study' ? 'studio' : 'lab'}
           </span>
         </div>
