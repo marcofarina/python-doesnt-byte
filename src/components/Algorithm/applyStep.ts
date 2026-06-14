@@ -18,9 +18,14 @@ export function initArrayState(trace: ArrayTrace): ArraySceneState {
     comparing: null,
     sorted: [],
     faded: [],
+    swapping: [],
     outcome: null,
     phase: '',
     note: '',
+    line: null,
+    cursor: null,
+    comparisons: 0,
+    swaps: 0,
   };
 }
 
@@ -32,12 +37,21 @@ export function applyArrayStep(
 ): ArraySceneState {
   const next: ArraySceneState = { ...state };
 
+  // Evidenziazioni transienti: riflettono SOLO lo step corrente.
+  next.comparing = null;
+  next.swapping = [];
+  // Riga di pseudocodice e cursore di posizione persistono finché uno step
+  // non li cambia (undefined = invariato; null = nascondi).
+  if (step.line !== undefined) next.line = step.line;
+  if (step.cursor !== undefined) next.cursor = step.cursor;
+
   switch (step.op) {
     case 'compare':
       next.comparing = {
         a: { kind: 'item', i: step.i },
         b: { kind: 'item', i: step.j },
       };
+      next.comparisons = state.comparisons + 1;
       break;
 
     case 'compareTarget':
@@ -45,6 +59,7 @@ export function applyArrayStep(
         a: { kind: 'item', i: step.i },
         b: { kind: 'target' },
       };
+      next.comparisons = state.comparisons + 1;
       break;
 
     case 'compareExtracted':
@@ -52,6 +67,7 @@ export function applyArrayStep(
         a: { kind: 'item', i: step.i },
         b: { kind: 'extracted' },
       };
+      next.comparisons = state.comparisons + 1;
       break;
 
     case 'swap': {
@@ -68,7 +84,8 @@ export function applyArrayStep(
       const items = state.items.slice();
       [items[i], items[j]] = [items[j], items[i]];
       next.items = items;
-      next.comparing = null;
+      next.swapping = [i, j];
+      next.swaps = state.swaps + 1;
       break;
     }
 
@@ -104,7 +121,8 @@ export function applyArrayStep(
       if (state.extracted) {
         next.extracted = { ...state.extracted, overIndex: from };
       }
-      next.comparing = null;
+      next.swapping = [from, from + 1];
+      next.swaps = state.swaps + 1;
       break;
     }
 

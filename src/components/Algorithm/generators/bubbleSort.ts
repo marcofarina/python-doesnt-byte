@@ -5,6 +5,17 @@ import type {
   GeneratorInput,
 } from '../types';
 
+// Righe di pseudocodice (indice 0-based = valore di `line` negli step).
+const CODE = [
+  'def bubble_sort(a):', // 0
+  '    n = len(a)', // 1
+  '    for i in range(n - 1):', // 2
+  '        for j in range(n - 1 - i):', // 3
+  '            if a[j] > a[j + 1]:', // 4
+  '                a[j], a[j+1] = a[j+1], a[j]', // 5
+  '    return a', // 6
+];
+
 function generate({ data }: GeneratorInput): ArrayTrace {
   const a = data.slice();
   const n = a.length;
@@ -12,7 +23,8 @@ function generate({ data }: GeneratorInput): ArrayTrace {
 
   steps.push({
     op: 'phase',
-    text: 'Confronto le coppie di numeri vicini: a ogni giro il più grande “sale” in fondo.',
+    line: 1,
+    text: 'Confronto i numeri vicini a due a due e, se sono nell’ordine sbagliato, li scambio: a ogni passata il più grande «risale» verso il fondo.',
   });
 
   let brokeEarly = false;
@@ -23,7 +35,9 @@ function generate({ data }: GeneratorInput): ArrayTrace {
         op: 'compare',
         i: j,
         j: j + 1,
-        note: `Confronto ${a[j]} e ${a[j + 1]}.`,
+        line: 4,
+        cursor: { i: j, label: 'j' },
+        note: `La coppia ${a[j]} e ${a[j + 1]}: il primo è più grande del secondo? Se sì, sono nell’ordine sbagliato.`,
       });
       if (a[j] > a[j + 1]) {
         const maggiore = a[j];
@@ -31,29 +45,36 @@ function generate({ data }: GeneratorInput): ArrayTrace {
           op: 'swap',
           i: j,
           j: j + 1,
-          note: `${maggiore} è più grande: li scambio.`,
+          line: 5,
+          cursor: { i: j, label: 'j' },
+          note: `${maggiore} è più grande di ${a[j + 1]}: erano invertiti, li scambio così il maggiore scala verso destra.`,
         });
         [a[j], a[j + 1]] = [a[j + 1], a[j]];
         swapped = true;
       } else {
         steps.push({
           op: 'note',
-          note: 'Sono già nell’ordine giusto: li lascio così.',
+          line: 4,
+          cursor: { i: j, label: 'j' },
+          note: `${a[j]} non supera ${a[j + 1]}: la coppia è già ordinata, la lascio com’è e proseguo.`,
         });
       }
     }
     steps.push({
       op: 'markSorted',
       indices: [n - 1 - pass],
-      note: `${a[n - 1 - pass]} è arrivato al suo posto.`,
+      line: 3,
+      note: `Passata finita: ${a[n - 1 - pass]} era il più grande tra quelli rimasti ed è arrivato in fondo. Da qui non lo tocco più.`,
     });
     if (!swapped) {
       const rest: number[] = [];
       for (let k = 0; k <= n - 2 - pass; k++) rest.push(k);
-      if (rest.length) steps.push({ op: 'markSorted', indices: rest });
+      if (rest.length) steps.push({ op: 'markSorted', indices: rest, line: 6 });
       steps.push({
         op: 'phase',
-        text: 'Nessuno scambio in questo giro: la sequenza è ordinata.',
+        line: 6,
+        cursor: null,
+        text: 'Una passata senza nemmeno uno scambio significa che è già tutto in ordine: posso fermarmi qui.',
       });
       brokeEarly = true;
       break;
@@ -61,10 +82,12 @@ function generate({ data }: GeneratorInput): ArrayTrace {
   }
 
   if (!brokeEarly) {
-    steps.push({ op: 'markSorted', indices: [0] });
+    steps.push({ op: 'markSorted', indices: [0], line: 6 });
     steps.push({
       op: 'phase',
-      text: 'Tutti i numeri sono al loro posto: ho finito.',
+      line: 6,
+      cursor: null,
+      text: 'Ogni numero è al suo posto: l’ordinamento è finito.',
     });
   }
 
@@ -75,6 +98,10 @@ export const bubbleSort: GeneratorDef = {
   id: 'bubble-sort',
   label: 'Bubble sort',
   kind: 'sort',
+  file: 'bubble_sort.py',
+  complexity: 'O(n²)',
+  blurb: 'Confronta coppie adiacenti e le scambia finché non sono in ordine.',
+  code: CODE,
   defaultData: [5, 3, 8, 1, 9, 2, 7],
   generate,
 };

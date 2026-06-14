@@ -97,6 +97,9 @@ export const quicksort: GeneratorDef = {
   id: 'quicksort',
   label: 'Quicksort',
   kind: 'sort',
+  file: 'quicksort.py',
+  complexity: 'O(n log n)',
+  blurb: 'Sceglie un pivot e partiziona; poi ordina ricorsivamente i due lati.',
   defaultData: [3, 5, 4, 1, 2, 9, 8, 7, 6],
   generate,
 };

@@ -26,12 +26,22 @@ export interface ArraySceneState {
   sorted: number[];
   /** Indici di slot attenuati (es. già scartati nella ricerca lineare). */
   faded: number[];
+  /** Slot coinvolti nello scambio appena avvenuto (anello «Scambio»).
+   *  Transiente: vale solo per lo step che lo provoca. */
+  swapping: number[];
   /** Esito ricerca: null finché non noto. */
   outcome: { found: true; i: number } | { found: false } | null;
   /** Testo di fase (study): persiste finché un nuovo 'phase' lo sostituisce. */
   phase: string;
   /** Nota puntuale dello step corrente (study). */
   note: string;
+  /** Riga di pseudocodice attiva (indice 0-based nel `code`); persiste. */
+  line: number | null;
+  /** Indicatore di posizione corrente sotto le barre; persiste. */
+  cursor: { i: number; label?: string } | null;
+  /** Contatori cumulativi per il pannello statistiche. */
+  comparisons: number;
+  swaps: number;
 }
 
 export type ArrayStep = (
@@ -53,8 +63,14 @@ export type ArrayStep = (
 ) & {
   /** Spiegazione puntuale mostrata in study. */
   note?: string;
-  /** Riservato alla fase 2 (showCode): non emesso dai generatori fase 1. */
+  /** Riga di pseudocodice (indice 0-based nel `code` del generatore) che lo
+   *  step illumina. Emessa dai sort; assente negli altri (nessun pannello). */
   line?: number;
+  /** Indicatore di posizione corrente sotto le barre (es. la variabile di
+   *  scansione `j`). Persiste come `line`: `undefined` = invariato, `null` =
+   *  nascosto, oggetto = mostralo allo slot `i`. La `label` compare solo quando
+   *  il pannello codice è attivo (lega l'indice alla variabile). */
+  cursor?: { i: number; label?: string } | null;
 };
 
 export interface ArrayTrace {
@@ -70,9 +86,18 @@ export interface GeneratorInput {
 
 export interface GeneratorDef {
   id: string;
-  /** Nome mostrato nell'header della card, es. «Bubble sort». */
+  /** Nome mostrato nel sotto-header, es. «Bubble sort». */
   label: string;
   kind: 'sort' | 'search';
+  /** Nome file mostrato nella toolbar, es. «bubble_sort.py». */
+  file?: string;
+  /** Complessità mostrata nel badge della toolbar, es. «O(n²)». */
+  complexity?: string;
+  /** Frase descrittiva (corsivo) nel sotto-header. */
+  blurb?: string;
+  /** Righe di pseudocodice Python; se presenti, abilita il pannello codice.
+   *  Gli step emettono `line` come indice 0-based in questo array. */
+  code?: string[];
   /** Dati usati in study quando il blocco non passa `data`. */
   defaultData: number[];
   /** Per kind 'search' senza target esplicito: sceglie il target.
