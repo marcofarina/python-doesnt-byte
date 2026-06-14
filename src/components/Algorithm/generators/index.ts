@@ -18,13 +18,3 @@ const REGISTRY: Record<string, GeneratorDef> = {
 export function getGenerator(id: string): GeneratorDef | undefined {
   return REGISTRY[id];
 }
-
-/** Tutti gli id registrati, nell'ordine di presentazione della pagina demo. */
-export const ALGO_IDS: string[] = [
-  bubbleSort.id,
-  selectionSort.id,
-  insertionSort.id,
-  linearSearch.id,
-  binarySearch.id,
-  quicksort.id,
-];

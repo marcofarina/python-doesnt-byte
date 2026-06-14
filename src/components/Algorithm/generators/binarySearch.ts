@@ -4,17 +4,7 @@ import type {
   GeneratorDef,
   GeneratorInput,
 } from '../types';
-
-/** Come la ricerca lineare, ma applicato al dato già ordinato. */
-function pickTarget(data: number[], rnd: () => number): number {
-  if (rnd() < 0.75 && data.length > 0) {
-    return data[Math.floor(rnd() * data.length)];
-  }
-  const present = new Set(data);
-  let t = 1;
-  while (present.has(t)) t += 1;
-  return t;
-}
+import { pickSearchTarget } from './pickTarget';
 
 function generate({ data, target }: GeneratorInput): ArrayTrace {
   const a = data.slice();
@@ -92,6 +82,6 @@ export const binarySearch: GeneratorDef = {
   blurb: 'Dimezza ogni volta l’intervallo di ricerca su dati ordinati.',
   defaultData: [1, 3, 4, 7, 9, 11, 14, 17],
   prepare: (data) => data.slice().sort((x, y) => x - y),
-  pickTarget,
+  pickTarget: pickSearchTarget,
   generate,
 };

@@ -4,18 +4,7 @@ import type {
   GeneratorDef,
   GeneratorInput,
 } from '../types';
-
-/** Con probabilità 0.75 un elemento presente (esito «trovato»), altrimenti
- *  il più piccolo intero positivo assente (esito «non trovato»). */
-function pickTarget(data: number[], rnd: () => number): number {
-  if (rnd() < 0.75 && data.length > 0) {
-    return data[Math.floor(rnd() * data.length)];
-  }
-  const present = new Set(data);
-  let t = 1;
-  while (present.has(t)) t += 1;
-  return t;
-}
+import { pickSearchTarget } from './pickTarget';
 
 function generate({ data, target }: GeneratorInput): ArrayTrace {
   const a = data.slice();
@@ -70,6 +59,6 @@ export const linearSearch: GeneratorDef = {
   complexity: 'O(n)',
   blurb: 'Scorre gli elementi uno a uno finché non trova il valore cercato.',
   defaultData: [4, 7, 1, 9, 3, 6, 2],
-  pickTarget,
+  pickTarget: pickSearchTarget,
   generate,
 };
