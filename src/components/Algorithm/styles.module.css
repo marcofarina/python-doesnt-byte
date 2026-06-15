@@ -1,0 +1,1049 @@
+/* ─────────────────────────────────────────────────────────────
+   <Algorithm> — visualizzatore di algoritmi.
+   Redesign su disegno «Visualizzatore Algoritmi» (Claude Design),
+   adattato ai token Atmospheric (--at-*) e a Monaspace.
+   Argon = UI, Neon (tabellare) = numeri/codice, Radon = corsivi.
+   ───────────────────────────────────────────────────────────── */
+.card {
+  /* lightness del fill cromatico + colori di stato (anelli e legenda):
+     definiti sulla card così sia la scena sia la legenda li vedono. */
+  --alg-L: 50%;
+  --alg-bar-text: #ffffff;
+  /* Colori di stato (anelli + pallini della legenda) tarati sul tema CHIARO:
+     più scuri e saturi, così contrastano sia con lo sfondo chiaro sia con le
+     barre a media luminosità. Il tema scuro li sovrascrive più sotto (lì il
+     bianco e le tinte pastello funzionano contro il fondo scuro). */
+  --alg-st-compare: #d97706;
+  --alg-st-swap: #059669;
+  --alg-st-sorted: #334155;
+  --alg-st-key: #9333ea;
+  border: 1px solid var(--at-border);
+  border-radius: 18px;
+  background: var(--at-bg-panel);
+  backdrop-filter: blur(8px);
+  margin: 1.4em 0;
+  overflow: hidden;
+  font-family: var(--font-mono-ui);
+  color: var(--at-fg);
+}
+:global(html[data-theme='dark']) .card {
+  --alg-L: 62%;
+  --alg-bar-text: #0b0b0f;
+  --alg-st-compare: #fbbf24;
+  --alg-st-swap: #34d399;
+  --alg-st-sorted: #ffffff;
+  --alg-st-key: #c084fc;
+}
+
+/* ── Toolbar ────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--at-bg-subtle);
+  border-bottom: 1px solid var(--at-border);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.trafficLights {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tlDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
+}
+.tlClose {
+  background: #ff5f57;
+}
+.tlMin {
+  background: #febc2e;
+}
+.tlMax {
+  background: #28c840;
+}
+
+.fileName {
+  margin-left: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--at-muted);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.complexity {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--at-muted-soft);
+  padding: 0 11px;
+  border-radius: 8px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border);
+}
+
+/* Switch Studio/Lab */
+.segmented {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 10px;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border);
+}
+
+.segBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--at-muted);
+  font-family: var(--font-mono-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.segBtn:hover {
+  color: var(--at-fg);
+}
+.segBtnOn {
+  background: var(--at-bg-panel);
+  color: var(--at-accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.segGlyph {
+  font-size: 0.92em;
+  /* L'icona (riempie tutta la sua cassa 1em) cadeva otticamente più in basso
+     del testo, il cui centro visivo sta sopra la metà della riga. La rialzo di
+     un soffio per allineare i due centri ottici. */
+  transform: translateY(-1px);
+}
+
+/* Toggle-icona (pannello, colori) */
+.toggleBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border-strong);
+  color: var(--at-muted);
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.toggleBtn:hover {
+  color: var(--at-fg);
+  border-color: var(--at-accent-chip-border);
+}
+.toggleBtnOn {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-accent);
+}
+
+.headerDivider {
+  width: 1px;
+  height: 18px;
+  background: var(--at-border);
+  margin: 0 2px;
+}
+
+/* ── Sotto-header ───────────────────────────────────────────── */
+.subHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--at-border);
+  flex-wrap: wrap;
+}
+
+.algoName {
+  font-family: var(--font-mono-ui);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--at-fg-strong);
+  letter-spacing: -0.01em;
+}
+
+.subDivider {
+  width: 1px;
+  height: 13px;
+  background: var(--at-border);
+}
+
+.blurb {
+  font-family: var(--font-mono-comment);
+  font-size: 0.8rem;
+  color: var(--at-muted-soft);
+  line-height: 1.4;
+  flex: 1;
+  min-width: 180px;
+}
+
+/* ── Stage ──────────────────────────────────────────────────── */
+.body {
+  background: radial-gradient(
+    120% 90% at 50% -10%,
+    color-mix(in srgb, var(--at-accent) 8%, transparent),
+    transparent 60%
+  );
+  padding: 30px 24px 18px;
+}
+
+.sceneWrap {
+  overflow-x: auto;
+}
+
+.scene {
+  margin: 0 auto;
+  width: max-content;
+}
+
+.baseline {
+  position: absolute;
+  left: -12px;
+  right: -12px;
+  height: 1px;
+  background: var(--at-border);
+}
+
+.stage {
+  position: relative;
+}
+
+.bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  border-radius: 8px 8px 5px 5px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 7px;
+  /* tinta a scala cromatica: hue per valore, lightness per tema */
+  background: linear-gradient(
+    180deg,
+    hsl(var(--alg-hue) 88% calc(var(--alg-L) + 8%)),
+    hsl(var(--alg-hue) 82% calc(var(--alg-L) - 4%))
+  );
+  box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.4);
+  will-change: transform;
+  transition:
+    transform var(--alg-dur) cubic-bezier(0.34, 1.1, 0.38, 1),
+    height var(--alg-dur) cubic-bezier(0.34, 1.1, 0.38, 1),
+    box-shadow 0.25s ease,
+    opacity var(--alg-dur) ease;
+}
+
+.barValue {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--alg-bar-text);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+}
+
+.keyTag {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  color: var(--alg-st-key);
+  animation: algBlink 1s ease-in-out infinite;
+}
+
+.chipRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.targetChip {
+  display: inline-block;
+  font-family: var(--font-mono-ui);
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: var(--at-accent-chip);
+  border: 1px solid var(--at-accent-chip-border);
+  color: var(--at-fg);
+  white-space: nowrap;
+  transition:
+    border-color var(--alg-dur) ease,
+    box-shadow var(--alg-dur) ease;
+}
+.targetChipActive {
+  border-color: var(--at-accent);
+  box-shadow: 0 0 0 3px var(--at-accent-chip);
+}
+
+.badge {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 6px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border);
+  color: var(--at-fg);
+  transition: left var(--alg-dur) ease;
+}
+
+/* Indicatore di posizione corrente (cursore di scansione) */
+.cursor {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  pointer-events: none;
+  transition: left var(--alg-dur) cubic-bezier(0.34, 1.1, 0.38, 1);
+}
+
+.cursorCaret {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 6px solid var(--at-accent);
+}
+
+.cursorLabel {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #fff;
+  background: var(--at-accent);
+  border-radius: 5px;
+  padding: 0 6px;
+}
+
+.range {
+  position: absolute;
+  height: 8px;
+  box-sizing: border-box;
+  border-left: 2px solid var(--at-muted);
+  border-right: 2px solid var(--at-muted);
+  border-bottom: 2px solid var(--at-muted);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  transition:
+    left var(--alg-dur) ease,
+    width var(--alg-dur) ease;
+}
+
+.rangeLabel {
+  position: absolute;
+  text-align: center;
+  font-family: var(--font-mono-ui);
+  font-size: 0.72rem;
+  color: var(--at-muted);
+}
+
+/* ── Descrizione step ───────────────────────────────────────── */
+.explanation {
+  margin: 16px auto 0;
+  /* Altezza FISSA: il blocco non cresce/cala tra uno step e l'altro, così i
+     pulsanti del footer non «saltano» sotto il dito (su mobile era ingestibile).
+     124px copre il caso peggiore misurato a 720px (nota su 2 righe + fase). */
+  height: 124px;
+  max-width: 720px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.phase {
+  margin: 0;
+  font-family: var(--font-mono-ui);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--at-fg-strong);
+  line-height: 1.5;
+}
+
+.stepChip {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--at-muted);
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--at-bg-chip);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.note {
+  margin: 3px 0 0;
+  font-family: var(--font-mono-comment);
+  font-size: 0.8rem;
+  color: var(--at-muted-soft);
+}
+
+/* ── Legenda ────────────────────────────────────────────────── */
+.legend {
+  margin-top: 14px;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono-ui);
+  font-size: 0.72rem;
+  color: var(--at-muted);
+}
+
+.legendSwatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Pannello pseudocodice + statistiche ────────────────────── */
+.codeGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 172px;
+  border-top: 1px solid var(--at-border);
+  background: var(--at-bg-subtle);
+}
+.codeGrid[data-stats='off'] {
+  grid-template-columns: 1fr;
+}
+
+.codeCol {
+  padding: 16px 0;
+  min-width: 0;
+}
+
+.codeHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px 12px 20px;
+}
+
+.codeLabel {
+  font-family: var(--font-mono-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--at-muted);
+}
+
+.copyBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--at-border-strong);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--at-muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.copyBtn:hover {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-accent);
+}
+.copyBtnDone,
+.copyBtnDone:hover {
+  background: transparent;
+  border-color: color-mix(in srgb, #34d399 55%, transparent);
+  color: #34d399;
+}
+
+/* Crossfade copia ↔ spunta: le due icone sono sovrapposte e si scambiano
+   opacità/scala secondo lo stato (copyBtnDone). */
+.copyBtnIcons {
+  position: relative;
+  width: 1em;
+  height: 1em;
+}
+.copyBtnIcon,
+.copyBtnCheck {
+  position: absolute;
+  inset: 0;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+.copyBtnCheck {
+  opacity: 0;
+  transform: scale(0.4);
+  color: #34d399;
+}
+.copyBtnDone .copyBtnIcon {
+  opacity: 0;
+  transform: scale(0.4);
+}
+.copyBtnDone .copyBtnCheck {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  overflow-x: auto;
+}
+
+.codeLine {
+  display: flex;
+  gap: 14px;
+  padding: 3px 20px 3px 16px;
+  line-height: 1.8;
+  border-left: 2px solid transparent;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+.codeLineOn {
+  background: var(--at-accent-chip);
+  border-left-color: var(--at-accent);
+}
+
+.codeNum {
+  min-width: 16px;
+  text-align: right;
+  user-select: none;
+  font-size: 0.72rem;
+  color: var(--at-muted-soft);
+}
+.codeLineOn .codeNum {
+  color: var(--at-accent);
+}
+
+.codeText {
+  white-space: pre;
+  opacity: 0.74;
+}
+.codeLineOn .codeText {
+  opacity: 1;
+}
+
+/* Stessa palette dei runner (PyRunner/SQLRunner): variabili --py-* globali. */
+.tKw {
+  color: var(--py-kw);
+}
+.tNum {
+  color: var(--py-num);
+}
+.tDef {
+  color: var(--py-def);
+}
+.tPunct {
+  color: var(--py-op);
+}
+
+.stats {
+  border-left: 1px solid var(--at-border);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+}
+
+.statLabel {
+  font-family: var(--font-mono-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--at-muted);
+  margin-bottom: 4px;
+}
+
+.statValue {
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--at-fg-strong);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* ── Footer: stato + scrubber + transport ───────────────────── */
+.footer {
+  background: var(--at-bg-subtle);
+  border-top: 1px solid var(--at-border);
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px 8px;
+  flex-wrap: wrap;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--at-muted);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.dotDone {
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+}
+.dotPlay {
+  background: var(--at-accent);
+  box-shadow: 0 0 8px var(--at-accent);
+  animation: algBlink 1s ease-in-out infinite;
+}
+.dotIdle {
+  background: var(--at-muted-soft);
+}
+.dotPause {
+  background: #fbbf24;
+  box-shadow: 0 0 8px #fbbf24;
+}
+
+.stepCount {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--at-muted-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.statSummary {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--at-muted-soft);
+}
+
+.scrub {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 18px;
+  margin: 0 16px 12px;
+}
+
+.scrubTrack {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--at-bg-chip);
+  overflow: hidden;
+}
+
+.scrubFill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+  transition: width 0.25s ease;
+}
+
+.scrubInput {
+  position: relative;
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+.scrubInput::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--at-accent);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+.scrubInput::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--at-accent);
+  cursor: pointer;
+}
+.scrubInput:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 4px;
+  border-radius: 99px;
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px 14px;
+  flex-wrap: wrap;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0 13px;
+  border-radius: 10px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border-strong);
+  color: var(--at-fg);
+  font-family: var(--font-mono-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    transform 0.12s ease;
+}
+.btn:hover:not(:disabled) {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+.btnIcon {
+  width: 38px;
+  padding: 0;
+}
+
+.btnWide {
+  padding: 0 20px;
+}
+
+.btnPrimary {
+  color: #fff;
+  border: none;
+  background: linear-gradient(135deg, var(--at-accent), #6366f1);
+  box-shadow: 0 8px 20px -8px var(--at-accent);
+}
+.btnPrimary:hover:not(:disabled) {
+  /* Ridichiaro il gradiente: la regola generica .btn:hover lo appiattirebbe. */
+  background: linear-gradient(135deg, var(--at-accent), #6366f1);
+  box-shadow: 0 11px 26px -8px var(--at-accent);
+  filter: saturate(1.08) brightness(1.03);
+}
+
+.btnGlyph {
+  font-size: 1em;
+}
+
+.speeds {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--at-bg-chip);
+  border: 1px solid var(--at-border-strong);
+}
+
+/* Indicatore che scorre sotto la pill attiva (--spd-idx = indice scelto). */
+.speedThumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: 42px;
+  border-radius: 7px;
+  background: var(--at-accent);
+  transform: translateX(calc(var(--spd-idx) * 100%));
+  transition: transform 0.22s cubic-bezier(0.34, 1.1, 0.38, 1);
+}
+
+.speedPill {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--at-muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.speedPill:hover {
+  color: var(--at-fg);
+}
+.speedPillOn,
+.speedPillOn:hover {
+  color: #fff;
+}
+
+/* ── Didascalia / errore ────────────────────────────────────── */
+.caption {
+  font-family: var(--font-mono-comment);
+  font-size: 0.85rem;
+  color: var(--at-muted);
+  text-align: center;
+  margin: 0.5em 0 1.4em;
+}
+
+.errorBox {
+  border: 1px solid #dc2626;
+  border-radius: 10px;
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  padding: 12px 16px;
+  margin: 1.4em 0;
+  font-family: var(--font-mono-ui);
+  font-size: 0.85rem;
+}
+
+@keyframes algBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ── Responsive / mobile ────────────────────────────────────────
+   Sotto i ~430 px la toolbar accavallava i controlli e il pannello
+   codice schiacciava lo pseudocodice in una colonna strettissima.
+   Vedi pm/spec-algo-viz-mobile.md. */
+
+/* P2 — il pannello codice impila statistiche sotto il codice. Soglia
+   più alta (560px) perché la colonna fissa da 172px soffoca il codice
+   già prima dei 480px. */
+@media (max-width: 560px) {
+  .codeGrid {
+    grid-template-columns: 1fr;
+  }
+  .stats {
+    border-left: none;
+    border-top: 1px solid var(--at-border);
+    flex-direction: row;
+    gap: 28px;
+    justify-content: flex-start;
+    padding: 12px 16px;
+  }
+
+  /* Numero accanto alla label, sulla stessa riga: la card si accorcia.
+     Label un filo più grande, valore molto più piccolo (non serve il
+     numerone da 1.6rem quando è in linea). */
+  .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .statLabel {
+    margin-bottom: 0;
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+  }
+  .statValue {
+    font-size: 1.05rem;
+  }
+
+  /* Interlinea del codice ben più stretta: su mobile lo pseudocodice
+     occupava troppo in verticale. */
+  .codeLine {
+    line-height: 1.45;
+    padding: 1px 16px 1px 12px;
+  }
+
+  /* Codice ad altezza limitata con scroll interno: scena, controlli e codice
+     stanno insieme senza scrollare la pagina. La riga attiva si porta in vista
+     da sola (auto-scroll in CodePanel). */
+  .code {
+    max-height: 32vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* P1 — la toolbar si stringe per stare su una riga sola: via i pallini
+   «traffic light» e il nome del file (decorativi, superflui su mobile),
+   e lo switch Studio/Lab resta solo-icona. Lo spazio liberato basta a
+   tenere icone + complessità sulla stessa riga, senza sprecare altezza. */
+@media (max-width: 480px) {
+  .header {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding: 10px 12px;
+  }
+  .headerRight {
+    gap: 6px;
+  }
+
+  /* Pallini e nome file: pura decorazione «finestra», fuori su mobile. */
+  .trafficLights,
+  .fileName {
+    display: none;
+  }
+
+  /* Switch Studio/Lab solo-icona: niente etichette, lo spazio è prezioso.
+     Il tap target resta comodo (height 34 + padding). */
+  .segmented {
+    margin-left: 0;
+  }
+  .segBtn {
+    height: 34px;
+    gap: 0;
+    padding: 0 11px;
+  }
+  .segBtn span {
+    display: none;
+  }
+  .segGlyph {
+    font-size: 1.05em;
+  }
+
+  /* P4 — densità: meno padding orizzontale (più spazio scena) e tap target
+     più comodi. */
+  .body {
+    padding: 20px 12px 14px;
+  }
+  .toggleBtn {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Spiegazione: su mobile lo stesso testo va a capo molto di più (fino a
+     ~180px con la fase). Nascondo la riga «fase» (l'intro, ripetuta a ogni
+     step) e riduco l'altezza fissa al solo testo dell'azione corrente. */
+  .explanation {
+    height: 108px;
+  }
+  .explanation .note {
+    display: none;
+  }
+}
+
+/* ── Movimento ridotto ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .bar,
+  .badge,
+  .range,
+  .cursor,
+  .speedThumb,
+  .scrubFill,
+  .codeLine,
+  .targetChip,
+  .copyBtnIcon,
+  .copyBtnCheck {
+    transition-duration: 0.01ms !important;
+  }
+  .keyTag,
+  .dotPlay {
+    animation: none !important;
+  }
+}
