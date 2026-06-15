@@ -19,6 +19,7 @@ const EXTRACT_DY = 58; // quanto scende l'elemento estratto (chiave)
 const HEADROOM = 16; // spazio sopra le barre per «lift» e ombra (no clipping)
 const EDGE = 6; // margine orizzontale interno: l'anello di selezione (~2.5px)
 // delle barre ai bordi non viene tagliato dall'overflow del .sceneWrap.
+const SPLIT_GAP = 16; // varco aperto a ogni confine ordinato/non ordinato
 const BADGE_W = 20;
 const BADGE_OFFSET = 22;
 
@@ -92,18 +93,30 @@ export default function ArrayScene({
       ? clamp((availW - 2 * EDGE) / (n - 1 + BAR_RATIO), MIN_UNIT, MAX_UNIT)
       : MAX_UNIT;
   const barW = unit * BAR_RATIO;
-  const gap = unit - barW;
   // Il valore in cifre non entra in barre molto strette: scalo il font solo
   // verso il basso (mai oltre la dimensione desktop).
   const valueScale = Math.min(1, barW / BASE_BAR_W);
 
+  // Stacco visivo tra parte ordinata e parte da ordinare: a ogni confine (slot
+  // ordinato adiacente a uno non ordinato) si apre un piccolo varco, così «ciò
+  // che è a posto» si legge staccato dal resto. Array tutto ordinato o tutto da
+  // ordinare = nessun confine = nessun varco. splitOffset[i] è il varco
+  // accumulato a sinistra dello slot i.
+  const sortedSet = new Set(state.sorted);
+  const splitOffset: number[] = new Array(Math.max(n, 1)).fill(0);
+  for (let i = 1; i < n; i++) {
+    const boundary = sortedSet.has(i - 1) !== sortedSet.has(i);
+    splitOffset[i] = splitOffset[i - 1] + (boundary ? SPLIT_GAP : 0);
+  }
+
   // Le barre partono da EDGE (non da 0): così l'anello della prima e dell'ultima
-  // ha spazio a sinistra/destra e non viene clippato.
-  const x = (i: number) => EDGE + i * unit;
+  // ha spazio a sinistra/destra e non viene clippato; ci si aggiunge il varco
+  // ordinato/non ordinato accumulato fino allo slot.
+  const x = (i: number) => EDGE + i * unit + (splitOffset[i] ?? 0);
   const slotCenter = (i: number) => x(i) + barW / 2;
 
-  const contentWidth = Math.max(n * unit - gap, barW);
-  const sceneWidth = contentWidth + 2 * EDGE;
+  const lastRight = n > 0 ? x(n - 1) + barW : barW;
+  const sceneWidth = lastRight + EDGE;
   const base = HEADROOM + TRACK_H; // baseline (base delle barre)
 
   // L'insieme dei valori è costante (items + eventuale estratto): min/max fissi.
@@ -135,12 +148,8 @@ export default function ArrayScene({
     }
   }
 
-  const sortedSet = new Set(state.sorted);
   const fadedSet = new Set(state.faded);
   const swappingSet = new Set(state.swapping);
-  const minSlots = new Set(
-    state.pointers.filter((p) => p.name === 'min').map((p) => p.i),
-  );
   const inRange = (slot: number) =>
     !state.range || (slot >= state.range.lo && slot <= state.range.hi);
   const foundSlot =
@@ -171,7 +180,6 @@ export default function ArrayScene({
       ring = 'key';
     } else {
       if (sortedSet.has(slot)) ring = 'sorted';
-      if (minSlots.has(slot)) ring = 'compare';
       if (comparingSlots.has(slot)) {
         ring = 'compare';
         lift = 8;

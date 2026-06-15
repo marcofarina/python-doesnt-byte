@@ -30,11 +30,12 @@ function generate({ data }: GeneratorInput): ArrayTrace {
 
   for (let i = 0; i <= n - 2; i++) {
     let min = i;
+    // `min` viaggia come cursore (caret + etichetta), lo stesso linguaggio
+    // visivo della `j` del bubble sort: niente badge stretto.
     steps.push({
-      op: 'pointer',
-      name: 'min',
-      i,
+      op: 'note',
       line: 3,
+      cursor: { i, label: 'min' },
       note: `Per ora il più piccolo è ${a[i]}.`,
     });
     for (let j = i + 1; j <= n - 1; j++) {
@@ -48,10 +49,9 @@ function generate({ data }: GeneratorInput): ArrayTrace {
       if (a[j] < a[min]) {
         min = j;
         steps.push({
-          op: 'pointer',
-          name: 'min',
-          i: j,
+          op: 'note',
           line: 6,
+          cursor: { i: j, label: 'min' },
           note: `${a[j]} è più piccolo: è il nuovo minimo.`,
         });
       }
@@ -75,8 +75,8 @@ function generate({ data }: GeneratorInput): ArrayTrace {
     steps.push({ op: 'markSorted', indices: [i], line: 2 });
   }
 
-  steps.push({ op: 'pointer', name: 'min', i: null });
-  steps.push({ op: 'markSorted', indices: [n - 1], line: 8 });
+  // Ultimo elemento ordinato di conseguenza: nascondo il cursore `min`.
+  steps.push({ op: 'markSorted', indices: [n - 1], line: 8, cursor: null });
   steps.push({
     op: 'phase',
     line: 8,

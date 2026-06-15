@@ -9,10 +9,14 @@
      definiti sulla card così sia la scena sia la legenda li vedono. */
   --alg-L: 50%;
   --alg-bar-text: #ffffff;
-  --alg-st-compare: #fbbf24;
-  --alg-st-swap: #34d399;
-  --alg-st-sorted: #ffffff;
-  --alg-st-key: #c084fc;
+  /* Colori di stato (anelli + pallini della legenda) tarati sul tema CHIARO:
+     più scuri e saturi, così contrastano sia con lo sfondo chiaro sia con le
+     barre a media luminosità. Il tema scuro li sovrascrive più sotto (lì il
+     bianco e le tinte pastello funzionano contro il fondo scuro). */
+  --alg-st-compare: #d97706;
+  --alg-st-swap: #059669;
+  --alg-st-sorted: #334155;
+  --alg-st-key: #9333ea;
   border: 1px solid var(--at-border);
   border-radius: 18px;
   background: var(--at-bg-panel);
@@ -25,6 +29,10 @@
 :global(html[data-theme='dark']) .card {
   --alg-L: 62%;
   --alg-bar-text: #0b0b0f;
+  --alg-st-compare: #fbbf24;
+  --alg-st-swap: #34d399;
+  --alg-st-sorted: #ffffff;
+  --alg-st-key: #c084fc;
 }
 
 /* ── Toolbar ────────────────────────────────────────────────── */
@@ -140,6 +148,10 @@
 
 .segGlyph {
   font-size: 0.92em;
+  /* L'icona (riempie tutta la sua cassa 1em) cadeva otticamente più in basso
+     del testo, il cui centro visivo sta sopra la metà della riga. La rialzo di
+     un soffio per allineare i due centri ottici. */
+  transform: translateY(-1px);
 }
 
 /* Toggle-icona (pannello, colori) */
