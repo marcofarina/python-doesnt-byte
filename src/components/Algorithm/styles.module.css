@@ -935,6 +935,19 @@
     margin-left: 0;
     justify-content: flex-end;
   }
+
+  /* P4 — densità: meno padding orizzontale (più spazio scena) e tap target
+     più comodi. Fatto dopo il reflow della toolbar così non riapre P1. */
+  .body {
+    padding: 20px 12px 14px;
+  }
+  .toggleBtn {
+    width: 36px;
+    height: 36px;
+  }
+  .segBtn {
+    height: 34px;
+  }
 }
 
 /* ── Movimento ridotto ──────────────────────────────────────── */
