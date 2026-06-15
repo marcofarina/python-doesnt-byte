@@ -1,10 +1,18 @@
-import { type CSSProperties } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react';
 import type { ArrayItem, ArraySceneState } from './types';
 import styles from './styles.module.css';
 
-const BAR_W = 44; // larghezza barra
-const GAP = 14; // spazio tra barre
-const UNIT = BAR_W + GAP;
+const BASE_BAR_W = 44; // larghezza barra a piena dimensione (desktop)
+const BASE_GAP = 14; // spazio tra barre a piena dimensione
+const MAX_UNIT = BASE_BAR_W + BASE_GAP; // 58 — passo orizzontale desktop
+const MIN_UNIT = 36; // passo minimo su mobile (barra ~27 + gap ~9)
+const BAR_RATIO = BASE_BAR_W / MAX_UNIT; // quota della barra dentro al passo
 const TRACK_H = 170; // altezza zona barre (allineate in basso)
 const MIN_H = 40; // altezza barra del valore minimo
 const EXTRACT_DY = 58; // quanto scende l'elemento estratto (chiave)
@@ -12,8 +20,13 @@ const HEADROOM = 16; // spazio sopra le barre per «lift» e ombra (no clipping)
 const BADGE_W = 20;
 const BADGE_OFFSET = 22;
 
-const x = (i: number) => i * UNIT;
-const slotCenter = (i: number) => x(i) + BAR_W / 2;
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.max(lo, Math.min(hi, v));
+
+// useLayoutEffect avverte in SSR: su server cade su useEffect (innocuo, il
+// markup parte comunque dal passo MAX_UNIT, identico al primo render client).
+const useIsoLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 // stato → variabile CSS dell'anello (colori in styles.module.css)
 const RING: Record<string, string> = {
@@ -50,7 +63,41 @@ export default function ArrayScene({
   showLabels,
 }: ArraySceneProps) {
   const n = state.items.length;
-  const sceneWidth = Math.max(n * UNIT - GAP, BAR_W);
+
+  // Larghezza disponibile = clientWidth di .sceneWrap (il genitore, che ha
+  // overflow-x: auto e già sconta il padding del .body). La misuro e seguo i
+  // resize/rotazioni con un ResizeObserver, restando dentro ArrayScene.
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const [availW, setAvailW] = useState(0);
+  useIsoLayoutEffect(() => {
+    const wrap = sceneRef.current?.parentElement;
+    if (!wrap) return undefined;
+    const measure = () => setAvailW(wrap.clientWidth);
+    measure();
+    if (typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver(measure);
+    ro.observe(wrap);
+    return () => ro.disconnect();
+  }, []);
+
+  // Passo adattivo: pieno (MAX_UNIT) finché c'è spazio, poi si stringe fino a
+  // MIN_UNIT; sotto, lo scroll orizzontale del .sceneWrap fa da rete (fallback).
+  // sceneWidth = n*unit − gap, quindi divido per (n − quota gap) per far stare
+  // l'intero array nello spazio disponibile quando possibile.
+  const unit =
+    availW > 0 && n > 0
+      ? clamp(availW / (n - 1 + BAR_RATIO), MIN_UNIT, MAX_UNIT)
+      : MAX_UNIT;
+  const barW = unit * BAR_RATIO;
+  const gap = unit - barW;
+  // Il valore in cifre non entra in barre molto strette: scalo il font solo
+  // verso il basso (mai oltre la dimensione desktop).
+  const valueScale = Math.min(1, barW / BASE_BAR_W);
+
+  const x = (i: number) => i * unit;
+  const slotCenter = (i: number) => x(i) + barW / 2;
+
+  const sceneWidth = Math.max(n * unit - gap, barW);
   const base = HEADROOM + TRACK_H; // baseline (base delle barre)
 
   // L'insieme dei valori è costante (items + eventuale estratto): min/max fissi.
@@ -134,7 +181,7 @@ export default function ArrayScene({
     const style: CSSProperties & Record<'--alg-hue', string> = {
       transform: `translate(${tx}px, ${ty}px)`,
       height: h,
-      width: BAR_W,
+      width: barW,
       color: 'var(--alg-bar-text)',
       '--alg-hue': String(Math.round(hueOf(item))),
     };
@@ -164,6 +211,7 @@ export default function ArrayScene({
 
   return (
     <div
+      ref={sceneRef}
       className={styles.scene}
       role="img"
       aria-label={`Animazione passo-passo: ${label}`}
@@ -193,7 +241,16 @@ export default function ArrayScene({
             style={barStyle(entry)}
           >
             {entry.isExtracted && <span className={styles.keyTag}>KEY</span>}
-            <span className={styles.barValue}>{entry.item.value}</span>
+            <span
+              className={styles.barValue}
+              style={
+                valueScale < 1
+                  ? { fontSize: `${valueScale * 0.9}rem` }
+                  : undefined
+              }
+            >
+              {entry.item.value}
+            </span>
           </div>
         ))}
 
@@ -226,7 +283,7 @@ export default function ArrayScene({
               style={{
                 top: base + 46,
                 left: x(state.range.lo),
-                width: x(state.range.hi) + BAR_W - x(state.range.lo),
+                width: x(state.range.hi) + barW - x(state.range.lo),
               }}
             />
             {state.range.label && (
@@ -235,7 +292,7 @@ export default function ArrayScene({
                 style={{
                   top: base + 58,
                   left: x(state.range.lo),
-                  width: x(state.range.hi) + BAR_W - x(state.range.lo),
+                  width: x(state.range.hi) + barW - x(state.range.lo),
                 }}
               >
                 {state.range.label}
