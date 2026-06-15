@@ -17,6 +17,8 @@ const TRACK_H = 170; // altezza zona barre (allineate in basso)
 const MIN_H = 40; // altezza barra del valore minimo
 const EXTRACT_DY = 58; // quanto scende l'elemento estratto (chiave)
 const HEADROOM = 16; // spazio sopra le barre per «lift» e ombra (no clipping)
+const EDGE = 6; // margine orizzontale interno: l'anello di selezione (~2.5px)
+// delle barre ai bordi non viene tagliato dall'overflow del .sceneWrap.
 const BADGE_W = 20;
 const BADGE_OFFSET = 22;
 
@@ -84,9 +86,10 @@ export default function ArrayScene({
   // MIN_UNIT; sotto, lo scroll orizzontale del .sceneWrap fa da rete (fallback).
   // sceneWidth = n*unit − gap, quindi divido per (n − quota gap) per far stare
   // l'intero array nello spazio disponibile quando possibile.
+  // Lo spazio per le barre è quello disponibile meno i due margini EDGE.
   const unit =
     availW > 0 && n > 0
-      ? clamp(availW / (n - 1 + BAR_RATIO), MIN_UNIT, MAX_UNIT)
+      ? clamp((availW - 2 * EDGE) / (n - 1 + BAR_RATIO), MIN_UNIT, MAX_UNIT)
       : MAX_UNIT;
   const barW = unit * BAR_RATIO;
   const gap = unit - barW;
@@ -94,10 +97,13 @@ export default function ArrayScene({
   // verso il basso (mai oltre la dimensione desktop).
   const valueScale = Math.min(1, barW / BASE_BAR_W);
 
-  const x = (i: number) => i * unit;
+  // Le barre partono da EDGE (non da 0): così l'anello della prima e dell'ultima
+  // ha spazio a sinistra/destra e non viene clippato.
+  const x = (i: number) => EDGE + i * unit;
   const slotCenter = (i: number) => x(i) + barW / 2;
 
-  const sceneWidth = Math.max(n * unit - gap, barW);
+  const contentWidth = Math.max(n * unit - gap, barW);
+  const sceneWidth = contentWidth + 2 * EDGE;
   const base = HEADROOM + TRACK_H; // baseline (base delle barre)
 
   // L'insieme dei valori è costante (items + eventuale estratto): min/max fissi.

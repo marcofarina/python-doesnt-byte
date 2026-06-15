@@ -304,12 +304,26 @@ export default function Player({
               </span>
             </button>
           )}
-          <IconBtn
-            icon="forward-step"
-            label="Avanti"
-            onClick={() => dispatch({ type: 'FWD' })}
-            disabled={atEnd}
-          />
+          {advanced ? (
+            <IconBtn
+              icon="forward-step"
+              label="Avanti"
+              onClick={() => dispatch({ type: 'FWD' })}
+              disabled={atEnd}
+            />
+          ) : (
+            // Studio: senza «Esegui», l'avanzamento passo-passo è l'azione
+            // principale → bottone esteso e colorato come la primaria.
+            <button
+              type="button"
+              className={`${styles.btn} ${styles.btnPrimary} ${styles.btnWide}`}
+              onClick={() => dispatch({ type: 'FWD' })}
+              disabled={atEnd}
+            >
+              <Icon name="forward-step" className={styles.btnGlyph} />
+              <span>Step</span>
+            </button>
+          )}
 
           {advanced && (
             <>

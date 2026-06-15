@@ -388,14 +388,16 @@
 /* ── Descrizione step ───────────────────────────────────────── */
 .explanation {
   margin: 16px auto 0;
-  /* Spazio riservato per ~2 righe di fase + nota: l'altezza del blocco non
-     cambia quando la spiegazione compare al primo passo. */
-  min-height: 58px;
+  /* Altezza FISSA: il blocco non cresce/cala tra uno step e l'altro, così i
+     pulsanti del footer non «saltano» sotto il dito (su mobile era ingestibile).
+     124px copre il caso peggiore misurato a 720px (nota su 2 righe + fase). */
+  height: 124px;
   max-width: 720px;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 
 .phase {
@@ -917,27 +919,84 @@
     border-left: none;
     border-top: 1px solid var(--at-border);
     flex-direction: row;
-    gap: 24px;
+    gap: 28px;
     justify-content: flex-start;
+    padding: 12px 16px;
+  }
+
+  /* Numero accanto alla label, sulla stessa riga: la card si accorcia.
+     Label un filo più grande, valore molto più piccolo (non serve il
+     numerone da 1.6rem quando è in linea). */
+  .stat {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .statLabel {
+    margin-bottom: 0;
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+  }
+  .statValue {
+    font-size: 1.05rem;
+  }
+
+  /* Interlinea del codice ben più stretta: su mobile lo pseudocodice
+     occupava troppo in verticale. */
+  .codeLine {
+    line-height: 1.45;
+    padding: 1px 16px 1px 12px;
+  }
+
+  /* Codice ad altezza limitata con scroll interno: scena, controlli e codice
+     stanno insieme senza scrollare la pagina. La riga attiva si porta in vista
+     da sola (auto-scroll in CodePanel). */
+  .code {
+    max-height: 32vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 }
 
-/* P1 — la toolbar riflowa: pallini + nome file + Studio/Lab su riga 1,
-   icone + complessità su riga 2 a tutta larghezza, allineate a destra.
-   Così nessun controllo si sovrappone e Studio/Lab resta cliccabile. */
+/* P1 — la toolbar si stringe per stare su una riga sola: via i pallini
+   «traffic light» e il nome del file (decorativi, superflui su mobile),
+   e lo switch Studio/Lab resta solo-icona. Lo spazio liberato basta a
+   tenere icone + complessità sulla stessa riga, senza sprecare altezza. */
 @media (max-width: 480px) {
   .header {
     flex-wrap: wrap;
     row-gap: 8px;
+    padding: 10px 12px;
   }
   .headerRight {
-    width: 100%;
+    gap: 6px;
+  }
+
+  /* Pallini e nome file: pura decorazione «finestra», fuori su mobile. */
+  .trafficLights,
+  .fileName {
+    display: none;
+  }
+
+  /* Switch Studio/Lab solo-icona: niente etichette, lo spazio è prezioso.
+     Il tap target resta comodo (height 34 + padding). */
+  .segmented {
     margin-left: 0;
-    justify-content: flex-end;
+  }
+  .segBtn {
+    height: 34px;
+    gap: 0;
+    padding: 0 11px;
+  }
+  .segBtn span {
+    display: none;
+  }
+  .segGlyph {
+    font-size: 1.05em;
   }
 
   /* P4 — densità: meno padding orizzontale (più spazio scena) e tap target
-     più comodi. Fatto dopo il reflow della toolbar così non riapre P1. */
+     più comodi. */
   .body {
     padding: 20px 12px 14px;
   }
@@ -945,8 +1004,15 @@
     width: 36px;
     height: 36px;
   }
-  .segBtn {
-    height: 34px;
+
+  /* Spiegazione: su mobile lo stesso testo va a capo molto di più (fino a
+     ~180px con la fase). Nascondo la riga «fase» (l'intro, ripetuta a ogni
+     step) e riduco l'altezza fissa al solo testo dell'azione corrente. */
+  .explanation {
+    height: 108px;
+  }
+  .explanation .note {
+    display: none;
   }
 }
 

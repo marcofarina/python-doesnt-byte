@@ -33,8 +33,23 @@ export default function CodePanel({
 }: CodePanelProps) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<number | undefined>(undefined);
+  const codeRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
+
+  // Porta la riga attiva in vista DENTRO al pannello codice (su mobile è
+  // scrollabile), aggiustando solo il suo scrollTop: non tocca lo scroll della
+  // pagina. Su desktop il pannello mostra tutto, quindi resta un no-op.
+  useEffect(() => {
+    const box = codeRef.current;
+    const line = activeRef.current;
+    if (!box || !line) return;
+    const b = box.getBoundingClientRect();
+    const l = line.getBoundingClientRect();
+    if (l.top < b.top) box.scrollTop += l.top - b.top - 8;
+    else if (l.bottom > b.bottom) box.scrollTop += l.bottom - b.bottom + 8;
+  }, [activeLine]);
 
   const onCopy = useCallback(() => {
     copyToClipboard(code.join('\n'))
@@ -66,12 +81,13 @@ export default function CodePanel({
             </span>
           </button>
         </div>
-        <div className={styles.code}>
+        <div className={styles.code} ref={codeRef}>
           {code.map((line, li) => {
             const on = activeLine === li;
             return (
               <div
                 key={li}
+                ref={on ? activeRef : undefined}
                 className={`${styles.codeLine} ${on ? styles.codeLineOn : ''}`}
               >
                 <span className={styles.codeNum}>{li + 1}</span>
