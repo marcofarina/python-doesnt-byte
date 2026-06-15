@@ -901,6 +901,42 @@
   }
 }
 
+/* ── Responsive / mobile ────────────────────────────────────────
+   Sotto i ~430 px la toolbar accavallava i controlli e il pannello
+   codice schiacciava lo pseudocodice in una colonna strettissima.
+   Vedi pm/spec-algo-viz-mobile.md. */
+
+/* P2 — il pannello codice impila statistiche sotto il codice. Soglia
+   più alta (560px) perché la colonna fissa da 172px soffoca il codice
+   già prima dei 480px. */
+@media (max-width: 560px) {
+  .codeGrid {
+    grid-template-columns: 1fr;
+  }
+  .stats {
+    border-left: none;
+    border-top: 1px solid var(--at-border);
+    flex-direction: row;
+    gap: 24px;
+    justify-content: flex-start;
+  }
+}
+
+/* P1 — la toolbar riflowa: pallini + nome file + Studio/Lab su riga 1,
+   icone + complessità su riga 2 a tutta larghezza, allineate a destra.
+   Così nessun controllo si sovrappone e Studio/Lab resta cliccabile. */
+@media (max-width: 480px) {
+  .header {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .headerRight {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+}
+
 /* ── Movimento ridotto ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .bar,
