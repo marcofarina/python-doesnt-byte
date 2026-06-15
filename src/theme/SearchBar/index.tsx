@@ -6,6 +6,9 @@
  * Note d'integrazione:
  * - I path degli asset Pagefind passano da `useBaseUrl`, così rispettano
  *   `baseUrl: /python-doesnt-byte/` sia in locale sia in produzione.
+ * - La modale è montata via Portal su `document.body`: dentro la navbar un
+ *   antenato con `transform` intrappolerebbe `position: fixed` (overlay che
+ *   copre solo la fascia alta). Il Portal la tira fuori da quel contesto.
  * - La ricerca esiste solo nel build di produzione (`npm run build` + `serve`):
  *   in `npm start` non c'è `build/pagefind/`, quindi lo script 404 e mostriamo
  *   un placeholder invece di un errore in console (degrado con grazia).
@@ -18,9 +21,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import { useColorMode } from '@docusaurus/theme-common';
 
+import { LensIcon, CircleXmarkIcon } from './icons';
 import styles from './styles.module.css';
 
 interface PagefindUIInstance {
@@ -44,7 +48,7 @@ declare global {
 }
 
 const TRANSLATIONS: Record<string, string> = {
-  placeholder: 'Cerca nel libro',
+  placeholder: 'Cerca un argomento, una funzione, un concetto…',
   clear_search: 'Pulisci',
   load_more: 'Mostra altri risultati',
   search_label: 'Cerca nel libro',
@@ -59,7 +63,7 @@ const TRANSLATIONS: Record<string, string> = {
   searching: 'Sto cercando…',
 };
 
-type LoadState = 'idle' | 'loading' | 'ready' | 'unavailable';
+type LoadState = 'loading' | 'ready' | 'unavailable';
 
 function injectStylesheet(href: string): void {
   if (document.querySelector(`link[data-pagefind-ui][href="${href}"]`)) return;
@@ -99,7 +103,6 @@ function loadScript(src: string): Promise<void> {
 }
 
 function SearchModal({ onClose }: { onClose: () => void }): ReactNode {
-  const { colorMode } = useColorMode();
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<PagefindUIInstance | null>(null);
   const [state, setState] = useState<LoadState>('loading');
@@ -108,13 +111,18 @@ function SearchModal({ onClose }: { onClose: () => void }): ReactNode {
   const cssUrl = useBaseUrl('/pagefind/pagefind-ui.css');
   const jsUrl = useBaseUrl('/pagefind/pagefind-ui.js');
 
-  // Chiudi con Escape.
+  // Chiudi con Escape e blocca lo scroll del body mentre la modale è aperta.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
   }, [onClose]);
 
   // Carica la Pagefind UI on-demand e inizializzala dentro la modale.
@@ -159,15 +167,20 @@ function SearchModal({ onClose }: { onClose: () => void }): ReactNode {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className={styles.modal} data-theme={colorMode}>
-        <button
-          type="button"
-          className={styles.close}
-          aria-label="Chiudi la ricerca"
-          onClick={onClose}
-        >
-          ×
-        </button>
+      <div className={styles.modal}>
+        <div className={styles.header}>
+          <span className={styles.kicker}>Cerca nel libro</span>
+          <button
+            type="button"
+            className={styles.close}
+            aria-label="Chiudi la ricerca"
+            onClick={onClose}
+          >
+            <CircleXmarkIcon className={styles.closeIcon} />
+            <kbd className={styles.escHint}>Esc</kbd>
+          </button>
+        </div>
+
         {state === 'unavailable' ? (
           <p className={styles.unavailable}>
             La ricerca è disponibile solo nel sito compilato (
@@ -175,7 +188,10 @@ function SearchModal({ onClose }: { onClose: () => void }): ReactNode {
             modalità sviluppo.
           </p>
         ) : (
-          <div ref={containerRef} className={styles.results} />
+          <div className={styles.searchArea}>
+            <LensIcon className={styles.lens} />
+            <div ref={containerRef} className={styles.results} />
+          </div>
         )}
       </div>
     </div>
@@ -206,24 +222,13 @@ export default function SearchBar(): ReactNode {
         aria-label="Cerca nel libro"
         onClick={() => setOpen(true)}
       >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="7" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
+        <LensIcon className={styles.triggerIcon} />
         <span className={styles.triggerLabel}>Cerca</span>
         <kbd className={styles.kbd}>⌘K</kbd>
       </button>
-      {open && <SearchModal onClose={close} />}
+      {open &&
+        typeof document !== 'undefined' &&
+        createPortal(<SearchModal onClose={close} />, document.body)}
     </>
   );
 }
