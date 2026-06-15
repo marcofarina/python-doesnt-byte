@@ -4,7 +4,7 @@
 
 [![Sito](https://img.shields.io/badge/Sito-rainbowbits.cloud-1d68e1?logo=googlechrome&logoColor=white)](https://www.rainbowbits.cloud/python-doesnt-byte/)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/marcofarina/python-doesnt-byte/.github%2Fworkflows%2Fdeploy.yml?label=deploy)
-![Version](https://img.shields.io/badge/Book%20version-0.3.0-orange)
+![Version](https://img.shields.io/badge/Book%20version-0.5.0-orange)
 ![Docusaurus](https://img.shields.io/badge/Built%20with-Docusaurus%203-3ECC5F?logo=docusaurus&logoColor=white)
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-4584b6?logo=python&labelColor=ffde57)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
@@ -21,7 +21,7 @@ Ho scritto questo libro come risposta alla crescente necessità di modernizzare 
 Il formato digitale offre diversi vantaggi:
 
 - **Flessibilità** — posso aggiornare e adattare i contenuti ai miei corsi e agli ultimi sviluppi del linguaggio in qualsiasi momento.
-- **Interattività** — esempi di codice eseguibili in-pagina, futuri algoritmi animati e materiali multimediali rendono l’apprendimento più pratico e coinvolgente.
+- **Interattività** — esempi di codice eseguibili in-pagina, query SQL eseguibili nel browser, algoritmi animati passo-passo e materiali multimediali rendono l’apprendimento più pratico e coinvolgente.
 - **Accessibilità** — gli studenti vi accedono da qualsiasi luogo e in qualsiasi momento, gratuitamente.
 - **Apertura** — la licenza _open source_ promuove condivisione, collaborazione e revisione da parte della comunità.
 
@@ -42,6 +42,8 @@ Il libro è organizzato in volumi indipendenti, ciascuno con la propria sidebar 
 
 - **[Docusaurus 3](https://docusaurus.io/)** (React 18 + TypeScript) come generatore di sito statico.
 - **PyRunner** — runtime custom in-repo per eseguire Python nel browser, basato su **[Brython](https://brython.info/)** 3.12 + **[CodeMirror 6](https://codemirror.net/)**. Espone il fence ` ```py live ` e il componente `<PyRunner />` in MDX.
+- **SQLRunner** (_SQL Live Blocks_) — esecutore SQL client-side via **[sql.js](https://sql.js.org/)** (SQLite compilato in WASM) in un Web Worker, con ripristino del database da snapshot. Per il Volume 3; espone il fence ` ```sql live `.
+- **Algorithm** — visualizzatore di algoritmi animati (ordinamento e ricerca) con player passo-passo, pseudocodice sincronizzato e preset _Studio_/_Lab_. Componente `<Algorithm />` in MDX.
 - Contenuti in **MDX** (italiano), con componenti didattici custom (callout Notion-style, quiz, tooltip, indice dei capitoli).
 - **Smart quotes** tipografici applicati automaticamente in build (`remark-smartypants`).
 - Deploy automatico su **GitHub Pages** (dominio custom `www.rainbowbits.cloud`) via GitHub Actions.
