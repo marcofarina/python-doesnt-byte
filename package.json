@@ -62,7 +62,8 @@
     "typescript": "~5.5.2"
   },
   "overrides": {
-    "webpack-dev-server": "^5.2.1"
+    "webpack-dev-server": "^5.2.1",
+    "shell-quote": "^1.8.4"
   },
   "browserslist": {
     "production": [
