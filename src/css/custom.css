@@ -1084,3 +1084,28 @@ html[data-theme='dark'] {
   justify-content: center;
   margin: 1.5rem 0;
 }
+
+/* ─────────────── Ricerca (Pagefind UI) ───────────────
+   La Pagefind UI espone CSS variables proprie: le allineiamo al tema del
+   libro (primary #1d68e1 / #75a3ed, font, raggi). Niente oklch qui per non
+   incappare nel transform → P3 (vedi gotcha callout): valori da var(--ifm-*)
+   o hex. Override dark sotto html[data-theme='dark'] per la specificità. */
+:root {
+  --pagefind-ui-scale: 0.9;
+  --pagefind-ui-primary: var(--ifm-color-primary);
+  --pagefind-ui-text: var(--ifm-font-color-base);
+  --pagefind-ui-background: var(--ifm-background-surface-color);
+  --pagefind-ui-border: var(--ifm-color-emphasis-200);
+  --pagefind-ui-tag: var(--ifm-color-emphasis-100);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 10px;
+  --pagefind-ui-font: var(--ifm-font-family-base);
+}
+
+html[data-theme='dark'] {
+  --pagefind-ui-primary: var(--ifm-color-primary);
+  --pagefind-ui-text: var(--ifm-font-color-base);
+  --pagefind-ui-background: var(--ifm-background-surface-color);
+  --pagefind-ui-border: var(--ifm-color-emphasis-300);
+  --pagefind-ui-tag: var(--ifm-color-emphasis-200);
+}

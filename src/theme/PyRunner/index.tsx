@@ -266,6 +266,7 @@ function PyRunnerInner(props: PyRunnerProps) {
 
   return (
     <div
+      data-pagefind-ignore
       className={clsx(
         styles.runner,
         props.embedded && styles.runnerEmbedded,
@@ -312,7 +313,7 @@ export default function PyRunner(props: PyRunnerProps) {
   return (
     <BrowserOnly
       fallback={
-        <pre className={styles.fallback}>
+        <pre data-pagefind-ignore className={styles.fallback}>
           <code>
             {typeof props.children === 'string' ? props.children : ''}
           </code>
