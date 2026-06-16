@@ -1167,13 +1167,14 @@ html[data-theme='dark'] {
 .pagefind-ui__search-clear {
   width: 30px !important;
   height: 30px !important;
-  top: 12px;
-  right: calc(1.4rem + 8px);
+  top: 17px !important;
+  right: calc(1.4rem + 10px) !important;
   padding: 0 !important;
   font-size: 0 !important;
   color: transparent;
-  background: var(--ifm-color-emphasis-200);
-  border-radius: 999px;
+  border: none !important;
+  background: var(--ifm-color-emphasis-200) !important;
+  border-radius: 999px !important;
   opacity: 0.85;
   transition:
     background 0.18s ease,
@@ -1182,7 +1183,7 @@ html[data-theme='dark'] {
 
 .pagefind-ui__search-clear:hover {
   opacity: 1;
-  background: var(--ifm-color-emphasis-300);
+  background: var(--ifm-color-emphasis-300) !important;
 }
 
 .pagefind-ui__search-clear::before {
@@ -1205,10 +1206,10 @@ html[data-theme='dark'] {
 
 .pagefind-ui__message {
   font-family: var(--font-mono-ui);
-  font-size: 0.74rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--ifm-color-emphasis-600);
+  letter-spacing: 0.03em;
+  color: var(--ifm-color-emphasis-700);
   padding: 0.6rem 0.2rem;
 }
 
@@ -1234,9 +1235,9 @@ html[data-theme='dark'] {
 
 .pagefind-ui__result-excerpt {
   font-family: var(--font-body);
-  font-size: 0.98rem;
-  line-height: 1.5;
-  color: var(--ifm-color-emphasis-700);
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: var(--ifm-color-emphasis-800);
 }
 
 /* Highlight dei termini: accent del libro, niente giallo da evidenziatore. */
@@ -1254,7 +1255,7 @@ html[data-theme='dark'] {
 }
 
 .pagefind-ui__result-nested .pagefind-ui__result-link {
-  font-size: 0.98rem;
+  font-size: 1.04rem;
 }
 
 /* «Mostra altri risultati» come bottone del tema. */
