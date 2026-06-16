@@ -1,11 +1,12 @@
 {
   "name": "python-doesnt-byte",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "build": "docusaurus build",
+    "postbuild": "pagefind --site build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -57,6 +58,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "pagefind": "^1.5.2",
     "prettier": "^3.7.1",
     "remark-smartypants": "^3.0.2",
     "typescript": "~5.5.2"

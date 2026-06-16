@@ -67,6 +67,7 @@ export default function DocItemContent({ children }: Props): ReactNode {
     chapter !== null ? `Capitolo ${String(chapter).padStart(2, '0')}` : null;
   return (
     <div
+      data-pagefind-body
       className={clsx(
         ThemeClassNames.docs.docMarkdown,
         'markdown',

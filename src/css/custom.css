@@ -6,14 +6,15 @@
 
 /* ─────────────── Atmospheric design tokens ─────────────── */
 :root {
-  --font-display: 'Crimson Pro', 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
-  --font-body: 'Crimson Pro', 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
-  --font-mono: 'Monaspace Neon', ui-monospace, SFMono-Regular, Menlo,
-    monospace;
-  --font-mono-comment: 'Monaspace Radon', 'Monaspace Neon', ui-monospace,
-    monospace;
-  --font-mono-ui: 'Monaspace Argon', 'Monaspace Neon', ui-monospace,
-    SFMono-Regular, monospace;
+  --font-display:
+    'Crimson Pro', 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
+  --font-body:
+    'Crimson Pro', 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
+  --font-mono: 'Monaspace Neon', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono-comment:
+    'Monaspace Radon', 'Monaspace Neon', ui-monospace, monospace;
+  --font-mono-ui:
+    'Monaspace Argon', 'Monaspace Neon', ui-monospace, SFMono-Regular, monospace;
 }
 
 :root,
@@ -278,21 +279,24 @@ html[data-theme='dark'] .hero {
 
 @font-face {
   font-family: 'Optimistic Display';
-  src: url('https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayLight-199be98cf48e5b4c688356b08a02362c.woff2') format('woff2');
+  src: url('https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayLight-199be98cf48e5b4c688356b08a02362c.woff2')
+    format('woff2');
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Optimistic Display';
-  src: url('https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayRegular-b0e4e99f91efd0021c3ab8e4df0e6e1b.woff2') format('woff2');
+  src: url('https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayRegular-b0e4e99f91efd0021c3ab8e4df0e6e1b.woff2')
+    format('woff2');
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Optimistic Display';
-  src: url('https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayBold-3a50548145f36de582c3b36d9626f4d6.woff2') format('woff2');
+  src: url('https://facebookmicrosites.github.io/design/public/fonts/OptimisticDisplayBold-3a50548145f36de582c3b36d9626f4d6.woff2')
+    format('woff2');
   font-weight: 700;
   font-style: normal;
 }
@@ -748,7 +752,10 @@ body:has(.theme-doc-sidebar-container)::before {
   flex: 1;
 }
 
-.theme-doc-sidebar-menu > .menu__list-item > .menu__list-item-collapsible .menu__link::before {
+.theme-doc-sidebar-menu
+  > .menu__list-item
+  > .menu__list-item-collapsible
+  .menu__link::before {
   content: counter(pdb-chapter, decimal-leading-zero);
   font-family: var(--font-mono-ui);
   font-size: 11px;
@@ -799,9 +806,7 @@ body:has(.theme-doc-sidebar-container)::before {
   margin-left: 0;
 }
 
-.theme-doc-sidebar-menu
-  .theme-doc-sidebar-item-link-level-2
-  > .menu__link,
+.theme-doc-sidebar-menu .theme-doc-sidebar-item-link-level-2 > .menu__link,
 .theme-doc-sidebar-menu
   .theme-doc-sidebar-item-category-level-2
   > .menu__list-item-collapsible {
@@ -935,34 +940,34 @@ main [class*='generatedIndexPage'] > p {
 */
 
 :root {
-  --callout-prereq-bg:     oklch(96% 0.025 240);
-  --callout-prereq-fg:     oklch(48% 0.16 240);
-  --callout-learn-bg:      oklch(96% 0.025 350);
-  --callout-learn-fg:      oklch(52% 0.18 350);
-  --callout-exercise-bg:   oklch(95% 0.03 320);
-  --callout-exercise-fg:   oklch(52% 0.2 320);
+  --callout-prereq-bg: oklch(96% 0.025 240);
+  --callout-prereq-fg: oklch(48% 0.16 240);
+  --callout-learn-bg: oklch(96% 0.025 350);
+  --callout-learn-fg: oklch(52% 0.18 350);
+  --callout-exercise-bg: oklch(95% 0.03 320);
+  --callout-exercise-fg: oklch(52% 0.2 320);
   --callout-definition-bg: oklch(95% 0.04 70);
   --callout-definition-fg: oklch(48% 0.13 70);
-  --callout-history-bg:    oklch(94% 0.045 35);
-  --callout-history-fg:    oklch(48% 0.16 35);
-  --callout-code-bg:       oklch(95% 0 0);
-  --callout-code-fg:       oklch(40% 0 0);
-  --callout-cleancode-bg:  oklch(95% 0.025 270);
-  --callout-cleancode-fg:  oklch(48% 0.18 270);
-  --callout-nutshell-bg:   oklch(95% 0.03 55);
-  --callout-nutshell-fg:   oklch(46% 0.09 55);
-  --callout-mindmap-bg:    oklch(95% 0.04 175);
-  --callout-mindmap-fg:    oklch(46% 0.13 175);
-  --callout-info-bg:       oklch(95% 0.04 145);
-  --callout-info-fg:       oklch(46% 0.14 145);
-  --callout-tip-bg:        oklch(96% 0.05 90);
-  --callout-tip-fg:        oklch(52% 0.15 85);
-  --callout-warning-bg:    oklch(94% 0.05 55);
-  --callout-warning-fg:    oklch(56% 0.17 50);
-  --callout-danger-bg:     oklch(93% 0.04 15);
-  --callout-danger-fg:     oklch(48% 0.22 18);
-  --callout-note-bg:       oklch(95% 0 0);
-  --callout-note-fg:       oklch(45% 0 0);
+  --callout-history-bg: oklch(94% 0.045 35);
+  --callout-history-fg: oklch(48% 0.16 35);
+  --callout-code-bg: oklch(95% 0 0);
+  --callout-code-fg: oklch(40% 0 0);
+  --callout-cleancode-bg: oklch(95% 0.025 270);
+  --callout-cleancode-fg: oklch(48% 0.18 270);
+  --callout-nutshell-bg: oklch(95% 0.03 55);
+  --callout-nutshell-fg: oklch(46% 0.09 55);
+  --callout-mindmap-bg: oklch(95% 0.04 175);
+  --callout-mindmap-fg: oklch(46% 0.13 175);
+  --callout-info-bg: oklch(95% 0.04 145);
+  --callout-info-fg: oklch(46% 0.14 145);
+  --callout-tip-bg: oklch(96% 0.05 90);
+  --callout-tip-fg: oklch(52% 0.15 85);
+  --callout-warning-bg: oklch(94% 0.05 55);
+  --callout-warning-fg: oklch(56% 0.17 50);
+  --callout-danger-bg: oklch(93% 0.04 15);
+  --callout-danger-fg: oklch(48% 0.22 18);
+  --callout-note-bg: oklch(95% 0 0);
+  --callout-note-fg: oklch(45% 0 0);
 }
 
 /* html[…] per alzare la specificità a (0,1,1): il transform oklch→display-p3
@@ -971,34 +976,34 @@ main [class*='generatedIndexPage'] > p {
    specificità ma più in basso nel sorgente, vincono e su display P3 i callout
    tornano chiari in dark mode. `html[data-theme='dark']` li batte sempre. */
 html[data-theme='dark'] {
-  --callout-prereq-bg:     oklch(26% 0.04 245);
-  --callout-prereq-fg:     oklch(78% 0.12 240);
-  --callout-learn-bg:      oklch(27% 0.05 350);
-  --callout-learn-fg:      oklch(82% 0.11 350);
-  --callout-exercise-bg:   oklch(26% 0.06 320);
-  --callout-exercise-fg:   oklch(80% 0.14 320);
+  --callout-prereq-bg: oklch(26% 0.04 245);
+  --callout-prereq-fg: oklch(78% 0.12 240);
+  --callout-learn-bg: oklch(27% 0.05 350);
+  --callout-learn-fg: oklch(82% 0.11 350);
+  --callout-exercise-bg: oklch(26% 0.06 320);
+  --callout-exercise-fg: oklch(80% 0.14 320);
   --callout-definition-bg: oklch(26% 0.045 70);
   --callout-definition-fg: oklch(82% 0.1 70);
-  --callout-history-bg:    oklch(26% 0.06 35);
-  --callout-history-fg:    oklch(78% 0.13 35);
-  --callout-code-bg:       oklch(28% 0 0);
-  --callout-code-fg:       oklch(82% 0 0);
-  --callout-cleancode-bg:  oklch(26% 0.05 270);
-  --callout-cleancode-fg:  oklch(80% 0.13 270);
-  --callout-nutshell-bg:   oklch(26% 0.035 55);
-  --callout-nutshell-fg:   oklch(80% 0.07 55);
-  --callout-mindmap-bg:    oklch(26% 0.05 175);
-  --callout-mindmap-fg:    oklch(80% 0.12 175);
-  --callout-info-bg:       oklch(26% 0.05 145);
-  --callout-info-fg:       oklch(82% 0.13 145);
-  --callout-tip-bg:        oklch(27% 0.05 90);
-  --callout-tip-fg:        oklch(85% 0.13 90);
-  --callout-warning-bg:    oklch(27% 0.08 55);
-  --callout-warning-fg:    oklch(82% 0.15 50);
-  --callout-danger-bg:     oklch(28% 0.08 15);
-  --callout-danger-fg:     oklch(78% 0.18 18);
-  --callout-note-bg:       oklch(26% 0 0);
-  --callout-note-fg:       oklch(78% 0 0);
+  --callout-history-bg: oklch(26% 0.06 35);
+  --callout-history-fg: oklch(78% 0.13 35);
+  --callout-code-bg: oklch(28% 0 0);
+  --callout-code-fg: oklch(82% 0 0);
+  --callout-cleancode-bg: oklch(26% 0.05 270);
+  --callout-cleancode-fg: oklch(80% 0.13 270);
+  --callout-nutshell-bg: oklch(26% 0.035 55);
+  --callout-nutshell-fg: oklch(80% 0.07 55);
+  --callout-mindmap-bg: oklch(26% 0.05 175);
+  --callout-mindmap-fg: oklch(80% 0.12 175);
+  --callout-info-bg: oklch(26% 0.05 145);
+  --callout-info-fg: oklch(82% 0.13 145);
+  --callout-tip-bg: oklch(27% 0.05 90);
+  --callout-tip-fg: oklch(85% 0.13 90);
+  --callout-warning-bg: oklch(27% 0.08 55);
+  --callout-warning-fg: oklch(82% 0.15 50);
+  --callout-danger-bg: oklch(28% 0.08 15);
+  --callout-danger-fg: oklch(78% 0.18 18);
+  --callout-note-bg: oklch(26% 0 0);
+  --callout-note-fg: oklch(78% 0 0);
 }
 
 .callout {
@@ -1049,38 +1054,329 @@ html[data-theme='dark'] {
 }
 
 /* Mapping tipo → bg + fg titolo. L'icona PNG ha colore proprio. */
-.callout--prereq     { background: var(--callout-prereq-bg); }
-.callout--prereq     .callout__title { color: var(--callout-prereq-fg); }
-.callout--learn      { background: var(--callout-learn-bg); }
-.callout--learn      .callout__title { color: var(--callout-learn-fg); }
-.callout--exercise   { background: var(--callout-exercise-bg); }
-.callout--exercise   .callout__title { color: var(--callout-exercise-fg); }
-.callout--definition { background: var(--callout-definition-bg); }
-.callout--definition .callout__title { color: var(--callout-definition-fg); }
-.callout--history    { background: var(--callout-history-bg); }
-.callout--history    .callout__title { color: var(--callout-history-fg); }
-.callout--code       { background: var(--callout-code-bg); }
-.callout--code       .callout__title { color: var(--callout-code-fg); }
-.callout--cleancode  { background: var(--callout-cleancode-bg); }
-.callout--cleancode  .callout__title { color: var(--callout-cleancode-fg); }
-.callout--nutshell   { background: var(--callout-nutshell-bg); }
-.callout--nutshell   .callout__title { color: var(--callout-nutshell-fg); }
-.callout--mindmap    { background: var(--callout-mindmap-bg); }
-.callout--mindmap    .callout__title { color: var(--callout-mindmap-fg); }
-.callout--info       { background: var(--callout-info-bg); }
-.callout--info       .callout__title { color: var(--callout-info-fg); }
-.callout--tip        { background: var(--callout-tip-bg); }
-.callout--tip        .callout__title { color: var(--callout-tip-fg); }
-.callout--warning    { background: var(--callout-warning-bg); }
-.callout--warning    .callout__title { color: var(--callout-warning-fg); }
-.callout--danger     { background: var(--callout-danger-bg); }
-.callout--danger     .callout__title { color: var(--callout-danger-fg); }
-.callout--note       { background: var(--callout-note-bg); }
-.callout--note       .callout__title { color: var(--callout-note-fg); }
+.callout--prereq {
+  background: var(--callout-prereq-bg);
+}
+.callout--prereq .callout__title {
+  color: var(--callout-prereq-fg);
+}
+.callout--learn {
+  background: var(--callout-learn-bg);
+}
+.callout--learn .callout__title {
+  color: var(--callout-learn-fg);
+}
+.callout--exercise {
+  background: var(--callout-exercise-bg);
+}
+.callout--exercise .callout__title {
+  color: var(--callout-exercise-fg);
+}
+.callout--definition {
+  background: var(--callout-definition-bg);
+}
+.callout--definition .callout__title {
+  color: var(--callout-definition-fg);
+}
+.callout--history {
+  background: var(--callout-history-bg);
+}
+.callout--history .callout__title {
+  color: var(--callout-history-fg);
+}
+.callout--code {
+  background: var(--callout-code-bg);
+}
+.callout--code .callout__title {
+  color: var(--callout-code-fg);
+}
+.callout--cleancode {
+  background: var(--callout-cleancode-bg);
+}
+.callout--cleancode .callout__title {
+  color: var(--callout-cleancode-fg);
+}
+.callout--nutshell {
+  background: var(--callout-nutshell-bg);
+}
+.callout--nutshell .callout__title {
+  color: var(--callout-nutshell-fg);
+}
+.callout--mindmap {
+  background: var(--callout-mindmap-bg);
+}
+.callout--mindmap .callout__title {
+  color: var(--callout-mindmap-fg);
+}
+.callout--info {
+  background: var(--callout-info-bg);
+}
+.callout--info .callout__title {
+  color: var(--callout-info-fg);
+}
+.callout--tip {
+  background: var(--callout-tip-bg);
+}
+.callout--tip .callout__title {
+  color: var(--callout-tip-fg);
+}
+.callout--warning {
+  background: var(--callout-warning-bg);
+}
+.callout--warning .callout__title {
+  color: var(--callout-warning-fg);
+}
+.callout--danger {
+  background: var(--callout-danger-bg);
+}
+.callout--danger .callout__title {
+  color: var(--callout-danger-fg);
+}
+.callout--note {
+  background: var(--callout-note-bg);
+}
+.callout--note .callout__title {
+  color: var(--callout-note-fg);
+}
 
 /* ─────────────── Mermaid diagrams ─────────────── */
 .docusaurus-mermaid-container {
   display: flex;
   justify-content: center;
   margin: 1.5rem 0;
+}
+
+/* ─────────────── Ricerca (Pagefind UI) ───────────────
+   La Pagefind UI espone CSS variables proprie: le allineiamo al tema del
+   libro. Poi rivestiamo gli elementi che genera a runtime (input, clear,
+   risultati) per integrarli nel design del libro — font del sito, accenti,
+   spaziatura. I selettori usano le classi semantiche `.pagefind-ui__*` e NON
+   il suffisso svelte (volatile fra le versioni); dove serve battere la
+   specificità di Pagefind si fa leva sullo scope `.theme-search-modal`.
+   Niente oklch qui per non incappare nel transform → P3 (vedi gotcha
+   callout): valori da var(--ifm-*) o hex. */
+:root {
+  --pagefind-ui-scale: 1;
+  --pagefind-ui-primary: var(--ifm-color-primary);
+  --pagefind-ui-text: var(--ifm-font-color-base);
+  --pagefind-ui-background: var(--ifm-background-surface-color);
+  --pagefind-ui-border: var(--ifm-color-emphasis-200);
+  --pagefind-ui-tag: var(--ifm-color-emphasis-100);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 12px;
+  --pagefind-ui-font: var(--font-body);
+}
+
+html[data-theme='dark'] {
+  --pagefind-ui-primary: var(--ifm-color-primary);
+  --pagefind-ui-text: var(--ifm-font-color-base);
+  --pagefind-ui-background: var(--ifm-background-surface-color);
+  --pagefind-ui-border: var(--ifm-color-emphasis-300);
+  --pagefind-ui-tag: var(--ifm-color-emphasis-200);
+}
+
+/* La UI di Pagefind vive dentro la nostra modale (className results del
+   componente SearchBar): `.pagefind-ui` è il wrapper che monta Pagefind. */
+.pagefind-ui {
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Catena di altezze per rendere `.pagefind-ui__results-area` l'unico scroller.
+   La struttura reale di Pagefind è: `.pagefind-ui` › `form.pagefind-ui__form` ›
+   `.pagefind-ui__drawer` › `.pagefind-ui__results-area` (il drawer è DENTRO il
+   form, non un fratello). Ogni anello deve essere una colonna flex vincolata
+   (flex:1; min-height:0), altrimenti l'area risultati non riceve mai un'altezza
+   limitata, non va in overflow e NON scrolla.
+   `!important`: la CSS svelte di Pagefind usa selettori a doppia classe
+   (es. `.pagefind-ui__drawer.svelte-…{flex-direction:row}`) che, a parità di
+   sorgente, battono i nostri a classe singola. */
+.pagefind-ui__form,
+.pagefind-ui__drawer {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+}
+
+/* Padding del form: lasciamo spazio a sinistra per la nostra lente duotone
+   e nascondiamo l'icona mono di default. Il padding-bottom pareggia i lati
+   (1.4rem), così a query vuota il campo non tocca il bordo della card. */
+.pagefind-ui__form {
+  padding: 0.4rem 1.4rem 1.4rem;
+}
+
+.pagefind-ui__form::before {
+  display: none !important;
+}
+
+/* Campo di ricerca: alto, leggibile, con focus ring del tema. */
+.pagefind-ui__search-input {
+  height: 54px;
+  /* Dentro il form (ora colonna flex) l'input è un flex item: senza questo si
+     lascerebbe comprimere quando i risultati riempiono il drawer e la tastiera
+     accorcia l'altezza disponibile. Tiene i suoi 54px. */
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0 3rem 0 2.9rem;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 500;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 18px;
+  color: var(--ifm-font-color-base);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease;
+}
+
+.pagefind-ui__search-input::placeholder {
+  color: var(--ifm-color-emphasis-500);
+  font-weight: 400;
+}
+
+.pagefind-ui__search-input:focus {
+  outline: none;
+  background: var(--ifm-background-surface-color);
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--ifm-color-primary) 18%, transparent);
+}
+
+/* «Pulisci» → bottoncino tondo discreto con una ✕, allineato dentro il campo.
+   !important perché la CSS svelte di Pagefind è iniettata a runtime DOPO il
+   nostro bundle e vince sui pari-specificità (testo del clear, dimensioni). */
+.pagefind-ui__search-clear {
+  width: 30px !important;
+  height: 30px !important;
+  top: 17px !important;
+  right: calc(1.4rem + 10px) !important;
+  padding: 0 !important;
+  font-size: 0 !important;
+  color: transparent;
+  border: none !important;
+  background: var(--ifm-color-emphasis-200) !important;
+  border-radius: 999px !important;
+  opacity: 0.85;
+  transition:
+    background 0.18s ease,
+    opacity 0.18s ease;
+}
+
+.pagefind-ui__search-clear:hover {
+  opacity: 1;
+  background: var(--ifm-color-emphasis-300) !important;
+}
+
+.pagefind-ui__search-clear::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: var(--ifm-color-emphasis-700);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' d='M8 8l8 8M16 8l-8 8'/%3E%3C/svg%3E")
+    center / 14px no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' d='M8 8l8 8M16 8l-8 8'/%3E%3C/svg%3E")
+    center / 14px no-repeat;
+}
+
+/* Area risultati: scrollabile dentro la card, con respiro ai lati. */
+.pagefind-ui__results-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* L'unico scroller della modale: «contain» impedisce che lo scroll, una
+     volta esaurito l'elenco, si propaghi alla pagina sotto (scroll chaining
+     fastidioso su mobile a tastiera aperta). */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 0 1.4rem 1.4rem;
+  margin-top: 0;
+}
+
+.pagefind-ui__message {
+  font-family: var(--font-mono-ui);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--ifm-color-emphasis-700);
+  padding: 0.2rem 0.2rem 0.5rem;
+}
+
+.pagefind-ui__result {
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  padding: 1rem 0;
+}
+
+.pagefind-ui__result-link {
+  font-family: var(--font-display);
+  font-size: 1.26rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--ifm-heading-color);
+  text-decoration: none;
+}
+
+.pagefind-ui__result-link:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.pagefind-ui__result-excerpt {
+  font-family: var(--font-body);
+  font-size: 1.13rem;
+  line-height: 1.55;
+  color: var(--ifm-color-emphasis-800);
+}
+
+/* Highlight dei termini: accent del libro, niente giallo da evidenziatore. */
+.pagefind-ui__result-excerpt mark,
+.pagefind-ui mark {
+  background: color-mix(in srgb, var(--ifm-color-primary) 16%, transparent);
+  color: var(--ifm-font-color-base);
+  border-radius: 3px;
+  padding: 0 0.12em;
+}
+
+.pagefind-ui__result-nested {
+  border-left: 2px solid var(--ifm-color-emphasis-200);
+  padding-left: 0.9rem;
+}
+
+.pagefind-ui__result-nested .pagefind-ui__result-link {
+  font-size: 1.1rem !important;
+}
+
+/* Via il glifo «⤷» che Pagefind antepone ai sotto-risultati: la barra a
+   sinistra basta a segnalare l'annidamento. */
+.pagefind-ui__result-nested .pagefind-ui__result-link::before {
+  content: none !important;
+}
+
+/* «Mostra altri risultati» come bottone del tema. */
+.pagefind-ui__button {
+  font-family: var(--font-mono-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  margin-top: 0.8rem;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.pagefind-ui__button:hover {
+  border-color: var(--ifm-color-primary);
+  background: color-mix(in srgb, var(--ifm-color-primary) 10%, transparent);
 }

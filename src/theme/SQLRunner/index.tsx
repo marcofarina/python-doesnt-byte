@@ -232,7 +232,7 @@ function SQLRunnerInner(props: SQLRunnerProps) {
   const maxHeight = `${maxLines * 1.55}em`;
 
   return (
-    <div className={clsx(pyStyles.runner, 'notranslate')}>
+    <div data-pagefind-ignore className={clsx(pyStyles.runner, 'notranslate')}>
       <Toolbar
         title={title}
         status={status}
@@ -275,7 +275,7 @@ export default function SQLRunner(props: SQLRunnerProps) {
   return (
     <BrowserOnly
       fallback={
-        <pre className={pyStyles.fallback}>
+        <pre data-pagefind-ignore className={pyStyles.fallback}>
           <code>
             {typeof props.code === 'string'
               ? props.code

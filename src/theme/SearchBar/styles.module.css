@@ -1,0 +1,226 @@
+/* ─────────────── Trigger nella navbar ───────────────
+   Pill coerente con la UI del sito: font mono (come gli item navbar),
+   lente duotone, scorciatoia ⌘K. */
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2rem;
+  padding: 0 0.7rem;
+  margin: 0 0.25rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-color-emphasis-700);
+  font-family: var(--font-mono-ui);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.trigger:hover {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--ifm-color-primary) 16%, transparent);
+}
+
+.triggerIcon {
+  font-size: 1.05rem;
+  color: var(--ifm-color-primary);
+}
+
+.triggerLabel {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.kbd {
+  font-family: var(--font-mono-ui);
+  font-size: 0.68rem;
+  line-height: 1;
+  padding: 0.22rem 0.36rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Su mobile resta solo l'icona. */
+@media (max-width: 996px) {
+  .triggerLabel,
+  .kbd {
+    display: none;
+  }
+
+  .trigger {
+    padding: 0;
+    width: 2rem;
+    justify-content: center;
+  }
+}
+
+/* ─────────────── Overlay (Portal su body) ─────────────── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 9vh 1rem 1rem;
+  overflow: hidden;
+  /* A scorrere è solo l'area risultati; il body è bloccato via JS (position
+     fixed), quindi qui basta «contain» per non propagare lo scroll. NIENTE
+     touch-action:none: su un avo annullerebbe il pan dei risultati. */
+  overscroll-behavior: contain;
+  background: color-mix(in srgb, #09090b 58%, transparent);
+  backdrop-filter: blur(6px) saturate(1.1);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
+  animation: pf-overlay-in 0.18s ease-out both;
+}
+
+@keyframes pf-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ─────────────── Card ─────────────── */
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 660px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 18px;
+  box-shadow:
+    0 1px 0 0 color-mix(in srgb, white 6%, transparent) inset,
+    0 30px 70px -20px rgba(0, 0, 0, 0.5),
+    0 12px 28px -18px rgba(0, 0, 0, 0.4);
+  animation: pf-modal-in 0.26s cubic-bezier(0.21, 0.47, 0.32, 0.98) both;
+}
+
+/* Mobile: meno respiro intorno e altezza ancorata alla visualViewport, così
+   con la tastiera aperta la card resta intera sopra di essa e a scorrere è
+   solo l'elenco dei risultati. */
+@media (max-width: 996px) {
+  .overlay {
+    padding: 0.75rem 0.6rem;
+  }
+
+  .modal {
+    max-height: calc(var(--pf-vh, 100dvh) - 1.5rem);
+  }
+}
+
+@keyframes pf-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header: kicker editoriale a sinistra, chiudi a destra. */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.1rem 0.4rem;
+}
+
+.kicker {
+  font-family: var(--font-mono-ui);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-500);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: none;
+  background: transparent;
+  padding: 0.2rem;
+  color: var(--ifm-color-emphasis-500);
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.close:hover {
+  color: var(--ifm-color-primary);
+}
+
+.closeIcon {
+  font-size: 1.5rem;
+}
+
+.escHint {
+  font-family: var(--font-mono-ui);
+  font-size: 0.64rem;
+  line-height: 1;
+  padding: 0.2rem 0.34rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 5px;
+  color: inherit;
+}
+
+/* ─────────────── Area di ricerca ───────────────
+   La lente duotone è nostra, sovrapposta all'input di Pagefind (di cui
+   imponiamo altezza/padding lato custom.css, così la posizione è stabile). */
+.searchArea {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.lens {
+  position: absolute;
+  top: 33px;
+  left: 2.1rem;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: var(--ifm-color-primary);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.unavailable {
+  margin: 0;
+  padding: 0.5rem 1.4rem 1.6rem;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.unavailable code {
+  font-size: 0.85em;
+}
