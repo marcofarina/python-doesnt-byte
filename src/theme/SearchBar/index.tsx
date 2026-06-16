@@ -275,6 +275,31 @@ function SearchModal({ onClose }: { onClose: () => void }): ReactNode {
         );
         input?.focus();
         removeKeyboardPrimer();
+        // Il tasto «Vai»/lente della tastiera iOS, premuto nel campo, resterebbe
+        // un pulsante morto: Pagefind non lo usa (la ricerca è live, filtra
+        // mentre digiti) e la tastiera non si chiude. Lo intercettiamo per
+        // togliere il focus e chiudere la tastiera. Due agganci, perché iOS a
+        // volte emette solo il `keydown` Enter e a volte anche il `submit`:
+        //  - `keydown` su Enter in fase di CATTURA: scatta prima degli handler
+        //    di Pagefind, quindi non può essere fermato da uno stopPropagation;
+        //  - `submit` del form come rete di sicurezza.
+        input?.addEventListener(
+          'keydown',
+          (e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              input.blur();
+            }
+          },
+          { capture: true },
+        );
+        const form = containerRef.current.querySelector<HTMLFormElement>(
+          'form.pagefind-ui__form',
+        );
+        form?.addEventListener('submit', (e) => {
+          e.preventDefault();
+          input?.blur();
+        });
       })
       .catch(() => {
         if (!cancelled) setState('unavailable');

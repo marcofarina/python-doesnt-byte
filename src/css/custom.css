@@ -1185,6 +1185,23 @@ html[data-theme='dark'] {
   min-height: 0;
 }
 
+/* Catena di altezze per rendere `.pagefind-ui__results-area` l'unico scroller.
+   La struttura reale di Pagefind è: `.pagefind-ui` › `form.pagefind-ui__form` ›
+   `.pagefind-ui__drawer` › `.pagefind-ui__results-area` (il drawer è DENTRO il
+   form, non un fratello). Ogni anello deve essere una colonna flex vincolata
+   (flex:1; min-height:0), altrimenti l'area risultati non riceve mai un'altezza
+   limitata, non va in overflow e NON scrolla.
+   `!important`: la CSS svelte di Pagefind usa selettori a doppia classe
+   (es. `.pagefind-ui__drawer.svelte-…{flex-direction:row}`) che, a parità di
+   sorgente, battono i nostri a classe singola. */
+.pagefind-ui__form,
+.pagefind-ui__drawer {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+}
+
 /* Padding del form: lasciamo spazio a sinistra per la nostra lente duotone
    e nascondiamo l'icona mono di default. Il padding-bottom pareggia i lati
    (1.4rem), così a query vuota il campo non tocca il bordo della card. */
@@ -1199,6 +1216,10 @@ html[data-theme='dark'] {
 /* Campo di ricerca: alto, leggibile, con focus ring del tema. */
 .pagefind-ui__search-input {
   height: 54px;
+  /* Dentro il form (ora colonna flex) l'input è un flex item: senza questo si
+     lascerebbe comprimere quando i risultati riempiono il drawer e la tastiera
+     accorcia l'altezza disponibile. Tiene i suoi 54px. */
+  flex-shrink: 0;
   box-sizing: border-box;
   padding: 0 3rem 0 2.9rem;
   font-family: var(--font-body);
