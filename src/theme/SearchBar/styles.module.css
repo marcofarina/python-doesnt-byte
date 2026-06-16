@@ -73,6 +73,11 @@
   justify-content: center;
   align-items: flex-start;
   padding: 9vh 1rem 1rem;
+  overflow: hidden;
+  /* A scorrere è solo l'area risultati; il body è bloccato via JS (position
+     fixed), quindi qui basta «contain» per non propagare lo scroll. NIENTE
+     touch-action:none: su un avo annullerebbe il pan dei risultati. */
+  overscroll-behavior: contain;
   background: color-mix(in srgb, #09090b 58%, transparent);
   backdrop-filter: blur(6px) saturate(1.1);
   -webkit-backdrop-filter: blur(6px) saturate(1.1);
@@ -105,6 +110,19 @@
     0 30px 70px -20px rgba(0, 0, 0, 0.5),
     0 12px 28px -18px rgba(0, 0, 0, 0.4);
   animation: pf-modal-in 0.26s cubic-bezier(0.21, 0.47, 0.32, 0.98) both;
+}
+
+/* Mobile: meno respiro intorno e altezza ancorata alla visualViewport, così
+   con la tastiera aperta la card resta intera sopra di essa e a scorrere è
+   solo l'elenco dei risultati. */
+@media (max-width: 996px) {
+  .overlay {
+    padding: 0.75rem 0.6rem;
+  }
+
+  .modal {
+    max-height: calc(var(--pf-vh, 100dvh) - 1.5rem);
+  }
 }
 
 @keyframes pf-modal-in {
@@ -190,6 +208,7 @@
 .results {
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-height: 0;
   overflow: hidden;
 }
