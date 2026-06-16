@@ -1121,9 +1121,10 @@ html[data-theme='dark'] {
 }
 
 /* Padding del form: lasciamo spazio a sinistra per la nostra lente duotone
-   e nascondiamo l'icona mono di default. */
+   e nascondiamo l'icona mono di default. Il padding-bottom pareggia i lati
+   (1.4rem), così a query vuota il campo non tocca il bordo della card. */
 .pagefind-ui__form {
-  padding: 0.4rem 1.4rem 0;
+  padding: 0.4rem 1.4rem 1.4rem;
 }
 
 .pagefind-ui__form::before {
@@ -1140,7 +1141,7 @@ html[data-theme='dark'] {
   font-weight: 500;
   background: var(--ifm-color-emphasis-100);
   border: 1px solid var(--ifm-color-emphasis-200);
-  border-radius: 12px;
+  border-radius: 18px;
   color: var(--ifm-font-color-base);
   transition:
     border-color 0.18s ease,
@@ -1200,17 +1201,17 @@ html[data-theme='dark'] {
 /* Area risultati: scrollabile dentro la card, con respiro ai lati. */
 .pagefind-ui__results-area {
   overflow-y: auto;
-  padding: 0.25rem 1.4rem 1.2rem;
-  margin-top: 0.5rem;
+  padding: 0 1.4rem 1.4rem;
+  margin-top: 0;
 }
 
 .pagefind-ui__message {
   font-family: var(--font-mono-ui);
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 600;
   letter-spacing: 0.03em;
   color: var(--ifm-color-emphasis-700);
-  padding: 0.6rem 0.2rem;
+  padding: 0.2rem 0.2rem 0.5rem;
 }
 
 .pagefind-ui__result {
@@ -1220,7 +1221,7 @@ html[data-theme='dark'] {
 
 .pagefind-ui__result-link {
   font-family: var(--font-display);
-  font-size: 1.18rem;
+  font-size: 1.26rem;
   font-weight: 600;
   line-height: 1.25;
   color: var(--ifm-heading-color);
@@ -1235,7 +1236,7 @@ html[data-theme='dark'] {
 
 .pagefind-ui__result-excerpt {
   font-family: var(--font-body);
-  font-size: 1.06rem;
+  font-size: 1.13rem;
   line-height: 1.55;
   color: var(--ifm-color-emphasis-800);
 }
@@ -1255,7 +1256,13 @@ html[data-theme='dark'] {
 }
 
 .pagefind-ui__result-nested .pagefind-ui__result-link {
-  font-size: 1.04rem;
+  font-size: 1.1rem !important;
+}
+
+/* Via il glifo «⤷» che Pagefind antepone ai sotto-risultati: la barra a
+   sinistra basta a segnalare l'annidamento. */
+.pagefind-ui__result-nested .pagefind-ui__result-link::before {
+  content: none !important;
 }
 
 /* «Mostra altri risultati» come bottone del tema. */
