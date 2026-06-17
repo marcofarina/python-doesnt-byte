@@ -157,7 +157,7 @@ function SocialBtn({
   const style: React.CSSProperties = {
     width: 38,
     height: 38,
-    borderRadius: 10,
+    borderRadius: 'var(--radius-sm)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -266,7 +266,7 @@ function PayLogo({
     height: 40,
     minWidth: 66,
     padding: '0 14px',
-    borderRadius: 9,
+    borderRadius: 'var(--radius-sm)',
     background: bgIdle,
     border: `1px solid ${bdIdle}`,
     fontFamily: T.mono,
@@ -504,7 +504,7 @@ function FooterInner({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
                 color: T.muted,
                 textDecoration: 'none',
                 padding: '5px 11px',
-                borderRadius: 999,
+                borderRadius: 'var(--radius-pill)',
                 border: `1px solid ${T.border}`,
                 background: T.bgChip,
               }}
