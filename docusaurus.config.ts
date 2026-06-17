@@ -115,6 +115,21 @@ export default async function createConfig(): Promise<Config> {
       },
     ],
 
+    // Analytics privacy-first (GoatCounter): nessun cookie, niente dati personali.
+    // Solo in produzione: in dev (`npm start`) NODE_ENV è 'development', così le
+    // visite locali non gonfiano le statistiche.
+    scripts:
+      process.env.NODE_ENV === 'production'
+        ? [
+            {
+              src: 'https://gc.zgo.at/count.js',
+              async: true,
+              'data-goatcounter':
+                'https://pythondoesntbyte.goatcounter.com/count',
+            },
+          ]
+        : [],
+
     clientModules: ['./src/fonts.ts'],
 
     plugins: [
