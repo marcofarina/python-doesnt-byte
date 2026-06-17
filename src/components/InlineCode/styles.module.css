@@ -2,7 +2,7 @@
   font-family: var(--font-mono);
   font-size: 0.86em;
   padding: 1.5px 7px;
-  border-radius: 5px;
+  border-radius: var(--radius-xs);
   background: var(--ic-bg);
   border: 1px solid var(--at-border);
   border-bottom: 1px solid var(--ic-accent-line);

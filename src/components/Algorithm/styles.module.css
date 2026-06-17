@@ -18,7 +18,7 @@
   --alg-st-sorted: #334155;
   --alg-st-key: #9333ea;
   border: 1px solid var(--at-border);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: var(--at-bg-panel);
   backdrop-filter: blur(8px);
   margin: 1.4em 0;
@@ -62,7 +62,7 @@
 .tlDot {
   width: 12px;
   height: 12px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
 }
 .tlClose {
@@ -102,7 +102,7 @@
   font-size: 0.72rem;
   color: var(--at-muted-soft);
   padding: 0 11px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
 }
@@ -114,7 +114,7 @@
   gap: 2px;
   margin-left: 10px;
   padding: 3px;
-  border-radius: 9px;
+  border-radius: var(--radius-sm);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
 }
@@ -126,7 +126,7 @@
   height: 24px;
   padding: 0 10px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: transparent;
   color: var(--at-muted);
   font-family: var(--font-mono-ui);
@@ -134,11 +134,16 @@
   font-weight: 600;
   cursor: pointer;
   transition:
-    background 0.15s ease,
-    color 0.15s ease;
+    background 0.15s var(--ease-smooth),
+    color 0.15s var(--ease-smooth),
+    transform 0.15s var(--ease-smooth);
 }
 .segBtn:hover {
   color: var(--at-fg);
+}
+.segBtn:active {
+  transform: scale(0.98);
+  transition-duration: var(--dur-fast);
 }
 .segBtnOn {
   background: var(--at-bg-panel);
@@ -161,20 +166,25 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border-strong);
   color: var(--at-muted);
   font-size: 0.92rem;
   cursor: pointer;
   transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    background 0.15s var(--ease-smooth),
+    border-color 0.15s var(--ease-smooth),
+    color 0.15s var(--ease-smooth),
+    transform 0.15s var(--ease-smooth);
 }
 .toggleBtn:hover {
   color: var(--at-fg);
   border-color: var(--at-accent-chip-border);
+}
+.toggleBtn:active {
+  transform: scale(0.98);
+  transition-duration: var(--dur-fast);
 }
 .toggleBtnOn {
   background: var(--at-accent-chip);
@@ -274,8 +284,8 @@
   transition:
     transform var(--alg-dur) cubic-bezier(0.34, 1.1, 0.38, 1),
     height var(--alg-dur) cubic-bezier(0.34, 1.1, 0.38, 1),
-    box-shadow 0.25s ease,
-    opacity var(--alg-dur) ease;
+    box-shadow 0.25s var(--ease-smooth),
+    opacity var(--alg-dur) var(--ease-smooth);
 }
 
 .barValue {
@@ -312,14 +322,14 @@
   font-family: var(--font-mono-ui);
   font-size: 0.8rem;
   padding: 3px 10px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--at-accent-chip);
   border: 1px solid var(--at-accent-chip-border);
   color: var(--at-fg);
   white-space: nowrap;
   transition:
-    border-color var(--alg-dur) ease,
-    box-shadow var(--alg-dur) ease;
+    border-color var(--alg-dur) var(--ease-smooth),
+    box-shadow var(--alg-dur) var(--ease-smooth);
 }
 .targetChipActive {
   border-color: var(--at-accent);
@@ -337,11 +347,11 @@
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
   color: var(--at-fg);
-  transition: left var(--alg-dur) ease;
+  transition: left var(--alg-dur) var(--ease-smooth);
 }
 
 /* Indicatore di posizione corrente (cursore di scansione) */
@@ -371,7 +381,7 @@
   line-height: 1.3;
   color: #fff;
   background: var(--at-accent);
-  border-radius: 5px;
+  border-radius: var(--radius-xs);
   padding: 0 6px;
 }
 
@@ -385,8 +395,8 @@
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
   transition:
-    left var(--alg-dur) ease,
-    width var(--alg-dur) ease;
+    left var(--alg-dur) var(--ease-smooth),
+    width var(--alg-dur) var(--ease-smooth);
 }
 
 .rangeLabel {
@@ -427,7 +437,7 @@
   font-size: 0.66rem;
   color: var(--at-muted);
   padding: 3px 7px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: var(--at-bg-chip);
   margin-right: 8px;
   vertical-align: middle;
@@ -461,7 +471,7 @@
 .legendSwatch {
   width: 11px;
   height: 11px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   flex-shrink: 0;
   box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25);
 }
@@ -504,15 +514,15 @@
   width: 30px;
   height: 30px;
   border: 1px solid var(--at-border-strong);
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: transparent;
   color: var(--at-muted);
   font-size: 0.82rem;
   cursor: pointer;
   transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
+    background 0.15s var(--ease-smooth),
+    border-color 0.15s var(--ease-smooth),
+    color 0.15s var(--ease-smooth);
 }
 .copyBtn:hover {
   background: var(--at-accent-chip);
@@ -538,7 +548,7 @@
   position: absolute;
   inset: 0;
   transition:
-    opacity 0.2s ease,
+    opacity 0.2s var(--ease-smooth),
     transform 0.2s cubic-bezier(0.34, 1.4, 0.5, 1);
 }
 .copyBtnCheck {
@@ -568,8 +578,8 @@
   line-height: 1.8;
   border-left: 2px solid transparent;
   transition:
-    background 0.25s ease,
-    border-color 0.25s ease;
+    background 0.25s var(--ease-smooth),
+    border-color 0.25s var(--ease-smooth);
 }
 .codeLineOn {
   background: var(--at-accent-chip);
@@ -665,7 +675,7 @@
 .statusDot {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
 }
 .dotDone {
   background: #34d399;
@@ -711,16 +721,16 @@
   left: 0;
   right: 0;
   height: 5px;
-  border-radius: 99px;
+  border-radius: var(--radius-pill);
   background: var(--at-bg-chip);
   overflow: hidden;
 }
 
 .scrubFill {
   height: 100%;
-  border-radius: 99px;
+  border-radius: var(--radius-pill);
   background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
-  transition: width 0.25s ease;
+  transition: width 0.25s var(--ease-smooth);
 }
 
 .scrubInput {
@@ -737,7 +747,7 @@
   -webkit-appearance: none;
   width: 15px;
   height: 15px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: #fff;
   border: 2px solid var(--at-accent);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
@@ -746,7 +756,7 @@
 .scrubInput::-moz-range-thumb {
   width: 14px;
   height: 14px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: #fff;
   border: 2px solid var(--at-accent);
   cursor: pointer;
@@ -754,7 +764,7 @@
 .scrubInput:focus-visible {
   outline: 2px solid var(--at-accent);
   outline-offset: 4px;
-  border-radius: 99px;
+  border-radius: var(--radius-pill);
 }
 
 .transport {
@@ -777,7 +787,7 @@
   height: 38px;
   min-width: 38px;
   padding: 0 13px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border-strong);
   color: var(--at-fg);
@@ -786,19 +796,20 @@
   font-weight: 600;
   cursor: pointer;
   transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease,
-    box-shadow 0.18s ease,
-    filter 0.18s ease,
-    transform 0.12s ease;
+    background 0.15s var(--ease-smooth),
+    border-color 0.15s var(--ease-smooth),
+    color 0.15s var(--ease-smooth),
+    box-shadow 0.18s var(--ease-smooth),
+    filter 0.18s var(--ease-smooth),
+    transform 0.12s var(--ease-smooth);
 }
 .btn:hover:not(:disabled) {
   background: var(--at-accent-chip);
   border-color: var(--at-accent-chip-border);
 }
 .btn:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: scale(0.98);
+  transition-duration: var(--dur-fast);
 }
 .btn:disabled {
   opacity: 0.4;
@@ -841,7 +852,7 @@
   align-items: center;
   height: 38px;
   padding: 4px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border-strong);
 }
@@ -853,7 +864,7 @@
   bottom: 4px;
   left: 4px;
   width: 42px;
-  border-radius: 7px;
+  border-radius: var(--radius-xs);
   background: var(--at-accent);
   transform: translateX(calc(var(--spd-idx) * 100%));
   transition: transform 0.22s cubic-bezier(0.34, 1.1, 0.38, 1);
@@ -875,7 +886,7 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
-  transition: color 0.18s ease;
+  transition: color 0.18s var(--ease-smooth);
 }
 .speedPill:hover {
   color: var(--at-fg);
@@ -896,7 +907,7 @@
 
 .errorBox {
   border: 1px solid #dc2626;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: rgba(220, 38, 38, 0.06);
   color: #dc2626;
   padding: 12px 16px;

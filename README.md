@@ -4,7 +4,7 @@
 
 [![Sito](https://img.shields.io/badge/Sito-rainbowbits.cloud-1d68e1?logo=googlechrome&logoColor=white)](https://www.rainbowbits.cloud/python-doesnt-byte/)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/marcofarina/python-doesnt-byte/.github%2Fworkflows%2Fdeploy.yml?label=deploy)
-![Version](https://img.shields.io/badge/Book%20version-0.6.1-orange)
+![Version](https://img.shields.io/badge/Book%20version-0.7.0-orange)
 ![Docusaurus](https://img.shields.io/badge/Built%20with-Docusaurus%203-3ECC5F?logo=docusaurus&logoColor=white)
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-4584b6?logo=python&labelColor=ffde57)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)

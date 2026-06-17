@@ -43,7 +43,7 @@
 .card {
   position: relative;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--at-bg-subtle);
   border: 1px solid var(--at-border);
   padding: 28px 24px;
@@ -53,9 +53,9 @@
   font: inherit;
   cursor: pointer;
   transition:
-    border-color 200ms ease,
-    transform 200ms ease,
-    box-shadow 200ms ease;
+    border-color 200ms var(--ease-smooth),
+    transform 200ms var(--ease-smooth),
+    box-shadow 200ms var(--ease-smooth);
 }
 
 .card:focus-visible {
@@ -97,7 +97,7 @@
   font-size: 14px;
   color: var(--at-muted);
   z-index: 2;
-  transition: color 200ms ease;
+  transition: color 200ms var(--ease-smooth);
 }
 .cardActive .cardArrow {
   color: var(--at-accent);
@@ -106,7 +106,7 @@
 .iconBox {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
   display: flex;
@@ -181,7 +181,7 @@
 
 .comingWrap {
   position: relative;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px dashed var(--at-border);
   background: var(--at-bg-subtle);
   padding: 36px 28px 28px;
@@ -194,7 +194,7 @@
 .comingIcon {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
   display: inline-flex;
@@ -226,7 +226,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 4px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
   color: var(--at-muted);
@@ -237,7 +237,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--at-border);
   background: var(--at-bg);
   max-width: 420px;
@@ -265,7 +265,7 @@
   font-family: var(--font-mono-ui);
   font-size: 11px;
   padding: 2px 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   background: var(--at-bg-chip);
   border: 1px solid var(--at-border);
   color: var(--at-muted);

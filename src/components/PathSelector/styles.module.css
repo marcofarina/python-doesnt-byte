@@ -5,7 +5,7 @@
   padding: 2px;
   background: var(--at-bg-subtle);
   border: 1px solid var(--at-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   margin: 0 8px;
 }
 
@@ -13,7 +13,7 @@
   appearance: none;
   background: transparent;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   font-family: var(--font-mono-ui);
   font-size: 12px;

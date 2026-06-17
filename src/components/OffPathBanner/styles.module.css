@@ -4,7 +4,7 @@
   gap: 10px;
   padding: 10px 14px;
   margin: 0 0 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   background: rgba(245, 158, 11, 0.06);
   border: 1px solid rgba(245, 158, 11, 0.28);
   border-left-width: 3px;
@@ -43,7 +43,7 @@ html[data-theme='dark'] .icon {
   font-weight: 600;
   letter-spacing: 0.04em;
   padding: 1px 7px;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   background: rgba(245, 158, 11, 0.14);
   color: #b45309;
 }

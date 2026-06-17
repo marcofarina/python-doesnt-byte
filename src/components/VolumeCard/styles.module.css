@@ -1,7 +1,7 @@
 .card {
   position: relative;
   display: block;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--at-bg-panel);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -60,7 +60,7 @@
 .iconBox {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
   background: var(--vol-icon-bg);
   border: 1px solid var(--vol-icon-border);

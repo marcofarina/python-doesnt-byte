@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--at-border);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   background: var(--at-bg-panel);
   backdrop-filter: blur(8px);
   overflow: hidden;
@@ -43,7 +43,7 @@
 .tlDot {
   width: 11px;
   height: 11px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   display: inline-block;
   box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.2);
 }
@@ -82,20 +82,29 @@
   gap: 6px;
   height: 30px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--at-border-strong);
   background: var(--at-bg-chip);
   color: var(--at-fg);
   font-family: 'Monaspace Argon', ui-monospace, monospace;
   font-size: 0.78rem;
   cursor: pointer;
-  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  transition:
+    background 120ms var(--ease-smooth),
+    color 120ms var(--ease-smooth),
+    border-color 120ms var(--ease-smooth),
+    transform 120ms var(--ease-smooth);
 }
 
 .iconBtn:hover:not(:disabled) {
   background: var(--at-accent-chip);
   border-color: var(--at-accent-chip-border);
   color: var(--at-fg-strong);
+}
+
+.iconBtn:active:not(:disabled) {
+  transform: scale(0.98);
+  transition-duration: var(--dur-fast);
 }
 
 .iconBtn:disabled {
@@ -174,7 +183,7 @@
   width: 100%;
   height: 100%;
   fill: currentColor;
-  transition: all var(--ifm-transition-fast) ease;
+  transition: all var(--ifm-transition-fast) var(--ease-smooth);
 }
 
 .copyBtnSuccess {
@@ -237,7 +246,7 @@
 .statusDot {
   width: 9px;
   height: 9px;
-  border-radius: 50%;
+  border-radius: var(--radius-circle);
   background: var(--at-faint);
   flex-shrink: 0;
   display: inline-block;
@@ -265,8 +274,13 @@
 }
 
 @keyframes pyrPulse {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .statusLabel {
@@ -310,7 +324,7 @@
   font-size: 0.78rem;
   height: 22px;
   padding: 0 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--at-accent-chip);
   border: 1px solid var(--at-accent-chip-border);
   color: var(--at-accent);
@@ -333,7 +347,7 @@
   right: 12px;
   z-index: 5;
   padding: 6px 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--at-accent-bg);
   border: 1px solid var(--at-accent-chip-border);
   color: var(--at-accent-soft);
@@ -346,8 +360,14 @@
 }
 
 @keyframes pyrToast {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .runner {
@@ -381,7 +401,7 @@
 .fallback {
   background: var(--at-bg-subtle);
   border: 1px solid var(--at-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 14px;
   font-family: 'Monaspace Neon', ui-monospace, monospace;
   font-size: 0.9rem;
@@ -390,7 +410,7 @@
 
 .error {
   border: 1px solid #ef4444;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   padding: 12px;
   background: rgba(239, 68, 68, 0.08);
   color: #fca5a5;

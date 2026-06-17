@@ -54,7 +54,7 @@ function Pill({ T, children }: { T: V4VTheme; children: ReactNode }) {
         alignItems: 'center',
         gap: 8,
         padding: '6px 13px 6px 11px',
-        borderRadius: 999,
+        borderRadius: 'var(--radius-pill)',
         background: T.accentChip,
         border: `1px solid ${T.accentChipBorder}`,
         fontFamily: T.mono,
@@ -91,7 +91,7 @@ function WayCard({
       style={{
         background: T.bgSubtle,
         border: `1px solid ${T.border}`,
-        borderRadius: 16,
+        borderRadius: 'var(--radius-lg)',
         padding: '24px 24px 26px',
         position: 'relative',
         ...style,
@@ -101,7 +101,7 @@ function WayCard({
         style={{
           width: 46,
           height: 46,
-          borderRadius: 12,
+          borderRadius: 'var(--radius-sm)',
           background: T.bgChip,
           border: `1px solid ${T.border}`,
           display: 'flex',
@@ -162,7 +162,7 @@ function QRTile({
     <div
       style={{
         background: '#ffffff',
-        borderRadius: 12,
+        borderRadius: 'var(--radius-sm)',
         padding: pad,
         display: 'flex',
         lineHeight: 0,
@@ -232,7 +232,7 @@ function QRThumb({
         position: 'relative',
         padding: 0,
         border: `1px solid ${T.border}`,
-        borderRadius: 13,
+        borderRadius: 'var(--radius-md)',
         background: T.bgChip,
         cursor: 'pointer',
         flexShrink: 0,
@@ -250,7 +250,7 @@ function QRThumb({
           bottom: -7,
           width: 24,
           height: 24,
-          borderRadius: 8,
+          borderRadius: 'var(--radius-xs)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -328,7 +328,7 @@ function QRModal({
           width: 'min(360px, 100%)',
           background: T.dark ? '#161619' : '#ffffff',
           border: `1px solid ${T.border}`,
-          borderRadius: 20,
+          borderRadius: 'var(--radius-lg)',
           padding: '30px 26px 26px',
           textAlign: 'center',
           boxShadow: '0 24px 60px rgba(0,0,0,0.4)',
@@ -345,7 +345,7 @@ function QRModal({
             right: 12,
             width: 32,
             height: 32,
-            borderRadius: 9,
+            borderRadius: 'var(--radius-sm)',
             border: `1px solid ${T.border}`,
             background: T.bgChip,
             color: T.muted,
@@ -361,7 +361,7 @@ function QRModal({
           <div
             style={{
               padding: 8,
-              borderRadius: 16,
+              borderRadius: 'var(--radius-lg)',
               border: `1px solid ${T[`${tone}Border`]}`,
               background: T[`${tone}Bg`],
             }}
@@ -445,7 +445,7 @@ function LinkRow({
         letterSpacing: '0.03em',
         color: color || T.accentSoft,
         border: `1px solid ${T.border}`,
-        borderRadius: 9,
+        borderRadius: 'var(--radius-sm)',
         padding: '9px 14px',
         background: T.bgChip,
       }}
@@ -498,7 +498,7 @@ function CopyRow({
         letterSpacing: '0.03em',
         color: c,
         border: `1px solid ${T.border}`,
-        borderRadius: 9,
+        borderRadius: 'var(--radius-sm)',
         padding: '9px 14px',
         background: T.bgChip,
       }}
@@ -561,7 +561,7 @@ function PayRow({
         display: 'flex',
         gap: 14,
         padding: 14,
-        borderRadius: 13,
+        borderRadius: 'var(--radius-md)',
         background: bg,
         border: `1px solid ${bd}`,
       }}
@@ -630,7 +630,7 @@ function DonationPanel({ T, ring }: { T: V4VTheme; ring?: boolean }) {
     <div
       className={ring ? 'v4v-ring' : 'v4v-beam'}
       style={{
-        borderRadius: 18,
+        borderRadius: 'var(--radius-lg)',
         padding: ring ? 1.6 : 1.4,
         background: T.bgSubtle,
         ...(ring
@@ -640,7 +640,7 @@ function DonationPanel({ T, ring }: { T: V4VTheme; ring?: boolean }) {
     >
       <div
         style={{
-          borderRadius: 16.6,
+          borderRadius: 'calc(var(--radius-lg) - 1.4px)',
           background: T.bgPanel,
           backdropFilter: 'blur(14px)',
           WebkitBackdropFilter: 'blur(14px)',
@@ -651,7 +651,7 @@ function DonationPanel({ T, ring }: { T: V4VTheme; ring?: boolean }) {
           style={{
             width: 46,
             height: 46,
-            borderRadius: 12,
+            borderRadius: 'var(--radius-sm)',
             background: T.bgChip,
             border: `1px solid ${T.border}`,
             display: 'flex',
@@ -748,7 +748,7 @@ function GoalBar({
         style={{
           position: 'relative',
           height,
-          borderRadius: 999,
+          borderRadius: 'var(--radius-pill)',
           background: T.track,
           overflow: 'visible',
         }}
@@ -761,7 +761,7 @@ function GoalBar({
             top: 0,
             bottom: 0,
             width: `${pct}%`,
-            borderRadius: 999,
+            borderRadius: 'var(--radius-pill)',
             background: `linear-gradient(90deg, ${T.accent}, #818cf8, ${T.accent})`,
           }}
         />
@@ -778,7 +778,7 @@ function GoalBar({
                 transform: 'translate(-50%,-50%)',
                 width: height + 6,
                 height: height + 6,
-                borderRadius: 999,
+                borderRadius: 'var(--radius-pill)',
                 background: hit ? T.accent : T.bg,
                 border: `2px solid ${hit ? T.accent : T.borderStrong}`,
                 boxShadow: hit ? `0 0 0 3px ${T.accentChip}` : 'none',
@@ -843,7 +843,7 @@ function DonorChip({
         alignItems: 'center',
         gap: 8,
         padding: '4px 13px 4px 4px',
-        borderRadius: 999,
+        borderRadius: 'var(--radius-pill)',
         background: T.bgChip,
         border: `1px solid ${T.border}`,
         fontFamily: T.body,
@@ -856,7 +856,7 @@ function DonorChip({
           flexShrink: 0,
           width: 25,
           height: 25,
-          borderRadius: 999,
+          borderRadius: 'var(--radius-pill)',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -897,7 +897,7 @@ function GoalsBlock({
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         border: `1px solid ${T.border}`,
-        borderRadius: 18,
+        borderRadius: 'var(--radius-lg)',
         padding: mobile ? '22px 20px 24px' : '28px 30px 30px',
       }}
     >
@@ -972,7 +972,7 @@ function GoalsBlock({
                 gap: 14,
                 alignItems: 'flex-start',
                 padding: '14px 16px',
-                borderRadius: 12,
+                borderRadius: 'var(--radius-md)',
                 background: hit ? T.accentBg : T.bgSubtle,
                 border: `1px solid ${hit ? T.accentBorder : T.border}`,
                 flexDirection: 'column',
@@ -983,7 +983,7 @@ function GoalsBlock({
                   flexShrink: 0,
                   width: 34,
                   height: 34,
-                  borderRadius: 9,
+                  borderRadius: 'var(--radius-sm)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1100,7 +1100,7 @@ function GoalsBlock({
                 alignItems: 'center',
                 gap: 7,
                 padding: '5px 15px',
-                borderRadius: 999,
+                borderRadius: 'var(--radius-pill)',
                 background: T.accentChip,
                 border: `1px solid ${T.accentChipBorder}`,
                 fontFamily: T.body,
@@ -1349,7 +1349,7 @@ function V4VPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
         <div
           style={{
             margin: '44px 0 0',
-            borderRadius: 16,
+            borderRadius: 'var(--radius-lg)',
             border: `1px solid ${T.border}`,
             background: T.bgSubtle,
             padding: '26px 30px 28px',
@@ -1368,7 +1368,7 @@ function V4VPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
                 flexShrink: 0,
                 width: 40,
                 height: 40,
-                borderRadius: 11,
+                borderRadius: 'var(--radius-sm)',
                 background: T.bgChip,
                 border: `1px solid ${T.border}`,
                 display: 'flex',
