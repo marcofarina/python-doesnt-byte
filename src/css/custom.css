@@ -1354,3 +1354,116 @@ html[data-theme='dark'] {
   border-color: var(--ifm-color-primary);
   background: color-mix(in srgb, var(--ifm-color-primary) 10%, transparent);
 }
+
+/* ────────────────────────────────────────────────────────────────────────
+   Value 4 Value — animazioni condivise dalla pagina /support e dal footer.
+   (bordi conici animati, riempimento shimmer della barra obiettivi, micro
+   interazioni press/link). Classi globali usate dagli stili inline dei
+   componenti in src/pages/support e src/theme/Footer.
+   ──────────────────────────────────────────────────────────────────────── */
+@property --v4v-ang {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes v4v-rot {
+  to {
+    --v4v-ang: 360deg;
+  }
+}
+@keyframes v4v-shimmer {
+  to {
+    background-position: 200% 0;
+  }
+}
+
+/* bordo conico animato "soft" (pannello donazioni, variante beam) */
+.v4v-beam {
+  position: relative;
+  isolation: isolate;
+}
+.v4v-beam::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: conic-gradient(
+    from var(--v4v-ang),
+    transparent 58%,
+    var(--b1, #06b6d4) 76%,
+    var(--b2, #3b82f6) 88%,
+    var(--b3, #8b5cf6) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: v4v-rot 6s linear infinite;
+  pointer-events: none;
+  opacity: var(--bop, 0.9);
+}
+
+/* riempimento shimmer della barra obiettivi */
+.v4v-fill {
+  background-size: 200% 100%;
+  animation: v4v-shimmer 2.4s linear infinite;
+}
+
+/* anello conico iridescente (pannello donazioni in evidenza) */
+.v4v-ring {
+  position: relative;
+  isolation: isolate;
+}
+.v4v-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.6px;
+  background: conic-gradient(
+    from var(--v4v-ang),
+    #06b6d4,
+    #2563eb,
+    #7c3aed,
+    #c084fc,
+    #f59e0b,
+    #06b6d4
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: v4v-rot 6s linear infinite;
+  pointer-events: none;
+}
+
+.v4v-press {
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.25s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.v4v-press:hover {
+  transform: translateY(-1px);
+}
+.v4v-press:active {
+  transform: translateY(0);
+}
+.v4v-link {
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4v-beam::before,
+  .v4v-ring::before,
+  .v4v-fill {
+    animation: none;
+  }
+}

@@ -179,9 +179,10 @@ export default async function createConfig(): Promise<Config> {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       mermaid: {
-        theme: {light: 'neutral', dark: 'dark'},
+        theme: { light: 'neutral', dark: 'dark' },
         options: {
-          fontFamily: "'Monaspace Argon', ui-monospace, SFMono-Regular, monospace",
+          fontFamily:
+            "'Monaspace Argon', ui-monospace, SFMono-Regular, monospace",
           fontSize: 14,
         },
       },
@@ -237,48 +238,8 @@ export default async function createConfig(): Promise<Config> {
           // tramite navbar items standard.
         ],
       },
-      footer: {
-        links: [
-          {
-            title: 'Rainbow Bits',
-            items: [
-              {
-                label: 'Python Doesn’t Byte',
-                to: '/docs/intro',
-              },
-            ],
-          },
-          {
-            title: 'Contribuisci',
-            items: [
-              {
-                html: '<span style="display: block">Bitcoin on-chain</span><span style="font-family: monospace; font-size: small;">bc1qhll2p0geaeqn4qskl2fk9gnlqusrcqja0v8p2d</span>',
-              },
-              {
-                label: 'Buy me a coffee',
-                href: 'https://ko-fi.com/marcofarina',
-              },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'GitHub',
-                href: 'https://github.com/marcofarina/',
-              },
-            ],
-          },
-        ],
-        logo: {
-          alt: 'Rainbow Bits Logo',
-          src: 'img/rb-hero-logo-dark.svg',
-          href: 'https://www.rainbowbits.cloud',
-          width: 160,
-          height: 51,
-        },
-        copyright: `Except where otherwise noted, content on this site is licensed under a<br>Creative Commons Attribution - Non-commercial - Share Alike 4.0 International license. ${new Date().getFullYear()}.<br>Built with Docusaurus. Icons by Font Awesome.`,
-      },
+      // Il footer è interamente gestito dallo swizzle src/theme/Footer
+      // (redesign Value 4 Value): la config `footer` non viene più usata.
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
