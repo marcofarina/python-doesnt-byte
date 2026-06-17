@@ -35,8 +35,7 @@
 }
 
 html[data-theme='dark'] .logo {
-  filter:
-    drop-shadow(0 0 40px rgba(56, 189, 248, 0.4))
+  filter: drop-shadow(0 0 40px rgba(56, 189, 248, 0.4))
     drop-shadow(0 12px 32px rgba(0, 0, 0, 0.5));
 }
 
@@ -94,4 +93,3 @@ html[data-theme='dark'] .logo {
     padding: 56px 20px 40px;
   }
 }
-
