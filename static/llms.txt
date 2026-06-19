@@ -1,0 +1,71 @@
+# Python Doesn't Byte
+
+> Libro di testo digitale open source per imparare Python, pensato per gli
+> indirizzi Informatica e Liceo Scienze Applicate della scuola superiore
+> italiana. Contenuti in italiano, codice eseguibile in pagina, licenza
+> CC BY-NC-SA 4.0. Autore: Marco Farina / Rainbow Bits.
+
+Il libro è organizzato in quattro volumi (Programmatore, Artefice, Archivista,
+Apprendista). Al momento il volume più completo è il «Manuale dell'Artefice»
+(programmazione a oggetti); gli altri sono in costruzione. Ogni capitolo include
+esempi Python eseguibili direttamente nel browser (runtime Brython) e quiz.
+
+Questo file è mantenuto a mano: se una voce non corrisponde più al sito, fa fede
+la sitemap (https://www.rainbowbits.cloud/sitemap.xml).
+
+## Orientamento
+
+- [Perché Python](https://www.rainbowbits.cloud/python-doesnt-byte/perche-python): il manifesto del progetto — perché questo libro esiste e per chi.
+- [Introduzione](https://www.rainbowbits.cloud/python-doesnt-byte/docs/intro): punto di partenza del libro.
+- [Come usare questo libro](https://www.rainbowbits.cloud/python-doesnt-byte/docs/come-usare-questo-libro): convenzioni tipografiche, elementi interattivi e suggerimenti.
+
+## Volume 1 — Manuale del Programmatore
+
+> I fondamenti del linguaggio. In costruzione.
+
+- [Manuale del Programmatore](https://www.rainbowbits.cloud/python-doesnt-byte/programmatore): introduzione al volume.
+- [Le variabili](https://www.rainbowbits.cloud/python-doesnt-byte/programmatore/variabili): primo contatto con le variabili in Python.
+
+## Volume 2 — Manuale dell'Artefice (OOP)
+
+> Programmazione a oggetti, costruita passo-passo attorno al lettore musicale «Risonanza». È il volume più completo.
+
+- [Manuale dell'Artefice](https://www.rainbowbits.cloud/python-doesnt-byte/artefice): introduzione al volume.
+- [Perché gli oggetti?](https://www.rainbowbits.cloud/python-doesnt-byte/artefice/perche-gli-oggetti): i limiti del codice procedurale e l'idea-madre dell'OOP — tenere insieme dati e comportamento.
+- [Classi, istanze e metodi](https://www.rainbowbits.cloud/python-doesnt-byte/artefice/classi-e-istanze): lo stampo e l'esemplare; cosa fa __init__, perché self compare ovunque, attributi contro metodi.
+- [Mostrare un oggetto](https://www.rainbowbits.cloud/python-doesnt-byte/artefice/mostrare-un-oggetto): i metodi speciali __str__ e __repr__ — l'oggetto che impara a raccontarsi.
+- [Metodi di classe e statici](https://www.rainbowbits.cloud/python-doesnt-byte/artefice/metodi-di-classe-e-statici): attributi di classe, @classmethod (e i costruttori alternativi), @staticmethod.
+- [Incapsulamento](https://www.rainbowbits.cloud/python-doesnt-byte/artefice/incapsulamento): interfaccia pubblica contro stato interno, convenzioni _ e __, «tell, don't ask».
+
+## Volume 3 — Manuale dell'Archivista
+
+> Basi di dati e SQL, con query eseguibili in pagina. In costruzione.
+
+- [Manuale dell'Archivista](https://www.rainbowbits.cloud/python-doesnt-byte/archivista): introduzione al volume.
+
+## Volume 4 — Biblioteca dell'Apprendista
+
+> Esercizi assegnati dai volumi precedenti. In costruzione.
+
+- [Biblioteca dell'Apprendista](https://www.rainbowbits.cloud/python-doesnt-byte/apprendista): introduzione al volume.
+
+## Le basi del linguaggio (materiale fondamenti)
+
+- [Programmare in Python](https://www.rainbowbits.cloud/python-doesnt-byte/docs/fondamenti-di-python/programmare-in-python): cosa significa programmare e come gira il codice Python.
+- [Le variabili](https://www.rainbowbits.cloud/python-doesnt-byte/docs/basi-del-linguaggio/le-variabili)
+- [Input](https://www.rainbowbits.cloud/python-doesnt-byte/docs/basi-del-linguaggio/input)
+- [Output](https://www.rainbowbits.cloud/python-doesnt-byte/docs/basi-del-linguaggio/output)
+- [Le stringhe](https://www.rainbowbits.cloud/python-doesnt-byte/docs/basi-del-linguaggio/le-stringhe)
+- [I moduli](https://www.rainbowbits.cloud/python-doesnt-byte/docs/basi-del-linguaggio/moduli)
+
+## Strumenti
+
+- [Playground](https://www.rainbowbits.cloud/python-doesnt-byte/playground): editor Python a tutta pagina, esecuzione nel browser.
+- [Note di rilascio](https://www.rainbowbits.cloud/python-doesnt-byte/note-di-rilascio): changelog del progetto.
+
+## Optional
+
+- [Sostieni il progetto](https://www.rainbowbits.cloud/python-doesnt-byte/support): donazioni «value for value».
+- [Licenza](https://www.rainbowbits.cloud/python-doesnt-byte/legale/licenza): CC BY-NC-SA 4.0.
+- [Privacy policy](https://www.rainbowbits.cloud/python-doesnt-byte/legale/privacy-policy)
+- [Termini di servizio](https://www.rainbowbits.cloud/python-doesnt-byte/legale/termini-di-servizio)
