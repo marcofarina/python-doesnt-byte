@@ -1,13 +1,8 @@
-// Registro di icone Font Awesome Pro 7.1.0 — stile duotone.
-//
-// Ogni glifo è una coppia di path estratti dal file SVG originale:
+// Ogni glifo è una coppia di path:
 //   - `s` (secondario): primo <path>, reso a opacità ridotta (default 0.4);
 //   - `p` (primario): secondo <path>, reso a opacità piena.
 // Quando `p` è vuoto il glifo è a layer singolo (heart, bolt, check…): in quel
 // caso il secondario viene reso pieno (vedi src/components/Icon/index.tsx).
-//
-// I path sono incollati così come esportati da Font Awesome (licenza Pro
-// commerciale): niente CDN, niente dipendenza npm Pro, tutto self-hosted.
 
 export interface DuotoneGlyph {
   /** viewBox originale del glifo (le proporzioni non sono sempre quadrate) */
