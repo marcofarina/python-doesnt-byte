@@ -1426,6 +1426,29 @@ function V4VPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
             di sostegno al progetto e non comporta alcun obbligo né alcuna
             condizione economica per la fruizione del materiale.
           </p>
+          <Link
+            to="/legale/note-legali-donazioni"
+            className="v4v-press"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 7,
+              marginTop: 18,
+              fontFamily: T.mono,
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: '0.03em',
+              color: T.accentSoft,
+              textDecoration: 'none',
+              padding: '8px 14px',
+              borderRadius: 'var(--radius-sm)',
+              border: `1px solid ${T.border}`,
+              background: T.bgChip,
+            }}
+          >
+            Leggi le note legali complete
+            <Icon name="arrow-right" size={14} color={T.accentSoft} />
+          </Link>
         </div>
       </div>
     </div>

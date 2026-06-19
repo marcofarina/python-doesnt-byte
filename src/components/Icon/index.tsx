@@ -18,7 +18,6 @@ interface IconProps {
 }
 
 /**
- * Icona Font Awesome Pro 7.1.0 in stile duotone, resa come SVG inline.
  * Vedi src/components/Icon/icons.ts per il registro dei glifi.
  */
 export default function Icon({
