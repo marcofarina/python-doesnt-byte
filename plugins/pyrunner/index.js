@@ -15,11 +15,6 @@ const DEFAULT_OPTIONS = {
     'sha384-JEgOSQ3kchBXLE0JDMOoSxjkqHdd8vNq3SY6/2KA4aPvCimeLMmt+cMnHIb0I4bw',
   libDir: 'bry-libs',
   examplesDir: 'py-examples',
-  /**
-   * Se `true` evita di iniettare gli script Brython in <head>: utile se un
-   * altro plugin li sta già caricando, o per test. Default: iniezione attiva.
-   */
-  skipScriptInjection: false,
 };
 
 function walkPyFiles(dir, baseDir) {
@@ -64,31 +59,21 @@ module.exports = function pyrunnerPlugin(context, pluginOptions = {}) {
         libUrl,
         examplesDir: opts.examplesDir,
         examples: content.examples,
+        // Coordinate per caricare Brython on-demand lato client (vedi
+        // src/pyBoot.ts). NON iniettiamo più gli <script> in <head>: così le
+        // pagine senza alcun runner (homepage, landing dei volumi, /support,
+        // 404, …) non scaricano ~1,1 MB di Brython core + stdlib inutilmente.
+        brython: {
+          mainSrc: opts.brythonSrc,
+          mainIntegrity: opts.brythonIntegrity,
+          stdlibSrc: opts.brythonStdlibSrc,
+          stdlibIntegrity: opts.brythonStdlibIntegrity,
+        },
       });
     },
 
     getPathsToWatch() {
       return [path.join(examplesAbsDir, '**/*.py')];
-    },
-
-    injectHtmlTags() {
-      if (opts.skipScriptInjection) return { headTags: [] };
-      const scriptTag = (src, integrity) => ({
-        tagName: 'script',
-        attributes: {
-          src,
-          ...(integrity ? { integrity } : {}),
-          crossorigin: 'anonymous',
-          referrerpolicy: 'no-referrer',
-          defer: 'defer',
-        },
-      });
-      return {
-        headTags: [
-          scriptTag(opts.brythonSrc, opts.brythonIntegrity),
-          scriptTag(opts.brythonStdlibSrc, opts.brythonStdlibIntegrity),
-        ],
-      };
     },
   };
 };

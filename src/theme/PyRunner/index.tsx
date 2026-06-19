@@ -7,6 +7,7 @@ import { Editor, type EditorHandle } from './Editor';
 import { Output } from './Output';
 import { Toolbar } from './Toolbar';
 import { runPython, splitSource } from './bryBridge';
+import { ensureBrython, type BrythonConfig } from '@site/src/pyBoot';
 import { coerceBool, coerceNumber } from './coerce';
 import { copyToClipboard } from './clipboard';
 import { encodeCode, DEFAULT_EXPLAIN_PROMPT, buildExplainText } from './share';
@@ -42,6 +43,7 @@ interface PyRunnerGlobalData {
   libUrl: string;
   examplesDir: string;
   examples: Record<string, string>;
+  brython?: BrythonConfig;
 }
 
 /**
@@ -73,6 +75,7 @@ function PyRunnerInner(props: PyRunnerProps) {
   const libUrl = data?.libUrl ?? '';
   const examples = data?.examples;
   const examplesDir = data?.examplesDir ?? '';
+  const brython = data?.brython;
 
   const rawSource = useMemo(() => {
     if (props.src) {
@@ -109,6 +112,7 @@ function PyRunnerInner(props: PyRunnerProps) {
   const [currentCode, setCurrentCode] = useState(code);
   const [overflowing, setOverflowing] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const editorWrapRef = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<EditorHandle | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
@@ -141,6 +145,7 @@ function PyRunnerInner(props: PyRunnerProps) {
       preCode: pre,
       postCode: post,
       libUrl,
+      brython,
       onStart: () => {
         setLogs([]);
         truncated = false;
@@ -178,7 +183,37 @@ function PyRunnerInner(props: PyRunnerProps) {
         ]);
       },
     });
-  }, [code, pre, post, codeId, libUrl]);
+  }, [code, pre, post, codeId, libUrl, brython]);
+
+  // Precarica Brython (~1,1 MB) quando il runner entra nel viewport, non al
+  // mount: una demo sotto la piega (es. la home) non scarica nulla finché non
+  // ci scrolli, ma il primo "Esegui" resta immediato sui runner che leggi
+  // davvero. Le pagine senza alcun runner non lo caricano mai. `rootMargin`
+  // anticipa il preload poco prima che il runner sia visibile. Fallback: se
+  // IntersectionObserver non c'è, precarica subito.
+  useEffect(() => {
+    const el = rootRef.current;
+    const preload = () => {
+      ensureBrython(libUrl, brython).catch(() => {
+        // Errori di rete/SRI emergono comunque al primo run, via onError.
+      });
+    };
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      preload();
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          preload();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [libUrl, brython]);
 
   const handleReset = useCallback(() => {
     editorRef.current?.setCode(code);
@@ -266,6 +301,7 @@ function PyRunnerInner(props: PyRunnerProps) {
 
   return (
     <div
+      ref={rootRef}
       data-pagefind-ignore
       className={clsx(
         styles.runner,
