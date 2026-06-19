@@ -32,6 +32,13 @@ const FOOT_PROJECT = [
   },
 ];
 
+const FOOT_LEGAL = [
+  { label: 'Privacy', to: '/legale/privacy-policy' },
+  { label: 'Termini', to: '/legale/termini-di-servizio' },
+  { label: 'Licenza', to: '/legale/licenza' },
+  { label: 'Donazioni', to: '/legale/note-legali-donazioni' },
+];
+
 function FootLink({
   T,
   to,
@@ -673,6 +680,47 @@ function FooterInner({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
                 label="Claude Code."
                 href="https://claude.com/claude-code"
               />
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: 4,
+                marginTop: 2,
+              }}
+            >
+              {FOOT_LEGAL.map((l, i) => (
+                <React.Fragment key={l.to}>
+                  {i > 0 && (
+                    <span
+                      aria-hidden="true"
+                      style={{ color: T.faint, fontSize: 11 }}
+                    >
+                      ·
+                    </span>
+                  )}
+                  <Link
+                    to={l.to}
+                    className="v4v-link"
+                    style={{
+                      fontFamily: T.mono,
+                      fontSize: 11.5,
+                      letterSpacing: '0.03em',
+                      color: T.muted,
+                      textDecoration: 'none',
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = T.accent)
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = T.muted)
+                    }
+                  >
+                    {l.label}
+                  </Link>
+                </React.Fragment>
+              ))}
             </div>
           </div>
           <div style={{ display: 'flex', gap: 10 }}>

@@ -1516,3 +1516,12 @@ html[data-theme='dark'] {
     scroll-behavior: auto !important;
   }
 }
+
+/* Pagine legali — firma geek (<GeekSignoff>). MDX avvolge i children in un
+   <p>: il suo margine inferiore gonfia la line-box e fa sembrare l'icona
+   disallineata (più in basso del testo). Azzeriamo margini e interlinea del
+   paragrafo così l'icona resta centrata sull'inchiostro del testo. */
+.legal-signoff p {
+  margin: 0;
+  line-height: 1;
+}

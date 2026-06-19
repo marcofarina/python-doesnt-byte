@@ -1,135 +1,143 @@
-# Codice di Comportamento del Collaboratore
+# Codice di condotta
 
-## Il Nostro Impegno
+## Per chi è questo spazio
+
+**Python doesn't byte** nasce come libro di testo per studenti, ma il suo
+repository è anche un piccolo spazio di collaborazione: chiunque può aprire una
+issue, proporre una pull request o partecipare a una discussione — che sia uno
+studente alle prime armi, un docente o un programmatore di lungo corso.
+
+Vogliamo che questo spazio resti accogliente soprattutto per chi è all'inizio.
+Le domande "ingenue" sono benvenute, gli errori fanno parte dell'imparare e
+nessuno è nato sapendo scrivere codice. La regola di fondo è una sola, e la
+prendiamo in prestito da una vecchia massima nerd: _be excellent to each other_.
+
+Partecipando agli spazi del repository accetti di rispettare il presente Codice
+di condotta.
+
+## Il nostro impegno
 
 Nell'interesse della promozione di un ambiente aperto e accogliente, noi
-contributori e manutentori ci impegnamo a rendere la partecipazione alla nostra
+contributori e manutentori ci impegniamo a rendere la partecipazione alla nostra
 comunità un'esperienza libera da molestie per tutti, indipendentemente dall'età,
 corporatura, disabilità visibile o meno, etnia, caratteristiche sessuali,
 identità ed espressione di genere, livello di esperienza, istruzione, stato
 socio-economico, nazionalità, aspetto, razza, casta, colore della pelle,
 religione o identità e orientamento sessuale.
 
-Noi ci impegniamo ad agire ed interagire per costruire una comunità aperta,
+Ci impegniamo ad agire e interagire per costruire una comunità aperta,
 accogliente, diversificata, inclusiva e sana.
 
-## I nostri Standard
+## I nostri standard
 
-Esempi di comportamenti che contribuiscono alla creazione di un ambiente
-positivo per la nostra comunità:
+Esempi di comportamenti che contribuiscono a creare un ambiente positivo per la
+nostra comunità:
 
-* Dimostrare empatia e gentilezza verso le altre persone
-* Rispettare le opinioni, i punti di vista ed esperienze differenti
-* Fornire, con garbo, critiche costruttive
-* Prendersi la responsabilità di quanto sostenuto e scusarsi verso le persone
-  colpite dai nostri sbagli, imparando da queste esperienze
-* Concentrarsi non su ciò che è meglio per noi come individui, ma su ciò che è
-  meglio per la comunità
+- usare un linguaggio rispettoso e inclusivo;
+- accogliere con apertura domande e proposte, anche da chi è alle prime armi;
+- concentrarsi sui problemi tecnici e didattici, non sulle persone;
+- fornire feedback costruttivi, spiegando il "perché" e suggerendo alternative;
+- rispettare le diverse competenze, esperienze e provenienze degli altri
+  partecipanti;
+- prendersi la responsabilità di quanto sostenuto, scusandosi verso le persone
+  colpite dai nostri sbagli e imparando dall'esperienza.
 
 Esempi di comportamento inaccettabile:
 
-* L'uso di linguaggio o immagini sessualizzate e l'attenzione sessuale o avance
-  indesiderate
-* Comportamenti da troll, commenti offensivi e attacchi personali o politici
-* Molestie in pubblico o in privato
-* Pubblicazione di informazioni private altrui, ad esempio un indirizzo postale
-  o elettronico, senza autorizzazione esplicita
-* Altri comportamenti che potrebbero ragionevolmente essere considerati
-  inappropriati in un contesto professionale
+- l'uso di linguaggio o immagini sessualizzate e attenzioni sessuali o avance
+  indesiderate;
+- commenti offensivi, comportamenti da troll e attacchi personali o politici;
+- molestie in pubblico o in privato, minacce, insulti, stalking o contatti non
+  desiderati;
+- pubblicazione di informazioni private altrui senza autorizzazione esplicita
+  (doxxing);
+- qualsiasi comportamento che renda l'ambiente meno sicuro o accogliente per
+  altri partecipanti, in particolare per studenti e nuovi contributori.
 
-## Adempimento e Responsabilità
+## Responsabilità di applicazione
 
-Le persone alla guida della comunità sono responsabili del chiarimento e
-dell'applicazione degli standard di comportamento accettabili e sono tenuti a
-intraprendere azioni correttive appropriate ed eque in risposta a qualsiasi caso
-di comportamento inaccettabile, minaccioso, offensivo o dannoso.
+Il maintainer del progetto è responsabile del chiarimento e dell'applicazione
+degli standard di comportamento accettabili ed è tenuto a intraprendere azioni
+correttive appropriate ed eque in risposta a qualsiasi comportamento ritenuto
+inappropriato, minaccioso, offensivo o dannoso.
 
-Le persone alla guida della comunità hanno il diritto e la responsabilità di
-rimuovere, modificare o rifiutare commenti, commit, codice, modifiche dei wiki,
-issue e altri contributi non allineati a questo Codice di Comportamento,
-comunicando le ragioni dell'intervento di moderazione quando opportuno.
+Il maintainer ha il diritto e la responsabilità di rimuovere, modificare o
+rifiutare commenti, commit, codice, modifiche del wiki, issue e altri contributi
+non allineati a questo Codice di condotta, comunicando le ragioni della
+moderazione quando opportuno.
 
-## Scopo
+## Ambito di applicazione
 
-Questo Codice di Comportamento si applica sia all'interno degli spazi della
-comunità che negli spazi pubblici quando un individuo rappresenta la sua
-comunità. Esempi di rappresentanza della nostra comunità includono l'uso di un
-indirizzo e-mail ufficiale del progetto, la pubblicazione tramite un account
-ufficiale attraverso social media o la funzione di rappresentante designato ad
-un evento online o offline.
+Questo Codice di condotta si applica in tutti gli spazi del progetto (issue,
+pull request, commenti, discussioni, wiki) e quando una persona rappresenta
+ufficialmente il progetto in spazi pubblici.
 
-## Applicazione
+## Segnalazioni
 
 I casi di comportamento abusivo, molesto o altrimenti inaccettabile possono
-essere presentate contattando i responsabili dell'applicazione di questo Codice
-di Condotta della comunità all'indirizzo [INSERISCI INDIRIZZO EMAIL]. Tutti i
-reclami saranno prontamente esaminati ed indagati.
+essere segnalati al responsabile dell'applicazione di questo Codice di condotta:
 
-Tutte le guide della comunità sono obbligate a mantenere la riservatezza della
-persona che ha riportato il caso.
+> **Prof. Marco Farina** — [marco@rainbowbits.cloud](mailto:marco@rainbowbits.cloud)
+
+Tutte le segnalazioni saranno esaminate e investigate prontamente ed equamente.
+Il maintainer è tenuto a rispettare la riservatezza di chi effettua una
+segnalazione.
 
 ## Linee guida all'applicazione
 
-Le guide della comunità seguiranno queste linee guida per determinare le azioni
-correttive contro azioni che ritengono violare questo Codice di Condotta:
+Per determinare le conseguenze di una violazione, il maintainer seguirà queste
+linee guida sull'impatto nella comunità.
 
 ### 1. Correzione
 
-**Impatto nella comunità**: Uso di linguaggio inappropriato o altri
-comportamenti giudicati non professionali o ostili nella community.
+**Impatto**: uso di linguaggio inappropriato o altri comportamenti giudicati non
+professionali o sgraditi nella comunità.
 
-**Conseguenze**: Un avviso scritto in forma privata dalle guide della comunità,
-spiegando la natura della violazione e perché il comportamento era
-inappropriato. Pubbliche scuse potrebbero essere richieste.
+**Conseguenza**: un avviso scritto e privato, che chiarisce la natura della
+violazione e spiega perché il comportamento era inappropriato. Potrebbero essere
+richieste delle scuse pubbliche.
 
 ### 2. Avviso
 
-**Impatto nella comunità**: Una violazione dopo un episodio avvenuto o una serie
-di azioni negative.
+**Impatto**: una violazione attraverso un singolo episodio o una serie di
+azioni.
 
-**Conseguenze**: Un avviso per il comportamento perpetrato. Nessuna
-comunicazione per un periodo di tempo specificato con le persone coinvolte,
-incluse quelle che applicano il Codice di Condotta. Questo comprende
-l'inibizione alla partecipazione negli spazi della comunità come canali esterni
-quali i social media. Violare questi termini può portare ad una espulsione
-temporanea o permanente.
+**Conseguenza**: un avviso con conseguenze in caso di reiterazione. Nessuna
+interazione con le persone coinvolte, comprese quelle che applicano il Codice di
+condotta, per un periodo di tempo determinato. Violare questi termini può portare
+a un'espulsione temporanea o permanente.
 
 ### 3. Espulsione temporanea
 
-**Impatto nella comunità**: Una grave violazione agli standard della comunità,
-incluso mantenere un comportamento inappropriato.
+**Impatto**: una grave violazione degli standard della comunità, incluso il
+protrarsi di un comportamento inappropriato.
 
-**Conseguenze**: Espulsione temporanea per un periodo di tempo specificato a
-qualsiasi sorta di interazione o comunicazione con la comunità. Durante questo
-periodo non è permesso nessun dialogo pubblico o privato con le persone
-coinvolte, comprese coloro che applicano il Codice di Condotta. Violare questi
-termini può portare ad una espulsione permanente.
+**Conseguenza**: espulsione temporanea da qualsiasi tipo di interazione o
+comunicazione pubblica con la comunità per un periodo determinato. Violare questi
+termini può portare a un'espulsione permanente.
 
 ### 4. Espulsione permanente
 
-**Impatto nella comunità**: Dimostrare sistematicamente di violare gli standard
-della comunità, inclusa la ripetizione di comportamenti inappropriati, molestie
-o aggressioni individuali o denigrazione di gruppi di individui.
+**Impatto**: dimostrare un comportamento sistematicamente in violazione degli
+standard della comunità, incluse molestie a un individuo o aggressioni o
+denigrazione di categorie di persone.
 
-**Conseguenze**: Espulsione permanente da ogni interazione pubblica della
-comunità.
+**Conseguenza**: espulsione permanente da qualsiasi tipo di interazione pubblica
+all'interno della comunità.
 
 ## Attribuzione
 
-Questo Codice di Comportamento è adattato dal [Contributor Covenant][homepage],
+Questo Codice di condotta è adattato dal [Contributor Covenant][homepage],
 versione 2.1, disponibile all'indirizzo
-[https://www.contributor-covenant.org/version/2/1/code_of_conduct][v2.1].
+<https://www.contributor-covenant.org/version/2/1/code_of_conduct.html>, con
+un'introduzione su misura per il contesto didattico di questo progetto.
 
-Le linee guida all'applicazione sono state ispirate dal [codice di condotta di
-Mozilla][Mozilla CoC].
+Le linee guida all'applicazione sono ispirate alla
+[scala di impatto del codice di condotta di Mozilla][mozilla].
 
-Per riposte a domande comuni riguardo questo codice di condotta,controlla le
-domande frequenti al link [https://www.contributor-covenant.org/faq][FAQ]. Le
-traduzioni sono disponibili al link
-[https://www.contributor-covenant.org/translations][translations].
+Per le risposte alle domande più comuni consulta le
+[FAQ](https://www.contributor-covenant.org/faq). Le traduzioni sono disponibili
+all'indirizzo <https://www.contributor-covenant.org/translations>.
 
 [homepage]: https://www.contributor-covenant.org
-[v2.1]: https://www.contributor-covenant.org/version/2/1/code_of_conduct
-[Mozilla CoC]: https://github.com/mozilla/diversity
-[FAQ]: https://www.contributor-covenant.org/faq
-[translations]: https://www.contributor-covenant.org/translations
+[mozilla]: https://github.com/mozilla/diversity
