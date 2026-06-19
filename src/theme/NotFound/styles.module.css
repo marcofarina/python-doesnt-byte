@@ -1,0 +1,144 @@
+.page {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--at-bg);
+  color: var(--at-fg);
+  overflow-x: hidden;
+  font-family: var(--font-display);
+  padding: 64px 24px;
+}
+
+.hero {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  text-align: center;
+}
+
+/* Riga "4 [Morte Nera] 4": il font-size enorme governa anche la dimensione
+   della stella, che è espressa in em rispetto a questa riga. */
+.code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.5rem, 3vw, 1.5rem);
+  font-size: clamp(6rem, 24vw, 14rem);
+  line-height: 1;
+  margin-bottom: clamp(24px, 5vw, 48px);
+}
+
+.digit {
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  /* annulla i tweak verticali di .at-grad-text: qui i numeri non hanno
+     discendenti e devono restare centrati sulla stella */
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.starWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Alone dietro la stazione: discreto, vira sul ciano in dark per agganciarsi
+   allo "stage" Atmospheric. */
+.starWrap::before {
+  content: '';
+  position: absolute;
+  inset: -22%;
+  border-radius: var(--radius-circle);
+  background: radial-gradient(
+    circle,
+    rgba(2, 132, 199, 0.18) 0%,
+    transparent 68%
+  );
+  z-index: -1;
+}
+
+html[data-theme='dark'] .starWrap::before {
+  background: radial-gradient(
+    circle,
+    rgba(56, 189, 248, 0.28) 0%,
+    transparent 70%
+  );
+}
+
+.star {
+  width: 0.84em;
+  height: 0.84em;
+  display: block;
+  color: var(--at-faint);
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.12));
+  transition: transform var(--dur-slow) var(--ease-spring);
+}
+
+html[data-theme='dark'] .star {
+  color: var(--at-muted-soft);
+  filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.25));
+}
+
+.code:hover .star {
+  transform: rotate(8deg) scale(1.04);
+}
+
+.quote {
+  font-size: clamp(1.25rem, 3.5vw, 1.7rem);
+  font-style: italic;
+  font-weight: 600;
+  color: var(--at-fg-strong);
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+.subtitle {
+  font-size: clamp(1rem, 2.4vw, 1.15rem);
+  color: var(--at-muted-soft);
+  max-width: 540px;
+  margin: 0 auto clamp(32px, 6vw, 48px);
+  line-height: 1.6;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: var(--ifm-color-primary);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background var(--dur-normal) var(--ease-smooth),
+    box-shadow var(--dur-normal) var(--ease-smooth);
+}
+
+.cta:hover {
+  color: #fff;
+  text-decoration: none;
+  background: var(--ifm-color-primary-dark);
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-1px);
+}
+
+.cta:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .code:hover .star,
+  .cta:hover,
+  .cta:active {
+    transform: none;
+  }
+}
