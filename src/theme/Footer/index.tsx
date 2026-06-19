@@ -26,6 +26,7 @@ const FOOT_VOLUMES = [
 const FOOT_PROJECT = [
   { label: 'Perché Python?', to: '/perche-python' },
   { label: 'Value 4 Value', to: '/support' },
+  { label: 'Note di rilascio', to: '/note-di-rilascio' },
   {
     label: 'Codice su GitHub',
     href: 'https://github.com/marcofarina/python-doesnt-byte',
