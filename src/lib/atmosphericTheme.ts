@@ -1,13 +1,16 @@
-// Tema per la pagina Value 4 Value e il footer.
+// Token "atmospheric" del sito in forma JS — il tema trasversale, NON solo
+// delle donazioni. Importato da: footer globale (quindi ogni pagina), pagine
+// legali (via src/components/Legal), /support (Value 4 Value) e note di rilascio.
 //
 // Riprende i token "atmospheric" del sito (Crimson Pro serif + Monaspace mono,
 // accent ciano→indaco→viola) già definiti in src/css/custom.css come variabili
-// `--at-*`. Qui sono raccolti in un oggetto JS perché i componenti della pagina
-// e del footer sono guidati da stili inline dipendenti dal tema (light/dark).
+// `--at-*`. Qui sono raccolti in un oggetto JS perché questi componenti sono
+// guidati da stili inline dipendenti dal tema (light/dark), che non possono
+// leggere comodamente le media-query light/dark.
 //
 // I font puntano alle variabili CSS del sito (niente CDN esterni).
 
-export interface V4VTheme {
+export interface AtmosphericTheme {
   dark: boolean;
   serif: string;
   display: string;
@@ -49,35 +52,46 @@ export interface V4VTheme {
   lnBorder: string;
 }
 
-export function getV4VTheme(dark: boolean): V4VTheme {
-  const serif = 'var(--font-body)';
-  const mono = 'var(--font-mono-ui)';
-  const common = { serif, display: serif, body: serif, mono };
+export function getAtmosphericTheme(dark: boolean): AtmosphericTheme {
+  // Token CONDIVISI col resto del sito: puntano alle `--at-*` di custom.css, che
+  // si rimappano da sole su light/dark via `html[data-theme]`. Fonte unica →
+  // niente drift JS↔CSS, e un cambio di colore/contrasto si fa in un posto solo.
+  // (Funzionano anche passati a <Icon color>, che applica `color` + currentColor.)
+  const shared = {
+    serif: 'var(--font-body)',
+    display: 'var(--font-body)',
+    body: 'var(--font-body)',
+    mono: 'var(--font-mono-ui)',
+    bg: 'var(--at-bg)',
+    bgPanel: 'var(--at-bg-panel)',
+    bgSubtle: 'var(--at-bg-subtle)',
+    bgChip: 'var(--at-bg-chip)',
+    fg: 'var(--at-fg)',
+    fgStrong: 'var(--at-fg-strong)',
+    fgBody: 'var(--at-fg-body)',
+    muted: 'var(--at-muted)',
+    mutedSoft: 'var(--at-muted-soft)',
+    faint: 'var(--at-faint)',
+    border: 'var(--at-border)',
+    borderStrong: 'var(--at-border-strong)',
+    accent: 'var(--at-accent)',
+    accentSoft: 'var(--at-accent-soft)',
+    accentBg: 'var(--at-accent-bg)',
+    accentChip: 'var(--at-accent-chip)',
+    accentChipBorder: 'var(--at-accent-chip-border)',
+    gradAccent: 'var(--at-grad-accent)',
+    gradText: 'var(--at-grad-text)',
+  };
 
+  // Token SOLO-donazioni (toni "brand" PayPal/Satispay/Lightning/Bitcoin) +
+  // track/accentBorder: non hanno un gemello `--at-*` e li usa solo V4V/Footer,
+  // quindi niente rischio di drift → restano letterali, distinti per tema.
+  // Il `dark` booleano serve ai branch JS dei componenti (ombre, blur, opacità).
   if (dark) {
     return {
-      ...common,
+      ...shared,
       dark: true,
-      bg: '#0b0b0e',
-      bgPanel: 'rgba(24,24,27,0.55)',
-      bgSubtle: 'rgba(255,255,255,0.028)',
-      bgChip: 'rgba(255,255,255,0.05)',
-      fg: '#e4e4e7',
-      fgStrong: '#fafafa',
-      fgBody: '#c6c6cb',
-      muted: '#8b8b93',
-      mutedSoft: '#a1a1aa',
-      faint: '#5b5b63',
-      border: 'rgba(255,255,255,0.09)',
-      borderStrong: 'rgba(255,255,255,0.14)',
-      accent: '#38bdf8',
-      accentSoft: '#7dd3fc',
-      accentBg: 'rgba(56,189,248,0.09)',
       accentBorder: 'rgba(56,189,248,0.28)',
-      accentChip: 'rgba(56,189,248,0.12)',
-      accentChipBorder: 'rgba(56,189,248,0.24)',
-      gradAccent: 'linear-gradient(135deg,#38bdf8 0%,#818cf8 50%,#c084fc 100%)',
-      gradText: 'linear-gradient(180deg,#ffffff 0%,#a1a1aa 100%)',
       track: 'rgba(255,255,255,0.07)',
       ln: '#c4b5fd',
       lnBg: 'rgba(167,139,250,0.10)',
@@ -95,28 +109,9 @@ export function getV4VTheme(dark: boolean): V4VTheme {
   }
 
   return {
-    ...common,
+    ...shared,
     dark: false,
-    bg: '#fafaf9',
-    bgPanel: 'rgba(255,255,255,0.72)',
-    bgSubtle: 'rgba(0,0,0,0.025)',
-    bgChip: 'rgba(0,0,0,0.045)',
-    fg: '#27272a',
-    fgStrong: '#0c0c0f',
-    fgBody: '#3f3f46',
-    muted: '#6b6b73',
-    mutedSoft: '#52525b',
-    faint: '#a1a1aa',
-    border: 'rgba(0,0,0,0.09)',
-    borderStrong: 'rgba(0,0,0,0.13)',
-    accent: '#0284c7',
-    accentSoft: '#0369a1',
-    accentBg: 'rgba(2,132,199,0.06)',
     accentBorder: 'rgba(2,132,199,0.26)',
-    accentChip: 'rgba(2,132,199,0.08)',
-    accentChipBorder: 'rgba(2,132,199,0.22)',
-    gradAccent: 'linear-gradient(135deg,#0284c7 0%,#6366f1 50%,#a855f7 100%)',
-    gradText: 'linear-gradient(180deg,#0c0c0f 0%,#52525b 100%)',
     track: 'rgba(0,0,0,0.07)',
     ln: '#7c3aed',
     lnBg: 'rgba(124,58,237,0.07)',
@@ -127,7 +122,9 @@ export function getV4VTheme(dark: boolean): V4VTheme {
     satispay: '#e30613',
     satispayBg: 'rgba(227,6,19,0.07)',
     satispayBorder: 'rgba(227,6,19,0.28)',
-    lightning: '#c2620a',
+    // lightning scurito (#f7931a "brand" → #a85607) per restare ≥ 4.5:1 come
+    // testo ("Copia offer") sul fondo chiaro. WCAG 1.4.3.
+    lightning: '#a85607',
     lightningBg: 'rgba(247,147,26,0.08)',
     lightningBorder: 'rgba(247,147,26,0.34)',
   };

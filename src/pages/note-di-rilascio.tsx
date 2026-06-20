@@ -2,7 +2,7 @@
  * /note-di-rilascio — pagina "Note di rilascio" (changelog).
  *
  * Modalità timeline (cronologia di versioni + sezioni per categoria), adattata
- * al sistema "atmospheric" del sito: tema da getV4VTheme, icone duotone dal
+ * al sistema "atmospheric" del sito: tema da getAtmosphericTheme, icone duotone dal
  * componente <Icon>, raggi dai token --radius-*. Layout responsivo: timeline a
  * due colonne su desktop, impilato (compatto) su mobile.
  *
@@ -12,7 +12,7 @@ import React, { useMemo, useState, type ReactNode } from 'react';
 import Layout from '@theme/Layout';
 import { useColorMode, useWindowSize } from '@docusaurus/theme-common';
 import Icon, { type IconName } from '@site/src/components/Icon';
-import { getV4VTheme, type V4VTheme } from '@site/src/lib/v4vTheme';
+import { getAtmosphericTheme, type AtmosphericTheme } from '@site/src/lib/atmosphericTheme';
 import {
   RELEASES,
   CAT_ORDER,
@@ -35,7 +35,7 @@ interface CatStyle {
 
 /* Colori per categoria (dipendono dal tema). Le etichette/icone arrivano da
    CATEGORY_META; qui si aggiunge solo la terna colore/sfondo/bordo. */
-function getCats(T: V4VTheme): Record<ReleaseCategory, CatStyle> {
+function getCats(T: AtmosphericTheme): Record<ReleaseCategory, CatStyle> {
   const green = T.dark ? '#34d399' : '#059669';
   const greenBg = T.dark ? 'rgba(52,211,153,0.10)' : 'rgba(5,150,105,0.07)';
   const greenBd = T.dark ? 'rgba(52,211,153,0.28)' : 'rgba(5,150,105,0.26)';
@@ -75,7 +75,7 @@ function Kicker({
   children,
   color,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   children: ReactNode;
   color?: string;
 }) {
@@ -100,7 +100,7 @@ function Pill({
   icon,
   children,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   icon: ReactNode;
   children: ReactNode;
 }) {
@@ -133,7 +133,7 @@ function LinkRow({
   icon,
   color,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   href: string;
   label: string;
   icon?: IconName;
@@ -171,7 +171,7 @@ function LinkRow({
 }
 
 /* ── Sfondo glow ───────────────────────────────────── */
-function Stage({ T }: { T: V4VTheme }) {
+function Stage({ T }: { T: AtmosphericTheme }) {
   return (
     <div
       aria-hidden="true"
@@ -200,7 +200,7 @@ function RelShot({
   label,
   color,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   label: string;
   color: string;
 }) {
@@ -260,7 +260,7 @@ function CatGroup({
   cat,
   items,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   cat: CatStyle;
   items: string[];
 }) {
@@ -357,7 +357,7 @@ function VersionTag({
   rel,
   inline,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   rel: Release;
   inline?: boolean;
 }) {
@@ -432,7 +432,7 @@ function ReleaseEntry({
   compact,
   last,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   rel: Release;
   cats: Record<ReleaseCategory, CatStyle>;
   filter: Filter;
@@ -553,7 +553,7 @@ function FilterChip({
   color,
   onClick,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   active: boolean;
   label: string;
   n: number;
@@ -596,7 +596,7 @@ function FilterChip({
 }
 
 /* ── Pagina ────────────────────────────────────────── */
-function ReleasesPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
+function ReleasesPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
   const cats = useMemo(() => getCats(T), [T]);
   const counts = useMemo(() => countByCat(), []);
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
@@ -756,7 +756,7 @@ function ReleasesPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
 function ReleasesContent() {
   const { colorMode } = useColorMode();
   const mobile = useWindowSize() === 'mobile';
-  const T = getV4VTheme(colorMode === 'dark');
+  const T = getAtmosphericTheme(colorMode === 'dark');
   return <ReleasesPage T={T} mobile={mobile} />;
 }
 

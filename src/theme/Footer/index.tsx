@@ -11,7 +11,7 @@ import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useColorMode, useWindowSize } from '@docusaurus/theme-common';
 import Icon from '@site/src/components/Icon';
-import { getV4VTheme, type V4VTheme } from '@site/src/lib/v4vTheme';
+import { getAtmosphericTheme, type AtmosphericTheme } from '@site/src/lib/atmosphericTheme';
 import { V4V_LINKS } from '@site/src/lib/v4vData';
 import { CONTACT_MAILTO } from '@site/src/lib/site';
 import MugSaucer from '@site/src/icons/mug-saucer.svg';
@@ -47,7 +47,7 @@ function FootLink({
   children,
   n,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   to?: string;
   href?: string;
   children: ReactNode;
@@ -121,7 +121,7 @@ function FootCol({
   title,
   children,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   title: string;
   children: ReactNode;
 }) {
@@ -154,7 +154,7 @@ function SocialBtn({
   label,
   children,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   /** URL esterno (apre in nuova scheda) */
   href?: string;
   /** rotta interna (navigazione SPA, stessa scheda) */
@@ -240,7 +240,7 @@ function PayLogo({
   logoHeight = 16,
   tint,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   name: string;
   /** URL esterno (PayPal, Satispay) */
   href?: string;
@@ -350,7 +350,7 @@ function ToolCredit({
   iconHeight,
   iconNode,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   label: string;
   href?: string;
   icon?: string;
@@ -394,7 +394,7 @@ function ToolCredit({
   );
 }
 
-function FooterInner({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
+function FooterInner({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
   const logo = useBaseUrl('/img/logo.svg');
   const docusaurusIcon = useBaseUrl('/img/icons/docusaurus.svg');
   const claudeIcon = useBaseUrl('/img/icons/claudecode.svg');
@@ -748,6 +748,6 @@ function FooterInner({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
 export default function Footer(): React.JSX.Element {
   const { colorMode } = useColorMode();
   const mobile = useWindowSize() === 'mobile';
-  const T = getV4VTheme(colorMode === 'dark');
+  const T = getAtmosphericTheme(colorMode === 'dark');
   return <FooterInner T={T} mobile={mobile} />;
 }

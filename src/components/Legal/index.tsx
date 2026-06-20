@@ -4,7 +4,7 @@
  * Tono pulito e "designed" ma leggibile: header con icona duotone + kicker +
  * titolo display + lead + data di aggiornamento; callout per le note in
  * evidenza; firma geek opzionale a fondo pagina. Theme-aware tramite il tema
- * Value 4 Value (getV4VTheme), così sono coerenti con /support e il footer.
+ * Value 4 Value (getAtmosphericTheme), così sono coerenti con /support e il footer.
  *
  * Si importano direttamente nelle pagine MDX di src/pages/legale/, non sono
  * registrati globalmente: servono solo lì.
@@ -12,12 +12,12 @@
 import React, { useState, type ReactNode } from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
 import Icon, { type IconName } from '@site/src/components/Icon';
-import { getV4VTheme } from '@site/src/lib/v4vTheme';
+import { getAtmosphericTheme } from '@site/src/lib/atmosphericTheme';
 import { copyToClipboard } from '@site/src/theme/PyRunner/clipboard';
 
 function useT() {
   const { colorMode } = useColorMode();
-  return getV4VTheme(colorMode === 'dark');
+  return getAtmosphericTheme(colorMode === 'dark');
 }
 
 /* ── Header pagina ─────────────────────────────────────── */
