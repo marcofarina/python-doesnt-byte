@@ -29,7 +29,10 @@ const atmosphericTheme = EditorView.theme(
       color: 'var(--py-def, var(--at-fg-strong))',
       backgroundColor: 'transparent',
       fontFamily: '"Monaspace Neon", ui-monospace, monospace',
-      fontSize: '1.05rem',
+      // Pilotabile da CSS: su mobile lo rimpiccioliamo via custom.css
+      // (il gutter usa 0.85em e scala da solo). Vale per PyRunner e
+      // SQLRunner, che riusa questo stesso Editor.
+      fontSize: 'var(--py-editor-font-size, 1.05rem)',
       fontVariantLigatures: 'none',
     },
     '.cm-content': {

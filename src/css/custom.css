@@ -328,7 +328,11 @@ html[data-theme='dark'] .hero {
   border: 1px solid var(--at-border);
   border-bottom: 1px solid rgba(2, 132, 199, 0.45);
   color: #27272a;
-  white-space: nowrap;
+  /* Niente `nowrap`: gli inline code lunghi (es. firme di funzione)
+     devono poter andare a capo, altrimenti su mobile sfondano la pagina
+     in orizzontale. `anywhere` spezza anche dentro un token se non c'è
+     altro punto di interruzione disponibile. */
+  overflow-wrap: anywhere;
   letter-spacing: 0;
   vertical-align: baseline;
   line-height: 1.5;
@@ -350,12 +354,55 @@ html[data-theme='dark'] .markdown :not(pre) > code {
   box-shadow: none;
 }
 
+/*
+ * Fix drawer mobile: il `backdrop-filter` qui sopra rende `.navbar` il
+ * containing block dei suoi figli `position: fixed`. Il drawer
+ * (`.navbar-sidebar`) e il suo backdrop sono figli di `.navbar`, quindi
+ * `top: 0; bottom: 0` di Infima si risolvono contro la navbar (alta
+ * ~60px) invece che contro il viewport → il drawer collassa all'altezza
+ * della barra e il menu diventa invisibile. Ancoriamo l'altezza al
+ * viewport con `100dvh` (dynamic viewport, gestisce le barre del browser
+ * mobile). Solo sotto il breakpoint in cui il drawer esiste.
+ */
+@media (max-width: 996px) {
+  .navbar-sidebar,
+  .navbar-sidebar__backdrop {
+    height: 100dvh;
+  }
+}
+
 .navbar__title {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 16px;
   letter-spacing: -0.01em;
   color: var(--at-fg-strong);
+}
+
+/*
+ * Su mobile la barra non ha spazio per il titolo intero accanto a
+ * hamburger + logo + icone a destra: veniva troncato a metà parola
+ * ("Python doesn"). Sotto i 500px mostriamo solo il logo. Il titolo
+ * completo resta nell'header del drawer (`.navbar-sidebar__brand`), che
+ * non è dentro `.navbar__inner` e quindi non è toccato da questa regola.
+ */
+@media (max-width: 500px) {
+  .navbar__inner .navbar__title {
+    display: none;
+  }
+}
+
+/*
+ * Su mobile Docusaurus rende il contenitore della ricerca
+ * `position: absolute`, presupponendo che sia l'unica cosa a destra.
+ * Noi però teniamo in barra anche GitHub e il caffè (componenti custom),
+ * e il search absolute ci finiva sopra, coprendo la tazzina. Lo
+ * riportiamo nel flow flex così le tre icone si affiancano in fila.
+ */
+@media (max-width: 996px) {
+  .navbar__items--right > div[class*='navbarSearchContainer'] {
+    position: static;
+  }
 }
 
 .navbar__link {
@@ -864,6 +911,17 @@ body:has(.theme-doc-sidebar-container)::before {
 }
 
 /* ─────────────── Atmospheric — Monaspace bindings ─────────────── */
+
+/*
+ * Editor CodeMirror (PyRunner + SQLRunner): su mobile il codice a 1.05rem
+ * era troppo grande. Lo rimpiccioliamo via la CSS var letta dal tema
+ * dell'editor (Editor.tsx). Il gutter usa 0.85em e scala di conseguenza.
+ */
+@media (max-width: 996px) {
+  :root {
+    --py-editor-font-size: 0.85rem;
+  }
+}
 
 /* Code blocks (Prism) — Monaspace Neon, no ligatures, no italics,
    texture healing on (calt redistributes whitespace around narrow chars
