@@ -1,5 +1,24 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import {
+  useFloating,
+  autoUpdate,
+  offset,
+  flip,
+  shift,
+  useClick,
+  useDismiss,
+  useRole,
+  useInteractions,
+  FloatingPortal,
+} from '@floating-ui/react';
 import styles from './styles.module.css';
+
+/**
+ * Spazio minimo dai bordi del viewport per flip/shift. In alto vale anche
+ * come clearance della navbar fissa di Docusaurus (--ifm-navbar-height, 3.75rem
+ * ≈ 60px): floating-ui non la conta tra i clipping ancestor.
+ */
+const PADDING = { top: 68, right: 8, bottom: 8, left: 8 };
 
 interface TooltipProps {
   /** Definition shown in the popover. String or JSX. */
@@ -10,49 +29,54 @@ interface TooltipProps {
 
 export default function Tooltip({ def, children }: TooltipProps) {
   const [open, setOpen] = useState(false);
-  const wrapRef = useRef<HTMLSpanElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  const popoverId = useId();
 
-  useEffect(() => {
-    if (!open) return;
+  const { refs, floatingStyles, context } = useFloating({
+    open,
+    onOpenChange: setOpen,
+    placement: 'top',
+    whileElementsMounted: autoUpdate,
+    middleware: [
+      // Distanza dal trigger.
+      offset(8),
+      // Auto-flip: se non c'è spazio sopra, ribalta sotto (e viceversa).
+      // Il padding superiore tiene conto della navbar fissa di Docusaurus,
+      // che non è un clipping ancestor: senza, il popover si infila dietro.
+      flip({ padding: PADDING }),
+      // Scorre lungo l'asse per non uscire dai bordi laterali del viewport.
+      shift({ padding: PADDING }),
+    ],
+  });
 
-    function handlePointer(e: MouseEvent) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') {
-        setOpen(false);
-        triggerRef.current?.focus();
-      }
-    }
-
-    document.addEventListener('mousedown', handlePointer);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handlePointer);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [open]);
+  const click = useClick(context);
+  const dismiss = useDismiss(context);
+  const role = useRole(context, { role: 'tooltip' });
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    click,
+    dismiss,
+    role,
+  ]);
 
   return (
-    <span ref={wrapRef} className={styles.wrap}>
+    <span className={styles.wrap}>
       <button
-        ref={triggerRef}
+        ref={refs.setReference}
         type="button"
         className={styles.trigger}
-        aria-describedby={open ? popoverId : undefined}
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
+        {...getReferenceProps()}
       >
         {children}
       </button>
       {open && (
-        <span id={popoverId} role="tooltip" className={styles.popover}>
-          {def}
-        </span>
+        <FloatingPortal>
+          <span
+            ref={refs.setFloating}
+            className={styles.popover}
+            style={floatingStyles}
+            {...getFloatingProps()}
+          >
+            {def}
+          </span>
+        </FloatingPortal>
       )}
     </span>
   );
