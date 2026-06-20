@@ -53,10 +53,11 @@ function waitFor(predicate: () => boolean): Promise<void> {
 }
 
 /**
- * Inietta uno <script> esterno on-demand e risolve quando ha finito di caricare.
+ * Inietta uno <script> on-demand e risolve quando ha finito di caricare.
  * Idempotente: se un tag con lo stesso `src` esiste già, si aggancia al suo
- * caricamento invece di duplicarlo. SRI + crossorigin/referrerpolicy ricalcano
- * quelli che prima erano in <head>, così la garanzia di integrità è invariata.
+ * caricamento invece di duplicarlo. SRI + crossorigin/referrerpolicy si
+ * applicano solo se è passato un `integrity` (es. script cross-origin da CDN);
+ * con Brython self-hostato (same-origin) non servono.
  */
 function injectScript(src: string, integrity?: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -76,9 +77,11 @@ function injectScript(src: string, integrity?: string): Promise<void> {
     const s = document.createElement('script');
     s.src = src;
     s.dataset.pyrunnerSrc = src;
-    if (integrity) s.integrity = integrity;
-    s.crossOrigin = 'anonymous';
-    s.referrerPolicy = 'no-referrer';
+    if (integrity) {
+      s.integrity = integrity;
+      s.crossOrigin = 'anonymous';
+      s.referrerPolicy = 'no-referrer';
+    }
     s.addEventListener(
       'load',
       () => {

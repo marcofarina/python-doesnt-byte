@@ -4,15 +4,14 @@ const fs = require('fs');
 const PLUGIN_NAME = 'pyrunner';
 
 const DEFAULT_OPTIONS = {
-  brythonSrc: 'https://cdn.jsdelivr.net/npm/brython@3.12.4/brython.min.js',
-  brythonStdlibSrc:
-    'https://cdn.jsdelivr.net/npm/brython@3.12.4/brython_stdlib.js',
-  // SRI hash dei bundle pinnati a 3.12.4. Se la CDN serve un file diverso
-  // (compromissione, MITM, mismatch di versione) il browser rifiuta lo script.
-  brythonIntegrity:
-    'sha384-7rPpfu6/m4Kt9MXKynqy9O9qlPkNnbNhhorIn114kwlsCY3AI3T9eXt+UgVcQ9Qg',
-  brythonStdlibIntegrity:
-    'sha384-JEgOSQ3kchBXLE0JDMOoSxjkqHdd8vNq3SY6/2KA4aPvCimeLMmt+cMnHIb0I4bw',
+  // Brython 3.12.4 self-hostato in static/<brythonDir>/ (niente CDN esterna:
+  // stessa policy di font e sql.js — privacy, niente single point of failure,
+  // funziona dietro reti che filtrano le CDN). Essendo same-origin non servono
+  // SRI né crossorigin: l'integrità è garantita dal repo. I file sono stati
+  // verificati contro l'hash sha384 che jsdelivr serviva per la 3.12.4.
+  brythonDir: 'brython',
+  brythonMain: 'brython.min.js',
+  brythonStdlib: 'brython_stdlib.js',
   libDir: 'bry-libs',
   examplesDir: 'py-examples',
 };
@@ -43,8 +42,22 @@ module.exports = function pyrunnerPlugin(context, pluginOptions = {}) {
     (context.siteConfig.staticDirectories &&
       context.siteConfig.staticDirectories[0]) ||
     'static';
-  const examplesAbsDir = path.join(context.siteDir, staticRoot, opts.examplesDir);
+  const examplesAbsDir = path.join(
+    context.siteDir,
+    staticRoot,
+    opts.examplesDir,
+  );
   const libUrl = path.posix.join(context.baseUrl, opts.libDir, '/');
+  const brythonMainSrc = path.posix.join(
+    context.baseUrl,
+    opts.brythonDir,
+    opts.brythonMain,
+  );
+  const brythonStdlibSrc = path.posix.join(
+    context.baseUrl,
+    opts.brythonDir,
+    opts.brythonStdlib,
+  );
 
   return {
     name: PLUGIN_NAME,
@@ -63,11 +76,10 @@ module.exports = function pyrunnerPlugin(context, pluginOptions = {}) {
         // src/pyBoot.ts). NON iniettiamo più gli <script> in <head>: così le
         // pagine senza alcun runner (homepage, landing dei volumi, /support,
         // 404, …) non scaricano ~1,1 MB di Brython core + stdlib inutilmente.
+        // URL same-origin (self-hostati): niente SRI/crossorigin.
         brython: {
-          mainSrc: opts.brythonSrc,
-          mainIntegrity: opts.brythonIntegrity,
-          stdlibSrc: opts.brythonStdlibSrc,
-          stdlibIntegrity: opts.brythonStdlibIntegrity,
+          mainSrc: brythonMainSrc,
+          stdlibSrc: brythonStdlibSrc,
         },
       });
     },
