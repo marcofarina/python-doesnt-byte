@@ -1,0 +1,14 @@
+# robots.txt — Python Doesn't Byte
+# Robots Exclusion Protocol (RFC 9309). Servito alla root del dominio:
+# https://www.rainbowbits.cloud/robots.txt
+# I file in static/ finiscono alla root del build (come CNAME), quindi alla root
+# del dominio — esattamente dove i crawler cercano questo file. Il baseUrl
+# /python-doesnt-byte/ NON si applica ai file statici di root.
+
+# Tutto indicizzabile: le poche pagine da escludere (demo/test) portano già il
+# proprio meta robots "noindex", che è più preciso di un Disallow qui (un
+# Disallow impedirebbe al crawler di leggere il noindex).
+User-agent: *
+Allow: /
+
+Sitemap: https://www.rainbowbits.cloud/sitemap.xml

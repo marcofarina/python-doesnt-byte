@@ -10,7 +10,7 @@
  *   - qui ascoltiamo quegli eventi e li propaghiamo via callback
  */
 
-import { ensureBrython } from '@site/src/pyBoot';
+import { ensureBrython, type BrythonConfig } from '@site/src/pyBoot';
 
 export type LogKind = 'stdout' | 'stderr';
 
@@ -19,6 +19,8 @@ export interface RunOptions {
   preCode?: string;
   postCode?: string;
   libUrl: string;
+  /** Coordinate per caricare Brython on-demand (dai global data del plugin). */
+  brython?: BrythonConfig;
   onStart: () => void;
   onLog: (kind: LogKind, text: string) => void;
   onDone: (durationMs: number) => void;
@@ -83,6 +85,7 @@ export function runPython(code: string, opts: RunOptions): () => void {
     preCode = '',
     postCode = '',
     libUrl,
+    brython,
     onStart,
     onLog,
     onDone,
@@ -134,7 +137,7 @@ export function runPython(code: string, opts: RunOptions): () => void {
   // termina con `"`, evita la concatenazione `"` + `"""` → SyntaxError.
   const wrapped = `from brython_runner import run\nrun("""${escapeForTripleQuote(userCode)}\n""", '${codeId}', ${lineShift})\n`;
 
-  ensureBrython(libUrl)
+  ensureBrython(libUrl, brython)
     .then(() => {
       // setTimeout 0 garantisce che il div nel DOM sia visibile al codice Python.
       window.setTimeout(() => {
