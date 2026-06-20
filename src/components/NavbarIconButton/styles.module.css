@@ -29,6 +29,18 @@
   text-decoration: none;
 }
 
+/*
+ * Su mobile questi pulsanti stanno in fila accanto al trigger "Cerca",
+ * che ha un anello bordato sempre visibile: senza bordo le nostre icone
+ * sembravano più piccole e "sbagliate". Diamogli lo stesso cerchio
+ * bordato così la fila di icone (GitHub · caffè · cerca) è coerente.
+ */
+@media (max-width: 996px) {
+  .btn {
+    border: 1px solid var(--at-border);
+  }
+}
+
 .btn:active {
   transform: scale(0.98);
   transition-duration: var(--dur-fast);
