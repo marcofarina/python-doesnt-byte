@@ -30,6 +30,7 @@
     "@docusaurus/preset-classic": "^3.10.1",
     "@docusaurus/theme-mermaid": "^3.10.1",
     "@floating-ui/react": "^0.27.19",
+    "@fontsource-variable/crimson-pro": "^5.2.8",
     "@fontsource/monaspace-argon": "^5.2.5",
     "@fontsource/monaspace-neon": "^5.2.5",
     "@fontsource/monaspace-radon": "^5.2.5",
