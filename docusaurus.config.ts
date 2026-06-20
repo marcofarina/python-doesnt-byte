@@ -108,13 +108,6 @@ export default async function createConfig(): Promise<Config> {
       ],
     ],
 
-    stylesheets: [
-      {
-        href: 'https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300..700;1,300..600&display=swap',
-        rel: 'stylesheet',
-      },
-    ],
-
     // Analytics privacy-first (GoatCounter): nessun cookie, niente dati personali.
     // Solo in produzione: in dev (`npm start`) NODE_ENV è 'development', così le
     // visite locali non gonfiano le statistiche.

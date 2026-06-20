@@ -7,9 +7,11 @@
 /* ─────────────── Atmospheric design tokens ─────────────── */
 :root {
   --font-display:
-    'Crimson Pro', 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
+    'Crimson Pro Variable', 'Crimson Pro', 'Iowan Old Style', 'Source Serif 4',
+    Georgia, serif;
   --font-body:
-    'Crimson Pro', 'Iowan Old Style', 'Source Serif 4', Georgia, serif;
+    'Crimson Pro Variable', 'Crimson Pro', 'Iowan Old Style', 'Source Serif 4',
+    Georgia, serif;
   --font-mono: 'Monaspace Neon', ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-mono-comment:
     'Monaspace Radon', 'Monaspace Neon', ui-monospace, monospace;
