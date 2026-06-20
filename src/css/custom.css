@@ -54,12 +54,14 @@ html[data-theme='light'] {
   --at-fg: #27272a;
   --at-fg-strong: #09090b;
   --at-fg-body: #3f3f46;
-  --at-muted: #71717a;
+  /* muted/accent scuriti per restare ≥ 4.5:1 come testo sul fondo chiaro
+     (WCAG 1.4.3): #71717a era ~4.4:1, #0284c7 ~3.9:1. Fonte unica dei token. */
+  --at-muted: #6b6b73;
   --at-muted-soft: #52525b;
   --at-faint: #a1a1aa;
   --at-border: rgba(0, 0, 0, 0.08);
   --at-border-strong: rgba(0, 0, 0, 0.12);
-  --at-accent: #0284c7;
+  --at-accent: #0270ad;
   --at-accent-soft: #0369a1;
   --at-accent-bg: rgba(2, 132, 199, 0.06);
   --at-accent-chip: rgba(2, 132, 199, 0.08);
@@ -109,7 +111,8 @@ html[data-theme='dark'] {
   --at-fg: #e4e4e7;
   --at-fg-strong: #fafafa;
   --at-fg-body: #d4d4d8;
-  --at-muted: #71717a;
+  /* #71717a era ~3.9:1 sul fondo scuro: alzato a #8b8b93 (~5.5:1). */
+  --at-muted: #8b8b93;
   --at-muted-soft: #a1a1aa;
   --at-faint: #52525b;
   --at-border: rgba(255, 255, 255, 0.08);

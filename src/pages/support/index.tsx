@@ -11,7 +11,7 @@ import Link from '@docusaurus/Link';
 import { useColorMode, useWindowSize } from '@docusaurus/theme-common';
 import Icon, { type IconName } from '@site/src/components/Icon';
 import { copyToClipboard } from '@site/src/theme/PyRunner/clipboard';
-import { getV4VTheme, type V4VTheme } from '@site/src/lib/v4vTheme';
+import { getAtmosphericTheme, type AtmosphericTheme } from '@site/src/lib/atmosphericTheme';
 import {
   V4V_GOALS,
   V4V_DONORS,
@@ -26,7 +26,7 @@ function Kicker({
   children,
   color,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   children: ReactNode;
   color?: string;
 }) {
@@ -46,7 +46,7 @@ function Kicker({
   );
 }
 
-function Pill({ T, children }: { T: V4VTheme; children: ReactNode }) {
+function Pill({ T, children }: { T: AtmosphericTheme; children: ReactNode }) {
   return (
     <span
       style={{
@@ -78,7 +78,7 @@ function WayCard({
   accent,
   style,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   icon: ReactNode;
   kicker: string;
   title: string;
@@ -116,18 +116,22 @@ function WayCard({
       <Kicker T={T} color={accent || T.accent}>
         {kicker}
       </Kicker>
-      <div
+      {/* h3: i tre "modi" (Time/Talent/Treasure) sono sotto-sezioni pari-livello
+          dell'h2 "Time, Talent, Treasure". Il pannello Treasure usa già un h3,
+          così l'outline resta h1 → h2 → (h3, h3, h3) senza salti. */}
+      <h3
         style={{
           fontFamily: T.display,
           fontSize: 21,
           fontWeight: 700,
           color: T.fgStrong,
           letterSpacing: '-0.01em',
+          lineHeight: 1.2,
           margin: '8px 0 8px',
         }}
       >
         {title}
-      </div>
+      </h3>
       <p
         style={{
           fontFamily: T.body,
@@ -213,7 +217,7 @@ function QRThumb({
   onOpen,
   name,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   value: string;
   level?: 'L' | 'M' | 'Q' | 'H';
   size: number;
@@ -278,7 +282,7 @@ function QRModal({
   onClose,
   children,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   tone: 'paypal' | 'satispay' | 'lightning';
   value: string;
   level?: 'L' | 'M' | 'Q' | 'H';
@@ -403,7 +407,7 @@ function QRModal({
             fontFamily: T.mono,
             fontSize: 10.5,
             letterSpacing: '0.04em',
-            color: T.faint,
+            color: T.muted,
             marginTop: 14,
           }}
         >
@@ -422,7 +426,7 @@ function LinkRow({
   label,
   color,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   href: string;
   label: string;
   color?: string;
@@ -464,7 +468,7 @@ function CopyRow({
   label,
   color,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   value: string;
   label: string;
   color?: string;
@@ -522,7 +526,7 @@ function PayRow({
   qrValue,
   qrLevel,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   tone: 'paypal' | 'satispay' | 'lightning';
   icon: ReactNode;
   name: string;
@@ -625,7 +629,7 @@ function PayRow({
   );
 }
 
-function DonationPanel({ T, ring }: { T: V4VTheme; ring?: boolean }) {
+function DonationPanel({ T, ring }: { T: AtmosphericTheme; ring?: boolean }) {
   return (
     <div
       className={ring ? 'v4v-ring' : 'v4v-beam'}
@@ -735,7 +739,7 @@ function GoalBar({
   milestones,
   height = 12,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   raised: number;
   max: number;
   milestones: Milestone[];
@@ -830,7 +834,7 @@ function DonorChip({
   hue,
   top,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   name: string;
   hue: number;
   top: boolean;
@@ -881,7 +885,7 @@ function GoalsBlock({
   donors,
   mobile,
 }: {
-  T: V4VTheme;
+  T: AtmosphericTheme;
   raised?: number;
   donors?: boolean;
   mobile?: boolean;
@@ -1120,7 +1124,7 @@ function GoalsBlock({
 }
 
 /* ── Glow di sfondo ────────────────────────────────── */
-function Stage({ T }: { T: V4VTheme }) {
+function Stage({ T }: { T: AtmosphericTheme }) {
   return (
     <div
       aria-hidden="true"
@@ -1144,7 +1148,7 @@ function Stage({ T }: { T: V4VTheme }) {
 }
 
 /* ── Pagina ────────────────────────────────────────── */
-function V4VPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
+function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
   const secTitle: CSSProperties = {
     fontFamily: T.display,
     fontSize: 28,
@@ -1222,7 +1226,11 @@ function V4VPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
               href="https://value4value.info/"
               target="_blank"
               rel="noreferrer"
-              style={{ color: T.accent, textDecoration: 'none' }}
+              style={{
+                color: T.accent,
+                textDecoration: 'underline',
+                textUnderlineOffset: '0.18em',
+              }}
             >
               Value 4 Value
             </a>
@@ -1277,7 +1285,8 @@ function V4VPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
                 style={{
                   color: T.accent,
                   fontWeight: 700,
-                  textDecoration: 'none',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '0.18em',
                 }}
               >
                 segnalamelo
@@ -1303,7 +1312,11 @@ function V4VPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
               proponi un nuovo capitolo, un esercizio o una revisione, oppure{' '}
               <a
                 href={CONTACT_MAILTO}
-                style={{ color: T.ln, textDecoration: 'none' }}
+                style={{
+                  color: T.ln,
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '0.18em',
+                }}
               >
                 scrivimi
               </a>{' '}
@@ -1458,7 +1471,7 @@ function V4VPage({ T, mobile }: { T: V4VTheme; mobile: boolean }) {
 function V4VContent() {
   const { colorMode } = useColorMode();
   const mobile = useWindowSize() === 'mobile';
-  const T = getV4VTheme(colorMode === 'dark');
+  const T = getAtmosphericTheme(colorMode === 'dark');
   return <V4VPage T={T} mobile={mobile} />;
 }
 

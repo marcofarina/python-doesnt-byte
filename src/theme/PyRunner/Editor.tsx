@@ -106,6 +106,8 @@ export interface EditorProps {
   onRun?: () => void;
   /** Estensione di linguaggio CodeMirror. Default: Python. */
   language?: Extension;
+  /** Etichetta accessibile per la textbox dell'editor (screen reader). */
+  ariaLabel?: string;
 }
 
 export interface EditorHandle {
@@ -114,7 +116,15 @@ export interface EditorHandle {
 }
 
 export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
-  { initialCode, showLineNumbers, readonly = false, onChange, onRun, language },
+  {
+    initialCode,
+    showLineNumbers,
+    readonly = false,
+    onChange,
+    onRun,
+    language,
+    ariaLabel = 'Editor di codice Python',
+  },
   ref,
 ) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -160,6 +170,9 @@ export const Editor = forwardRef<EditorHandle, EditorProps>(function Editor(
         },
       ]),
       atmosphericTheme,
+      // Etichetta la textbox di CodeMirror (.cm-content, role="textbox") per gli
+      // screen reader: senza, viene annunciata come campo editabile anonimo.
+      EditorView.contentAttributes.of({ 'aria-label': ariaLabel }),
       readOnlyCompartment.of([
         EditorState.readOnly.of(readonly),
         EditorView.editable.of(!readonly),

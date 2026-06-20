@@ -254,6 +254,7 @@ function SQLRunnerInner(props: SQLRunnerProps) {
           onChange={handleChange}
           onRun={handleRun}
           language={sqlLanguage}
+          ariaLabel="Editor di codice SQL"
         />
       </div>
       <Output
