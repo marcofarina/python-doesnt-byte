@@ -184,8 +184,24 @@ export default async function createConfig(): Promise<Config> {
     themes: ['@docusaurus/theme-mermaid'],
 
     themeConfig: {
-      // Replace with your project's social card
-      image: 'img/docusaurus-social-card.jpg',
+      // Immagine OG/social di default (1200×630, sRGB). Le singole pagine
+      // possono sovrascriverla via frontmatter `image:`. Sostituisce il
+      // placeholder Docusaurus. Il file va in static/img/og-card.jpg.
+      image: 'img/og-card.jpg',
+      // Metadata di default applicati a tutte le pagine (le pagine con
+      // frontmatter/Layout proprio sovrascrivono description e og:title).
+      // Docusaurus emette già da solo og:image/twitter:image (da `image`
+      // qui sopra) e twitter:card=summary_large_image.
+      metadata: [
+        {
+          name: 'keywords',
+          content:
+            'python, informatica, liceo scienze applicate, libro di testo, programmazione, didattica, open source, scuola superiore',
+        },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:locale', content: 'it_IT' },
+        { property: 'og:site_name', content: 'Python Doesn’t Byte' },
+      ],
       mermaid: {
         theme: { light: 'neutral', dark: 'dark' },
         options: {
