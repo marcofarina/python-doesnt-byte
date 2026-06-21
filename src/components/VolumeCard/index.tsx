@@ -1,5 +1,6 @@
 import { useRef, type CSSProperties, type ReactNode } from 'react';
 import Link from '@docusaurus/Link';
+import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
 type Accent = 'blue' | 'pink' | 'amber' | 'green';
@@ -132,7 +133,9 @@ export default function VolumeCard({
         <div className={styles.iconBox}>{icon}</div>
         <div className={styles.body}>
           <div className={styles.kicker}>{kicker}</div>
-          <h3 className={styles.title}>{title}</h3>
+          <Heading as="h3" className={styles.title}>
+            {title}
+          </Heading>
           <p className={styles.desc}>{desc}</p>
         </div>
         <div className={styles.arrow}>

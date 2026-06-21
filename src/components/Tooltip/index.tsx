@@ -69,6 +69,10 @@ export default function Tooltip({ def, children }: TooltipProps) {
       {open && (
         <FloatingPortal>
           <span
+            // `refs` è l'oggetto di @floating-ui useFloating(): `setFloating` è
+            // un callback ref stabile, non un React ref con `.current` — la
+            // regola react-hooks/refs qui è un falso positivo (vede solo il nome).
+            // eslint-disable-next-line react-hooks/refs
             ref={refs.setFloating}
             className={styles.popover}
             style={floatingStyles}

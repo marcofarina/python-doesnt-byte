@@ -11,6 +11,7 @@
  */
 import React, { useState, type ReactNode } from 'react';
 import { useColorMode } from '@docusaurus/theme-common';
+import Heading from '@theme/Heading';
 import Icon, { type IconName } from '@site/src/components/Icon';
 import { getAtmosphericTheme } from '@site/src/lib/atmosphericTheme';
 import { copyToClipboard } from '@site/src/theme/PyRunner/clipboard';
@@ -84,7 +85,8 @@ export function LegalHeader({
       >
         {kicker}
       </div>
-      <h1
+      <Heading
+        as="h1"
         style={{
           fontFamily: T.display,
           fontSize: 'clamp(34px, 5vw, 46px)',
@@ -96,7 +98,7 @@ export function LegalHeader({
         }}
       >
         {title}
-      </h1>
+      </Heading>
       {children && (
         <p
           style={{
