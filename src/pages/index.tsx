@@ -2,6 +2,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import Link from '@docusaurus/Link';
 import Layout from '@theme/Layout';
+import Heading from '@theme/Heading';
 
 import VolumeCard from '@site/src/components/VolumeCard';
 import BentoFeatures from '@site/src/components/BentoFeatures';
@@ -115,7 +116,8 @@ export default function Home(): JSX.Element {
             </div>
           </div>
 
-          <h1
+          <Heading
+            as="h1"
             className={`${styles.title} at-fade-up`}
             style={{ animationDelay: '0.15s' }}
           >
@@ -124,7 +126,7 @@ export default function Home(): JSX.Element {
             <span className={`${styles.titleSecondary} at-grad-blue`}>
               doesn’t byte.
             </span>
-          </h1>
+          </Heading>
 
           <p
             className={`${styles.tagline} at-fade-up`}

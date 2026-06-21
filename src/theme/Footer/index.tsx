@@ -11,7 +11,10 @@ import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import { useColorMode, useWindowSize } from '@docusaurus/theme-common';
 import Icon from '@site/src/components/Icon';
-import { getAtmosphericTheme, type AtmosphericTheme } from '@site/src/lib/atmosphericTheme';
+import {
+  getAtmosphericTheme,
+  type AtmosphericTheme,
+} from '@site/src/lib/atmosphericTheme';
 import { V4V_LINKS } from '@site/src/lib/v4vData';
 import { CONTACT_MAILTO } from '@site/src/lib/site';
 import MugSaucer from '@site/src/icons/mug-saucer.svg';
@@ -90,7 +93,7 @@ function FootLink({
 
   if (href) {
     return (
-      <a
+      <Link
         href={href}
         target="_blank"
         rel="noreferrer"
@@ -100,7 +103,7 @@ function FootLink({
         onMouseLeave={onLeave}
       >
         {inner}
-      </a>
+      </Link>
     );
   }
   return (
@@ -199,7 +202,7 @@ function SocialBtn({
     );
   }
   return (
-    <a
+    <Link
       href={href}
       aria-label={label}
       title={label}
@@ -211,7 +214,7 @@ function SocialBtn({
       onMouseLeave={onLeave}
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
@@ -310,7 +313,7 @@ function PayLogo({
 
   if (href) {
     return (
-      <a
+      <Link
         href={href}
         target="_blank"
         rel="noreferrer"
@@ -321,7 +324,7 @@ function PayLogo({
         onMouseLeave={onLeave}
       >
         {content}
-      </a>
+      </Link>
     );
   }
   return (
@@ -380,7 +383,7 @@ function ToolCredit({
     return <span style={{ ...base, color: T.muted }}>{inner}</span>;
   }
   return (
-    <a
+    <Link
       href={href}
       target="_blank"
       rel="noreferrer"
@@ -390,7 +393,7 @@ function ToolCredit({
       onMouseLeave={(e) => (e.currentTarget.style.color = T.mutedSoft)}
     >
       {inner}
-    </a>
+    </Link>
   );
 }
 
@@ -495,7 +498,7 @@ function FooterInner({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
               Il libro di testo, reinventato. Open source, libero e gratuito —
               perché l’informazione vuole essere libera.
             </p>
-            <a
+            <Link
               href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
               target="_blank"
               rel="noreferrer"
@@ -526,7 +529,7 @@ function FooterInner({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
               }}
             >
               CC BY-NC-SA 4.0
-            </a>
+            </Link>
           </div>
 
           {/* Il libro */}
@@ -635,7 +638,7 @@ function FooterInner({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
             >
               © {new Date().getFullYear()} Rainbow Bits · Contenuti sotto
               licenza{' '}
-              <a
+              <Link
                 href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
                 target="_blank"
                 rel="noreferrer"
@@ -645,7 +648,7 @@ function FooterInner({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
                 onMouseLeave={(e) => (e.currentTarget.style.color = 'inherit')}
               >
                 CC BY-NC-SA 4.0
-              </a>
+              </Link>
               .
             </p>
             <div

@@ -7,11 +7,15 @@ import React, {
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import Layout from '@theme/Layout';
+import Heading from '@theme/Heading';
 import Link from '@docusaurus/Link';
 import { useColorMode, useWindowSize } from '@docusaurus/theme-common';
-import Icon, { type IconName } from '@site/src/components/Icon';
+import Icon from '@site/src/components/Icon';
 import { copyToClipboard } from '@site/src/theme/PyRunner/clipboard';
-import { getAtmosphericTheme, type AtmosphericTheme } from '@site/src/lib/atmosphericTheme';
+import {
+  getAtmosphericTheme,
+  type AtmosphericTheme,
+} from '@site/src/lib/atmosphericTheme';
 import {
   V4V_GOALS,
   V4V_DONORS,
@@ -119,7 +123,8 @@ function WayCard({
       {/* h3: i tre "modi" (Time/Talent/Treasure) sono sotto-sezioni pari-livello
           dell'h2 "Time, Talent, Treasure". Il pannello Treasure usa già un h3,
           così l'outline resta h1 → h2 → (h3, h3, h3) senza salti. */}
-      <h3
+      <Heading
+        as="h3"
         style={{
           fontFamily: T.display,
           fontSize: 21,
@@ -131,7 +136,7 @@ function WayCard({
         }}
       >
         {title}
-      </h3>
+      </Heading>
       <p
         style={{
           fontFamily: T.body,
@@ -432,7 +437,7 @@ function LinkRow({
   color?: string;
 }) {
   return (
-    <a
+    <Link
       href={href}
       target="_blank"
       rel="noreferrer"
@@ -456,7 +461,7 @@ function LinkRow({
     >
       {label}
       <Icon name="arrow-right" size={14} color={color || T.accentSoft} />
-    </a>
+    </Link>
   );
 }
 
@@ -670,7 +675,8 @@ function DonationPanel({ T, ring }: { T: AtmosphericTheme; ring?: boolean }) {
         <Kicker T={T} color={T.satispay}>
           Treasure
         </Kicker>
-        <h3
+        <Heading
+          as="h3"
           style={{
             fontFamily: T.display,
             fontSize: 23,
@@ -681,7 +687,7 @@ function DonationPanel({ T, ring }: { T: AtmosphericTheme; ring?: boolean }) {
           }}
         >
           Sostieni in 30 secondi
-        </h3>
+        </Heading>
         <p
           style={{
             fontFamily: T.body,
@@ -1186,7 +1192,8 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
         {/* HERO */}
         <div style={{ textAlign: 'center', maxWidth: 760, margin: '0 auto' }}>
           <Pill T={T}>Value for value</Pill>
-          <h1
+          <Heading
+            as="h1"
             style={{
               fontFamily: T.display,
               fontWeight: 700,
@@ -1206,7 +1213,7 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
             <span className="at-grad-blue" style={{ fontStyle: 'italic' }}>
               restituiscine un po’.
             </span>
-          </h1>
+          </Heading>
           <p style={{ ...lead, margin: '0 auto 14px', maxWidth: 640 }}>
             <em>Python doesn’t byte</em> è gratis, libero e open source — e
             resterà così. Ma scriverlo costa tempo e tenerlo online costa
@@ -1222,7 +1229,7 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
             }}
           >
             Se per te ha un valore, ricambia come preferisci. È la filosofia del{' '}
-            <a
+            <Link
               href="https://value4value.info/"
               target="_blank"
               rel="noreferrer"
@@ -1233,7 +1240,7 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
               }}
             >
               Value 4 Value
-            </a>
+            </Link>
             : tre modi, nessun obbligo.
           </p>
         </div>
@@ -1241,7 +1248,9 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
         {/* TRE MODI */}
         <div style={{ textAlign: 'center', margin: '58px 0 26px' }}>
           <Kicker T={T}>Tre modi</Kicker>
-          <h2 style={{ ...secTitle, marginTop: 8 }}>Time, Talent, Treasure</h2>
+          <Heading as="h2" style={{ ...secTitle, marginTop: 8 }}>
+            Time, Talent, Treasure
+          </Heading>
           <p
             style={{
               fontFamily: T.body,
@@ -1280,7 +1289,7 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
               famiglie o ai docenti di altre scuole — il passaparola è il modo
               più semplice per farlo crescere. Oppure, se trovi un errore o un
               passaggio poco chiaro,{' '}
-              <a
+              <Link
                 href={CONTACT_MAILTO}
                 style={{
                   color: T.accent,
@@ -1290,7 +1299,7 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
                 }}
               >
                 segnalamelo
-              </a>
+              </Link>
               : ogni correzione rende il libro migliore per chi verrà dopo di
               te.
             </WayCard>
@@ -1310,7 +1319,7 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
               Sai programmare, fare design o comunicazione? Apri una{' '}
               <strong style={{ color: T.fgStrong }}>pull request</strong>,
               proponi un nuovo capitolo, un esercizio o una revisione, oppure{' '}
-              <a
+              <Link
                 href={CONTACT_MAILTO}
                 style={{
                   color: T.ln,
@@ -1319,7 +1328,7 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
                 }}
               >
                 scrivimi
-              </a>{' '}
+              </Link>{' '}
               e basta: il codice è su GitHub e c’è sempre spazio per migliorare,
               qualunque sia la tua competenza.
             </WayCard>
@@ -1338,7 +1347,9 @@ function V4VPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
               flexWrap: 'wrap',
             }}
           >
-            <h2 style={secTitle}>La campagna {V4V_GOALS.year}</h2>
+            <Heading as="h2" style={secTitle}>
+              La campagna {V4V_GOALS.year}
+            </Heading>
             <span style={{ fontFamily: T.body, fontSize: 16, color: T.muted }}>
               — dove vanno i contributi
             </span>

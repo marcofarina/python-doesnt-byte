@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import clsx from 'clsx';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import Heading from '@theme/Heading';
 
 interface CalloutEntry {
   defaultTitle: string;
@@ -53,7 +54,9 @@ export default function Admonition(props: AdmonitionProps): ReactNode {
             className="callout__icon"
           />
         )}
-        <h4 className="callout__title">{title ?? entry.defaultTitle}</h4>
+        <Heading as="h4" className="callout__title">
+          {title ?? entry.defaultTitle}
+        </Heading>
       </div>
       <div className="callout__body">{children}</div>
     </aside>

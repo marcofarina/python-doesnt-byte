@@ -1,5 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react';
 import clsx from 'clsx';
+import Heading from '@theme/Heading';
 import PyRunner from '@site/src/theme/PyRunner';
 import styles from './styles.module.css';
 
@@ -165,13 +166,7 @@ interface CardProps {
   panelId: string;
 }
 
-function SpotlightCard({
-  feature,
-  index,
-  active,
-  onSelect,
-  panelId,
-}: CardProps) {
+function SpotlightCard({ feature, active, onSelect, panelId }: CardProps) {
   const ref = useRef<HTMLButtonElement>(null);
   function onMove(e: React.MouseEvent<HTMLButtonElement>) {
     const el = ref.current;
@@ -195,7 +190,9 @@ function SpotlightCard({
       <div className={styles.iconBox}>{feature.icon}</div>
       <div className={styles.body}>
         <div className={styles.kicker}>{feature.kicker}</div>
-        <h3 className={styles.cardTitle}>{feature.title}</h3>
+        <Heading as="h3" className={styles.cardTitle}>
+          {feature.title}
+        </Heading>
         <p className={styles.cardDesc}>{feature.desc}</p>
       </div>
       <span className={styles.cardArrow} aria-hidden="true">
@@ -222,9 +219,9 @@ export default function BentoFeatures() {
   return (
     <section className={styles.wrap}>
       <div className={styles.head}>
-        <h2 className={`${styles.title} at-grad-text`}>
+        <Heading as="h2" className={`${styles.title} at-grad-text`}>
           Pensato per imparare facendo.
-        </h2>
+        </Heading>
         <p className={styles.subtitle}>
           Tre cose che un libro di testo, sulla carta, non può fare.
         </p>

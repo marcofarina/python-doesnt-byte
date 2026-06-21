@@ -10,9 +10,14 @@
  */
 import React, { useMemo, useState, type ReactNode } from 'react';
 import Layout from '@theme/Layout';
+import Heading from '@theme/Heading';
+import Link from '@docusaurus/Link';
 import { useColorMode, useWindowSize } from '@docusaurus/theme-common';
 import Icon, { type IconName } from '@site/src/components/Icon';
-import { getAtmosphericTheme, type AtmosphericTheme } from '@site/src/lib/atmosphericTheme';
+import {
+  getAtmosphericTheme,
+  type AtmosphericTheme,
+} from '@site/src/lib/atmosphericTheme';
 import {
   RELEASES,
   CAT_ORDER,
@@ -141,7 +146,7 @@ function LinkRow({
 }) {
   const c = color || T.accentSoft;
   return (
-    <a
+    <Link
       href={href}
       target="_blank"
       rel="noreferrer"
@@ -166,7 +171,7 @@ function LinkRow({
       {icon && <Icon name={icon} size={14} color={c} />}
       {label}
       {!icon && <Icon name="arrow-right" size={14} color={c} />}
-    </a>
+    </Link>
   );
 }
 
@@ -454,7 +459,8 @@ function ReleaseEntry({
           {rel.feature.shot && (
             <RelShot T={T} label={rel.feature.shot} color={featColor} />
           )}
-          <h3
+          <Heading
+            as="h3"
             style={{
               fontFamily: T.display,
               fontSize: 23,
@@ -466,7 +472,7 @@ function ReleaseEntry({
             }}
           >
             {rel.feature.title}
-          </h3>
+          </Heading>
           <p
             style={{
               fontFamily: T.body,
@@ -627,7 +633,8 @@ function ReleasesPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
           {/* HEADER */}
           <header style={{ marginBottom: 36 }}>
             <Kicker T={T}>Changelog</Kicker>
-            <h1
+            <Heading
+              as="h1"
               style={{
                 fontFamily: T.display,
                 fontWeight: 700,
@@ -639,7 +646,7 @@ function ReleasesPage({ T, mobile }: { T: AtmosphericTheme; mobile: boolean }) {
               }}
             >
               Note di rilascio
-            </h1>
+            </Heading>
             <p
               style={{
                 fontFamily: T.body,

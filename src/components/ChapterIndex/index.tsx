@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import Link from '@docusaurus/Link';
+import Heading from '@theme/Heading';
 import clsx from 'clsx';
 import styles from './styles.module.css';
 
@@ -124,7 +125,9 @@ export default function ChapterIndex() {
   return (
     <section className={styles.wrap}>
       <div className={styles.head}>
-        <h2 className={styles.label}>Indice</h2>
+        <Heading as="h2" className={styles.label}>
+          Indice
+        </Heading>
         <span className={styles.count}>{current.label}</span>
       </div>
       <div
