@@ -1,0 +1,41 @@
+---
+title: 'Laboratorio: piccolo convertitore'
+sidebar_label: 'Laboratorio: convertitore'
+sidebar_position: 3
+description: Pagina dimostrativa — un laboratorio (progetto) con pagina dedicata.
+---
+
+<LessonMeta
+  kind="laboratorio"
+  n="11.4"
+  volume="Manuale del Programmatore"
+  chapter="Le basi"
+  lessonId="1.3.11"
+  lessonTo="/programmatore/variabili"
+  lessonLabel="I tipi di dato"
+  theory={[{ to: '/programmatore/variabili', label: 'Le variabili' }]}
+/>
+
+In questo laboratorio metti insieme quello che hai imparato e costruisci un
+piccolo convertitore passo dopo passo. È un lavoro più lungo di un esercizio
+singolo: prenditi il tuo tempo.
+
+### Passo 1 — i dati
+
+Parti da una temperatura in Celsius e calcola Fahrenheit e Kelvin.
+
+```py live
+celsius = 20
+# Fahrenheit e Kelvin
+```
+
+### Passo 2 — un riepilogo
+
+Stampa una riga riassuntiva con tutti e tre i valori.
+
+```py live readonly
+celsius = 20
+fahrenheit = celsius * 9 / 5 + 32
+kelvin = celsius + 273.15
+print(f"{celsius} C = {fahrenheit} F = {kelvin} K")
+```
