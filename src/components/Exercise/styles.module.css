@@ -15,12 +15,16 @@
   --c-fg-body: var(--at-fg-body);
   --c-muted: var(--at-muted);
   --c-faint: var(--at-faint);
-  --c-accent: var(--at-accent);
-  --c-accent-soft: var(--at-accent-soft);
-  --c-accent-dim: var(--at-accent-soft);
-  --c-accent-chip: var(--at-accent-chip);
-  --c-accent-chip-bd: var(--at-accent-chip-border);
-  --c-anchor-bg: color-mix(in srgb, var(--at-accent) 4%, transparent);
+  /* accento per-tipo: un solo colore, i chip si derivano da qui */
+  --ex-accent: var(--at-accent);
+  --ex-accent-soft: var(--at-accent-soft);
+
+  --c-accent: var(--ex-accent);
+  --c-accent-soft: var(--ex-accent-soft);
+  --c-accent-dim: var(--ex-accent-soft);
+  --c-accent-chip: color-mix(in srgb, var(--ex-accent) 9%, transparent);
+  --c-accent-chip-bd: color-mix(in srgb, var(--ex-accent) 24%, transparent);
+  --c-anchor-bg: color-mix(in srgb, var(--ex-accent) 4%, transparent);
 
   position: relative;
   background: linear-gradient(180deg, var(--c-bg-from), var(--c-bg-to));
@@ -29,6 +33,9 @@
   overflow: hidden;
   margin: 0 0 32px;
 }
+
+/* Il colore per-tipo arriva dall'accento di pagina (custom.css,
+   [data-exercise-kind]): la card eredita --at-accent, niente override locale. */
 
 .inner {
   display: flex;

@@ -20,6 +20,10 @@
 #   - batch:  <Exercise n="11.1">     forma corta lezione.esercizio
 #   - singola: <LessonMeta n="11.3">  il numero sta nel badge
 #
+# COLORE PAGINA: `exercise_kind` (rapidi|esercizio|laboratorio) tinge l'INTERA
+# pagina con l'accento del tipo (ambra/viola/teal). DEVE combaciare col `kind`
+# del <LessonMeta>. Senza, la pagina resta blu come gli altri volumi.
+#
 # REGOLA FERREA sui link: SOLO identificatori on-site (path/permalink del sito),
 # MAI riferimenti interni esterni (niente paideia_id e simili).
 # ─────────────────────────────────────────────────────────────────────────────
@@ -27,6 +31,7 @@ title: <titolo della pagina>
 sidebar_label: <label in sidebar>
 sidebar_position: 1
 description: <una frase>
+exercise_kind: rapidi # rapidi | esercizio | laboratorio (= kind del LessonMeta)
 ---
 
 {/* ===========================================================================

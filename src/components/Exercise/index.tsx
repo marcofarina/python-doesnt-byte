@@ -77,7 +77,11 @@ export function LessonMeta({
   const k = KIND[kind];
   const section = n ?? lessonId;
   return (
-    <aside className={styles.card} aria-label="Provenienza dell'esercizio">
+    <aside
+      className={styles.card}
+      data-kind={kind}
+      aria-label="Provenienza dell'esercizio"
+    >
       <div className={styles.inner}>
         {/* ancora: icona grande a tutta altezza + tipo/numero impilati */}
         <div className={styles.anchor}>
