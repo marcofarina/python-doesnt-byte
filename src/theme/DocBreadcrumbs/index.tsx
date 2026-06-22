@@ -1,0 +1,136 @@
+/**
+ * Swizzle di @theme/DocBreadcrumbs (eject).
+ *
+ * Unica differenza rispetto all'originale: dopo la casetta (che punta alla home
+ * del sito) inseriamo una briciola col NOME DEL VOLUME corrente, linkata
+ * all'indice del volume. Senza, in Biblioteca dell'Apprendista la prima briciola
+ * è il volume-sorgente (es. «Manuale del Programmatore») e si ha l'impressione
+ * di essere nel Vol.1 invece che negli esercizi del Vol.4.
+ *
+ * Il resto è copia fedele dell'originale: ricontrollare a ogni upgrade di
+ * Docusaurus (vedi memoria upgrade_risks).
+ */
+import React, { type ReactNode } from 'react';
+import clsx from 'clsx';
+import { ThemeClassNames } from '@docusaurus/theme-common';
+import {
+  useSidebarBreadcrumbs,
+  useDocsVersion,
+} from '@docusaurus/plugin-content-docs/client';
+import { useHomePageRoute } from '@docusaurus/theme-common/internal';
+import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import { translate } from '@docusaurus/Translate';
+import HomeBreadcrumbItem from '@theme/DocBreadcrumbs/Items/Home';
+import DocBreadcrumbsStructuredData from '@theme/DocBreadcrumbs/StructuredData';
+
+import styles from './styles.module.css';
+
+// Nome leggibile del volume, per pluginId dell'istanza docs. routeBasePath
+// coincide col pluginId per tutti e quattro i volumi (vedi docusaurus.config).
+const VOLUME_LABELS: Record<string, string> = {
+  programmatore: 'Manuale del Programmatore',
+  artefice: 'Manuale dell’Artefice',
+  archivista: 'Manuale dell’Archivista',
+  apprendista: 'Biblioteca dell’Apprendista',
+};
+
+function BreadcrumbsItemLink({
+  children,
+  href,
+  isLast,
+}: {
+  children: ReactNode;
+  href?: string;
+  isLast: boolean;
+}): ReactNode {
+  const className = 'breadcrumbs__link';
+  if (isLast) {
+    return <span className={className}>{children}</span>;
+  }
+  return href ? (
+    <Link className={className} href={href}>
+      <span>{children}</span>
+    </Link>
+  ) : (
+    <span className={className}>{children}</span>
+  );
+}
+
+function BreadcrumbsItem({
+  children,
+  active,
+}: {
+  children: ReactNode;
+  active?: boolean;
+}): ReactNode {
+  return (
+    <li
+      className={clsx('breadcrumbs__item', {
+        'breadcrumbs__item--active': active,
+      })}
+    >
+      {children}
+    </li>
+  );
+}
+
+// Briciola del volume corrente, subito dopo la casetta.
+function VolumeBreadcrumbItem(): ReactNode {
+  const { pluginId } = useDocsVersion();
+  const href = useBaseUrl(`/${pluginId}/`);
+  const label = VOLUME_LABELS[pluginId];
+  if (!label) {
+    return null;
+  }
+  return (
+    <BreadcrumbsItem>
+      <BreadcrumbsItemLink href={href} isLast={false}>
+        {label}
+      </BreadcrumbsItemLink>
+    </BreadcrumbsItem>
+  );
+}
+
+export default function DocBreadcrumbs(): ReactNode {
+  const breadcrumbs = useSidebarBreadcrumbs();
+  const homePageRoute = useHomePageRoute();
+  if (!breadcrumbs) {
+    return null;
+  }
+  return (
+    <>
+      <DocBreadcrumbsStructuredData breadcrumbs={breadcrumbs} />
+      <nav
+        className={clsx(
+          ThemeClassNames.docs.docBreadcrumbs,
+          styles.breadcrumbsContainer,
+        )}
+        aria-label={translate({
+          id: 'theme.docs.breadcrumbs.navAriaLabel',
+          message: 'Breadcrumbs',
+          description: 'The ARIA label for the breadcrumbs',
+        })}
+      >
+        <ul className="breadcrumbs">
+          {homePageRoute && <HomeBreadcrumbItem />}
+          <VolumeBreadcrumbItem />
+          {breadcrumbs.map((item, idx) => {
+            const isLast = idx === breadcrumbs.length - 1;
+            const href =
+              item.type === 'category' && item.linkUnlisted
+                ? undefined
+                : item.href;
+            return (
+              <BreadcrumbsItem key={idx} active={isLast}>
+                <BreadcrumbsItemLink href={href} isLast={isLast}>
+                  {item.label}
+                </BreadcrumbsItemLink>
+              </BreadcrumbsItem>
+            );
+          })}
+        </ul>
+      </nav>
+    </>
+  );
+}
