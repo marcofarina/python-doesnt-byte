@@ -14,7 +14,14 @@
  * A video l'esercizio mostra la forma corta lezione.esercizio (es. 10.2).
  * Tutti i riferimenti sono identificatori on-site (path/permalink), mai esterni.
  */
-import { type ReactNode } from 'react';
+import {
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import { usePluginData } from '@docusaurus/useGlobalData';
@@ -169,24 +176,166 @@ export function Exercise({ n, title, children }: ExerciseProps): ReactNode {
 
 // ─── Solution ────────────────────────────────────────────────────────────────
 
+/** Millisecondi di pressione continua per rivelare la soluzione. */
+const HOLD_MS = 3000;
+
 interface SolutionProps {
-  /** Etichetta del disclosure. Default: «Mostra la soluzione». */
+  /** Etichetta principale (prominente). Default: «Soluzione». */
   label?: string;
+  /** Riga di servizio (attenuata). Default: «tieni premuto per visualizzare». */
+  hint?: string;
   children: ReactNode;
 }
 
+/**
+ * Soluzione a rivelazione protetta: per evitare lo spoiler da misclick, il
+ * corpo si apre solo dopo aver tenuto premuto il pulsante per {@link HOLD_MS}.
+ * Feedback: una barra di avanzamento (nell'accento per-tipo della pagina)
+ * riempie il pulsante e l'icona passa in cross-fade da faccina (a riposo) a
+ * mano-che-preme (in pressione); al rilascio anticipato tutto torna indietro.
+ * Una volta rivelata, il pulsante diventa un normale toggle apri/chiudi
+ * (niente più rischio spoiler).
+ *
+ * Il progress è guidato da requestAnimationFrame scritto inline sull'elemento
+ * (non da una transition CSS) così resta visibile anche con
+ * `prefers-reduced-motion`, dove le transition globali sono azzerate.
+ */
 export function Solution({
-  label = 'Mostra la soluzione',
+  label = 'Soluzione',
+  hint = 'tieni premuto per visualizzare',
   children,
 }: SolutionProps): ReactNode {
+  const [revealed, setRevealed] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [holding, setHolding] = useState(false);
+
+  const fillRef = useRef<HTMLSpanElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef(0);
+  // gesto di pressione in corso (da puntatore) + soppressione del click che
+  // ogni gesto di puntatore emette al rilascio: senza, il click finale
+  // richiuderebbe la soluzione appena rivelata dall'hold.
+  const gestureRef = useRef(false);
+  const suppressClickRef = useRef(false);
+
+  const setFill = useCallback((p: number) => {
+    if (fillRef.current) fillRef.current.style.transform = `scaleX(${p})`;
+  }, []);
+
+  const stopRaf = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
+  const startHold = useCallback(
+    (e: ReactPointerEvent<HTMLButtonElement>) => {
+      // Già rivelata o tasto non primario: lascia che sia il click a gestire.
+      if (revealed || e.button !== 0) return;
+      e.preventDefault();
+      gestureRef.current = true;
+      setHolding(true);
+      startRef.current = performance.now();
+      // durante l'hold la barra segue il RAF fotogramma per fotogramma
+      if (fillRef.current) fillRef.current.style.transition = 'none';
+      stopRaf();
+      const step = (now: number) => {
+        const p = Math.min(1, (now - startRef.current) / HOLD_MS);
+        setFill(p);
+        if (p >= 1) {
+          stopRaf();
+          setRevealed(true);
+          setOpen(true);
+          return;
+        }
+        rafRef.current = requestAnimationFrame(step);
+      };
+      rafRef.current = requestAnimationFrame(step);
+    },
+    [revealed, stopRaf, setFill],
+  );
+
+  // fine di un gesto di puntatore (rilascio, uscita o annullamento)
+  const endGesture = useCallback(() => {
+    stopRaf();
+    if (gestureRef.current) {
+      gestureRef.current = false;
+      suppressClickRef.current = true;
+    }
+    setHolding(false);
+    // al rilascio la barra rientra con un breve ease (deterministico, inline)
+    if (fillRef.current) {
+      fillRef.current.style.transition = 'transform 160ms var(--ease-out)';
+    }
+    setFill(0);
+  }, [stopRaf, setFill]);
+
+  const onClick = useCallback(() => {
+    // Sopprimi il click sintetico che segue ogni gesto di puntatore.
+    if (suppressClickRef.current) {
+      suppressClickRef.current = false;
+      return;
+    }
+    // Qui ci arriva solo l'attivazione da tastiera (Enter/Space) o il click su
+    // soluzione già rivelata: la prima rivela, il secondo fa toggle.
+    if (revealed) setOpen((v) => !v);
+    else {
+      setRevealed(true);
+      setOpen(true);
+    }
+  }, [revealed]);
+
+  useEffect(() => () => stopRaf(), [stopRaf]);
+
   return (
-    <details className={styles.solution}>
-      <summary className={styles.solutionSummary}>
-        <Icon name="check" size={16} className={styles.solutionIcon} />
-        <span>{label}</span>
-      </summary>
-      <div className={styles.solutionBody}>{children}</div>
-    </details>
+    <div
+      className={styles.solution}
+      data-revealed={revealed || undefined}
+      data-holding={holding || undefined}
+    >
+      <button
+        type="button"
+        className={styles.solutionSummary}
+        aria-expanded={open}
+        onPointerDown={startHold}
+        onPointerUp={endGesture}
+        onPointerLeave={endGesture}
+        onPointerCancel={endGesture}
+        onClick={onClick}
+      >
+        <span
+          ref={fillRef}
+          className={styles.solutionFill}
+          aria-hidden="true"
+        />
+        <span className={styles.solutionIconWrap} aria-hidden="true">
+          <Icon
+            name="face-awesome"
+            size={18}
+            className={`${styles.solutionIcon} ${styles.solutionIconRest}`}
+          />
+          <Icon
+            name="hand-pointer"
+            size={17}
+            className={`${styles.solutionIcon} ${styles.solutionIconHold}`}
+          />
+        </span>
+        <span className={styles.solutionLabels}>
+          <span className={styles.solutionLabel}>{label}</span>
+          {!revealed && <span className={styles.solutionHint}>{hint}</span>}
+        </span>
+        {revealed && (
+          <Icon
+            name="arrow-right"
+            size={13}
+            className={styles.solutionChevron}
+            aria-hidden="true"
+          />
+        )}
+      </button>
+      {open && <div className={styles.solutionBody}>{children}</div>}
+    </div>
   );
 }
 
