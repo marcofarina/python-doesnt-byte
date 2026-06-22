@@ -24,16 +24,9 @@ import { translate } from '@docusaurus/Translate';
 import HomeBreadcrumbItem from '@theme/DocBreadcrumbs/Items/Home';
 import DocBreadcrumbsStructuredData from '@theme/DocBreadcrumbs/StructuredData';
 
-import styles from './styles.module.css';
+import { VOLUME_LABELS } from '@site/src/lib/docResolve';
 
-// Nome leggibile del volume, per pluginId dell'istanza docs. routeBasePath
-// coincide col pluginId per tutti e quattro i volumi (vedi docusaurus.config).
-const VOLUME_LABELS: Record<string, string> = {
-  programmatore: 'Manuale del Programmatore',
-  artefice: 'Manuale dell’Artefice',
-  archivista: 'Manuale dell’Archivista',
-  apprendista: 'Biblioteca dell’Apprendista',
-};
+import styles from './styles.module.css';
 
 function BreadcrumbsItemLink({
   children,

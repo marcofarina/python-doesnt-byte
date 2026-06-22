@@ -18,6 +18,7 @@ import SQLRunner from '@site/src/theme/SQLRunner';
 import Algorithm from '@site/src/components/Algorithm';
 import ExerciseLink from '@site/src/components/ExerciseLink';
 import Exercise, { LessonMeta, Solution } from '@site/src/components/Exercise';
+import AssignedExercises from '@site/src/components/AssignedExercises';
 
 export default {
   ...MDXComponents,
@@ -37,4 +38,5 @@ export default {
   Exercise,
   LessonMeta,
   Solution,
+  AssignedExercises,
 };

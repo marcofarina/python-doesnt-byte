@@ -3,9 +3,10 @@
  *
  * Modello IBRIDO: una lezione con soli esercizi rapidi è una pagina singola;
  * se ha anche esercizi dedicati / laboratori diventa una cartella con una pagina
- * per tipo. Ogni pagina dichiara la sua provenienza con <LessonMeta>.
+ * per tipo. La provenienza è dichiarata nel FRONTMATTER (assigned_in/theory) e la
+ * card <LessonMeta> è DERIVATA + auto-iniettata dallo swizzle DocItem/Content.
  *
- *   <LessonMeta kind="…" ... />   card compatta (badge tipo + provenienza + teoria)
+ *   <LessonMeta />   card compatta derivata dal global data (badge + provenienza)
  *   <Exercise n="10.2" title="…">…</Exercise>   un esercizietto (nelle pagine batch)
  *   <Solution>```py live readonly … ```</Solution>   soluzione (PyRunner non editabile)
  *
@@ -16,70 +17,67 @@
 import { type ReactNode } from 'react';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
+import { usePluginData } from '@docusaurus/useGlobalData';
+import { useDoc, useAllDocsData } from '@docusaurus/plugin-content-docs/client';
 import Icon, { type IconName } from '@site/src/components/Icon';
+import {
+  resolvePermalink,
+  volumeLabel,
+  type ExerciseGraphData,
+  type ExerciseKind,
+  type LessonRef,
+} from '@site/src/lib/docResolve';
 
 import styles from './styles.module.css';
 
 // ─── LessonMeta ──────────────────────────────────────────────────────────────
 
-interface TheoryRef {
-  /** path on-site della lezione */
-  to: string;
-  label: string;
-}
-
 /**
- * Tipo di pagina-esercizio:
+ * Card di provenienza dell'esercizio. È DERIVATA: legge il record dal global
+ * data del plugin `exercise-graph` (chiave = docId della pagina corrente) e ne
+ * risolve i permalink. Non prende props — viene auto-iniettata dallo swizzle
+ * DocItem/Content. Render `null` se la pagina non è un esercizio noto.
+ *
+ * Tipo di pagina-esercizio (badge):
  *   rapidi      → batch di esercizietti «a batteria» (più <Exercise> in pagina)
  *   esercizio   → un esercizio completo, pagina dedicata
  *   laboratorio → laboratorio/progetto, pagina dedicata
+ *
+ * NB: il «capitolo» della lezione-sorgente non è derivabile a build-time
+ * (volumi flat, capitoli solo nelle sidebar) → la crumb è «Volume › Lezione».
  */
-type ExerciseKind = 'rapidi' | 'esercizio' | 'laboratorio';
-
 const KIND: Record<ExerciseKind, { label: string; icon: IconName }> = {
   rapidi: { label: 'Esercizi rapidi', icon: 'dumbbell' },
   esercizio: { label: 'Esercizio', icon: 'pen' },
   laboratorio: { label: 'Laboratorio', icon: 'flask' },
 };
 
-interface LessonMetaProps {
-  /** Tipo di pagina: mostra un badge con icona. */
-  kind?: ExerciseKind;
-  /**
-   * Numero dell'esercizio (forma corta lezione.esercizio, es. «11.3»), per le
-   * pagine a esercizio singolo / laboratorio. Sui batch si usa <Exercise n="…">.
-   */
-  n?: string;
-  /** Path on-site della lezione che assegna gli esercizi. */
-  lessonTo: string;
-  /** Nome della lezione (link alla teoria). */
-  lessonLabel: string;
-  /** Volume di provenienza, es. «Manuale del Programmatore». */
-  volume: string;
-  /** Capitolo di provenienza, es. «Le basi». */
-  chapter: string;
-  /** Id interno della lezione, es. «1.3.10». Mostrato come badge discreto. */
-  lessonId?: string;
-  /** Lezioni che danno teoria supplementare. */
-  theory?: TheoryRef[];
-}
+export function LessonMeta(): ReactNode {
+  const data = usePluginData('exercise-graph') as ExerciseGraphData | undefined;
+  const allData = useAllDocsData();
+  const { metadata } = useDoc();
+  const record = data?.exercises?.[metadata.id];
+  if (!record) return null;
 
-export function LessonMeta({
-  kind = 'rapidi',
-  n,
-  lessonTo,
-  lessonLabel,
-  volume,
-  chapter,
-  lessonId,
-  theory = [],
-}: LessonMetaProps): ReactNode {
-  const k = KIND[kind];
-  const section = n ?? lessonId;
+  const k = KIND[record.kind] ?? KIND.rapidi;
+  const section = record.n ?? record.lessonId;
+  const lessonTo = resolvePermalink(
+    allData,
+    record.assignedIn.volume,
+    record.assignedIn.docId,
+  );
+
+  const theory = record.theory
+    .map((t: LessonRef) => ({
+      to: resolvePermalink(allData, t.volume, t.docId),
+      label: t.title,
+    }))
+    .filter((t): t is { to: string; label: string } => t.to !== null);
+
   return (
     <aside
       className={styles.card}
-      data-kind={kind}
+      data-kind={record.kind}
       aria-label="Provenienza dell'esercizio"
     >
       <div className={styles.inner}>
@@ -102,17 +100,19 @@ export function LessonMeta({
               Assegnato in
             </span>
             <span className={styles.crumbs}>
-              <span>{volume}</span>
+              <span>{volumeLabel(record.assignedIn.volume)}</span>
               <span className={styles.chevron} aria-hidden="true">
                 ›
               </span>
-              <span>{chapter}</span>
-              <span className={styles.chevron} aria-hidden="true">
-                ›
-              </span>
-              <Link to={lessonTo} className={styles.crumbLeaf}>
-                {lessonLabel}
-              </Link>
+              {lessonTo ? (
+                <Link to={lessonTo} className={styles.crumbLeaf}>
+                  {record.assignedIn.title}
+                </Link>
+              ) : (
+                <span className={styles.crumbLeaf}>
+                  {record.assignedIn.title}
+                </span>
+              )}
             </span>
           </div>
 

@@ -11,6 +11,7 @@ import type {
 } from '@docusaurus/plugin-content-docs';
 
 import OffPathBanner from '@site/src/components/OffPathBanner';
+import { LessonMeta } from '@site/src/components/Exercise';
 
 function useSyntheticTitle(): string | null {
   const { metadata, frontMatter, contentTitle } = useDoc();
@@ -87,6 +88,8 @@ export default function DocItemContent({ children }: Props): ReactNode {
           <Heading as="h1">{syntheticTitle}</Heading>
         </header>
       )}
+      {/* Card di provenienza auto-iniettata: self-gate (null se non esercizio). */}
+      <LessonMeta />
       <MDXContent>{children}</MDXContent>
     </div>
   );

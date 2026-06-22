@@ -1,0 +1,21 @@
+/* Sezione «Esercizi assegnati» in fondo a una lezione. Sta FUORI dal corpo
+   markdown (iniettata dallo swizzle DocItem/Footer): non eredita la tipografia
+   della prosa, quindi definisce il proprio spazio e separatore. */
+.section {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--at-border);
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--at-fg-strong);
+  margin-bottom: 0.75rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}

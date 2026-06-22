@@ -3,51 +3,57 @@
 # TEMPLATE PAGINE-ESERCIZIO — Volume 4 (Biblioteca dell'Apprendista)
 #
 # File con prefisso "_": Docusaurus lo ESCLUDE dal build. È un promemoria da cui
-# copiare. Sotto trovi i TRE tipi di pagina; copia il blocco che ti serve in
+# copiare in:
 #   volumes/apprendista/<volume-sorgente>/<capitolo>/<...>.mdx
 #
+# AUTORAGGIO SOLO-FRONTMATTER: scrivi SOLO il frontmatter qui sotto + il corpo
+# dell'esercizio. NON scrivere <LessonMeta> né <AssignedExercises>: la card di
+# provenienza (in cima all'esercizio) e l'elenco «Esercizi assegnati» (in fondo
+# alla lezione sorgente) sono GENERATI e iniettati automaticamente dal plugin
+# `exercise-graph` a partire da questo frontmatter. Una sola fonte di verità.
+#
 # MODELLO IBRIDO (livello "lezione"):
-#   - lezione con SOLO esercizi rapidi → un'unica pagina:
-#       <capitolo>/<lezione>.mdx
-#   - lezione con anche esercizi dedicati / laboratori → una cartella-lezione:
+#   - lezione con SOLO esercizi rapidi → un'unica pagina:  <capitolo>/<lezione>.mdx
+#   - lezione con anche esercizi dedicati / laboratori → cartella-lezione:
 #       <capitolo>/<lezione>/esercizi-rapidi.mdx
 #       <capitolo>/<lezione>/esercizio-<slug>.mdx
 #       <capitolo>/<lezione>/laboratorio-<slug>.mdx
 #     e in sidebars/apprendista.ts la lezione diventa una `category`.
 #
-# NUMERAZIONE: id interno volume.capitolo.lezione.esercizio (es. 1.3.11.3).
-#   - <LessonMeta lessonId="1.3.11">  coordinata della lezione
-#   - batch:  <Exercise n="11.1">     forma corta lezione.esercizio
-#   - singola: <LessonMeta n="11.3">  il numero sta nel badge
+# CAMPI:
+#   exercise_kind  rapidi | esercizio | laboratorio  — badge + colore pagina.
+#   assigned_in    «<volume>/<docId>» della lezione che assegna (OBBLIGATORIO).
+#                  docId = path della lezione SENZA estensione, relativo al
+#                  volume (es. la lezione volumes/programmatore/variabili.mdx →
+#                  «programmatore/variabili»). Validato a build-time: se non
+#                  esiste, la build fallisce.
+#   theory         lista «<volume>/<docId>» di lezioni di teoria (opzionale).
+#   n              numero a video forma corta lezione.esercizio (es. «11.3»),
+#                  per esercizio/laboratorio singolo (opzionale).
+#   lesson_id      id interno volume.capitolo.lezione (es. «1.3.11», opzionale).
+#   difficulty     facile | medio | difficile (opzionale).
+#   time           tempo stimato, es. «20 min» (opzionale).
 #
-# COLORE PAGINA: `exercise_kind` (rapidi|esercizio|laboratorio) tinge l'INTERA
-# pagina con l'accento del tipo (ambra/viola/teal). DEVE combaciare col `kind`
-# del <LessonMeta>. Senza, la pagina resta blu come gli altri volumi.
-#
-# REGOLA FERREA sui link: SOLO identificatori on-site (path/permalink del sito),
-# MAI riferimenti interni esterni (niente paideia_id e simili).
+# NB: i batch usano <Exercise n="11.1"> per i singoli esercizietti (vanno nel TOC).
+# REGOLA FERREA: i riferimenti sono SOLO doc id on-site, MAI paideia_id o simili.
 # ─────────────────────────────────────────────────────────────────────────────
 title: <titolo della pagina>
 sidebar_label: <label in sidebar>
 sidebar_position: 1
 description: <una frase>
-exercise_kind: rapidi # rapidi | esercizio | laboratorio (= kind del LessonMeta)
+exercise_kind: rapidi # rapidi | esercizio | laboratorio
+assigned_in: programmatore/<slug-lezione>
+theory: [programmatore/<slug-lezione>]
+lesson_id: '1.3.11'
+# n: '11.3'           # solo per esercizio/laboratorio singolo
+# difficulty: medio
+# time: 20 min
 ---
 
 {/* ===========================================================================
     TIPO 1 — ESERCIZI RAPIDI (batch): più esercizietti «a batteria» in pagina.
-    title pagina = nome lezione. kind="rapidi". Più <Exercise>.
+    Frontmatter: exercise_kind: rapidi. Corpo = più <Exercise>.
     =========================================================================== */}
-
-<LessonMeta
-  kind="rapidi"
-  volume="Manuale del Programmatore"
-  chapter="<nome capitolo>"
-  lessonId="1.3.11"
-  lessonTo="/programmatore/<slug-lezione>"
-  lessonLabel="<nome lezione>"
-  theory={[{ to: '/programmatore/<slug>', label: '<lezione>' }]}
-/>
 
 <Exercise n="11.1" title="<titolo esercizietto>">
 
@@ -69,19 +75,8 @@ Testo della consegna.
 
 {/* ===========================================================================
     TIPO 2 — ESERCIZIO dedicato: un esercizio completo, pagina sua.
-    title pagina = nome esercizio. kind="esercizio" + n="11.3". Niente <Exercise>.
+    Frontmatter: exercise_kind: esercizio, n: '11.3'. Corpo = la consegna.
     =========================================================================== */}
-
-<LessonMeta
-  kind="esercizio"
-  n="11.3"
-  volume="Manuale del Programmatore"
-  chapter="<nome capitolo>"
-  lessonId="1.3.11"
-  lessonTo="/programmatore/<slug-lezione>"
-  lessonLabel="<nome lezione>"
-  theory={[{ to: '/programmatore/<slug>', label: '<lezione>' }]}
-/>
 
 Testo della consegna (il corpo della pagina È l'esercizio).
 
@@ -99,19 +94,8 @@ Testo della consegna (il corpo della pagina È l'esercizio).
 
 {/* ===========================================================================
     TIPO 3 — LABORATORIO: progetto più ampio, a passi, pagina sua.
-    title pagina = nome lab. kind="laboratorio" + n. Usa ### per i passi.
+    Frontmatter: exercise_kind: laboratorio, n: '11.4'. Usa ### per i passi.
     =========================================================================== */}
-
-<LessonMeta
-  kind="laboratorio"
-  n="11.4"
-  volume="Manuale del Programmatore"
-  chapter="<nome capitolo>"
-  lessonId="1.3.11"
-  lessonTo="/programmatore/<slug-lezione>"
-  lessonLabel="<nome lezione>"
-  theory={[{ to: '/programmatore/<slug>', label: '<lezione>' }]}
-/>
 
 Introduzione del laboratorio.
 
@@ -120,18 +104,3 @@ Introduzione del laboratorio.
 ```py live
 # …
 ```
-
-{/* ───────────────────────────────────────────────────────────────────────────
-    LATO LEZIONE (volumi 1–3): nella lezione che assegna, con il path on-site
-    della pagina-esercizio (eventualmente con anchor #esercizio-11-3):
-
-      ## Esercizi assegnati
-
-      <ExerciseLink
-        to="/apprendista/programmatore/<capitolo>/<lezione>/esercizio-<slug>"
-        difficulty="medio"
-        time="20 min"
-      >
-        11.3 — Titolo dell'esercizio
-      </ExerciseLink>
-   ─────────────────────────────────────────────────────────────────────────── */}
