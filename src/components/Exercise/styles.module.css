@@ -46,7 +46,7 @@
 .anchor {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: center;
   gap: 15px;
   padding: 18px 22px;
   border-right: 1px solid var(--c-border);
@@ -55,8 +55,10 @@
 }
 
 .iconTile {
-  align-self: stretch;
-  width: 54px;
+  align-self: center;
+  /* quadrata, alta quanto il blocco label-tipo + numero esercizio */
+  width: 46px;
+  height: 46px;
   flex-shrink: 0;
   border-radius: var(--radius-md);
   display: flex;
@@ -317,8 +319,8 @@
 /* cross-fade icona: lampadina (a riposo) ⇄ mano-che-preme (in pressione) */
 .solutionIconWrap {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   display: grid;
   place-items: center;
   color: var(--sol);

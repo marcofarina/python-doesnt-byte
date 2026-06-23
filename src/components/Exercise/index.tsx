@@ -311,13 +311,13 @@ export function Solution({
         />
         <span className={styles.solutionIconWrap} aria-hidden="true">
           <Icon
-            name="face-awesome"
-            size={18}
+            name="puzzle"
+            size={30}
             className={`${styles.solutionIcon} ${styles.solutionIconRest}`}
           />
           <Icon
             name="hand-pointer"
-            size={17}
+            size={28}
             className={`${styles.solutionIcon} ${styles.solutionIconHold}`}
           />
         </span>
