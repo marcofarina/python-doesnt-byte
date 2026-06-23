@@ -191,8 +191,9 @@ interface SolutionProps {
  * Soluzione a rivelazione protetta: per evitare lo spoiler da misclick, il
  * corpo si apre solo dopo aver tenuto premuto il pulsante per {@link HOLD_MS}.
  * Feedback: una barra di avanzamento (nell'accento per-tipo della pagina)
- * riempie il pulsante e l'icona passa in cross-fade da faccina (a riposo) a
- * mano-che-preme (in pressione); al rilascio anticipato tutto torna indietro.
+ * riempie il pulsante e l'icona passa in cross-fade da tessera-di-puzzle (a
+ * riposo) a mano-che-preme (in pressione); al rilascio anticipato tutto torna
+ * indietro.
  * Una volta rivelata, il pulsante diventa un normale toggle apri/chiudi
  * (niente più rischio spoiler).
  *

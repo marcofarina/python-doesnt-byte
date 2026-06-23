@@ -199,7 +199,9 @@ module.exports = function exerciseGraphPlugin(context) {
         });
       }
 
-      return { exercises, byLesson, lessons };
+      // `lessons` serve solo qui per validare i riferimenti: non finisce nel
+      // global data (i client usano solo `exercises` e `byLesson`).
+      return { exercises, byLesson };
     },
 
     async contentLoaded({ content, actions }) {

@@ -10,10 +10,9 @@
 import React, { type ReactNode } from 'react';
 import Link from '@docusaurus/Link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import type { Difficulty } from '@site/src/lib/docResolve';
 
 import styles from './styles.module.css';
-
-type Difficulty = 'facile' | 'medio' | 'difficile';
 
 interface ExerciseLinkProps {
   /** Path on-site dell'esercizio (senza baseUrl). Es. `/apprendista/...`. */

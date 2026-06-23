@@ -47,7 +47,6 @@ export interface ExerciseListItem {
 export interface ExerciseGraphData {
   exercises: Record<string, ExerciseRecord>;
   byLesson: Record<string, ExerciseListItem[]>;
-  lessons: Record<string, { title: string }>;
 }
 
 // Nome leggibile del volume per pluginId (= routeBasePath = cartella). Fonte

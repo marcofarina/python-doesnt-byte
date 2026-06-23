@@ -316,7 +316,7 @@
   z-index: 1;
 }
 
-/* cross-fade icona: lampadina (a riposo) ⇄ mano-che-preme (in pressione) */
+/* cross-fade icona: tessera-di-puzzle (a riposo) ⇄ mano-che-preme (in pressione) */
 .solutionIconWrap {
   flex-shrink: 0;
   width: 32px;
