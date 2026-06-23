@@ -11,6 +11,7 @@ import type {
 } from '@docusaurus/plugin-content-docs';
 
 import OffPathBanner from '@site/src/components/OffPathBanner';
+import { LessonMeta } from '@site/src/components/Exercise';
 
 function useSyntheticTitle(): string | null {
   const { metadata, frontMatter, contentTitle } = useDoc();
@@ -63,11 +64,17 @@ function useChapterNumber(): number | null {
 export default function DocItemContent({ children }: Props): ReactNode {
   const syntheticTitle = useSyntheticTitle();
   const chapter = useChapterNumber();
+  const { frontMatter } = useDoc();
+  // Vol. 4 (esercizi): tinge la pagina con l'accento del tipo (rapidi/esercizio/
+  // laboratorio). L'override dei token vive in custom.css ([data-exercise-kind]).
+  const exerciseKind = (frontMatter as { exercise_kind?: string })
+    .exercise_kind;
   const kicker =
     chapter !== null ? `Capitolo ${String(chapter).padStart(2, '0')}` : null;
   return (
     <div
       data-pagefind-body
+      data-exercise-kind={exerciseKind}
       className={clsx(
         ThemeClassNames.docs.docMarkdown,
         'markdown',
@@ -81,6 +88,8 @@ export default function DocItemContent({ children }: Props): ReactNode {
           <Heading as="h1">{syntheticTitle}</Heading>
         </header>
       )}
+      {/* Card di provenienza auto-iniettata: self-gate (null se non esercizio). */}
+      <LessonMeta />
       <MDXContent>{children}</MDXContent>
     </div>
   );

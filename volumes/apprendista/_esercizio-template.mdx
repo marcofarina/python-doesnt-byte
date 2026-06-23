@@ -1,0 +1,106 @@
+---
+# ─────────────────────────────────────────────────────────────────────────────
+# TEMPLATE PAGINE-ESERCIZIO — Volume 4 (Biblioteca dell'Apprendista)
+#
+# File con prefisso "_": Docusaurus lo ESCLUDE dal build. È un promemoria da cui
+# copiare in:
+#   volumes/apprendista/<volume-sorgente>/<capitolo>/<...>.mdx
+#
+# AUTORAGGIO SOLO-FRONTMATTER: scrivi SOLO il frontmatter qui sotto + il corpo
+# dell'esercizio. NON scrivere <LessonMeta> né <AssignedExercises>: la card di
+# provenienza (in cima all'esercizio) e l'elenco «Esercizi assegnati» (in fondo
+# alla lezione sorgente) sono GENERATI e iniettati automaticamente dal plugin
+# `exercise-graph` a partire da questo frontmatter. Una sola fonte di verità.
+#
+# MODELLO IBRIDO (livello "lezione"):
+#   - lezione con SOLO esercizi rapidi → un'unica pagina:  <capitolo>/<lezione>.mdx
+#   - lezione con anche esercizi dedicati / laboratori → cartella-lezione:
+#       <capitolo>/<lezione>/esercizi-rapidi.mdx
+#       <capitolo>/<lezione>/esercizio-<slug>.mdx
+#       <capitolo>/<lezione>/laboratorio-<slug>.mdx
+#     e in sidebars/apprendista.ts la lezione diventa una `category`.
+#
+# CAMPI:
+#   exercise_kind  rapidi | esercizio | laboratorio  — badge + colore pagina.
+#   assigned_in    «<volume>/<docId>» della lezione che assegna (OBBLIGATORIO).
+#                  docId = path della lezione SENZA estensione, relativo al
+#                  volume (es. la lezione volumes/programmatore/variabili.mdx →
+#                  «programmatore/variabili»). Validato a build-time: se non
+#                  esiste, la build fallisce.
+#   theory         lista «<volume>/<docId>» di lezioni di teoria (opzionale).
+#   n              numero a video forma corta lezione.esercizio (es. «11.3»),
+#                  per esercizio/laboratorio singolo (opzionale).
+#   lesson_id      id interno volume.capitolo.lezione (es. «1.3.11», opzionale).
+#   difficulty     facile | medio | difficile (opzionale).
+#   time           tempo stimato, es. «20 min» (opzionale).
+#
+# NB: i batch usano <Exercise n="11.1"> per i singoli esercizietti (vanno nel TOC).
+# REGOLA FERREA: i riferimenti sono SOLO doc id on-site, MAI paideia_id o simili.
+# ─────────────────────────────────────────────────────────────────────────────
+title: <titolo della pagina>
+sidebar_label: <label in sidebar>
+sidebar_position: 1
+description: <una frase>
+exercise_kind: rapidi # rapidi | esercizio | laboratorio
+assigned_in: programmatore/<slug-lezione>
+theory: [programmatore/<slug-lezione>]
+lesson_id: '1.3.11'
+# n: '11.3'           # solo per esercizio/laboratorio singolo
+# difficulty: medio
+# time: 20 min
+---
+
+{/* ===========================================================================
+    TIPO 1 — ESERCIZI RAPIDI (batch): più esercizietti «a batteria» in pagina.
+    Frontmatter: exercise_kind: rapidi. Corpo = più <Exercise>.
+    =========================================================================== */}
+
+<Exercise n="11.1" title="<titolo esercizietto>">
+
+Testo della consegna.
+
+```py live
+# codice di partenza (opzionale)
+```
+
+<Solution>
+
+```py live readonly
+# soluzione (PyRunner non editabile, ma eseguibile)
+```
+
+</Solution>
+
+</Exercise>
+
+{/* ===========================================================================
+    TIPO 2 — ESERCIZIO dedicato: un esercizio completo, pagina sua.
+    Frontmatter: exercise_kind: esercizio, n: '11.3'. Corpo = la consegna.
+    =========================================================================== */}
+
+Testo della consegna (il corpo della pagina È l'esercizio).
+
+```py live
+# codice di partenza
+```
+
+<Solution>
+
+```py live readonly
+# soluzione
+```
+
+</Solution>
+
+{/* ===========================================================================
+    TIPO 3 — LABORATORIO: progetto più ampio, a passi, pagina sua.
+    Frontmatter: exercise_kind: laboratorio, n: '11.4'. Usa ### per i passi.
+    =========================================================================== */}
+
+Introduzione del laboratorio.
+
+### Passo 1 — …
+
+```py live
+# …
+```

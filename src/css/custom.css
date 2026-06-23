@@ -1588,3 +1588,58 @@ html[data-theme='dark'] {
   margin: 0;
   line-height: 1;
 }
+
+/* ─── Volume 4 (esercizi): accento per-tipo a livello di pagina ──────────────
+   Ogni pagina-esercizio della Biblioteca dell'Apprendista è monocroma nel
+   colore del suo tipo (rapidi = ambra, esercizio = viola, laboratorio = teal);
+   gli altri 3 volumi restano blu. `data-exercise-kind` è impostato dallo
+   swizzle DocItem/Content da `frontMatter.exercise_kind` sul solo wrapper del
+   contenuto (sidebar e briciole escluse). Tutti i token accento si derivano da
+   --ex-pa / --ex-pa-soft, così basta cambiare quei due per ritoccare il tipo. */
+[data-exercise-kind] {
+  --ifm-color-primary: var(--ex-pa);
+  --ifm-color-primary-dark: color-mix(in srgb, var(--ex-pa) 90%, #000);
+  --ifm-color-primary-darker: color-mix(in srgb, var(--ex-pa) 85%, #000);
+  --ifm-color-primary-darkest: color-mix(in srgb, var(--ex-pa) 72%, #000);
+  --ifm-color-primary-light: color-mix(in srgb, var(--ex-pa) 90%, #fff);
+  --ifm-color-primary-lighter: color-mix(in srgb, var(--ex-pa) 85%, #fff);
+  --ifm-color-primary-lightest: color-mix(in srgb, var(--ex-pa) 72%, #fff);
+
+  --at-accent: var(--ex-pa);
+  --at-accent-soft: var(--ex-pa-soft);
+  --at-accent-bg: color-mix(in srgb, var(--ex-pa) 7%, transparent);
+  --at-accent-chip: color-mix(in srgb, var(--ex-pa) 9%, transparent);
+  --at-accent-chip-border: color-mix(in srgb, var(--ex-pa) 22%, transparent);
+
+  --at-grad-accent: linear-gradient(
+    135deg,
+    var(--ex-pa) 0%,
+    var(--ex-pa-soft) 100%
+  );
+}
+
+[data-exercise-kind='rapidi'] {
+  --ex-pa: #b45309;
+  --ex-pa-soft: #92400e;
+}
+[data-exercise-kind='esercizio'] {
+  --ex-pa: #7c3aed;
+  --ex-pa-soft: #6d28d9;
+}
+[data-exercise-kind='laboratorio'] {
+  --ex-pa: #0d9488;
+  --ex-pa-soft: #0f766e;
+}
+
+html[data-theme='dark'] [data-exercise-kind='rapidi'] {
+  --ex-pa: #fbbf24;
+  --ex-pa-soft: #fcd34d;
+}
+html[data-theme='dark'] [data-exercise-kind='esercizio'] {
+  --ex-pa: #a78bfa;
+  --ex-pa-soft: #c4b5fd;
+}
+html[data-theme='dark'] [data-exercise-kind='laboratorio'] {
+  --ex-pa: #2dd4bf;
+  --ex-pa-soft: #5eead4;
+}

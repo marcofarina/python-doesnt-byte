@@ -1,0 +1,394 @@
+/* LessonMeta — card di riferimento esercizio.
+   Stile ripreso dal redesign Claude Design (progetto "Rainbow bits",
+   ExerciseCard), riadattato ai token, font e icone del progetto.
+   Niente bordo-accento sinistro: l'accento sta nel pannello "ancora". */
+
+.card {
+  /* mappa la palette del design sui nostri token (che gestiscono già dark/light) */
+  --c-mono: var(--font-mono-ui);
+  --c-serif: var(--font-body);
+  --c-bg-from: var(--at-bg-panel);
+  --c-bg-to: var(--at-bg-subtle);
+  --c-border: var(--at-border);
+  --c-border-soft: color-mix(in srgb, var(--at-border) 55%, transparent);
+  --c-fg-strong: var(--at-fg-strong);
+  --c-fg-body: var(--at-fg-body);
+  --c-muted: var(--at-muted);
+  --c-faint: var(--at-faint);
+  /* accento per-tipo: un solo colore, i chip si derivano da qui */
+  --ex-accent: var(--at-accent);
+  --ex-accent-soft: var(--at-accent-soft);
+
+  --c-accent: var(--ex-accent);
+  --c-accent-soft: var(--ex-accent-soft);
+  --c-accent-dim: var(--ex-accent-soft);
+  --c-accent-chip: color-mix(in srgb, var(--ex-accent) 9%, transparent);
+  --c-accent-chip-bd: color-mix(in srgb, var(--ex-accent) 24%, transparent);
+  --c-anchor-bg: color-mix(in srgb, var(--ex-accent) 4%, transparent);
+
+  position: relative;
+  background: linear-gradient(180deg, var(--c-bg-from), var(--c-bg-to));
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 0 0 32px;
+}
+
+/* Il colore per-tipo arriva dall'accento di pagina (custom.css,
+   [data-exercise-kind]): la card eredita --at-accent, niente override locale. */
+
+.inner {
+  display: flex;
+  align-items: stretch;
+}
+
+/* ── ancora (sinistra): tipo + numero ───────────────────── */
+.anchor {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+  padding: 18px 22px;
+  border-right: 1px solid var(--c-border);
+  background: var(--c-anchor-bg);
+  min-width: 180px;
+}
+
+.iconTile {
+  align-self: center;
+  /* quadrata, alta quanto il blocco label-tipo + numero esercizio */
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-accent-chip);
+  border: 1px solid var(--c-accent-chip-bd);
+  color: var(--c-accent);
+}
+
+.anchorText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.typeLabel {
+  font-family: var(--c-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--c-accent-soft);
+}
+
+.section {
+  font-family: var(--c-mono);
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--c-fg-strong);
+}
+
+/* ── meta (destra): assegnato in / teoria ───────────────── */
+.meta {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.label {
+  width: 124px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--c-mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-faint);
+  white-space: nowrap;
+}
+
+/* l'icona duotone ha il viewBox quadrato: la centriamo otticamente sulla
+   x-height del testo maiuscoletto */
+.label :global(svg) {
+  display: block;
+  margin-top: -1px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--c-border-soft);
+}
+
+/* ── breadcrumb ─────────────────────────────────────────── */
+.crumbs {
+  font-family: var(--c-serif);
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--c-muted);
+}
+
+.chevron {
+  color: var(--c-faint);
+  font-family: var(--c-mono);
+  font-size: 0.82em;
+  padding: 0 4px;
+  user-select: none;
+}
+
+.crumbLeaf {
+  color: var(--c-accent-soft);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-accent-chip-bd);
+  padding-bottom: 1px;
+}
+
+.crumbLeaf:hover {
+  color: var(--c-accent);
+  border-bottom-color: var(--c-accent);
+  text-decoration: none;
+}
+
+/* ── link teoria ────────────────────────────────────────── */
+.theory {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: baseline;
+}
+
+.theoryLink {
+  font-family: var(--c-serif);
+  font-size: 16px;
+  color: var(--c-fg-body);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-accent-dim);
+  padding-bottom: 1px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.theoryLink:hover {
+  color: var(--c-accent-soft);
+  text-decoration: none;
+}
+
+/* ── responsive: su schermi stretti impila ancora + meta ── */
+@media (max-width: 600px) {
+  .inner {
+    flex-direction: column;
+  }
+  .anchor {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 16px;
+    border-right: none;
+    border-bottom: 1px solid var(--c-border);
+    min-width: 0;
+  }
+  .label {
+    width: auto;
+  }
+  .row {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+  }
+}
+
+/* ─── Exercise ─────────────────────────────────────────────────────────────── */
+
+.exercise {
+  margin: 40px 0;
+  scroll-margin-top: 80px;
+}
+
+.exHeading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.exNum {
+  flex-shrink: 0;
+  font-family: var(--font-mono-ui);
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--at-accent);
+  background: var(--at-accent-bg);
+  border: 1px solid var(--at-accent-chip-border);
+  border-radius: var(--radius-sm);
+  /* padding verticale asimmetrico in em: le cifre non hanno discendenti, così
+     lo spazio vuoto del descender finisce tutto sotto e il chip sembra basso-
+     pesante. Più padding sopra che sotto ricentra otticamente l'inchiostro
+     (compensa ≈0.16em di overhang del descender); in em così scala col font. */
+  padding: 0.3em 10px 0.14em;
+  line-height: 1;
+}
+
+.exTitle {
+  min-width: 0;
+}
+
+/* ─── Solution (tieni-premuto-per-rivelare) ────────────────────────────────── */
+
+.solution {
+  /* segue l'accento per-tipo della pagina (rapidi=ambra, esercizio=viola,
+     laboratorio=teal); fuori da una pagina-esercizio ricade sul blu di default */
+  --sol: var(--at-accent);
+  margin: 16px 0 0;
+  border: 1px solid var(--at-border);
+  border-radius: var(--radius-md);
+  background: var(--at-bg-subtle);
+  overflow: hidden;
+}
+
+.solutionSummary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  margin: 0;
+  padding: 11px 16px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-mono-ui);
+  color: var(--at-fg-strong);
+  user-select: none;
+  -webkit-touch-callout: none;
+  /* la pressione lunga su touch non deve selezionare testo o scrollare */
+  touch-action: none;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+
+.solutionSummary:hover {
+  background: var(--at-bg-chip);
+}
+
+/* barra di avanzamento: riempie il pulsante durante la pressione. Lo scaleX e
+   la sua transition sono guidati inline da JS (requestAnimationFrame durante
+   l'hold, breve ease al rilascio): vedi src/components/Exercise/index.tsx. */
+.solutionFill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: color-mix(in srgb, var(--sol) 16%, transparent);
+  pointer-events: none;
+}
+
+[data-holding] .solutionFill {
+  /* bordo destro come "testa" della barra, per leggere meglio l'avanzamento */
+  box-shadow: inset -2px 0 0 0 color-mix(in srgb, var(--sol) 55%, transparent);
+}
+
+/* contenuti sopra la barra */
+.solutionIconWrap,
+.solutionLabels,
+.solutionChevron {
+  position: relative;
+  z-index: 1;
+}
+
+/* cross-fade icona: tessera-di-puzzle (a riposo) ⇄ mano-che-preme (in pressione) */
+.solutionIconWrap {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: var(--sol);
+}
+
+.solutionIcon {
+  grid-area: 1 / 1;
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.solutionIconRest {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.solutionIconHold {
+  opacity: 0;
+  transform: scale(0.78);
+}
+
+[data-holding] .solutionIconRest {
+  opacity: 0;
+  transform: scale(0.78);
+}
+
+[data-holding] .solutionIconHold {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.solutionLabels {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.solutionLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+}
+
+.solutionHint {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  color: var(--at-faint);
+}
+
+.solutionChevron {
+  margin-left: auto;
+  color: var(--at-muted);
+  transform: rotate(90deg);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+[aria-expanded='true'] .solutionChevron {
+  transform: rotate(-90deg);
+}
+
+.solutionBody {
+  position: relative;
+  z-index: 1;
+  padding: 4px 16px 14px;
+  border-top: 1px solid var(--at-border);
+}
