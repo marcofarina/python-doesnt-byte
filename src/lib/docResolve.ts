@@ -63,6 +63,30 @@ export function volumeLabel(volume: string): string {
   return VOLUME_LABELS[volume] ?? volume;
 }
 
+// Etichetta CORTA del volume (Vol. N), usata SOLO nelle briciole della
+// Biblioteca dell'Apprendista: lì il volume-sorgente affianca «Biblioteca
+// dell'Apprendista» e due titoli di libro interi confondono. «Vol. 1» si legge
+// come una sezione, non come un libro concorrente, e conserva la provenienza.
+export const VOLUME_SHORT: Record<string, string> = {
+  programmatore: 'Vol. 1',
+  artefice: 'Vol. 2',
+  archivista: 'Vol. 3',
+  apprendista: 'Vol. 4',
+};
+
+// Lookup inverso nome-lungo → Vol. N: la prima briciola della sidebar espone il
+// label lungo (es. «Manuale del Programmatore»), non il pluginId.
+const SHORT_BY_LABEL: Record<string, string> = Object.fromEntries(
+  Object.entries(VOLUME_LABELS)
+    .filter(([key]) => VOLUME_SHORT[key])
+    .map(([key, label]) => [label, VOLUME_SHORT[key]]),
+);
+
+/** «Vol. N» dato il nome lungo del volume, o `undefined` se non è un volume. */
+export function volumeShortByLabel(label: string): string | undefined {
+  return SHORT_BY_LABEL[label];
+}
+
 /**
  * Risolve il permalink (senza baseUrl, pronto per <Link to>) di un doc dato il
  * suo volume (pluginId) e il suo docId volume-local. `null` se non risolve —

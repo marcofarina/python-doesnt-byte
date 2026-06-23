@@ -1,11 +1,15 @@
 /**
  * Swizzle di @theme/DocBreadcrumbs (eject).
  *
- * Unica differenza rispetto all'originale: dopo la casetta (che punta alla home
- * del sito) inseriamo una briciola col NOME DEL VOLUME corrente, linkata
- * all'indice del volume. Senza, in Biblioteca dell'Apprendista la prima briciola
- * è il volume-sorgente (es. «Manuale del Programmatore») e si ha l'impressione
- * di essere nel Vol.1 invece che negli esercizi del Vol.4.
+ * Due differenze rispetto all'originale:
+ *  1. dopo la casetta (che punta alla home del sito) inseriamo una briciola col
+ *     NOME DEL VOLUME corrente, linkata all'indice del volume. Senza, in
+ *     Biblioteca dell'Apprendista la prima briciola è il volume-sorgente (es.
+ *     «Manuale del Programmatore») e si ha l'impressione di essere nel Vol.1
+ *     invece che negli esercizi del Vol.4.
+ *  2. nella sola Biblioteca dell'Apprendista la prima briciola della sidebar (il
+ *     volume-sorgente) è accorciata a «Vol. N»: affianco a «Biblioteca
+ *     dell'Apprendista» due titoli di libro interi confondono.
  *
  * Il resto è copia fedele dell'originale: ricontrollare a ogni upgrade di
  * Docusaurus (vedi memoria upgrade_risks).
@@ -24,7 +28,7 @@ import { translate } from '@docusaurus/Translate';
 import HomeBreadcrumbItem from '@theme/DocBreadcrumbs/Items/Home';
 import DocBreadcrumbsStructuredData from '@theme/DocBreadcrumbs/StructuredData';
 
-import { VOLUME_LABELS } from '@site/src/lib/docResolve';
+import { VOLUME_LABELS, volumeShortByLabel } from '@site/src/lib/docResolve';
 
 import styles from './styles.module.css';
 
@@ -88,9 +92,14 @@ function VolumeBreadcrumbItem(): ReactNode {
 export default function DocBreadcrumbs(): ReactNode {
   const breadcrumbs = useSidebarBreadcrumbs();
   const homePageRoute = useHomePageRoute();
+  const { pluginId } = useDocsVersion();
   if (!breadcrumbs) {
     return null;
   }
+  // Solo in Biblioteca dell'Apprendista: la prima briciola della sidebar è il
+  // volume-sorgente (es. «Manuale del Programmatore»). Accanto a «Biblioteca
+  // dell'Apprendista» due titoli di libro confondono → la accorciamo a «Vol. N».
+  const shortenFirst = pluginId === 'apprendista';
   return (
     <>
       <DocBreadcrumbsStructuredData breadcrumbs={breadcrumbs} />
@@ -114,10 +123,14 @@ export default function DocBreadcrumbs(): ReactNode {
               item.type === 'category' && item.linkUnlisted
                 ? undefined
                 : item.href;
+            const label =
+              shortenFirst && idx === 0
+                ? (volumeShortByLabel(item.label) ?? item.label)
+                : item.label;
             return (
               <BreadcrumbsItem key={idx} active={isLast}>
                 <BreadcrumbsItemLink href={href} isLast={isLast}>
-                  {item.label}
+                  {label}
                 </BreadcrumbsItemLink>
               </BreadcrumbsItem>
             );
