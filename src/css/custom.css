@@ -771,64 +771,61 @@ body:has(.theme-doc-sidebar-container)::before {
 }
 
 .theme-doc-sidebar-menu {
-  counter-reset: pdb-chapter;
-  padding: 20px 0 !important;
+  /* gutter orizzontale: lascia spazio ai bordi delle pill attive */
+  padding: 14px 10px !important;
   font-family: var(--font-body);
 }
 
-.theme-doc-sidebar-menu > .menu__list-item {
-  margin: 0;
+.theme-doc-sidebar-menu > .menu__list-item:not(:first-child) {
+  margin-top: 2px;
 }
 
-/* Solo le categorie top-level sono capitoli numerati: i link top-level di
-   servizio (Come usare, Introduzione) restano senza numero, in linea col
-   kicker "Capitolo NN" della pagina (che conta solo le categorie). */
-.theme-doc-sidebar-menu > .menu__list-item:has(> .menu__list-item-collapsible) {
-  counter-increment: pdb-chapter;
-}
-
+/* Voce base (link + collapsible): pill arrotondata, nessuna barra a sinistra.
+   Allineamento verticale centrato, niente baseline (serviva ai numeri). */
 .theme-doc-sidebar-menu .menu__link {
-  border-radius: 0;
-  border-left: 2px solid transparent;
-  padding: 7px 20px 7px 18px;
-  font-size: 15.5px;
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 14.5px;
   font-weight: 400;
   color: var(--at-muted-soft);
-  line-height: 1.35;
+  line-height: 1.4;
   background: transparent;
-  align-items: baseline;
   transition:
     color 0.15s var(--ease-smooth),
-    background 0.15s var(--ease-smooth),
-    border-color 0.15s var(--ease-smooth);
+    background 0.15s var(--ease-smooth);
 }
 
 .theme-doc-sidebar-menu .menu__list-item-collapsible {
   padding: 0;
   background: transparent;
-  border-radius: 0;
+  border-radius: var(--radius-sm);
 }
 
 .theme-doc-sidebar-menu .menu__list-item-collapsible .menu__link {
   flex: 1;
 }
 
+/* Indentazione progressiva, profondità-indipendente: ogni lista annidata
+   aggiunge uno step. Le pill compongono il rientro in automatico, così i figli
+   stanno SEMPRE più a destra del genitore (vol. 4 arriva a 4 livelli). */
+.theme-doc-sidebar-menu .menu__list .menu__list {
+  padding-left: 14px;
+  margin: 2px 0 0;
+}
+
+/* Etichette top-level (volume-sorgente / capitolo): ancorano la gerarchia,
+   un filo più marcate ora che non ci sono più i numeri. */
 .theme-doc-sidebar-menu
   > .menu__list-item
   > .menu__list-item-collapsible
-  .menu__link::before {
-  content: counter(pdb-chapter, decimal-leading-zero);
-  font-family: var(--font-mono-ui);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: var(--at-faint);
-  margin-right: 12px;
-  display: inline-block;
-  min-width: 22px;
-  align-self: baseline;
+  > .menu__link,
+.theme-doc-sidebar-menu > .menu__list-item > .menu__link {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--at-fg);
 }
 
+/* Hover */
 .theme-doc-sidebar-menu .menu__link:hover {
   background: var(--at-bg-subtle);
   color: var(--at-fg);
@@ -840,59 +837,34 @@ body:has(.theme-doc-sidebar-container)::before {
 
 .theme-doc-sidebar-menu .menu__list-item-collapsible:hover .menu__link {
   color: var(--at-fg);
+  background: transparent;
 }
 
+/* Attivo = pill con sfondo tenue + testo accento. Niente bordo a sinistra. */
 .theme-doc-sidebar-menu .menu__link--active,
 .theme-doc-sidebar-menu .menu__list-item-collapsible--active .menu__link {
   background: var(--at-accent-bg);
-  border-left-color: var(--at-accent);
   color: var(--at-accent-soft);
   font-weight: 600;
 }
 
-.theme-doc-sidebar-menu .menu__list-item-collapsible--active {
+.theme-doc-sidebar-menu .menu__list-item-collapsible--active .menu__link:hover {
   background: var(--at-accent-bg);
 }
 
-.theme-doc-sidebar-menu
-  > .menu__list-item
-  > .menu__list-item-collapsible--active
-  .menu__link::before {
-  color: var(--at-accent);
-}
-
-/* Sub-items (level 2+) — indented, smaller, no number */
-.theme-doc-sidebar-menu .menu__list .menu__list {
-  padding-left: 0;
-  margin-left: 0;
-}
-
-.theme-doc-sidebar-menu .theme-doc-sidebar-item-link-level-2 > .menu__link,
-.theme-doc-sidebar-menu
-  .theme-doc-sidebar-item-category-level-2
-  > .menu__list-item-collapsible {
-  padding: 4px 20px 4px 52px;
-  font-size: 14.5px;
-  color: var(--at-muted);
-  border-left: 2px solid transparent;
-}
-
-.theme-doc-sidebar-menu
-  .theme-doc-sidebar-item-link-level-2
-  > .menu__link--active {
-  color: var(--at-accent);
-  background: transparent;
-  border-left-color: var(--at-accent);
-  font-weight: 500;
-}
-
-/* Caret (collapse arrow) — minimal, no pill background */
+/* Caret (freccia di collasso) — minimale, nessuna pill dedicata */
 .theme-doc-sidebar-menu .menu__caret {
-  padding: 0 14px;
+  padding: 0 8px;
   background: transparent;
-  border-radius: 0;
+  border-radius: var(--radius-sm);
   transition: opacity 0.15s var(--ease-smooth);
-  opacity: 0.5;
+  opacity: 0.6;
+}
+
+/* In dark il chevron (grigio-chiaro invertito) ha meno contrasto sul fondo
+   nero: a 0.6 quasi sparisce. Lo alziamo per pareggiare la resa del light. */
+html[data-theme='dark'] .theme-doc-sidebar-menu .menu__caret {
+  opacity: 0.85;
 }
 
 .theme-doc-sidebar-menu .menu__caret:hover {
@@ -908,8 +880,10 @@ body:has(.theme-doc-sidebar-container)::before {
   background-size: 1.4rem 1.4rem;
 }
 
+/* NB: niente `filter: opacity(...)` qui — sovrascriverebbe il filtro invert di
+   Infima che in dark schiarisce il chevron. Usiamo la proprietà `opacity`. */
 .theme-doc-sidebar-menu .menu__link--sublist-caret::after {
-  filter: opacity(0.6);
+  opacity: 0.7;
 }
 
 /* ─────────────── Atmospheric — Monaspace bindings ─────────────── */
