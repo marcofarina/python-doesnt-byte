@@ -952,6 +952,15 @@ pre code,
   display: block;
 }
 
+/* TOC collassabile (solo mobile): il default Docusaurus usa --ifm-global-radius
+   (6.4px), fuori dalla nostra scala radius → stona accanto agli altri box/chip.
+   Lo riportiamo a --radius-md, come gli altri pannelli. Classe raddoppiata per
+   battere la specificità del CSS module .tocCollapsible_… (stessa specificità,
+   ma vince per ordine di cascata). */
+.theme-doc-toc-mobile.theme-doc-toc-mobile {
+  border-radius: var(--radius-md);
+}
+
 /* ─────────────── Atmospheric — Generated index pages (category landings) ─────────────── */
 
 main [class*='generatedIndexPage'] > header > h1,
