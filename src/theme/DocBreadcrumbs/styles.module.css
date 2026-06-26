@@ -33,3 +33,19 @@
 .action {
   flex-shrink: 0;
 }
+
+/* Mobile: niente affiancamento. Tenere il chip in riga obbligherebbe le
+   briciole a incolonnarsi (una parola per riga), specie negli esercizi col
+   percorso lungo. Si impila: briciole sopra a piena larghezza, chip sotto. */
+@media (max-width: 768px) {
+  .breadcrumbsContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .breadcrumbsContainer > :global(.breadcrumbs) {
+    flex: 0 1 auto;
+    width: 100%;
+  }
+}

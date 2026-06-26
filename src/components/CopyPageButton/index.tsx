@@ -195,7 +195,7 @@ function CopyPageMenu({ permalink }: { permalink: string }): ReactNode {
               </button>
 
               <div className={styles.sep} role="separator" />
-              <p className={styles.groupLabel}>Chiedi aiuto a</p>
+              <p className={styles.groupLabel}>Chiedi una spiegazione a</p>
 
               {AI_PROVIDERS.map((p, i) => (
                 <button
