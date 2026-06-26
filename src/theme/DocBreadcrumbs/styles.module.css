@@ -10,15 +10,26 @@
 .breadcrumbsContainer {
   --ifm-breadcrumb-size-multiplier: 0.8;
   margin-bottom: 0.8rem;
-  /* Briciole a sinistra, chip «Spiegamelo facile» ancorato a destra sulla
-     stessa riga. In wrap (mobile) il chip scende sotto, sempre a destra. */
+  /* Briciole a sinistra, chip «Spiegamelo facile» ancorato a destra. Il
+     container NON va a capo (nowrap): a mandare a capo è la lista delle
+     briciole (già flex-wrap in Infima), che si restringe per far spazio al
+     chip. Così il chip resta sempre sulla prima riga, in alto a destra,
+     invece di scivolare sotto «allineato a niente». */
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   gap: 8px 12px;
 }
 
+/* La lista briciole è il flex item elastico: cresce per spingere il chip a
+   destra, ma può anche restringersi (min-width: 0) e andare a capo al suo
+   interno quando il percorso è lungo. */
+.breadcrumbsContainer > :global(.breadcrumbs) {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
 .action {
-  margin-left: auto;
   flex-shrink: 0;
 }
