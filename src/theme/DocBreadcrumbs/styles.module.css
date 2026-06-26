@@ -10,4 +10,15 @@
 .breadcrumbsContainer {
   --ifm-breadcrumb-size-multiplier: 0.8;
   margin-bottom: 0.8rem;
+  /* Briciole a sinistra, chip «Spiegamelo facile» ancorato a destra sulla
+     stessa riga. In wrap (mobile) il chip scende sotto, sempre a destra. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.action {
+  margin-left: auto;
+  flex-shrink: 0;
 }

@@ -29,6 +29,7 @@ import HomeBreadcrumbItem from '@theme/DocBreadcrumbs/Items/Home';
 import DocBreadcrumbsStructuredData from '@theme/DocBreadcrumbs/StructuredData';
 
 import { VOLUME_LABELS, volumeShortByLabel } from '@site/src/lib/docResolve';
+import CopyPageButton from '@site/src/components/CopyPageButton';
 
 import styles from './styles.module.css';
 
@@ -136,6 +137,10 @@ export default function DocBreadcrumbs(): ReactNode {
             );
           })}
         </ul>
+        {/* Self-gate: null fuori da una lezione (pagine category). */}
+        <div className={styles.action}>
+          <CopyPageButton />
+        </div>
       </nav>
     </>
   );

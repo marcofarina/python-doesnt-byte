@@ -5,12 +5,12 @@ import {
   faRotateLeft,
   faStop,
   faExpand,
-  faWandMagicSparkles,
   faDatabase,
 } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import IconCopy from '@theme/Icon/Copy';
 import IconSuccess from '@theme/Icon/Success';
+import Icon from '@site/src/components/Icon';
 import { copyToClipboard } from './clipboard';
 import styles from './styles.module.css';
 import type { RunStatus } from './types';
@@ -99,7 +99,7 @@ export function Toolbar({
             aria-label="Spiegamelo facile (copia prompt)"
             title="Copia un prompt per chiedere a un’IA di spiegarti questo codice"
           >
-            <FontAwesomeIcon icon={faWandMagicSparkles} />
+            <Icon name="microchip-ai" size={15} />
           </button>
         )}
         {showFullscreen && onFullscreen && (
