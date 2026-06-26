@@ -1,0 +1,137 @@
+.root {
+  display: inline-flex;
+}
+
+/* ── Trigger ─────────────────────────────────────────────────────────────── */
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--at-fg-body);
+  background: var(--at-bg-subtle);
+  border: 1px solid var(--at-border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.trigger:hover {
+  color: var(--at-accent);
+  border-color: var(--at-accent);
+  background: var(--at-accent-bg);
+}
+
+.trigger:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+.trigger:active {
+  transform: scale(0.98);
+}
+
+.triggerIcon {
+  color: var(--at-muted);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.trigger:hover .triggerIcon {
+  color: var(--at-accent);
+}
+
+.chevron {
+  color: var(--at-muted);
+  transition: transform var(--dur-normal) var(--ease-out);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ── Menu ────────────────────────────────────────────────────────────────── */
+.menu {
+  z-index: 100;
+  min-width: 220px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-md);
+  background: var(--at-bg-panel);
+  border: 1px solid var(--at-border-strong);
+  box-shadow: var(--shadow-elevated);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  font-family: var(--font-mono-ui);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: left;
+  color: var(--at-fg-body);
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.item:hover,
+.item:focus-visible {
+  color: var(--at-accent);
+  background: var(--at-accent-bg);
+  outline: none;
+}
+
+.item:active {
+  transform: scale(0.98);
+}
+
+.itemDone {
+  color: var(--at-accent);
+}
+
+.itemIcon {
+  color: var(--at-muted);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.item:hover .itemIcon,
+.item:focus-visible .itemIcon,
+.itemDone .itemIcon {
+  color: var(--at-accent);
+}
+
+.sep {
+  height: 1px;
+  margin: 6px 4px;
+  background: var(--at-border);
+}
+
+.groupLabel {
+  margin: 2px 0 4px;
+  padding: 0 10px;
+  font-family: var(--font-mono-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--at-faint);
+}

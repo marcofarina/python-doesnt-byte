@@ -10,4 +10,42 @@
 .breadcrumbsContainer {
   --ifm-breadcrumb-size-multiplier: 0.8;
   margin-bottom: 0.8rem;
+  /* Briciole a sinistra, chip «Spiegamelo facile» ancorato a destra. Il
+     container NON va a capo (nowrap): a mandare a capo è la lista delle
+     briciole (già flex-wrap in Infima), che si restringe per far spazio al
+     chip. Così il chip resta sempre sulla prima riga, in alto a destra,
+     invece di scivolare sotto «allineato a niente». */
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 8px 12px;
+}
+
+/* La lista briciole è il flex item elastico: cresce per spingere il chip a
+   destra, ma può anche restringersi (min-width: 0) e andare a capo al suo
+   interno quando il percorso è lungo. */
+.breadcrumbsContainer > :global(.breadcrumbs) {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.action {
+  flex-shrink: 0;
+}
+
+/* Mobile: niente affiancamento. Tenere il chip in riga obbligherebbe le
+   briciole a incolonnarsi (una parola per riga), specie negli esercizi col
+   percorso lungo. Si impila: briciole sopra a piena larghezza, chip sotto. */
+@media (max-width: 768px) {
+  .breadcrumbsContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .breadcrumbsContainer > :global(.breadcrumbs) {
+    flex: 0 1 auto;
+    width: 100%;
+  }
 }
