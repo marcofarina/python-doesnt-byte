@@ -21,7 +21,6 @@ import {
   FloatingFocusManager,
 } from '@floating-ui/react';
 import { useDoc } from '@docusaurus/plugin-content-docs/client';
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { usePluginData } from '@docusaurus/useGlobalData';
 import Icon from '@site/src/components/Icon';
 import { copyToClipboard } from '@site/src/theme/PyRunner/clipboard';
@@ -64,7 +63,6 @@ export default function CopyPageButton(): ReactNode {
 }
 
 function CopyPageMenu({ permalink }: { permalink: string }): ReactNode {
-  const { siteConfig } = useDocusaurusContext();
   const data = usePluginData('copy-page-md') as CopyPageData | undefined;
 
   const [open, setOpen] = useState(false);
@@ -76,7 +74,6 @@ function CopyPageMenu({ permalink }: { permalink: string }): ReactNode {
   useEffect(() => () => window.clearTimeout(resetTimer.current), []);
 
   const relMdUrl = mdPath(permalink);
-  const absMdUrl = siteConfig.url.replace(/\/$/, '') + relMdUrl;
 
   const { refs, floatingStyles, context } = useFloating({
     open,
@@ -127,11 +124,16 @@ function CopyPageMenu({ permalink }: { permalink: string }): ReactNode {
 
   const handleProvider = useCallback(
     (url: string) => {
-      const target = url + encodeURIComponent(buildAiPrompt(absMdUrl));
+      // URL assoluto del .md calcolato dall'origin reale a runtime (non da
+      // siteConfig.url): così punta sempre all'host da cui la pagina è
+      // realmente servita — dominio custom, fallback GitHub Pages o deploy di
+      // preview — invece di una sola URL canonica fissata a build-time.
+      const mdUrl = window.location.origin + relMdUrl;
+      const target = url + encodeURIComponent(buildAiPrompt(mdUrl));
       window.open(target, '_blank', 'noopener,noreferrer');
       setOpen(false);
     },
-    [absMdUrl],
+    [relMdUrl],
   );
 
   const copyLabel =

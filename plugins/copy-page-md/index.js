@@ -71,8 +71,12 @@ function transformJsx(s, siteDir) {
 
   // Catch-all: rimuove i tag JSX rimasti (componenti capitalizzati) tenendone i
   // children — Epigraph, Tabs, Exercise, Solution, FAIcon, DocCardList, ecc.
-  s = s.replace(/<[A-Z][A-Za-z0-9]*\b[^>]*\/>/g, ''); // self-closing
-  s = s.replace(/<[A-Z][A-Za-z0-9]*\b[^>]*?>/g, ''); // apertura
+  // `ATTRS` consuma char non-`>` oppure stringhe quotate intere: così il match
+  // si ferma al `>` che chiude davvero il tag e non al primo `>` dentro un
+  // valore d'attributo (es. explainPrompt="se a > b allora…").
+  const ATTRS = `(?:[^>"']|"[^"]*"|'[^']*')*`;
+  s = s.replace(new RegExp(`<[A-Z][A-Za-z0-9]*\\b${ATTRS}/>`, 'g'), ''); // self-closing
+  s = s.replace(new RegExp(`<[A-Z][A-Za-z0-9]*\\b${ATTRS}>`, 'g'), ''); // apertura
   s = s.replace(/<\/[A-Z][A-Za-z0-9]*>/g, ''); // chiusura
 
   return s;
