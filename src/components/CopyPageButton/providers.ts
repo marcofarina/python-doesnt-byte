@@ -15,14 +15,10 @@ export interface AiProvider {
 }
 
 export const AI_PROVIDERS: readonly AiProvider[] = [
-  // App Gemini (non Google AI Mode). Il prefill `?q=` è best-effort: se Google
-  // smette di onorarlo, l'utente trova comunque il prompt già in clipboard.
-  {
-    id: 'gemini',
-    label: 'Gemini',
-    icon: 'gemini',
-    url: 'https://gemini.google.com/app?q=',
-  },
+  // NB: Gemini è escluso di proposito. L'app web (gemini.google.com/app) NON
+  // supporta nativamente il prefill via URL (`?q=` / `?prompt=`): funziona solo
+  // con un'estensione Chrome di terze parti, quindi per i nostri utenti sarebbe
+  // un link che apre Gemini vuoto. Riconsiderare se Google aggiunge il supporto.
   {
     id: 'claude',
     label: 'Claude',
