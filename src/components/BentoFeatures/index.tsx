@@ -14,85 +14,93 @@ interface Feature {
   demo: ReactNode;
 }
 
-function PlayIcon() {
+/* Icone delle tab: Font Awesome Pro 7.1.0 duotone (primario currentColor +
+ * secondario opacity .4). Il colore e l'animazione hover arrivano dalla
+ * classe passata da fuori (vedi .icon* in styles). */
+function PlayDuotone({ className }: { className?: string }) {
   return (
     <svg
+      className={className}
       width="24"
       height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="var(--at-accent)"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 512 512"
       aria-hidden="true"
     >
-      <polygon points="6 4 20 12 6 20 6 4" />
+      <path
+        opacity=".4"
+        fill="currentColor"
+        d="M0 256a256 256 0 1 0 512 0 256 256 0 1 0 -512 0zm176-88c0-8.7 4.7-16.7 12.3-20.9s16.8-4.1 24.3 .5l144 88c7.1 4.4 11.5 12.1 11.5 20.5s-4.4 16.1-11.5 20.5l-144 88c-7.4 4.5-16.7 4.7-24.3 .5S176 352.7 176 344l0-176z"
+      />
+      <path
+        fill="currentColor"
+        d="M212.5 147.5c-7.4-4.5-16.7-4.7-24.3-.5S176 159.3 176 168l0 176c0 8.7 4.7 16.7 12.3 20.9s16.8 4.1 24.3-.5l144-88c7.1-4.4 11.5-12.1 11.5-20.5s-4.4-16.1-11.5-20.5l-144-88z"
+      />
     </svg>
   );
 }
 
-function DatabaseLineIcon() {
+function TableDuotone({ className }: { className?: string }) {
   return (
     <svg
+      className={className}
       width="24"
       height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#0891b2"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 448 512"
       aria-hidden="true"
     >
-      <ellipse cx="12" cy="5" rx="9" ry="3" />
-      <path d="M3 5v6c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-      <path d="M3 11v6c0 1.66 4 3 9 3s9-1.34 9-3v-6" />
+      <path
+        opacity=".4"
+        fill="currentColor"
+        d="M64 160l0 64 64 0 0 64-64 0 0 64 64 0 0 64 64 0 0-64 64 0 0 64 64 0 0-64 64 0 0-64-64 0 0-64 64 0 0-64-64 0 0-64-64 0 0 64-64 0 0-64-64 0 0 64-64 0zm128 64l64 0 0 64-64 0 0-64z"
+      />
+      <path
+        fill="currentColor"
+        d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM384 96l0 320-320 0 0-320 320 0z"
+      />
     </svg>
   );
 }
 
-function GraphIcon() {
+function ChartDuotone({ className }: { className?: string }) {
   return (
     <svg
+      className={className}
       width="24"
       height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#7c3aed"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 512 512"
       aria-hidden="true"
     >
-      <circle cx="5" cy="6" r="2.2" />
-      <circle cx="19" cy="6" r="2.2" />
-      <circle cx="12" cy="13" r="2.2" />
-      <circle cx="6" cy="19" r="2.2" />
-      <circle cx="18" cy="19" r="2.2" />
-      <line x1="6.6" y1="7.5" x2="10.6" y2="11.6" />
-      <line x1="17.4" y1="7.5" x2="13.4" y2="11.6" />
-      <line x1="10.7" y1="14.7" x2="7.3" y2="17.4" />
-      <line x1="13.3" y1="14.7" x2="16.7" y2="17.4" />
+      <path
+        opacity=".4"
+        fill="currentColor"
+        d="M192 80c0-26.5 21.5-48 48-48l32 0c26.5 0 48 21.5 48 48l0 352c0 26.5-21.5 48-48 48l-32 0c-26.5 0-48-21.5-48-48l0-352z"
+      />
+      <path
+        fill="currentColor"
+        d="M432 96c-26.5 0-48 21.5-48 48l0 288c0 26.5 21.5 48 48 48l32 0c26.5 0 48-21.5 48-48l0-288c0-26.5-21.5-48-48-48l-32 0zM48 224c-26.5 0-48 21.5-48 48L0 432c0 26.5 21.5 48 48 48l32 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48l-32 0z"
+      />
     </svg>
   );
 }
 
-function SearchIcon() {
+function SearchDuotone({ className }: { className?: string }) {
   return (
     <svg
+      className={className}
       width="24"
       height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#a21caf"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 512 512"
       aria-hidden="true"
     >
-      <circle cx="10.5" cy="10.5" r="6.5" />
-      <line x1="20" y1="20" x2="15.5" y2="15.5" />
+      <path
+        opacity=".4"
+        fill="currentColor"
+        d="M64 208a144 144 0 1 0 288 0 144 144 0 1 0 -288 0z"
+      />
+      <path
+        fill="currentColor"
+        d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376C296.3 401.1 253.9 416 208 416 93.1 416 0 322.9 0 208S93.1 0 208 0 416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
+      />
     </svg>
   );
 }
@@ -171,14 +179,14 @@ const FEATURES: Feature[] = [
     kicker: '01',
     title: 'Esempi vivi',
     desc: 'Ogni snippet gira nella pagina. Modificalo, sperimenta, rompi qualcosa: il libro risponde.',
-    icon: <PlayIcon />,
+    icon: <PlayDuotone className={styles.iconPlay} />,
     demo: <PyRunner code={HERO_CODE} title="piramide.py" />,
   },
   {
     kicker: '02',
     title: 'Database dal vivo',
     desc: 'Interroghi un vero SQLite nel browser. Zero installazioni: scrivi SQL e vedi le righe.',
-    icon: <DatabaseLineIcon />,
+    icon: <TableDuotone className={styles.iconData} />,
     demo: (
       <SQLRunner
         code={SQL_DEMO}
@@ -193,14 +201,14 @@ const FEATURES: Feature[] = [
     kicker: '03',
     title: 'Algoritmi animati',
     desc: 'Ordinamento, ricerca, ricorsione: visualizzazioni interattive per vedere ogni passo.',
-    icon: <GraphIcon />,
+    icon: <ChartDuotone className={styles.iconAlgo} />,
     demo: <Algorithm name="bubble-sort" mode="study" shuffle={6} />,
   },
   {
     kicker: '04',
     title: 'Cerca, non sfogliare',
     desc: 'Trova subito un concetto, una definizione, un esempio. Senza indice analitico né rilegatura.',
-    icon: <SearchIcon />,
+    icon: <SearchDuotone className={styles.iconSearch} />,
     demo: (
       <div className={styles.searchPromo}>
         <button
@@ -210,7 +218,7 @@ const FEATURES: Feature[] = [
             window.dispatchEvent(new CustomEvent('pdb:open-search'))
           }
         >
-          <SearchIcon />
+          <SearchDuotone />
           <span className={styles.searchFieldText}>
             Cerca una funzione, un concetto, un esempio…
           </span>
@@ -236,19 +244,19 @@ const MORE: MoreItem[] = [
   {
     icon: <RouteDuotone />,
     title: 'Percorsi adattivi',
-    desc: 'Il libro si rimodella sul tuo indirizzo: Informatica o Liceo Scienze Applicate.',
+    desc: 'Il libro si rimodella sul tuo indirizzo: Informatica, Liceo Scienze Applicate o ITS.',
     color: '#2563eb',
   },
   {
     icon: <WandDuotone />,
     title: 'Spiegamelo facile',
-    desc: 'Un click e un assistente AI ti rispiega codice ed errori a parole tue.',
+    desc: 'Copi un prompt pronto — o lo mandi al tuo LLM preferito — per farti rispiegare codice ed errori a parole tue.',
     color: '#7c3aed',
   },
   {
     icon: <LinkSwapDuotone />,
     title: 'Esercizi e teoria, collegati',
-    desc: 'Ogni esercizio sa da quale capitolo nasce; ogni capitolo sa come allenarti.',
+    desc: 'Ogni esercizio sa da quale lezione nasce; ogni lezione sa come allenarti.',
     color: '#0d9488',
   },
 ];

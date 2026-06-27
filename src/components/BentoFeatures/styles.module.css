@@ -123,6 +123,83 @@
   z-index: 2;
 }
 
+/* Colore (duotone via currentColor) di ciascuna icona-tab. */
+.iconPlay {
+  color: var(--at-accent);
+}
+.iconData {
+  color: #0891b2;
+}
+.iconAlgo {
+  color: #7c3aed;
+  transform-origin: 50% 92%;
+}
+.iconSearch {
+  color: #a21caf;
+}
+
+.iconBox svg {
+  transition: transform 250ms var(--ease-smooth);
+}
+
+/* All'hover sulla card l'icona si anima con un gesto a tema: il play pulsa,
+ * la tabella ondeggia, le barre dell'algoritmo «riordinano», la lente scruta. */
+.card:hover .iconPlay {
+  animation: bento-icon-pulse 1.1s var(--ease-smooth) infinite;
+}
+.card:hover .iconData {
+  animation: bento-icon-nudge 1.1s var(--ease-smooth) infinite;
+}
+.card:hover .iconAlgo {
+  animation: bento-icon-bars 0.9s var(--ease-smooth) infinite;
+}
+.card:hover .iconSearch {
+  animation: bento-icon-scan 1.4s var(--ease-smooth) infinite;
+}
+
+@keyframes bento-icon-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.16);
+  }
+}
+@keyframes bento-icon-nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@keyframes bento-icon-bars {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  35% {
+    transform: scaleY(0.76);
+  }
+  70% {
+    transform: scaleY(1.14);
+  }
+}
+@keyframes bento-icon-scan {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0);
+  }
+  25% {
+    transform: translate(1.5px, -1px) rotate(-7deg);
+  }
+  75% {
+    transform: translate(-1.5px, 1px) rotate(7deg);
+  }
+}
+
 .body {
   position: relative;
   z-index: 2;
@@ -183,6 +260,12 @@
     transform: none;
     transition: none;
   }
+  .card:hover .iconPlay,
+  .card:hover .iconData,
+  .card:hover .iconAlgo,
+  .card:hover .iconSearch {
+    animation: none;
+  }
 }
 
 /* Box demo «Cerca»: un campo reale che apre la modale Pagefind (⌘K). */
@@ -225,6 +308,7 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+  color: var(--at-muted);
 }
 
 .searchFieldText {
