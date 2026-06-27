@@ -91,8 +91,10 @@
   transition: opacity 0.3s;
   pointer-events: none;
 }
-.card:hover::before,
-.cardActive::before {
+/* Lo spotlight segue il cursore: visibile solo in hover (anche sulla card
+ * attiva, già distinta da bordo + ombra interna). Senza questo vincolo il
+ * glow resterebbe «appeso» all'ultima posizione del mouse sulla attiva. */
+.card:hover::before {
   opacity: 1;
 }
 

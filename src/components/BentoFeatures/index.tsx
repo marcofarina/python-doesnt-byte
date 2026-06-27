@@ -278,6 +278,13 @@ function SpotlightCard({ feature, active, onSelect, panelId }: CardProps) {
     el.style.setProperty('--at-mx', `${e.clientX - r.left}px`);
     el.style.setProperty('--at-my', `${e.clientY - r.top}px`);
   }
+  // Riporta lo spotlight al centro così non «riappare» all'angolo al rientro.
+  function onLeave() {
+    const el = ref.current;
+    if (!el) return;
+    el.style.removeProperty('--at-mx');
+    el.style.removeProperty('--at-my');
+  }
   return (
     <button
       ref={ref}
@@ -287,6 +294,7 @@ function SpotlightCard({ feature, active, onSelect, panelId }: CardProps) {
       aria-controls={panelId}
       tabIndex={active ? 0 : -1}
       onMouseMove={onMove}
+      onMouseLeave={onLeave}
       onClick={onSelect}
       className={clsx(styles.card, active && styles.cardActive)}
     >
