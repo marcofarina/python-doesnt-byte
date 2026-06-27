@@ -385,6 +385,19 @@ export default function SearchBar(): ReactNode {
     return () => document.removeEventListener('keydown', onKey);
   }, []);
 
+  // Apertura programmatica da altrove nella pagina (es. il box «Cerca» della
+  // homepage). L'evento è dispatchato sincronamente nel gesto utente, così
+  // warm() e il primer della tastiera (iOS) restano dentro l'interazione.
+  useEffect(() => {
+    const onOpen = () => {
+      warm();
+      openKeyboardPrimer();
+      setOpen(true);
+    };
+    window.addEventListener('pdb:open-search', onOpen);
+    return () => window.removeEventListener('pdb:open-search', onOpen);
+  }, [warm]);
+
   return (
     <>
       <button
