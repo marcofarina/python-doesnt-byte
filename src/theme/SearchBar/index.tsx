@@ -24,6 +24,7 @@ import React, {
 import { createPortal } from 'react-dom';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
+import { OPEN_SEARCH_EVENT } from '@site/src/lib/events';
 import { LensIcon, CircleXmarkIcon } from './icons';
 import styles from './styles.module.css';
 
@@ -394,8 +395,8 @@ export default function SearchBar(): ReactNode {
       openKeyboardPrimer();
       setOpen(true);
     };
-    window.addEventListener('pdb:open-search', onOpen);
-    return () => window.removeEventListener('pdb:open-search', onOpen);
+    window.addEventListener(OPEN_SEARCH_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_SEARCH_EVENT, onOpen);
   }, [warm]);
 
   return (

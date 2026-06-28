@@ -4,6 +4,7 @@ import Heading from '@theme/Heading';
 import PyRunner from '@site/src/theme/PyRunner';
 import SQLRunner from '@site/src/theme/SQLRunner';
 import Algorithm from '@site/src/components/Algorithm';
+import { OPEN_SEARCH_EVENT } from '@site/src/lib/events';
 import styles from './styles.module.css';
 
 interface Feature {
@@ -215,7 +216,7 @@ const FEATURES: Feature[] = [
           type="button"
           className={styles.searchField}
           onClick={() =>
-            window.dispatchEvent(new CustomEvent('pdb:open-search'))
+            window.dispatchEvent(new CustomEvent(OPEN_SEARCH_EVENT))
           }
         >
           <SearchDuotone />
