@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import PyRunner from '@site/src/theme/PyRunner';
@@ -269,9 +269,16 @@ interface CardProps {
   active: boolean;
   onSelect: () => void;
   panelId: string;
+  innerRef: (node: HTMLButtonElement | null) => void;
 }
 
-function SpotlightCard({ feature, active, onSelect, panelId }: CardProps) {
+function SpotlightCard({
+  feature,
+  active,
+  onSelect,
+  panelId,
+  innerRef,
+}: CardProps) {
   const ref = useRef<HTMLButtonElement>(null);
   function onMove(e: React.MouseEvent<HTMLButtonElement>) {
     const el = ref.current;
@@ -282,7 +289,10 @@ function SpotlightCard({ feature, active, onSelect, panelId }: CardProps) {
   }
   return (
     <button
-      ref={ref}
+      ref={(node) => {
+        ref.current = node;
+        innerRef(node);
+      }}
       type="button"
       role="tab"
       aria-selected={active}
@@ -311,13 +321,70 @@ export default function BentoFeatures() {
   const [active, setActive] = useState(0);
   const panelId = 'bento-demo-panel';
 
+  /* --- Carosello mobile (≤560px) ---
+   * Sotto i 560px le card diventano una riga a scroll-snap orizzontale. Per non
+   * ri-eseguire i demo pesanti (PyRunner/SQLRunner/Algorithm) a ogni swipe,
+   * l'`active` si aggiorna SOLO a scorrimento assestato (scroll + debounce),
+   * mai durante il movimento. Tap/freccia/dot scrollano la card in posizione
+   * via `goTo`: lo scroll fluido che ne segue fa ricalcolare lo stesso indice a
+   * fine corsa (setActive idempotente), quindi non serve nessun flag. */
+  const gridRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const scrollTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  const isCarousel = () =>
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 560px)').matches;
+  const prefersReduced = () =>
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function goTo(i: number) {
+    setActive(i);
+    const grid = gridRef.current;
+    const el = cardRefs.current[i];
+    if (!isCarousel() || !grid || !el) return;
+    const gridRect = grid.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const delta = elRect.left - gridRect.left;
+    grid.scrollTo({
+      left: grid.scrollLeft + delta,
+      behavior: prefersReduced() ? 'auto' : 'smooth',
+    });
+  }
+
+  function onScroll() {
+    if (!isCarousel()) return;
+    clearTimeout(scrollTimer.current);
+    scrollTimer.current = setTimeout(() => {
+      const grid = gridRef.current;
+      if (!grid) return;
+      const gridRect = grid.getBoundingClientRect();
+      const center = gridRect.left + gridRect.width / 2;
+      let nearest = 0;
+      let best = Infinity;
+      cardRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const dist = Math.abs(r.left + r.width / 2 - center);
+        if (dist < best) {
+          best = dist;
+          nearest = i;
+        }
+      });
+      setActive(nearest);
+    }, 120);
+  }
+
+  useEffect(() => () => clearTimeout(scrollTimer.current), []);
+
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'ArrowRight') {
       e.preventDefault();
-      setActive((a) => (a + 1) % FEATURES.length);
+      goTo((active + 1) % FEATURES.length);
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      setActive((a) => (a - 1 + FEATURES.length) % FEATURES.length);
+      goTo((active - 1 + FEATURES.length) % FEATURES.length);
     }
   }
 
@@ -332,10 +399,12 @@ export default function BentoFeatures() {
         </p>
       </div>
       <div
+        ref={gridRef}
         className={styles.grid}
         role="tablist"
         aria-label="Pilastri del libro"
         onKeyDown={onKeyDown}
+        onScroll={onScroll}
       >
         {FEATURES.map((f, i) => (
           <SpotlightCard
@@ -343,8 +412,22 @@ export default function BentoFeatures() {
             feature={f}
             index={i}
             active={i === active}
-            onSelect={() => setActive(i)}
+            onSelect={() => goTo(i)}
             panelId={panelId}
+            innerRef={(node) => {
+              cardRefs.current[i] = node;
+            }}
+          />
+        ))}
+      </div>
+      <div className={styles.dots} aria-hidden="true">
+        {FEATURES.map((f, i) => (
+          <button
+            key={f.kicker}
+            type="button"
+            tabIndex={-1}
+            className={clsx(styles.dot, i === active && styles.dotActive)}
+            onClick={() => goTo(i)}
           />
         ))}
       </div>

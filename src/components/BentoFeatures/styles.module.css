@@ -40,9 +40,87 @@
   }
 }
 
+/* Sotto i 560px le 4 card diventano un carosello a swipe orizzontale: lo
+ * stack verticale spingeva il demo molto sotto la card toccata, costringendo a
+ * scrollare avanti e indietro. Lo snap nativo dà la "fisica" iOS gratis; la
+ * card a calc(100% - 52px) lascia ~38px di peek della successiva (affordance,
+ * insieme ai dot sotto). La sync card↔demo è gestita in JS (vedi index.tsx). */
 @media (max-width: 560px) {
   .grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    /* Su iOS il contenitore-scroller orizzontale può fare bounce verticale e
+     * tagliare la card in alto. Difese a strati:
+     * 1) NON forzo `overflow-y: hidden`: lasciandolo al suo `auto` (imposto
+     *    comunque da overflow-x:auto via spec) `overscroll-behavior` ha effetto
+     *    — su un asse `hidden` iOS lo ignora. (`overflow-y: clip` non aiuta:
+     *    accanto a overflow-x:auto degrada a hidden per spec.)
+     * 2) `overscroll-behavior: none` → niente rubber-band.
+     * 3) `touch-action: pan-x` → il gesto resta orizzontale.
+     * 4) `padding-block` (compensato da margin-block negativo, layout invariato)
+     *    è il cuscinetto: anche se iOS forzasse qualche px di bounce, la card
+     *    non raggiunge mai il bordo di clip → nessun taglio visibile.
+     * In Chrome scrollHeight === clientHeight (zero overflow reale dopo aver
+     * tolto i transform), quindi qui non c'è contenuto verticale da scrollare. */
+    touch-action: pan-x;
+    overscroll-behavior: none;
+    scroll-snap-type: x mandatory;
+    gap: 14px;
+    padding-block: 16px;
+    margin-block: -16px;
+    scrollbar-width: none;
+  }
+  .grid::-webkit-scrollbar {
+    display: none;
+  }
+  .card {
+    flex: 0 0 calc(100% - 52px);
+    /* `none start` = nessuno snap sull'asse blocco (verticale), start su quello
+     * inline (orizzontale). La forma breve `start` valeva `start start` e su
+     * iOS poteva agganciare anche in verticale, alzando/tagliando la card. */
+    scroll-snap-align: none start;
+  }
+  /* Su touch lo stato :hover resta «appiccicato» dopo il tap: l'hover-shift e
+   * le animazioni-icona (transform/scale) alzerebbero la card creando area
+   * scrollabile verticale. Su mobile niente di tutto questo. */
+  .card:hover {
+    transform: none;
+  }
+  .card:hover .iconPlay,
+  .card:hover .iconData,
+  .card:hover .iconAlgo,
+  .card:hover .iconSearch {
+    animation: none;
+  }
+}
+
+.dots {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-circle);
+    background: var(--at-border);
+    cursor: pointer;
+    transition:
+      background-color 200ms var(--ease-smooth),
+      transform 200ms var(--ease-smooth);
+  }
+  .dotActive {
+    background: var(--at-accent);
+    transform: scale(1.35);
   }
 }
 
