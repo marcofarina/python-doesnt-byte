@@ -174,9 +174,13 @@ def _check_win():
 # --- API studente: azioni -----------------------------------------------------
 
 def move():
+    # La guardia scatta PRIMA del check `won`: a mondo congelato le azioni
+    # restano no-op ma costano comunque un passo, altrimenti un
+    # `while True: move()` dopo la vittoria ciclerebbe per sempre senza che
+    # nessun contatore avanzi (main thread bloccato).
+    _action_guard()
     if _world.won:
         return
-    _action_guard()
     hero = _world.hero
     dx, dy = DIRS[hero.facing]
     nx, ny = hero.x + dx, hero.y + dy
@@ -189,18 +193,18 @@ def move():
 
 
 def turn_left():
+    _action_guard()
     if _world.won:
         return
-    _action_guard()
     _world.hero.facing = _TURN_LEFT[_world.hero.facing]
     _emit({'t': 'turn', 'f': _world.hero.facing})
     _after_action()
 
 
 def turn_right():
+    _action_guard()
     if _world.won:
         return
-    _action_guard()
     _world.hero.facing = _TURN_RIGHT[_world.hero.facing]
     _emit({'t': 'turn', 'f': _world.hero.facing})
     _after_action()

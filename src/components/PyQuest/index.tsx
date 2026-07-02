@@ -62,7 +62,10 @@ function makeCodeId(seed: string, n: number): string {
     hash = (hash * 33) ^ seed.charCodeAt(i);
   }
   // Deve soddisfare la guardia /^pyr_[a-z0-9]+$/ di bryBridge (niente separatori).
-  return `pyr_${(hash >>> 0).toString(36)}${n.toString(36)}`;
+  // Hash a larghezza fissa (7 = max cifre base36 di un uint32): senza padding la
+  // concatenazione hash+contatore potrebbe collidere tra istanze diverse.
+  const h = (hash >>> 0).toString(36).padStart(7, '0');
+  return `pyr_${h}${n.toString(36)}`;
 }
 
 function PyQuestInner(props: PyQuestProps) {
