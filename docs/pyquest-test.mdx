@@ -1,0 +1,39 @@
+---
+unlisted: true
+title: PyQuest — pagina di test
+description: Harness di verifica del motore PyQuest (trace-based, mini-giochi a griglia)
+---
+
+# PyQuest — sandbox di test del motore
+
+Pagina temporanea per validare il **motore** di PyQuest (fase 1). Non è linkata
+dalla sidebar (`unlisted: true`): la raggiungi solo via URL `/docs/pyquest-test`.
+Qui il componente è in versione **harness**: editor + bottone Esegui + dump grezzo
+degli eventi emessi dal motore Python. Renderer e player arrivano nella fase 2.
+
+Il livello di default è una griglia 5×5 con Byte in `(1, 1)` rivolto a est e un
+muro a due celle di distanza.
+
+## 1. Movimento base
+
+Digita `for _ in range(3): move()` e premi Esegui: attesi `move`, `move`, `bump`
+(la terza mossa sbatte contro il muro).
+
+<PyQuest />
+
+## 2. Verifica indipendenza tra istanze
+
+Due harness sullo stesso livello sulla stessa pagina: devono avere `codeId`
+diversi e trace indipendenti (esegui l'uno, l'altro resta fermo).
+
+<PyQuest />
+
+## Note per la verifica (checklist step 5)
+
+- **a)** `for _ in range(3): move()` → `move, move, bump`.
+- **b)** un errore a riga 2 (es. `move()` poi `boom`) → eventi fino a riga 1
+  **più** un traceback su stderr che indica **riga 2**.
+- **c)** due Esegui consecutivi producono trace identiche (nessuna
+  contaminazione tra run del modulo `pyquest` cacheato).
+- Prova anche `while not on_goal(): move()` e la vittoria (`win`) quando Byte
+  raggiunge `(3, 3)` — serve girare e muoversi (`turn_right()` + `move()`).

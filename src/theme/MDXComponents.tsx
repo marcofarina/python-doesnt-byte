@@ -16,6 +16,7 @@ import Quiz, {
 import PyRunner from '@site/src/theme/PyRunner';
 import SQLRunner from '@site/src/theme/SQLRunner';
 import Algorithm from '@site/src/components/Algorithm';
+import PyQuest from '@site/src/components/PyQuest';
 import ExerciseLink from '@site/src/components/ExerciseLink';
 import Exercise, { LessonMeta, Solution } from '@site/src/components/Exercise';
 import AssignedExercises from '@site/src/components/AssignedExercises';
@@ -34,6 +35,7 @@ export default {
   PyRunner,
   SQLRunner,
   Algorithm,
+  PyQuest,
   ExerciseLink,
   Exercise,
   LessonMeta,
