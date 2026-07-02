@@ -1,39 +1,61 @@
 ---
 unlisted: true
 title: PyQuest — pagina di test
-description: Harness di verifica del motore PyQuest (trace-based, mini-giochi a griglia)
+description: Harness di verifica del motore + renderer PyQuest (mini-giochi a griglia)
 ---
 
-# PyQuest — sandbox di test del motore
+# PyQuest — sandbox di test
 
-Pagina temporanea per validare il **motore** di PyQuest (fase 1). Non è linkata
-dalla sidebar (`unlisted: true`): la raggiungi solo via URL `/docs/pyquest-test`.
-Qui il componente è in versione **harness**: editor + bottone Esegui + dump grezzo
-degli eventi emessi dal motore Python. Renderer e player arrivano nella fase 2.
+Pagina temporanea per validare **motore + renderer + player** di PyQuest (fasi
+1–2). Non è linkata dalla sidebar (`unlisted: true`): la raggiungi solo via URL
+`/docs/pyquest-test`. Il componente è ora giocabile end-to-end: editor + Esegui +
+board animata passo per passo.
 
-Il livello di default è una griglia 5×5 con Byte in `(1, 1)` rivolto a est e un
-muro a due celle di distanza.
+## 1. Livello dal plugin dati (world/level)
 
-## 1. Movimento base
+Livello `muoviti` del mondo `mondo-01` (livelli provvisori di collaudo),
+risolto dai global data del plugin `pyquest`. Il codice iniziale porta Byte
+sulla bandiera: premi Esegui e guarda l'animazione.
 
-Digita `for _ in range(3): move()` e premi Esegui: attesi `move`, `move`, `bump`
-(la terza mossa sbatte contro il muro).
+<PyQuest world="mondo-01" level="muoviti" />
 
-<PyQuest />
+## 2. Navigazione con i sensori
 
-## 2. Verifica indipendenza tra istanze
+Livello `attorno-al-muro`: c'è un blocco centrale da aggirare, più una gemma e un
+fantasma come scenografia (combat e raccolta arrivano nella fase 3). Prova a far
+arrivare Byte in basso a destra con un ciclo `while not on_goal()`.
 
-Due harness sullo stesso livello sulla stessa pagina: devono avere `codeId`
-diversi e trace indipendenti (esegui l'uno, l'altro resta fermo).
+<PyQuest world="mondo-01" level="attorno-al-muro" />
 
-<PyQuest />
+## 3. Indipendenza tra istanze
 
-## Note per la verifica (checklist step 5)
+Due istanze dello stesso livello sulla stessa pagina: devono avere trace e player
+indipendenti (esegui l'una, l'altra resta ferma).
 
-- **a)** `for _ in range(3): move()` → `move, move, bump`.
-- **b)** un errore a riga 2 (es. `move()` poi `boom`) → eventi fino a riga 1
-  **più** un traceback su stderr che indica **riga 2**.
-- **c)** due Esegui consecutivi producono trace identiche (nessuna
-  contaminazione tra run del modulo `pyquest` cacheato).
-- Prova anche `while not on_goal(): move()` e la vittoria (`win`) quando Byte
-  raggiunge `(3, 3)` — serve girare e muoversi (`turn_right()` + `move()`).
+<PyQuest world="mondo-01" level="muoviti" />
+
+## 4. Id ignoto
+
+Un `level` inesistente non deve ripiegare su un livello di riserva: atteso un
+pannello d'errore esplicito.
+
+<PyQuest world="mondo-01" level="non-esiste" />
+
+## Note per la verifica (checklist step 10-12)
+
+- **a)** Esegui il livello 1: attesi `move, move, turn, move, move`, poi
+  autoplay da passo 0 e — a fine animazione — il pannello di vittoria con il
+  flavor text di Byte.
+- **b)** Un errore nel codice (es. `boom` a riga 2) → trace parziale animata,
+  poi pannello «C'è un errore nel codice» col traceback (riga giusta).
+- **c)** `while True: move()` → pannello step limit nel tono di Byte; il
+  traceback resta in console.
+- **d)** Slider di seek, play/pausa, passo avanti/indietro, reset; le 4
+  velocità (0,5× 1× 2× 4×) scalano anche la durata delle transizioni.
+- **e)** `print()` interleaved compaiono in console solo quando l'animazione
+  raggiunge il passo in cui sono stati emessi.
+- **f)** Il livello 2 disegna gemma e fantasma fermi; Byte li attraversa
+  (niente combat/raccolta finché non arriva la fase 3). Sbattere più volte
+  contro il blocco centrale senza vincere → flavor «bump ripetuto».
+- **g)** Dark mode: board, sprite e pannelli esito leggibili in entrambi i
+  temi; la griglia scala col contenitore (`--pq-cell`).

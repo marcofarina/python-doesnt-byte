@@ -1,0 +1,349 @@
+/* GameScene — board a griglia + entità posizionate per trasformazione.
+   Le entità animano il movimento via transition su `transform`; la durata è
+   `--pq-dur`, iniettata dal GamePlayer in base alla velocità scelta. Gli
+   effetti one-shot (fx) sono keyframes rimontate a ogni passo (key cangiante).
+   `--pq-cell` è calcolata dal renderer (ResizeObserver): min(48px, larghezza
+   contenitore / colonne). */
+
+.scene {
+  /* Tema di scena (light). Override dark in fondo, con selettore
+     html[data-theme='dark'] per evitare il gotcha oklch/P3 su display wide. */
+  --pq-board-bg: #e9edf2;
+  --pq-floor: #f5f7fa;
+  --pq-wall: #40495b;
+  --pq-grid-line: rgba(0, 0, 0, 0.06);
+  --pq-hero: var(--at-accent, #0270ad);
+  --pq-hero-track: #3d4759;
+  --pq-hero-panel: rgba(255, 255, 255, 0.35);
+  --pq-hero-led-ring: #ffffff;
+  --pq-hero-led: #22b8cf;
+  --pq-monty: #2f9e44;
+  --pq-monty-hat: #8d6e3f;
+  --pq-monty-eye: #1a1a1a;
+  --pq-enemy: #d6336c;
+  --pq-resource: #f08c00;
+  --pq-goal: #2f9e44;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.board {
+  position: relative;
+  width: calc(var(--pq-cols) * var(--pq-cell));
+  height: calc(var(--pq-rows) * var(--pq-cell));
+  max-width: 100%;
+  background: var(--pq-board-bg);
+  border-radius: var(--radius-sm, 10px);
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.08));
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+/* Base comune a celle ed entità: box grande una cella, posizionato per
+   trasformazione tramite le custom property --pq-x/--pq-y. */
+.floor,
+.wall,
+.goal,
+.resource,
+.enemy,
+.hero,
+.fx {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--pq-cell);
+  height: var(--pq-cell);
+  transform: translate(
+    calc(var(--pq-x) * var(--pq-cell)),
+    calc(var(--pq-y) * var(--pq-cell))
+  );
+}
+
+/* --- Celle -------------------------------------------------------------- */
+
+.floor,
+.wall {
+  padding: 1px;
+  background-clip: content-box;
+  box-shadow: inset 0 0 0 1px var(--pq-grid-line);
+}
+
+.floor {
+  background-color: var(--pq-floor);
+}
+
+.wall {
+  background-color: var(--pq-wall);
+}
+
+/* --- Entità ------------------------------------------------------------- */
+
+.goal,
+.resource,
+.enemy,
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--pq-cell) * 0.5);
+  pointer-events: none;
+}
+
+.goal {
+  color: var(--pq-goal);
+  font-size: calc(var(--pq-cell) * 0.42);
+  opacity: 0.85;
+}
+
+.resource {
+  animation: pq-float 2.4s var(--ease-smooth, ease-in-out) infinite;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+  transition:
+    opacity var(--pq-dur, 320ms) var(--ease-out),
+    scale var(--pq-dur, 320ms) var(--ease-out);
+}
+
+/* Raccolta: resta montata (identità DOM stabile), svanisce e basta. */
+.collected {
+  opacity: 0;
+  scale: 0.3;
+  animation: none;
+}
+
+.enemy {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+  transition:
+    transform var(--pq-dur, 320ms) var(--ease-smooth),
+    opacity var(--pq-dur, 320ms) var(--ease-out),
+    scale var(--pq-dur, 320ms) var(--ease-out);
+}
+
+/* Sconfitto: resta montato, dissolvenza. */
+.dead {
+  opacity: 0;
+  scale: 0.4;
+}
+
+/* Pips HP del nemico (un puntino per PV). */
+.enemyPips {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+}
+
+.pip {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--radius-circle, 50%);
+  background: var(--pq-enemy);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.65);
+}
+
+/* L'eroe anima lo spostamento tra celle. */
+.hero {
+  transition: transform var(--pq-dur, 320ms) var(--ease-smooth);
+  z-index: 2;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+/* Wrapper degli effetti one-shot sull'eroe: rimontato (key cangiante) a ogni
+   fx, così la keyframe riparte anche su bump consecutivi. */
+.heroFxWrap {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 12%;
+}
+
+/* Lo sprite ruota col facing (disegnato rivolto a nord). */
+.sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform var(--pq-dur, 320ms) var(--ease-smooth);
+}
+
+/* --- Effetti one-shot --------------------------------------------------- */
+
+.fx {
+  z-index: 3;
+  pointer-events: none;
+}
+
+.fx_attack::after,
+.fx_defeat::after,
+.fx_collect::after {
+  content: '';
+  position: absolute;
+  inset: 15%;
+  border-radius: var(--radius-circle, 50%);
+}
+
+.fx_attack::after {
+  border: 2px solid var(--pq-enemy);
+  animation: pq-ring var(--pq-dur, 320ms) var(--ease-out) forwards;
+}
+
+.fx_collect::after {
+  background: radial-gradient(circle, var(--pq-resource) 0%, transparent 70%);
+  animation: pq-pop var(--pq-dur, 320ms) var(--ease-spring) forwards;
+}
+
+.fx_defeat::after {
+  border: 2px solid var(--pq-enemy);
+  animation: pq-pop var(--pq-dur, 320ms) var(--ease-out) forwards;
+}
+
+/* Effetti applicati direttamente sull'eroe. */
+.bump {
+  animation: pq-shake var(--pq-dur, 320ms) var(--ease-out);
+}
+
+.heroHit {
+  animation: pq-flash var(--pq-dur, 320ms) var(--ease-out);
+}
+
+@keyframes pq-float {
+  0%,
+  100% {
+    margin-top: 0;
+  }
+  50% {
+    margin-top: -3px;
+  }
+}
+
+@keyframes pq-shake {
+  0%,
+  100% {
+    translate: 0;
+  }
+  25% {
+    translate: -4px 0;
+  }
+  75% {
+    translate: 4px 0;
+  }
+}
+
+@keyframes pq-flash {
+  0%,
+  100% {
+    filter: none;
+  }
+  50% {
+    filter: drop-shadow(0 0 6px var(--pq-enemy)) brightness(1.4);
+  }
+}
+
+@keyframes pq-ring {
+  from {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+@keyframes pq-pop {
+  from {
+    transform: scale(0.2);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* --- HUD ---------------------------------------------------------------- */
+
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-height: 1.6rem;
+}
+
+.hp {
+  display: inline-flex;
+  gap: 3px;
+  color: #e03131;
+}
+
+.hpPip {
+  font-size: 0.95rem;
+}
+
+.inventory {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.invChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill, 999px);
+  background: var(--at-bg-chip, rgba(0, 0, 0, 0.04));
+  color: var(--pq-resource);
+}
+
+.badge {
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill, 999px);
+}
+
+.badgeWin {
+  color: #fff;
+  background: var(--pq-goal);
+}
+
+.badgeFail {
+  color: #fff;
+  background: var(--pq-enemy);
+}
+
+/* --- Dark: override del tema di scena (html[data-theme] contro gotcha P3) - */
+
+:global(html[data-theme='dark']) .scene {
+  --pq-board-bg: #14161c;
+  --pq-floor: #1e2230;
+  --pq-wall: #2b3245;
+  --pq-grid-line: rgba(255, 255, 255, 0.05);
+  --pq-hero: var(--at-accent, #38bdf8);
+  --pq-hero-track: #566178;
+  --pq-hero-panel: rgba(0, 0, 0, 0.25);
+  --pq-hero-led-ring: #10131a;
+  --pq-hero-led: #3bc9db;
+  --pq-monty: #51cf66;
+  --pq-monty-hat: #a98953;
+  --pq-monty-eye: #10131a;
+  --pq-enemy: #f06595;
+  --pq-resource: #ffc078;
+  --pq-goal: #51cf66;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .enemy,
+  .resource,
+  .sprite {
+    transition: none;
+    animation: none;
+  }
+}

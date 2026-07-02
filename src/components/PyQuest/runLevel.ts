@@ -15,7 +15,7 @@ import type { BrythonConfig } from '@site/src/pyBoot';
 import { runPython, type LogKind } from '@site/src/theme/PyRunner/bryBridge';
 import type { GameEvent, LevelDef } from './types';
 
-const MAX_STEPS_DEFAULT = 500;
+export const MAX_STEPS_DEFAULT = 500;
 
 /** Sottoinsieme del livello che il motore Python consuma davvero. */
 function runtimeLevel(level: LevelDef): Record<string, unknown> {

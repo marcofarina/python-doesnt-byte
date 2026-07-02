@@ -1,0 +1,133 @@
+/* GamePlayer — board + slider di seek + barra dei comandi + console. */
+
+.player {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* --- Slider di seek ------------------------------------------------------ */
+
+.scrub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scrubInput {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--at-accent, #0270ad);
+  cursor: pointer;
+}
+
+.scrubInput:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.counter {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.8rem;
+  opacity: 0.7;
+  min-width: 4.5em;
+  text-align: right;
+}
+
+/* --- Transport ----------------------------------------------------------- */
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-xs, 6px);
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.08));
+  background: var(--at-bg-panel, rgba(255, 255, 255, 0.7));
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast, 150ms) var(--ease-out),
+    transform var(--dur-fast, 150ms) var(--ease-out);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--at-bg-chip, rgba(0, 0, 0, 0.04));
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.playBtn {
+  color: #fff;
+  background: var(--at-accent, #0270ad);
+  border-color: transparent;
+}
+
+.playBtn:hover:not(:disabled) {
+  background: var(--at-accent-soft, #0369a1);
+}
+
+.speed {
+  display: inline-flex;
+  margin-left: auto;
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-pill, 999px);
+  overflow: hidden;
+}
+
+.speedBtn {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 0.75rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background var(--dur-fast, 150ms) var(--ease-out);
+}
+
+.speedBtn:hover {
+  background: var(--at-bg-chip, rgba(0, 0, 0, 0.04));
+}
+
+.speedActive {
+  background: var(--at-accent, #0270ad);
+  color: #fff;
+}
+
+.speedActive:hover {
+  background: var(--at-accent, #0270ad);
+}
+
+/* --- Console sincronizzata (print/traceback per atStep) ------------------- */
+
+.console {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm, 10px);
+  background: var(--at-bg-subtle, rgba(0, 0, 0, 0.025));
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.08));
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.stderr {
+  color: var(--ifm-color-danger, #d6336c);
+}

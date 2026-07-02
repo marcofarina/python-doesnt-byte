@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "mondo-01",
+  "title": "Mondo di collaudo",
+  "description": "Livelli provvisori di collaudo (fase 2): saranno sostituiti dal mondo pilota definitivo allo step 18.",
+  "character": "byte",
+  "volume": "programmatore",
+  "levels": [
+    {
+      "id": "muoviti",
+      "title": "Fai muovere Byte",
+      "grid": {
+        "legend": { "#": "wall", ".": "floor" },
+        "rows": ["#####", "#...#", "#...#", "#...#", "#####"]
+      },
+      "hero": { "x": 1, "y": 1, "facing": "east", "hp": 3 },
+      "goal": { "x": 3, "y": 3 },
+      "win": [{ "type": "reach" }],
+      "starterCode": "# Porta Byte sulla bandiera in (3, 3).\nmove()\nmove()\nturn_right()\nmove()\nmove()\n",
+      "solution": "move()\nmove()\nturn_right()\nmove()\nmove()\n",
+      "hints": [
+        "Byte guarda a est: due move() lo portano al muro di destra.",
+        "Con turn_right() gira verso sud, poi altri due move() lo mettono sul goal."
+      ],
+      "par": 5
+    },
+    {
+      "id": "attorno-al-muro",
+      "title": "Aggira l'ostacolo",
+      "grid": {
+        "legend": { "#": "wall", ".": "floor" },
+        "rows": ["#######", "#.....#", "#.###.#", "#.#.#.#", "#.###.#", "#.....#", "#######"]
+      },
+      "hero": { "x": 1, "y": 1, "facing": "south", "hp": 3 },
+      "goal": { "x": 5, "y": 5 },
+      "win": [{ "type": "reach" }],
+      "starterCode": "# Aggira il blocco centrale e raggiungi la bandiera in basso a destra.\nwhile not on_goal():\n    if is_blocked():\n        turn_left()\n    move()\n",
+      "hints": [
+        "Usa i sensori: is_blocked() ti dice se hai un muro davanti.",
+        "Un ciclo while not on_goal() ripete finché non sei arrivato."
+      ],
+      "par": 12,
+      "enemies": [
+        { "id": "e1", "kind": "ghost", "x": 1, "y": 5, "hp": 2, "behavior": "static" }
+      ],
+      "resources": [
+        { "id": "g1", "kind": "gem", "x": 5, "y": 1 }
+      ]
+    }
+  ]
+}

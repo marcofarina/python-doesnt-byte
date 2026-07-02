@@ -1,29 +1,47 @@
 /**
- * PyQuest — mini-giochi a griglia con Python (spec: PyQuest).
+ * PyQuest — mini-giochi a griglia con Python (spec step 12).
  *
- * ⚠️ VERSIONE HARNESS (step 5). Questa è la prima versione "debug" del
- * componente: editor riusato da PyRunner + bottone Esegui + dump grezzo degli
- * eventi ricevuti dal motore. Niente renderer, niente player: quelli arrivano
- * nella fase 2 (step 10-12), quando questo file verrà riscritto (step 12).
- * Serve solo a validare il motore trace-based end-to-end.
+ * Orchestrazione: editor + Toolbar (riusati da PyRunner) → `runLevel` esegue il
+ * codice studente contro il motore trace-based (`static/bry-libs/pyquest.py`),
+ * gli eventi si accumulano in un ref, e a fine esecuzione `GamePlayer` anima la
+ * trace su `GameScene`.
+ *
+ * Macchina a stati: `idle → executing (invisibile, ms) → animating → finished`.
+ * L'esito è calcolato dalla trace con precedenza **won > failed > error**
+ * (emendamento D7): dopo la vittoria la trace può contenere anche `step_limit`
+ * e uno stderr — lo studente ha comunque vinto, il traceback resta in console.
+ *
+ * Risoluzione del livello: `levelData` inline (editor/test) ha la precedenza;
+ * altrimenti `world`+`level` fanno lookup nei global data del plugin `pyquest`.
+ * Id ignoti = pannello d'errore, mai un livello di ripiego silenzioso.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { usePluginData } from '@docusaurus/useGlobalData';
+import clsx from 'clsx';
 import { Editor, type EditorHandle } from '@site/src/theme/PyRunner/Editor';
+import { Toolbar } from '@site/src/theme/PyRunner/Toolbar';
+import type { RunStatus } from '@site/src/theme/PyRunner/types';
 import { ensureBrython, type BrythonConfig } from '@site/src/pyBoot';
-import { runLevel } from './runLevel';
+import pyStyles from '@site/src/theme/PyRunner/styles.module.css';
+import { runLevel, MAX_STEPS_DEFAULT } from './runLevel';
+import { useWorldData } from './useWorldData';
+import { characterDef } from './characters';
+import GamePlayer from './GamePlayer';
 import type { GameEvent, LevelDef, LogLine } from './types';
+import styles from './PyQuest.module.css';
 
 export interface PyQuestProps {
-  /** Id del mondo nei global data del plugin `pyquest` (fase 2, step 7). */
+  /** Id del mondo nei global data del plugin `pyquest`. */
   world?: string;
   /** Id del livello dentro il mondo. */
   level?: string;
   /** Livello passato inline (editor/test): bypassa la lookup su world/level. */
   levelData?: LevelDef;
-  /** Titolo mostrato sopra l'editor. */
+  /** Personaggio (override): normalmente ereditato dal mondo. */
+  character?: string;
+  /** Titolo mostrato nella toolbar (override del titolo del livello). */
   title?: string;
 }
 
@@ -32,25 +50,9 @@ interface PyRunnerGlobalData {
   brython?: BrythonConfig;
 }
 
-type RunStatus = 'idle' | 'running' | 'done' | 'error';
-
-// Livello di fallback per l'harness: griglia 5×5, muro a 2 celle davanti a Byte
-// così `for _ in range(3): move()` produce move, move, bump.
-const DEFAULT_LEVEL: LevelDef = {
-  id: 'harness',
-  title: 'Harness 5×5',
-  grid: {
-    legend: { '#': 'wall', '.': 'floor' },
-    rows: ['#####', '#...#', '#...#', '#...#', '#####'],
-  },
-  hero: { x: 1, y: 1, facing: 'east', hp: 3 },
-  goal: { x: 3, y: 3 },
-  win: [{ type: 'reach' }],
-  starterCode:
-    '# Muovi Byte. Prova a cambiare il codice ed esegui.\nfor _ in range(3):\n    move()\n',
-  hints: [],
-  par: 6,
-};
+type Phase = 'idle' | 'executing' | 'animating' | 'finished';
+/** `null` = il codice è terminato senza vittoria, sconfitta né errore. */
+type Outcome = 'won' | 'failed' | 'error' | null;
 
 // Contatore di modulo per il suffisso del codeId (D12): due istanze dello stesso
 // livello sulla stessa pagina devono restare indipendenti.
@@ -68,30 +70,51 @@ function makeCodeId(seed: string, n: number): string {
   return `pyr_${h}${n.toString(36)}`;
 }
 
-function PyQuestInner(props: PyQuestProps) {
-  const data = usePluginData('pyrunner') as PyRunnerGlobalData | undefined;
-  const libUrl = data?.libUrl ?? '';
-  const brython = data?.brython;
+function ErrorBox({ children }: { children: React.ReactNode }) {
+  return <div className={styles.error}>{children}</div>;
+}
 
-  const level = props.levelData ?? DEFAULT_LEVEL;
+function PyQuestInner(props: PyQuestProps) {
+  const pyrunner = usePluginData('pyrunner') as PyRunnerGlobalData | undefined;
+  const worlds = useWorldData();
+  const libUrl = pyrunner?.libUrl ?? '';
+  const brython = pyrunner?.brython;
+
+  // Risoluzione livello + personaggio (prima degli hook condizionali: i render
+  // d'errore stanno in fondo, dopo tutti gli hook).
+  const world = props.world ? worlds[props.world] : undefined;
+  const level: LevelDef | undefined =
+    props.levelData ??
+    (world && props.level
+      ? world.levels.find((l) => l.id === props.level)
+      : undefined);
+  const character = props.character ?? world?.character ?? 'byte';
+  const char = characterDef(character);
+  const starterCode = level?.starterCode ?? '';
+
   const seed =
     props.world && props.level
       ? `${props.world}/${props.level}`
-      : JSON.stringify(level);
-
+      : JSON.stringify(level ?? props);
   const instanceN = useRef<number>(-1);
   if (instanceN.current < 0) instanceN.current = idCounter++;
-  const codeId = useMemo(() => makeCodeId(seed, instanceN.current), [seed]);
+  const codeId = makeCodeId(seed, instanceN.current);
 
+  const [phase, setPhase] = useState<Phase>('idle');
+  const [outcome, setOutcome] = useState<Outcome>(null);
   const [events, setEvents] = useState<GameEvent[]>([]);
   const [logs, setLogs] = useState<LogLine[]>([]);
-  const [status, setStatus] = useState<RunStatus>('idle');
+  const [playKey, setPlayKey] = useState(0);
+  const [hasEdits, setHasEdits] = useState(false);
+  const [currentCode, setCurrentCode] = useState(starterCode);
 
   const editorRef = useRef<EditorHandle | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
+  const eventsRef = useRef<GameEvent[]>([]);
+  const logsRef = useRef<LogLine[]>([]);
 
-  // Precarica Brython quando l'harness entra nel viewport (pattern PyRunner).
+  // Precarica Brython quando il componente entra nel viewport (pattern PyRunner).
   useEffect(() => {
     const el = rootRef.current;
     const preload = () => {
@@ -118,12 +141,37 @@ function PyQuestInner(props: PyQuestProps) {
 
   useEffect(() => () => cleanupRef.current?.(), []);
 
+  const finishRun = useCallback(() => {
+    const trace = eventsRef.current;
+    const hasWin = trace.some((e) => e.t === 'win');
+    const hasDeath = trace.some((e) => e.t === 'death');
+    const hasLimit = trace.some((e) => e.t === 'step_limit');
+    const hasStderr = logsRef.current.some((l) => l.kind === 'stderr');
+    // Precedenza esplicita (emendamento D7): won > failed > error.
+    setOutcome(
+      hasWin
+        ? 'won'
+        : hasDeath || hasLimit
+          ? 'failed'
+          : hasStderr
+            ? 'error'
+            : null,
+    );
+    setEvents([...trace]);
+    setLogs([...logsRef.current]);
+    setPhase('animating');
+    setPlayKey((k) => k + 1);
+  }, []);
+
   const handleRun = useCallback(() => {
-    const code = editorRef.current?.getCode() ?? level.starterCode;
-    setStatus('running');
+    if (!level) return;
+    const code = editorRef.current?.getCode() ?? starterCode;
+    setPhase('executing');
+    setOutcome(null);
     setEvents([]);
     setLogs([]);
-    const collected: GameEvent[] = [];
+    eventsRef.current = [];
+    logsRef.current = [];
     cleanupRef.current?.();
     cleanupRef.current = runLevel({
       code,
@@ -132,116 +180,163 @@ function PyQuestInner(props: PyQuestProps) {
       libUrl,
       brython,
       onStart: () => {
-        collected.length = 0;
-        setEvents([]);
-        setLogs([]);
+        eventsRef.current = [];
+        logsRef.current = [];
       },
       onEvent: (ev) => {
-        collected.push(ev);
-        setEvents([...collected]);
+        eventsRef.current.push(ev);
       },
       onLog: (kind, text) => {
-        setLogs((prev) => [...prev, { kind, text, atStep: collected.length }]);
-        if (kind === 'stderr') setStatus('error');
+        logsRef.current.push({ kind, text, atStep: eventsRef.current.length });
       },
-      onDone: () => setStatus((s) => (s === 'error' ? s : 'done')),
+      onDone: finishRun,
       onError: (err) => {
-        setStatus('error');
-        setLogs((prev) => [
-          ...prev,
-          {
-            kind: 'stderr',
-            text: `[PyQuest] ${err.message}\n`,
-            atStep: collected.length,
-          },
-        ]);
+        logsRef.current.push({
+          kind: 'stderr',
+          text: `[PyQuest] ${err.message}\n`,
+          atStep: eventsRef.current.length,
+        });
+        finishRun();
       },
     });
-  }, [level, codeId, libUrl, brython]);
+  }, [level, starterCode, codeId, libUrl, brython, finishRun]);
+
+  const handleReset = useCallback(() => {
+    editorRef.current?.setCode(starterCode);
+    setCurrentCode(starterCode);
+    setHasEdits(false);
+  }, [starterCode]);
+
+  const handleChange = useCallback(
+    (next: string) => {
+      setCurrentCode(next);
+      setHasEdits(next !== starterCode);
+    },
+    [starterCode],
+  );
+
+  // Fine animazione: il player è arrivato in fondo alla trace.
+  const handleStepChange = useCallback((step: number, total: number) => {
+    if (step >= total) {
+      setPhase((p) => (p === 'animating' ? 'finished' : p));
+    }
+  }, []);
 
   if (!libUrl) {
     return (
-      <div style={{ padding: 12, border: '1px solid var(--at-border)' }}>
-        PyQuest (harness): plugin <code>pyrunner</code> non registrato — libUrl
-        mancante.
-      </div>
+      <ErrorBox>
+        PyQuest: plugin <code>pyrunner</code> non registrato — libUrl mancante.
+      </ErrorBox>
+    );
+  }
+  if (!level) {
+    if (props.world && !world) {
+      return (
+        <ErrorBox>
+          PyQuest: mondo <code>{props.world}</code> non trovato nei dati del
+          plugin.
+        </ErrorBox>
+      );
+    }
+    if (world && props.level) {
+      return (
+        <ErrorBox>
+          PyQuest: livello <code>{props.level}</code> non trovato nel mondo{' '}
+          <code>{props.world}</code>.
+        </ErrorBox>
+      );
+    }
+    return (
+      <ErrorBox>
+        PyQuest: specifica <code>world</code> + <code>level</code> oppure{' '}
+        <code>levelData</code>.
+      </ErrorBox>
     );
   }
 
-  const boxStyle: React.CSSProperties = {
-    border: '1px solid var(--at-border)',
-    borderRadius: 'var(--radius-m, 10px)',
-    padding: 8,
-    margin: '8px 0',
-    background: 'var(--at-bg-subtle)',
-    fontFamily: '"Monaspace Neon", ui-monospace, monospace',
-    fontSize: '0.85rem',
-    whiteSpace: 'pre-wrap',
-    maxHeight: 240,
-    overflow: 'auto',
-  };
+  const toolbarStatus: RunStatus =
+    phase === 'executing'
+      ? 'running'
+      : phase === 'idle'
+        ? 'idle'
+        : outcome === 'error'
+          ? 'error'
+          : 'done';
+
+  const maxSteps = level.maxSteps ?? MAX_STEPS_DEFAULT;
+  const hasDeath = events.some((e) => e.t === 'death');
+  const bumpCount = events.filter((e) => e.t === 'bump').length;
+  const stderrText = logs
+    .filter((l) => l.kind === 'stderr')
+    .map((l) => l.text)
+    .join('');
 
   return (
-    <div ref={rootRef} data-pagefind-ignore style={{ margin: '1.5rem 0' }}>
-      <div style={{ marginBottom: 6, fontWeight: 600 }}>
-        {props.title ?? level.title}{' '}
-        <span style={{ opacity: 0.6, fontWeight: 400 }}>
-          — harness ({status})
-        </span>
-      </div>
-      <div
-        style={{
-          border: '1px solid var(--at-border)',
-          borderRadius: 'var(--radius-m, 10px)',
-          overflow: 'hidden',
-        }}
-      >
-        <Editor
-          ref={editorRef}
-          initialCode={level.starterCode}
-          showLineNumbers
-          onRun={handleRun}
-        />
-      </div>
-      <button
-        type="button"
-        onClick={handleRun}
-        disabled={status === 'running'}
-        style={{
-          marginTop: 8,
-          padding: '6px 14px',
-          borderRadius: 'var(--radius-s, 6px)',
-          border: '1px solid var(--at-border)',
-          background: 'var(--at-accent)',
-          color: '#fff',
-          cursor: status === 'running' ? 'default' : 'pointer',
-        }}
-      >
-        Esegui
-      </button>
-      <div style={{ marginTop: 8, fontWeight: 600, fontSize: '0.8rem' }}>
-        Eventi ({events.length})
-      </div>
-      <div style={boxStyle}>
-        {events.map((ev, i) => `${i}: ${JSON.stringify(ev)}`).join('\n') || '—'}
-      </div>
-      {logs.length > 0 && (
-        <>
-          <div style={{ marginTop: 8, fontWeight: 600, fontSize: '0.8rem' }}>
-            Console
+    <div ref={rootRef} data-pagefind-ignore className={styles.root}>
+      <div className={styles.layout}>
+        <div className={styles.stage}>
+          <GamePlayer
+            level={level}
+            character={character}
+            events={events}
+            logs={logs}
+            playKey={playKey}
+            onStepChange={handleStepChange}
+          />
+
+          {/* Pannelli di esito con il flavor text del personaggio (D13). */}
+          {phase === 'finished' && outcome === 'won' && (
+            <div className={clsx(styles.panel, styles.panelWin)}>
+              <strong>{char.name}:</strong> {char.flavor.win}
+            </div>
+          )}
+          {phase === 'finished' && outcome === 'failed' && (
+            <div className={clsx(styles.panel, styles.panelFail)}>
+              <strong>{char.name}:</strong>{' '}
+              {hasDeath ? char.flavor.death : char.flavor.stepLimit(maxSteps)}
+            </div>
+          )}
+          {phase === 'finished' && outcome === 'error' && (
+            <div className={clsx(styles.panel, styles.panelError)}>
+              <p className={styles.panelTitle}>C’è un errore nel codice</p>
+              <pre className={styles.traceback}>{stderrText}</pre>
+            </div>
+          )}
+          {phase === 'finished' && outcome === null && bumpCount >= 2 && (
+            <div className={clsx(styles.panel, styles.panelNeutral)}>
+              <strong>{char.name}:</strong> {char.flavor.bump}
+            </div>
+          )}
+        </div>
+
+        <div className={clsx(pyStyles.runner, 'notranslate', styles.editorCol)}>
+          <Toolbar
+            title={props.title ?? level.title}
+            status={toolbarStatus}
+            hasEdits={hasEdits}
+            code={currentCode}
+            onRun={handleRun}
+            onReset={handleReset}
+          />
+          <div className={pyStyles.editorWrap}>
+            <Editor
+              ref={editorRef}
+              initialCode={starterCode}
+              showLineNumbers
+              onChange={handleChange}
+              onRun={handleRun}
+              ariaLabel="Editor di codice Python del livello"
+            />
           </div>
-          <div style={boxStyle}>
-            {logs.map((l) => `[${l.kind}@${l.atStep}] ${l.text}`).join('')}
-          </div>
-        </>
-      )}
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function PyQuest(props: PyQuestProps) {
   return (
-    <BrowserOnly fallback={<div>PyQuest…</div>}>
+    <BrowserOnly fallback={<div className={styles.root}>PyQuest…</div>}>
       {() => <PyQuestInner {...props} />}
     </BrowserOnly>
   );
