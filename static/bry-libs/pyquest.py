@@ -7,10 +7,21 @@
 # modello (aggiornato durante l'esecuzione vera), quindi i cicli condizionati
 # funzionano.
 #
-# NB (step 6, sys.settrace): decisione ancora da prendere — vedi task PyQuest.
-# Finché non è documentata qui, il residuo `while True: pass` senza chiamate API
-# blocca il main thread come oggi in PyRunner (mitigato da step_count e
-# sensor_count per i loop che *chiamano* qualcosa).
+# Decisione step 6 (spike sys.settrace, 2026-07-02): guardia NON attivata,
+# rischio residuo ACCETTATO. Misure in Brython 3.12 nel browser:
+#   - settrace con eventi 'line' funziona SOLO nei frame di funzione
+#     (400 005 eventi su un loop 200k in funzione; overhead ~20-27x, ~2-6 us/evento);
+#   - il codice a livello modulo — cioè il codice studente, exec-utato da
+#     brython_runner — NON genera line events (1 solo evento su loop da 300k
+#     iterazioni top-level), quindi la guardia non vedrebbe proprio il caso
+#     canonico `while True: pass`;
+#   - frame.f_trace sul frame corrente è accettato ma inefficace (0 eventi);
+#   - il raise dal tracer nei frame di funzione ha semantica rotta:
+#     sys.settrace(None) chiamato dentro il tracer non disattiva il tracing e
+#     l'eccezione riesplode durante le righe dell'handler, scavalcando l'except.
+# Quindi: `while True: pass` senza chiamate API blocca il main thread come oggi
+# in PyRunner; i loop che chiamano qualcosa sono mitigati da step_count e
+# sensor_count qui sotto.
 
 import json
 from config import Config  # type: ignore
