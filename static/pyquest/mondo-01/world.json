@@ -40,12 +40,36 @@
         "Un ciclo while not on_goal() ripete finché non sei arrivato."
       ],
       "par": 12,
-      "enemies": [
-        { "id": "e1", "kind": "ghost", "x": 1, "y": 5, "hp": 2, "behavior": "static" }
-      ],
       "resources": [
         { "id": "g1", "kind": "gem", "x": 5, "y": 1 }
       ]
+    },
+    {
+      "id": "duello",
+      "title": "Duello con un bug",
+      "grid": {
+        "legend": { "#": "wall", ".": "floor" },
+        "rows": ["########", "#......#", "#......#", "########"]
+      },
+      "hero": { "x": 1, "y": 1, "facing": "east", "hp": 5 },
+      "enemies": [
+        { "id": "b1", "kind": "bug", "x": 6, "y": 1, "hp": 2, "behavior": "melee" }
+      ],
+      "resources": [
+        { "id": "g1", "kind": "gem", "x": 3, "y": 2 }
+      ],
+      "win": [
+        { "type": "defeat" },
+        { "type": "collect", "kind": "gem", "qty": 1 }
+      ],
+      "starterCode": "# Il bug ti viene incontro: colpiscilo con attack(), poi raccogli la gemma.\nmove()\nmove()\nattack()\nattack()\nturn_right()\nmove()\ncollect()\n",
+      "solution": "move()\nmove()\nattack()\nattack()\nturn_right()\nmove()\ncollect()\n",
+      "hints": [
+        "Il bug è di tipo melee: ti si avvicina di un passo a ogni tua azione. Non serve rincorrerlo.",
+        "attack() colpisce la cella davanti a te: falla mentre il bug è lì davanti. Servono due colpi (ha 2 PV).",
+        "Sconfitto il bug, girati verso la gemma con turn_right(), avvicinati e usa collect()."
+      ],
+      "par": 7
     }
   ]
 }

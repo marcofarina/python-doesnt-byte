@@ -21,11 +21,21 @@ sulla bandiera: premi Esegui e guarda l'animazione.
 
 ## 2. Navigazione con i sensori
 
-Livello `attorno-al-muro`: c'è un blocco centrale da aggirare, più una gemma e un
-fantasma come scenografia (combat e raccolta arrivano nella fase 3). Prova a far
-arrivare Byte in basso a destra con un ciclo `while not on_goal()`.
+Livello `attorno-al-muro`: c'è un blocco centrale da aggirare (più una gemma come
+scenografia). Prova a far arrivare Byte in basso a destra con un ciclo
+`while not on_goal()`.
 
 <PyQuest world="mondo-01" level="attorno-al-muro" />
+
+## 2-bis. Combat, raccolta, hint e stelle (fase 3)
+
+Livello `duello`: un bug **melee** ti viene incontro. Colpiscilo con `attack()`
+(ha 2 PV), poi raccogli la gemma con `collect()`. La vittoria richiede *sia*
+sconfiggere il bug *sia* raccogliere la gemma (`win` multipla). Alla vittoria
+compaiono le stelle (da `par`); i suggerimenti si rivelano a scaglioni sotto
+l'editor; «Spiegamelo facile» copia il prompt negli appunti.
+
+<PyQuest world="mondo-01" level="duello" />
 
 ## 3. Indipendenza tra istanze
 
@@ -54,8 +64,17 @@ pannello d'errore esplicito.
   velocità (0,5× 1× 2× 4×) scalano anche la durata delle transizioni.
 - **e)** `print()` interleaved compaiono in console solo quando l'animazione
   raggiunge il passo in cui sono stati emessi.
-- **f)** Il livello 2 disegna gemma e fantasma fermi; Byte li attraversa
-  (niente combat/raccolta finché non arriva la fase 3). Sbattere più volte
-  contro il blocco centrale senza vincere → flavor «bump ripetuto».
-- **g)** Dark mode: board, sprite e pannelli esito leggibili in entrambi i
-  temi; la griglia scala col contenitore (`--pq-cell`).
+- **f)** Sbattere più volte contro il blocco centrale del livello 2 senza
+  vincere → flavor «bump ripetuto».
+- **g)** Dark mode: board, sprite, stelle e pannelli esito leggibili in entrambi
+  i temi; la griglia scala col contenitore (`--pq-cell`).
+- **h)** Livello `duello` (fase 3): il bug melee si avvicina a ogni azione; due
+  `attack()` lo sconfiggono; `collect()` raccoglie la gemma; con la soluzione la
+  vittoria arriva a `par` azioni → 3 stelle. La trace è **identica** su run
+  ripetuti. Ricaricando la pagina, il livello risulta «Completato · record N».
+- **i)** Morte dell'eroe (es. resta fermo accanto a un nemico che lo colpisce
+  fino a 0 PV): UI di sconfitta (non pannello errore); traceback breve in
+  console. `while True: move()` → step limit nel tono di Byte.
+- **j)** Suggerimenti: si rivelano uno alla volta (1/3 → 2/3 → 3/3) e non
+  persistono al reload. «Spiegamelo facile» copia un prompt con codice + titolo
+  del livello.

@@ -19,16 +19,26 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { usePluginData } from '@docusaurus/useGlobalData';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { faStar as faStarOutline } from '@fortawesome/free-regular-svg-icons';
 import clsx from 'clsx';
 import { Editor, type EditorHandle } from '@site/src/theme/PyRunner/Editor';
 import { Toolbar } from '@site/src/theme/PyRunner/Toolbar';
 import type { RunStatus } from '@site/src/theme/PyRunner/types';
+import { copyToClipboard } from '@site/src/theme/PyRunner/clipboard';
+import {
+  buildExplainText,
+  DEFAULT_EXPLAIN_PROMPT,
+} from '@site/src/theme/PyRunner/share';
 import { ensureBrython, type BrythonConfig } from '@site/src/pyBoot';
 import pyStyles from '@site/src/theme/PyRunner/styles.module.css';
 import { runLevel, MAX_STEPS_DEFAULT } from './runLevel';
 import { useWorldData } from './useWorldData';
+import { useProgress, countActions, starsFor } from './useProgress';
 import { characterDef } from './characters';
 import GamePlayer from './GamePlayer';
+import HintPanel from './HintPanel';
 import type { GameEvent, LevelDef, LogLine } from './types';
 import styles from './PyQuest.module.css';
 
@@ -74,9 +84,25 @@ function ErrorBox({ children }: { children: React.ReactNode }) {
   return <div className={styles.error}>{children}</div>;
 }
 
+/** Riga di 3 stelle, piene fino a `n` (spec D11). */
+function Stars({ n }: { n: number }) {
+  return (
+    <span className={styles.stars} aria-label={`${n} stelle su 3`}>
+      {[1, 2, 3].map((i) => (
+        <FontAwesomeIcon
+          key={i}
+          icon={i <= n ? faStar : faStarOutline}
+          className={clsx(styles.star, i <= n && styles.starOn)}
+        />
+      ))}
+    </span>
+  );
+}
+
 function PyQuestInner(props: PyQuestProps) {
   const pyrunner = usePluginData('pyrunner') as PyRunnerGlobalData | undefined;
   const worlds = useWorldData();
+  const { getLevel, recordWin } = useProgress();
   const libUrl = pyrunner?.libUrl ?? '';
   const brython = pyrunner?.brython;
 
@@ -91,6 +117,11 @@ function PyQuestInner(props: PyQuestProps) {
   const character = props.character ?? world?.character ?? 'byte';
   const char = characterDef(character);
   const starterCode = level?.starterCode ?? '';
+
+  // Progresso salvato: solo per livelli identificati da world+level (non per i
+  // livelli inline dell'editor, che non hanno un id persistibile).
+  const savedProgress =
+    props.world && props.level ? getLevel(props.world, props.level) : undefined;
 
   const seed =
     props.world && props.level
@@ -157,11 +188,25 @@ function PyQuestInner(props: PyQuestProps) {
             ? 'error'
             : null,
     );
+    // Vittoria: salva completamento e record (solo per livelli identificabili).
+    if (hasWin && props.world && props.level) {
+      recordWin(props.world, props.level, countActions(trace));
+    }
     setEvents([...trace]);
     setLogs([...logsRef.current]);
     setPhase('animating');
     setPlayKey((k) => k + 1);
-  }, []);
+  }, [recordWin, props.world, props.level]);
+
+  const handleExplain = useCallback(() => {
+    if (!level) return;
+    const code = editorRef.current?.getCode() ?? starterCode;
+    const contextTitle = `Livello PyQuest «${level.title}»`;
+    const text = buildExplainText(DEFAULT_EXPLAIN_PROMPT, code, contextTitle);
+    copyToClipboard(text).catch(() => {
+      /* clipboard non disponibile: nessun feedback, il codice resta nell'editor */
+    });
+  }, [level, starterCode]);
 
   const handleRun = useCallback(() => {
     if (!level) return;
@@ -271,10 +316,26 @@ function PyQuestInner(props: PyQuestProps) {
     .map((l) => l.text)
     .join('');
 
+  // Azioni e stelle di QUESTA esecuzione (il pannello vittoria le mostra);
+  // `savedProgress` porta invece il record persistito, visibile anche a freddo.
+  const runSteps = countActions(events);
+  const runStars = starsFor(runSteps, level.par);
+  const isRecord =
+    outcome === 'won' &&
+    (savedProgress === undefined || runSteps <= savedProgress.bestSteps);
+
   return (
     <div ref={rootRef} data-pagefind-ignore className={styles.root}>
       <div className={styles.layout}>
         <div className={styles.stage}>
+          {/* Record persistito: visibile anche a freddo (verifica reload). */}
+          {savedProgress?.done && (
+            <div className={styles.completed}>
+              <Stars n={starsFor(savedProgress.bestSteps, level.par)} />
+              <span>Completato · record {savedProgress.bestSteps} azioni</span>
+            </div>
+          )}
+
           <GamePlayer
             level={level}
             character={character}
@@ -287,7 +348,18 @@ function PyQuestInner(props: PyQuestProps) {
           {/* Pannelli di esito con il flavor text del personaggio (D13). */}
           {phase === 'finished' && outcome === 'won' && (
             <div className={clsx(styles.panel, styles.panelWin)}>
-              <strong>{char.name}:</strong> {char.flavor.win}
+              <div className={styles.winHead}>
+                <Stars n={runStars} />
+                <span className={styles.winSteps}>
+                  {runSteps} azioni · par {level.par}
+                  {isRecord && (
+                    <b className={styles.record}> · nuovo record!</b>
+                  )}
+                </span>
+              </div>
+              <p className={styles.winFlavor}>
+                <strong>{char.name}:</strong> {char.flavor.win}
+              </p>
             </div>
           )}
           {phase === 'finished' && outcome === 'failed' && (
@@ -317,6 +389,8 @@ function PyQuestInner(props: PyQuestProps) {
             code={currentCode}
             onRun={handleRun}
             onReset={handleReset}
+            showExplain
+            onExplain={handleExplain}
           />
           <div className={pyStyles.editorWrap}>
             <Editor
@@ -328,6 +402,7 @@ function PyQuestInner(props: PyQuestProps) {
               ariaLabel="Editor di codice Python del livello"
             />
           </div>
+          <HintPanel hints={level.hints} />
         </div>
       </div>
     </div>
