@@ -62,8 +62,13 @@ function writeProgress(next: ProgressShape) {
 export interface UseProgress {
   /** Progresso salvato di un livello (undefined se mai completato). */
   getLevel(worldId: string, levelId: string): LevelProgress | undefined;
-  /** Registra una vittoria: marca `done` e minimizza `bestSteps`. */
-  recordWin(worldId: string, levelId: string, steps: number): void;
+  /**
+   * Registra una vittoria: marca `done` e minimizza `bestSteps`. Ritorna true
+   * se è un nuovo record (prima vittoria o miglioramento **stretto** del best):
+   * va deciso qui, prima della scrittura — dopo, il best salvato coincide col
+   * run e un pareggio sarebbe indistinguibile da un record.
+   */
+  recordWin(worldId: string, levelId: string, steps: number): boolean;
   /** Sblocco calcolato: primo livello o precedente `done` (spec D10). */
   isUnlocked(world: WorldDef, levelId: string): boolean;
 }
@@ -100,12 +105,13 @@ export function useProgress(): UseProgress {
   );
 
   const recordWin = useCallback(
-    (worldId: string, levelId: string, steps: number) => {
+    (worldId: string, levelId: string, steps: number): boolean => {
       // Rileggo dallo storage prima di scrivere: evita di sovrascrivere
       // aggiornamenti fatti da un altro blocco tra un render e l'altro.
       const current = readProgress();
       const world = current.worlds[worldId] ?? { levels: {} };
       const prev = world.levels[levelId];
+      const isRecord = prev === undefined || steps < prev.bestSteps;
       const bestSteps = prev ? Math.min(prev.bestSteps, steps) : steps;
       const next: ProgressShape = {
         ...current,
@@ -122,6 +128,7 @@ export function useProgress(): UseProgress {
       };
       writeProgress(next);
       setProgress(next); // aggiorna subito questo blocco; l'evento fa gli altri
+      return isRecord;
     },
     [],
   );

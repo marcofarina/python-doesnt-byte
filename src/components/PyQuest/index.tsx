@@ -84,10 +84,18 @@ function ErrorBox({ children }: { children: React.ReactNode }) {
   return <div className={styles.error}>{children}</div>;
 }
 
+/** «1 azione» / «N azioni». */
+function azioni(n: number): string {
+  return n === 1 ? 'azione' : 'azioni';
+}
+
 /** Riga di 3 stelle, piene fino a `n` (spec D11). */
 function Stars({ n }: { n: number }) {
   return (
-    <span className={styles.stars} aria-label={`${n} stelle su 3`}>
+    <span
+      className={styles.stars}
+      aria-label={n === 1 ? '1 stella su 3' : `${n} stelle su 3`}
+    >
       {[1, 2, 3].map((i) => (
         <FontAwesomeIcon
           key={i}
@@ -138,12 +146,19 @@ function PyQuestInner(props: PyQuestProps) {
   const [playKey, setPlayKey] = useState(0);
   const [hasEdits, setHasEdits] = useState(false);
   const [currentCode, setCurrentCode] = useState(starterCode);
+  // Nuovo record di QUESTO run: deciso da recordWin PRIMA di scrivere il best
+  // (dopo la scrittura un pareggio sarebbe indistinguibile da un record).
+  const [isRecord, setIsRecord] = useState(false);
 
   const editorRef = useRef<EditorHandle | null>(null);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
   const eventsRef = useRef<GameEvent[]>([]);
   const logsRef = useRef<LogLine[]>([]);
+  // Il livello era già completato all'avvio del run? Serve a non far comparire
+  // la striscia «Completato» durante l'animazione della prima vittoria (recordWin
+  // scatta a inizio animazione: la striscia rivelerebbe l'esito in anticipo).
+  const wasDoneBeforeRunRef = useRef(false);
 
   // Precarica Brython quando il componente entra nel viewport (pattern PyRunner).
   useEffect(() => {
@@ -190,7 +205,7 @@ function PyQuestInner(props: PyQuestProps) {
     );
     // Vittoria: salva completamento e record (solo per livelli identificabili).
     if (hasWin && props.world && props.level) {
-      recordWin(props.world, props.level, countActions(trace));
+      setIsRecord(recordWin(props.world, props.level, countActions(trace)));
     }
     setEvents([...trace]);
     setLogs([...logsRef.current]);
@@ -211,8 +226,10 @@ function PyQuestInner(props: PyQuestProps) {
   const handleRun = useCallback(() => {
     if (!level) return;
     const code = editorRef.current?.getCode() ?? starterCode;
+    wasDoneBeforeRunRef.current = savedProgress?.done === true;
     setPhase('executing');
     setOutcome(null);
+    setIsRecord(false);
     setEvents([]);
     setLogs([]);
     eventsRef.current = [];
@@ -244,7 +261,7 @@ function PyQuestInner(props: PyQuestProps) {
         finishRun();
       },
     });
-  }, [level, starterCode, codeId, libUrl, brython, finishRun]);
+  }, [level, starterCode, codeId, libUrl, brython, finishRun, savedProgress]);
 
   const handleReset = useCallback(() => {
     editorRef.current?.setCode(starterCode);
@@ -320,19 +337,24 @@ function PyQuestInner(props: PyQuestProps) {
   // `savedProgress` porta invece il record persistito, visibile anche a freddo.
   const runSteps = countActions(events);
   const runStars = starsFor(runSteps, level.par);
-  const isRecord =
-    outcome === 'won' &&
-    (savedProgress === undefined || runSteps <= savedProgress.bestSteps);
+  // La striscia «Completato» non deve anticipare l'esito durante l'animazione
+  // della vittoria che l'ha appena sbloccata (recordWin scrive a inizio replay).
+  const showCompleted =
+    savedProgress?.done === true &&
+    (phase === 'idle' || phase === 'finished' || wasDoneBeforeRunRef.current);
 
   return (
     <div ref={rootRef} data-pagefind-ignore className={styles.root}>
       <div className={styles.layout}>
         <div className={styles.stage}>
           {/* Record persistito: visibile anche a freddo (verifica reload). */}
-          {savedProgress?.done && (
+          {showCompleted && savedProgress && (
             <div className={styles.completed}>
               <Stars n={starsFor(savedProgress.bestSteps, level.par)} />
-              <span>Completato · record {savedProgress.bestSteps} azioni</span>
+              <span>
+                Completato · record {savedProgress.bestSteps}{' '}
+                {azioni(savedProgress.bestSteps)}
+              </span>
             </div>
           )}
 
@@ -351,7 +373,7 @@ function PyQuestInner(props: PyQuestProps) {
               <div className={styles.winHead}>
                 <Stars n={runStars} />
                 <span className={styles.winSteps}>
-                  {runSteps} azioni · par {level.par}
+                  {runSteps} {azioni(runSteps)} · par {level.par}
                   {isRecord && (
                     <b className={styles.record}> · nuovo record!</b>
                   )}
@@ -402,7 +424,9 @@ function PyQuestInner(props: PyQuestProps) {
               ariaLabel="Editor di codice Python del livello"
             />
           </div>
-          <HintPanel hints={level.hints} />
+          {/* key: al cambio livello (anteprima live dell'editor) i suggerimenti
+              rivelati ripartono da zero. */}
+          <HintPanel key={level.id} hints={level.hints} />
         </div>
       </div>
     </div>

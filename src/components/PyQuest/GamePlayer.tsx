@@ -17,7 +17,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
-  useRef,
+  useState,
   type CSSProperties,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -111,16 +111,17 @@ export default function GamePlayer({
     { stepIndex: 0, playing: false, speedIdx: DEFAULT_SPEED_IDX },
   );
 
-  // Nuovo run: autoplay dal passo 0 (velocità conservata).
-  const firstRender = useRef(true);
-  useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
+  // Nuovo run: autoplay dal passo 0 (velocità conservata). Il reset avviene IN
+  // RENDER (pattern «adjust state during render»), non in un effect: con
+  // l'effect, al re-run il cursore stantio del run precedente (già a fine
+  // trace) veniva notificato via onStepChange prima del reset e il genitore
+  // chiudeva subito l'animazione (pannello esito visibile per tutto il replay).
+  const [prevPlayKey, setPrevPlayKey] = useState(playKey);
+  if (prevPlayKey !== playKey) {
+    setPrevPlayKey(playKey);
     dispatch({ type: 'RESET' });
     dispatch({ type: 'TOGGLE_PLAY' });
-  }, [playKey]);
+  }
 
   // Autoplay.
   useEffect(() => {
