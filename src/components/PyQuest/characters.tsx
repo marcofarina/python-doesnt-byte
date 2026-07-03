@@ -144,6 +144,9 @@ const ENEMIES: Record<string, Visual> = {
   spider: { icon: faSpider, color: 'var(--pq-enemy)', label: 'ragno' },
 };
 
+/** Kind con uno sprite dedicato (l'editor livelli li offre nei menu). */
+export const ENEMY_KINDS = Object.keys(ENEMIES);
+
 const ENEMY_FALLBACK: Visual = {
   icon: faSkull,
   color: 'var(--pq-enemy)',
@@ -160,6 +163,9 @@ const RESOURCES: Record<string, Visual> = {
   coin: { icon: faCoins, color: 'var(--pq-resource)', label: 'moneta' },
   heart: { icon: faHeart, color: 'var(--pq-resource)', label: 'cuore' },
 };
+
+/** Kind con uno sprite dedicato (l'editor livelli li offre nei menu). */
+export const RESOURCE_KINDS = Object.keys(RESOURCES);
 
 const RESOURCE_FALLBACK: Visual = {
   icon: faStar,

@@ -187,6 +187,34 @@ function PyQuestInner(props: PyQuestProps) {
 
   useEffect(() => () => cleanupRef.current?.(), []);
 
+  // Cambio di livello a runtime (anteprima live dell'editor livelli): la trace
+  // del run precedente non descrive più il livello — annulla l'eventuale run e
+  // torna a idle. Per i livelli da world data l'identità è stabile: non scatta.
+  const levelRef = useRef(level);
+  useEffect(() => {
+    if (levelRef.current === level) return;
+    levelRef.current = level;
+    cleanupRef.current?.();
+    cleanupRef.current = null;
+    eventsRef.current = [];
+    logsRef.current = [];
+    setPhase('idle');
+    setOutcome(null);
+    setIsRecord(false);
+    setEvents([]);
+    setLogs([]);
+  }, [level]);
+
+  // Anche starterCode può cambiare a runtime (form dell'editor livelli):
+  // l'Editor monta initialCode una sola volta, quindi va allineato a mano —
+  // ma solo finché non ci sono modifiche manuali da preservare.
+  useEffect(() => {
+    if (!hasEdits) {
+      editorRef.current?.setCode(starterCode);
+      setCurrentCode(starterCode);
+    }
+  }, [starterCode, hasEdits]);
+
   const finishRun = useCallback(() => {
     const trace = eventsRef.current;
     const hasWin = trace.some((e) => e.t === 'win');

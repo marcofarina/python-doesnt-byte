@@ -1,0 +1,364 @@
+/* Editor livelli PyQuest (step 17). Strumento d'autore desktop-first. */
+
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+.header h1 {
+  margin-bottom: 0.35rem;
+}
+.header p {
+  color: var(--ifm-color-emphasis-700);
+  max-width: 60ch;
+  margin: 0;
+}
+.headerIcon {
+  color: var(--ifm-color-primary);
+}
+
+.loading {
+  padding: 3rem;
+  text-align: center;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Layout a due colonne (canvas | form). */
+.editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+@media (max-width: 996px) {
+  .editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.canvasCol,
+.formCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.panel {
+  background: var(
+    --ifm-card-background-color,
+    var(--ifm-background-surface-color)
+  );
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 1rem 1.1rem;
+}
+
+.panelTitle {
+  font-size: 1rem;
+  margin: 0 0 0.6rem;
+}
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+.panelHead .panelTitle {
+  margin: 0;
+}
+
+.hint {
+  font-size: 0.82rem;
+  color: var(--ifm-color-emphasis-600);
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+.hint code {
+  font-size: 0.78rem;
+}
+
+/* Palette + resize. */
+.paletteRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.paletteBtn {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.paletteBtn:hover {
+  border-color: var(--ifm-color-primary);
+}
+.paletteBtn:active {
+  transform: scale(0.98);
+}
+.paletteActive {
+  background: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  color: #fff;
+}
+
+.sizeCtrl {
+  display: flex;
+  gap: 0.75rem;
+}
+.sizeCtrl label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-600);
+  gap: 0.2rem;
+}
+.sizeCtrl input {
+  width: 4rem;
+}
+
+/* Griglia editabile. Cella a lato fisso (strumento desktop-first): niente
+   percentuali circolari con `width: fit-content`. */
+.board {
+  --ed-cell: 40px;
+  display: grid;
+  grid-template-columns: repeat(var(--ed-cols), var(--ed-cell));
+  grid-template-rows: repeat(var(--ed-rows), var(--ed-cell));
+  gap: 2px;
+  padding: 6px;
+  background: var(--ed-board-bg);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+  max-width: 100%;
+  overflow: auto;
+  user-select: none;
+  touch-action: none;
+}
+
+/* Le celle riempiono la griglia in auto-placement (ordine row-major nel tsx);
+   quadrate come in GameScene, niente radius fuori scala token. */
+.cell {
+  width: var(--ed-cell);
+  height: var(--ed-cell);
+  padding: 0;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  font-size: calc(var(--ed-cell) * 0.5);
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+.cell:hover {
+  box-shadow: inset 0 0 0 2px var(--ifm-color-primary);
+}
+.cellFloor {
+  background: var(--ed-floor);
+}
+.cellWall {
+  background: var(--ed-wall);
+}
+
+.mark {
+  pointer-events: none;
+  line-height: 1;
+}
+.markHero {
+  color: var(--ed-hero);
+  display: inline-flex;
+}
+.markGoal {
+  color: var(--ed-goal);
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  opacity: 0.85;
+}
+.markEnemy {
+  color: var(--ed-enemy);
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  font-size: calc(var(--ed-cell) * 0.42);
+}
+.markResource {
+  color: var(--ed-resource);
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  font-size: calc(var(--ed-cell) * 0.42);
+}
+
+/* Colori griglia (allineati a GameScene, override dark dedicato). */
+.board {
+  --ed-board-bg: #e9edf2;
+  --ed-floor: #f5f7fa;
+  --ed-wall: #40495b;
+  --ed-hero: var(--ifm-color-primary);
+  --ed-goal: #2f9e44;
+  --ed-enemy: #d6336c;
+  --ed-resource: #f08c00;
+}
+html[data-theme='dark'] .board {
+  --ed-board-bg: #14161c;
+  --ed-floor: #1e2230;
+  --ed-wall: #2b3245;
+  --ed-goal: #51cf66;
+  --ed-enemy: #f06595;
+  --ed-resource: #ffc078;
+}
+
+/* Errori di validazione. */
+.errors {
+  margin: 0 0 0.9rem;
+  padding: 0.6rem 0.9rem 0.6rem 1.5rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--ifm-color-danger) 12%, transparent);
+  color: var(--ifm-color-danger-darker);
+  font-size: 0.85rem;
+}
+.errors li {
+  margin: 0.15rem 0;
+}
+html[data-theme='dark'] .errors {
+  color: var(--ifm-color-danger-lightest);
+}
+
+/* Form metadati. */
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ifm-color-emphasis-700);
+}
+.field input,
+.field select {
+  font-weight: 400;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.rowId {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-600);
+  min-width: 5.5rem;
+}
+.grow {
+  flex: 1;
+}
+.numSmall {
+  width: 4.5rem;
+}
+
+/* Input comuni. */
+.editor input[type='text'],
+.editor input[type='number'],
+.editor select,
+.editor textarea {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--radius-xs);
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  padding: 0.35rem 0.5rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+.editor input:focus,
+.editor select:focus,
+.editor textarea:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+
+.code {
+  width: 100%;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.8rem;
+  line-height: 1.45;
+  resize: vertical;
+  margin-bottom: 0.75rem;
+}
+
+/* Bottoni azione. */
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.addBtn:hover {
+  border-color: var(--ifm-color-primary);
+}
+.addBtn:active {
+  transform: scale(0.98);
+}
+
+.iconBtn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ifm-color-emphasis-600);
+  border-radius: var(--radius-xs);
+  padding: 0.3rem 0.45rem;
+  cursor: pointer;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+.iconBtn:hover {
+  color: var(--ifm-color-danger);
+  background: color-mix(in srgb, var(--ifm-color-danger) 12%, transparent);
+}
+
+.importError {
+  color: var(--ifm-color-danger);
+  font-size: 0.82rem;
+  margin: 0 0 0.5rem;
+}

@@ -33,7 +33,8 @@ import styles from './GameScene.module.css';
 const MAX_CELL_PX = 48;
 
 // Gradi di rotazione dello sprite per facing (disegnato rivolto a nord).
-const FACING_DEG: Record<Facing, number> = {
+// Esportato: anche l'editor livelli orienta l'eroe con la stessa tabella.
+export const FACING_DEG: Record<Facing, number> = {
   north: 0,
   east: 90,
   south: 180,
