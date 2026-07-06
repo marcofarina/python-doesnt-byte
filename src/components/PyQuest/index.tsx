@@ -53,6 +53,12 @@ export interface PyQuestProps {
   character?: string;
   /** Titolo mostrato nella toolbar (override del titolo del livello). */
   title?: string;
+  /**
+   * Notifica una vittoria a fine animazione (la galleria vi aggancia la
+   * navigazione al livello successivo). Il progresso è già stato salvato quando
+   * scatta. Passa una callback stabile (useCallback) per evitare rifiri.
+   */
+  onWin?: (result: { steps: number; stars: number; isRecord: boolean }) => void;
 }
 
 interface PyRunnerGlobalData {
@@ -311,6 +317,14 @@ function PyQuestInner(props: PyQuestProps) {
       setPhase((p) => (p === 'animating' ? 'finished' : p));
     }
   }, []);
+
+  // Vittoria conclusa: segnala al genitore (la galleria sblocca il «prossimo»).
+  const { onWin } = props;
+  useEffect(() => {
+    if (phase !== 'finished' || outcome !== 'won' || !level || !onWin) return;
+    const steps = countActions(events);
+    onWin({ steps, stars: starsFor(steps, level.par), isRecord });
+  }, [phase, outcome, level, events, isRecord, onWin]);
 
   if (!libUrl) {
     return (

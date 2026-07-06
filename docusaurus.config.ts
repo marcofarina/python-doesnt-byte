@@ -256,6 +256,11 @@ export default async function createConfig(): Promise<Config> {
               },
             ],
           },
+          {
+            to: '/pyquest',
+            label: 'PyQuest',
+            position: 'left',
+          },
           /*        {
                     to: '/blog',
                     label: 'Blog',
