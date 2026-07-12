@@ -24,6 +24,7 @@ import React, {
 import { createPortal } from 'react-dom';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
+import { OPEN_SEARCH_EVENT } from '@site/src/lib/events';
 import { LensIcon, CircleXmarkIcon } from './icons';
 import styles from './styles.module.css';
 
@@ -384,6 +385,19 @@ export default function SearchBar(): ReactNode {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, []);
+
+  // Apertura programmatica da altrove nella pagina (es. il box «Cerca» della
+  // homepage). L'evento è dispatchato sincronamente nel gesto utente, così
+  // warm() e il primer della tastiera (iOS) restano dentro l'interazione.
+  useEffect(() => {
+    const onOpen = () => {
+      warm();
+      openKeyboardPrimer();
+      setOpen(true);
+    };
+    window.addEventListener(OPEN_SEARCH_EVENT, onOpen);
+    return () => window.removeEventListener(OPEN_SEARCH_EVENT, onOpen);
+  }, [warm]);
 
   return (
     <>
