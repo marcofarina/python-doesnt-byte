@@ -1,4 +1,5 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import clsx from 'clsx';
 import {
@@ -14,6 +15,8 @@ type Accent = 'blue' | 'pink' | 'amber' | 'green';
 interface Chapter {
   title: string;
   lessons: number;
+  /** Rotta della pagina, solo per i capitoli già pubblicati. */
+  to?: string;
 }
 
 interface Volume {
@@ -25,6 +28,12 @@ interface Volume {
   draft?: boolean;
 }
 
+/*
+ * TOC pianificata: i capitoli senza `to` non esistono ancora come pagine e i
+ * conteggi in `lessons` sono di progetto, non misurati sul contenuto reale.
+ * Tenere allineata a mano man mano che i volumi prendono forma; a regime
+ * andrà derivata dai globalData delle istanze docs.
+ */
 const VOLUMES: Volume[] = [
   {
     n: '01',
@@ -33,7 +42,7 @@ const VOLUMES: Volume[] = [
     icon: BracketsCurlyIcon,
     draft: true,
     chapters: [
-      { title: 'Introduzione', lessons: 2 },
+      { title: 'Introduzione', lessons: 2, to: '/programmatore/' },
       { title: 'Fondamenti di Python', lessons: 4 },
       { title: 'Le basi del linguaggio', lessons: 5 },
       { title: 'Strutture di controllo', lessons: 4 },
@@ -48,12 +57,28 @@ const VOLUMES: Volume[] = [
     icon: CompassDraftingIcon,
     draft: true,
     chapters: [
-      { title: 'Introduzione', lessons: 2 },
-      { title: 'Perché gli oggetti?', lessons: 3 },
-      { title: 'Classi, istanze e metodi', lessons: 5 },
-      { title: 'Metodi di classe e statici', lessons: 3 },
-      { title: 'Mostrare un oggetto', lessons: 2 },
-      { title: 'Incapsulamento', lessons: 4 },
+      { title: 'Introduzione', lessons: 2, to: '/artefice/' },
+      {
+        title: 'Perché gli oggetti?',
+        lessons: 3,
+        to: '/artefice/perche-gli-oggetti',
+      },
+      {
+        title: 'Classi, istanze e metodi',
+        lessons: 5,
+        to: '/artefice/classi-e-istanze',
+      },
+      {
+        title: 'Metodi di classe e statici',
+        lessons: 3,
+        to: '/artefice/metodi-di-classe-e-statici',
+      },
+      {
+        title: 'Mostrare un oggetto',
+        lessons: 2,
+        to: '/artefice/mostrare-un-oggetto',
+      },
+      { title: 'Incapsulamento', lessons: 4, to: '/artefice/incapsulamento' },
     ],
   },
   {
@@ -63,7 +88,7 @@ const VOLUMES: Volume[] = [
     icon: DatabaseIcon,
     draft: true,
     chapters: [
-      { title: 'Introduzione', lessons: 2 },
+      { title: 'Introduzione', lessons: 2, to: '/archivista/' },
       { title: 'File e formati', lessons: 4 },
       { title: 'Database relazionali', lessons: 5 },
       { title: 'SQL essenziale', lessons: 6 },
@@ -77,7 +102,7 @@ const VOLUMES: Volume[] = [
     icon: BookOpenCoverIcon,
     draft: true,
     chapters: [
-      { title: 'Introduzione', lessons: 1 },
+      { title: 'Introduzione', lessons: 1, to: '/apprendista/' },
       { title: 'Mini-progetti guidati', lessons: 5 },
       { title: 'Algoritmi visualizzati', lessons: 4 },
       { title: 'Sfide di codice', lessons: 6 },
@@ -149,13 +174,20 @@ export default function ChapterIndex() {
     return () => ro.disconnect();
   }, [moveIndicator]);
 
+  // Roving tabindex: il focus deve seguire il tab attivo, altrimenti resta
+  // su un bottone con tabIndex -1 e la navigazione da tastiera si rompe.
+  function selectTab(i: number) {
+    setActive(i);
+    btnRefs.current[i]?.focus();
+  }
+
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'ArrowRight') {
       e.preventDefault();
-      setActive((a) => (a + 1) % VOLUMES.length);
+      selectTab((active + 1) % VOLUMES.length);
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
-      setActive((a) => (a - 1 + VOLUMES.length) % VOLUMES.length);
+      selectTab((active - 1 + VOLUMES.length) % VOLUMES.length);
     }
   }
 
@@ -220,20 +252,39 @@ export default function ChapterIndex() {
         className={styles.panel}
       >
         <div key={active} className={styles.list}>
-          {current.chapters.map((ch, i) => (
-            <div key={ch.title} className={styles.row}>
-              <span className={styles.num}>
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <span className={styles.title}>{ch.title}</span>
-              <span className={styles.lessons}>
-                {ch.lessons} {ch.lessons === 1 ? 'lezione' : 'lezioni'}
-              </span>
-              <span className={styles.arrow}>
-                <ArrowRight />
-              </span>
-            </div>
-          ))}
+          {current.chapters.map((ch, i) => {
+            const inner = (
+              <>
+                <span className={styles.num}>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className={styles.title}>{ch.title}</span>
+                <span className={styles.lessons}>
+                  {ch.lessons} {ch.lessons === 1 ? 'lezione' : 'lezioni'}
+                </span>
+                {ch.to && (
+                  <span className={styles.arrow}>
+                    <ArrowRight />
+                  </span>
+                )}
+              </>
+            );
+            // Freccia e hover solo sulle righe che portano davvero a una
+            // pagina; i capitoli pianificati restano voci statiche.
+            return ch.to ? (
+              <Link
+                key={ch.title}
+                to={ch.to}
+                className={clsx(styles.row, styles.rowLink)}
+              >
+                {inner}
+              </Link>
+            ) : (
+              <div key={ch.title} className={clsx(styles.row, styles.rowSoon)}>
+                {inner}
+              </div>
+            );
+          })}
         </div>
       </div>
 

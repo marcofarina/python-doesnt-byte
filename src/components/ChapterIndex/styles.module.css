@@ -196,8 +196,26 @@
 .row:last-child {
   border-bottom: none;
 }
-.row:hover {
+
+/* Affordance (hover, freccia che scorre) solo sulle righe-link: le voci
+ * pianificate (.rowSoon) non portano da nessuna parte e non devono
+ * promettere un click. */
+.rowLink {
+  text-decoration: none;
+  color: inherit;
+}
+.rowLink:hover {
+  text-decoration: none;
+  color: inherit;
   background: color-mix(in oklab, var(--vc) 7%, transparent);
+}
+.rowLink:focus-visible {
+  outline: 2px solid var(--vc);
+  outline-offset: -2px;
+}
+
+.rowSoon .title {
+  color: var(--at-muted);
 }
 
 .num {
@@ -208,7 +226,7 @@
   color: var(--at-faint);
   transition: color var(--dur-normal) var(--ease-smooth);
 }
-.row:hover .num {
+.rowLink:hover .num {
   color: var(--vc);
 }
 
@@ -237,7 +255,7 @@
     transform var(--dur-normal) var(--ease-smooth),
     color var(--dur-normal) var(--ease-smooth);
 }
-.row:hover .arrow {
+.rowLink:hover .arrow {
   transform: translateX(4px);
   color: var(--vc);
 }

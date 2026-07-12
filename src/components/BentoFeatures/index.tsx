@@ -238,7 +238,8 @@ interface MoreItem {
   icon: ReactNode;
   title: string;
   desc: string;
-  color: string;
+  /* Il colore vive nel CSS (classi more_*) con varianti light/dark. */
+  accent: 'blue' | 'violet' | 'teal';
 }
 
 const MORE: MoreItem[] = [
@@ -246,19 +247,19 @@ const MORE: MoreItem[] = [
     icon: <RouteDuotone />,
     title: 'Percorsi adattivi',
     desc: 'Il libro si rimodella sul tuo indirizzo: Informatica, Liceo Scienze Applicate o ITS.',
-    color: '#2563eb',
+    accent: 'blue',
   },
   {
     icon: <WandDuotone />,
     title: 'Spiegamelo facile',
     desc: 'Copi un prompt pronto — o lo mandi al tuo LLM preferito — per farti rispiegare codice ed errori a parole tue.',
-    color: '#7c3aed',
+    accent: 'violet',
   },
   {
     icon: <LinkSwapDuotone />,
     title: 'Esercizi e teoria, collegati',
     desc: 'Ogni esercizio sa da quale lezione nasce; ogni lezione sa come allenarti.',
-    color: '#0d9488',
+    accent: 'teal',
   },
 ];
 
@@ -364,8 +365,7 @@ export default function BentoFeatures() {
           {MORE.map((m) => (
             <li
               key={m.title}
-              className={styles.moreItem}
-              style={{ ['--more-color' as string]: m.color }}
+              className={clsx(styles.moreItem, styles[`more_${m.accent}`])}
             >
               <span className={styles.moreIcon}>{m.icon}</span>
               <div className={styles.moreBody}>

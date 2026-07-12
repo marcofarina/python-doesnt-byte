@@ -125,7 +125,8 @@
   z-index: 2;
 }
 
-/* Colore (duotone via currentColor) di ciascuna icona-tab. */
+/* Colore (duotone via currentColor) di ciascuna icona-tab, con variante
+ * pastello in dark come per gli accent dei volumi. */
 .iconPlay {
   color: var(--at-accent);
 }
@@ -138,6 +139,16 @@
 }
 .iconSearch {
   color: #a21caf;
+}
+
+html[data-theme='dark'] .iconData {
+  color: #5ec8dd;
+}
+html[data-theme='dark'] .iconAlgo {
+  color: #a78bfa;
+}
+html[data-theme='dark'] .iconSearch {
+  color: #d98ce3;
 }
 
 .iconBox svg {
@@ -364,6 +375,27 @@
   align-items: flex-start;
   gap: 14px;
   text-align: left;
+}
+
+/* Accenti delle voci, con variante pastello in dark (stesso schema degli
+ * accent dei volumi in ChapterIndex/VolumeCard). */
+.more_blue {
+  --more-color: #2563eb;
+}
+.more_violet {
+  --more-color: #7c3aed;
+}
+.more_teal {
+  --more-color: #0d9488;
+}
+html[data-theme='dark'] .more_blue {
+  --more-color: #75a3ed;
+}
+html[data-theme='dark'] .more_violet {
+  --more-color: #a78bfa;
+}
+html[data-theme='dark'] .more_teal {
+  --more-color: #5ecfc0;
 }
 
 .moreIcon {
