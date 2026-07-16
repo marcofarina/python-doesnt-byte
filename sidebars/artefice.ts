@@ -1,31 +1,13 @@
 import type { SidebarsConfig } from '@docusaurus/plugin-content-docs';
 
 // Manuale dell'Artefice (Volume 2 — 4a).
+// Sidebar UNICA: l'albero vive in curriculum/toc/ (fonte condivisa con il
+// plugin curriculum); i percorsi personalizzati filtrano client-side.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const tree = require('../curriculum/toc/artefice.js');
+
 const sidebars: SidebarsConfig = {
-  it: [
-    'intro',
-    'perche-gli-oggetti',
-    'classi-e-istanze',
-    'metodi-di-classe-e-statici',
-    'mostrare-un-oggetto',
-    'incapsulamento',
-  ],
-  liceo: [
-    'intro',
-    'perche-gli-oggetti',
-    'classi-e-istanze',
-    'metodi-di-classe-e-statici',
-    'mostrare-un-oggetto',
-    'incapsulamento',
-  ],
-  its: [
-    'intro',
-    'perche-gli-oggetti',
-    'classi-e-istanze',
-    'metodi-di-classe-e-statici',
-    'mostrare-un-oggetto',
-    'incapsulamento',
-  ],
+  libro: tree,
 };
 
 export default sidebars;

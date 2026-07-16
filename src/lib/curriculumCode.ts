@@ -25,7 +25,8 @@ export type CurriculumCodeErrorReason =
   | 'crc' // checksum errato (typo o codice monco)
   | 'version' // versione formato sconosciuta (sito più vecchio del codice)
   | 'mode' // modo di codifica sconosciuto
-  | 'payload'; // payload incoerente con N (bit oltre N, run fuori range)
+  | 'payload' // payload incoerente con N (bit oltre N, run fuori range)
+  | 'epoch'; // epoca assente dal manifest (lanciato dal CurriculumContext)
 
 export class CurriculumCodeError extends Error {
   readonly reason: CurriculumCodeErrorReason;
