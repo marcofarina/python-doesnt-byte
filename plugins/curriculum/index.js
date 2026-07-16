@@ -274,3 +274,6 @@ module.exports = function curriculumPlugin(context) {
 
 module.exports.PLUGIN_NAME = PLUGIN_NAME;
 module.exports.VOLUMES = VOLUMES;
+// Riusato da scripts/curriculum-new-epoch.js per rigenerare l'elenco
+// in ordine curricolare.
+module.exports.flattenTocDocIds = flattenTocDocIds;
