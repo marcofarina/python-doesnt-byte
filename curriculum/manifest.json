@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "currentEpoch": 1,
+  "epochs": {
+    "1": [
+      "programmatore/intro",
+      "programmatore/variabili",
+      "artefice/intro",
+      "artefice/perche-gli-oggetti",
+      "artefice/classi-e-istanze",
+      "artefice/metodi-di-classe-e-statici",
+      "artefice/mostrare-un-oggetto",
+      "artefice/incapsulamento",
+      "archivista/intro",
+      "apprendista/intro",
+      "apprendista/programmatore/le-basi/le-variabili",
+      "apprendista/programmatore/le-basi/i-tipi-di-dato/esercizi-rapidi",
+      "apprendista/programmatore/le-basi/i-tipi-di-dato/esercizio-convertitore",
+      "apprendista/programmatore/le-basi/i-tipi-di-dato/laboratorio-convertitore"
+    ]
+  }
+}
