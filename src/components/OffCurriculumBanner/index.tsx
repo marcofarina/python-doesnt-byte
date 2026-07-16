@@ -6,7 +6,7 @@
  * multiple).
  */
 import React, { type ReactNode } from 'react';
-import useBaseUrl from '@docusaurus/useBaseUrl';
+import Link from '@docusaurus/Link';
 import { useDoc, useDocsVersion } from '@docusaurus/plugin-content-docs/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -21,10 +21,6 @@ export default function OffCurriculumBanner(): ReactNode {
   const version = useDocsVersion();
   const { included, isIncluded, clear } = useCurriculum();
   const { volumes } = useCurriculumPluginData();
-  // Anchor semplice (non <Link>): la pagina /percorso arriva con la fase 4
-  // e un <Link> a una rotta inesistente farebbe fallire il check dei broken
-  // link in build. Da convertire a <Link> quando la pagina esiste.
-  const percorsoUrl = useBaseUrl('/percorso');
 
   if (!included) return null; // nessun percorso attivo
   if (!volumes.some((v) => v.id === version.pluginId)) return null;
@@ -51,9 +47,9 @@ export default function OffCurriculumBanner(): ReactNode {
         <span className={styles.sep} aria-hidden="true">
           ·
         </span>
-        <a className={styles.action} href={percorsoUrl}>
+        <Link className={styles.action} to="/percorso">
           Gestisci percorso
-        </a>
+        </Link>
       </span>
     </aside>
   );

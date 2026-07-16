@@ -1,9 +1,8 @@
 /**
  * Swizzle Navbar/Content — copia dell'originale theme-classic con l'aggiunta
- * del nostro <PathSelector/> al centro fra gli item di sinistra e quelli
- * di destra. Il componente PathSelector si nasconde da sé quando l'utente
- * non è dentro un volume, quindi sulle altre pagine la navbar resta vuota
- * al centro.
+ * del nostro <CurriculumIndicator/> al centro fra gli item di sinistra e
+ * quelli di destra. Il componente si nasconde da sé quando nessun percorso
+ * è attivo, quindi di norma la navbar resta vuota al centro.
  */
 import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
@@ -23,7 +22,7 @@ import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
 
-import PathSelector from '@site/src/components/PathSelector';
+import CurriculumIndicator from '@site/src/components/CurriculumIndicator';
 import NavbarIconButton from '@site/src/components/NavbarIconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import MugSaucer from '@site/src/icons/mug-saucer.svg';
@@ -105,7 +104,7 @@ export default function NavbarContent(): ReactNode {
           <NavbarItems items={leftItems} />
         </>
       }
-      center={<PathSelector />}
+      center={<CurriculumIndicator />}
       right={
         <>
           <NavbarItems items={rightItems} />

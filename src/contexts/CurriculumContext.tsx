@@ -23,11 +23,8 @@ import React, {
 } from 'react';
 import { useLocation } from '@docusaurus/router';
 import { usePluginData } from '@docusaurus/useGlobalData';
-import {
-  CurriculumCodeError,
-  decodeCurriculum,
-  normalizeCurriculumCode,
-} from '@site/src/lib/curriculumCode';
+import { normalizeCurriculumCode } from '@site/src/lib/curriculumCode';
+import { keysFromCode } from '@site/src/lib/curriculumSelection';
 
 const STORAGE_KEY = 'pdb:curriculum';
 
@@ -103,22 +100,6 @@ type CurriculumContextValue = {
 
 const CurriculumContext = createContext<CurriculumContextValue | null>(null);
 
-function decodeToKeys(
-  code: string,
-  manifest: CurriculumManifest,
-): ReadonlySet<string> | null {
-  const { epoch, indices } = decodeCurriculum(code);
-  const entries = manifest.epochs[String(epoch)];
-  if (!entries) return null;
-  const keys = new Set<string>();
-  for (const i of indices) {
-    // Indici oltre la lunghezza attuale (codice più nuovo del sito) o slot
-    // tombstone: bit inerti, si ignorano.
-    if (i < entries.length) keys.add(entries[i]);
-  }
-  return keys;
-}
-
 export function CurriculumProvider({ children }: { children: ReactNode }) {
   const { manifest, alwaysVisible } = useCurriculumPluginData();
   const [code, setCodeState] = useState<string | null>(null);
@@ -148,9 +129,10 @@ export function CurriculumProvider({ children }: { children: ReactNode }) {
   const included = useMemo(() => {
     if (!code) return null;
     try {
-      return decodeToKeys(code, manifest);
+      return keysFromCode(code, manifest);
     } catch {
-      // Codice salvato corrotto (o formato futuro): degrada a libro intero.
+      // Codice salvato corrotto, epoca ignota o formato futuro: degrada a
+      // libro intero.
       return null;
     }
   }, [code, manifest]);
@@ -171,14 +153,7 @@ export function CurriculumProvider({ children }: { children: ReactNode }) {
   const setCode = useCallback(
     (raw: string) => {
       const canonical = normalizeCurriculumCode(raw);
-      const { epoch } = decodeCurriculum(canonical);
-      if (!manifest.epochs[String(epoch)]) {
-        throw new CurriculumCodeError(
-          'epoch',
-          `Il codice appartiene a un'epoca (${epoch}) che questo sito non ` +
-            'conosce ancora: ricarica la pagina per aggiornare il sito.',
-        );
-      }
+      keysFromCode(canonical, manifest); // valida, epoca compresa (throw)
       setCodeState(canonical);
       try {
         window.localStorage.setItem(STORAGE_KEY, canonical);
