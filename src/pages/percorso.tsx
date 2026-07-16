@@ -26,6 +26,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import copy from 'copy-text-to-clipboard';
+import QRCode from 'qrcode';
 
 import {
   useCurriculum,
@@ -176,6 +177,90 @@ function TreeNodes({
   );
 }
 
+// ── Overlay QR per la LIM ───────────────────────────────────────────────────
+
+/**
+ * QR a tutto schermo del link condiviso, pensato per essere proiettato:
+ * gli studenti inquadrano il QR (o copiano il codice scritto sotto).
+ * Chiusura con click fuori dalla targa, «×» o Esc.
+ */
+function QrOverlay({
+  link,
+  code,
+  onClose,
+}: {
+  link: string;
+  code: string;
+  onClose: () => void;
+}) {
+  const [svg, setSvg] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    QRCode.toString(link, {
+      type: 'svg',
+      errorCorrectionLevel: 'M',
+      margin: 2,
+    }).then((s) => {
+      if (alive) setSvg(s);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [link]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className={styles.qrOverlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label="QR code del percorso"
+      onClick={onClose}
+    >
+      <div
+        className={styles.qrPlate}
+        onClick={(e) => e.stopPropagation()}
+        role="presentation"
+      >
+        {svg && (
+          <div
+            className={styles.qrSvg}
+            // SVG generato localmente dalla libreria qrcode sul nostro link.
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{ __html: svg }}
+          />
+        )}
+        <p className={styles.qrCodeText} translate="no">
+          {code}
+        </p>
+      </div>
+      <button
+        type="button"
+        className={styles.qrClose}
+        aria-label="Chiudi"
+        title="Chiudi"
+        autoFocus
+        onClick={onClose}
+      >
+        <FontAwesomeIcon icon={['fas', 'xmark']} aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
 // ── Sezione studente ────────────────────────────────────────────────────────
 
 function StudentCard({
@@ -292,6 +377,7 @@ export default function PercorsoPage(): ReactNode {
     () => new Set(allKeys),
   );
   const [copied, setCopied] = useState<'code' | 'link' | null>(null);
+  const [showQr, setShowQr] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const copiedTimer = useRef<ReturnType<typeof setTimeout>>();
 
@@ -493,15 +579,35 @@ export default function PercorsoPage(): ReactNode {
                 >
                   {copied === 'link' ? 'Copiato' : 'Copia link'}
                 </button>
+                <button
+                  type="button"
+                  className={styles.ghostBtn}
+                  onClick={() => setShowQr(true)}
+                >
+                  <FontAwesomeIcon
+                    icon={['fas', 'qrcode']}
+                    className={styles.btnIcon}
+                    aria-hidden="true"
+                  />
+                  Mostra QR
+                </button>
               </div>
               <p className={styles.codeHint}>
                 Gli studenti lo inseriscono qui sopra, oppure aprono il link e
-                trovano il percorso già attivo.
+                trovano il percorso già attivo. Il QR è pensato per la LIM:
+                proiettalo e la classe inquadra.
               </p>
             </aside>
           </div>
         </section>
       </main>
+      {showQr && (
+        <QrOverlay
+          link={shareLink}
+          code={liveCode}
+          onClose={() => setShowQr(false)}
+        />
+      )}
     </Layout>
   );
 }

@@ -43,6 +43,7 @@
     "clsx": "^2.0.0",
     "copy-text-to-clipboard": "^3.2.2",
     "prism-react-renderer": "^2.3.0",
+    "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -53,6 +54,7 @@
     "@docusaurus/module-type-aliases": "^3.10.1",
     "@docusaurus/tsconfig": "^3.10.1",
     "@docusaurus/types": "^3.10.1",
+    "@types/qrcode": "^1.5.6",
     "@types/sql.js": "^1.4.11",
     "@typescript-eslint/eslint-plugin": "^8.48.0",
     "@typescript-eslint/parser": "^8.48.0",
@@ -68,7 +70,8 @@
   },
   "overrides": {
     "webpack-dev-server": "^5.2.1",
-    "shell-quote": "^1.8.4"
+    "shell-quote": "^1.8.4",
+    "websocket-driver": "^0.7.5"
   },
   "browserslist": {
     "production": [
