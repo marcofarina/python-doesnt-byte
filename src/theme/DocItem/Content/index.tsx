@@ -10,7 +10,7 @@ import type {
   PropSidebarItem,
 } from '@docusaurus/plugin-content-docs';
 
-import OffPathBanner from '@site/src/components/OffPathBanner';
+import OffCurriculumBanner from '@site/src/components/OffCurriculumBanner';
 import { LessonMeta } from '@site/src/components/Exercise';
 
 function useSyntheticTitle(): string | null {
@@ -81,7 +81,7 @@ export default function DocItemContent({ children }: Props): ReactNode {
         kicker && 'doc-has-chapter-kicker',
       )}
     >
-      <OffPathBanner />
+      <OffCurriculumBanner />
       {kicker && <p className="doc-chapter-kicker">{kicker}</p>}
       {syntheticTitle && (
         <header>

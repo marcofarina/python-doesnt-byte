@@ -1,17 +1,15 @@
 /**
- * Swizzle DocRoot — sostituisce la sidebar default scelta da Docusaurus
- * con quella corrispondente al "percorso" attualmente scelto dall'utente
- * per il volume corrente, leggendo da PathContext.
+ * Swizzle DocRoot — con un percorso attivo (CurriculumContext) filtra la
+ * sidebar del volume corrente: le lezioni escluse spariscono, le categorie
+ * svuotate pure. Il filtro è presentazionale e SSR-safe per costruzione:
+ * al primo render `included` è null (libro intero), il percorso arriva
+ * dall'effect di idratazione.
  *
- * Se l'utente non ha scelto nulla, oppure la sidebar selezionata non esiste
- * per questo volume, ricade sul default (`sidebarName` ricavato dal doc).
- *
- * Quando la lezione corrente NON è dentro la sidebar attiva (es. utente sul
- * percorso "Liceo" ma è arrivato a una lezione che vive solo in "IT"),
- * mostriamo comunque la sidebar attiva: la lezione si rende a tutto schermo
- * senza essere evidenziata in sidebar (banner off-path: prossimo step).
+ * Quando la lezione corrente NON è nel percorso (link diretto), la sidebar
+ * filtrata resta comunque: la lezione si rende senza evidenza in sidebar e
+ * OffCurriculumBanner spiega il perché.
  */
-import React, { type ReactNode } from 'react';
+import React, { useMemo, type ReactNode } from 'react';
 import clsx from 'clsx';
 import {
   HtmlClassNameProvider,
@@ -27,30 +25,27 @@ import NotFoundContent from '@theme/NotFound/Content';
 import type { Props } from '@theme/DocRoot';
 import type { PropSidebar } from '@docusaurus/plugin-content-docs';
 
-import { usePathContext, type VolumeId } from '@site/src/contexts/PathContext';
+import {
+  useCurriculum,
+  useCurriculumPluginData,
+} from '@site/src/contexts/CurriculumContext';
+import { filterSidebarItems } from '@site/src/lib/curriculumFilter';
 
-const VOLUMES: ReadonlySet<string> = new Set([
-  'programmatore',
-  'artefice',
-  'archivista',
-  'apprendista',
-]);
-
-function useResolvedSidebar(defaultName: string | undefined) {
+function useFilteredSidebar(
+  defaultItems: PropSidebar | undefined,
+): PropSidebar | null {
   const version = useDocsVersion();
-  const { getPath } = usePathContext();
+  const { included, isIncluded } = useCurriculum();
+  const { volumes } = useCurriculumPluginData();
   const pluginId = version.pluginId;
 
-  if (!VOLUMES.has(pluginId)) {
-    // Pagine docs non-volume: comportamento standard.
-    return null;
-  }
-  const chosen = getPath(pluginId as VolumeId);
-  if (!chosen) return null;
-  const sidebars = version.docsSidebars;
-  if (!sidebars || !(chosen in sidebars)) return null;
-  if (chosen === defaultName) return null;
-  return { name: chosen, items: sidebars[chosen]! };
+  return useMemo(() => {
+    // Nessun percorso attivo, pagina docs non-volume o sidebar assente:
+    // comportamento standard.
+    if (!included || !defaultItems) return null;
+    if (!volumes.some((v) => v.id === pluginId)) return null;
+    return filterSidebarItems(defaultItems, pluginId, isIncluded);
+  }, [included, isIncluded, volumes, pluginId, defaultItems]);
 }
 
 export default function DocRoot(props: Props): ReactNode {
@@ -79,11 +74,9 @@ function DocRootInner({
   defaultItems: PropSidebar | undefined;
   docElement: ReactNode;
 }) {
-  const resolved = useResolvedSidebar(defaultName);
-  const name = resolved?.name ?? defaultName;
-  const items = resolved?.items ?? defaultItems;
+  const filtered = useFilteredSidebar(defaultItems);
   return (
-    <DocsSidebarProvider name={name} items={items}>
+    <DocsSidebarProvider name={defaultName} items={filtered ?? defaultItems}>
       <DocRootLayout>{docElement}</DocRootLayout>
     </DocsSidebarProvider>
   );
