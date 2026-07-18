@@ -1,6 +1,6 @@
 {
   "name": "python-doesnt-byte",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -17,6 +17,8 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,mdx}\"",
+    "curriculum:new-epoch": "node scripts/curriculum-new-epoch.js",
+    "curriculum:check": "node scripts/check-manifest-append-only.js",
     "version": "node scripts/sync-pm-version.mjs"
   },
   "dependencies": {
@@ -43,6 +45,7 @@
     "clsx": "^2.0.0",
     "copy-text-to-clipboard": "^3.2.2",
     "prism-react-renderer": "^2.3.0",
+    "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -53,6 +56,7 @@
     "@docusaurus/module-type-aliases": "^3.10.1",
     "@docusaurus/tsconfig": "^3.10.1",
     "@docusaurus/types": "^3.10.1",
+    "@types/qrcode": "^1.5.6",
     "@types/sql.js": "^1.4.11",
     "@typescript-eslint/eslint-plugin": "^8.48.0",
     "@typescript-eslint/parser": "^8.48.0",
@@ -68,7 +72,8 @@
   },
   "overrides": {
     "webpack-dev-server": "^5.2.1",
-    "shell-quote": "^1.8.4"
+    "shell-quote": "^1.8.4",
+    "websocket-driver": "^0.7.5"
   },
   "browserslist": {
     "production": [

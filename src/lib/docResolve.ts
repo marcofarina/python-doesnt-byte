@@ -4,7 +4,7 @@
  *
  * Il permalink NON va ricostruito a mano (regole slug/index/trailingSlash sono
  * fragili): lo risolviamo dai dati che Docusaurus ha già calcolato, esposti via
- * `useAllDocsData()` (vedi src/components/PathSelector per il pattern `current`).
+ * `useAllDocsData()` (versione `current` di ogni istanza plugin-content-docs).
  */
 import type { GlobalPluginData } from '@docusaurus/plugin-content-docs/client';
 
