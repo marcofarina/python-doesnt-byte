@@ -1,0 +1,201 @@
+/* PyQuest — layout del componente giocabile: scena a sinistra, editor a destra
+   (impilati su schermi stretti). L'editor riusa toolbar e stili di PyRunner;
+   qui vivono solo il layout e i pannelli di esito (flavor text, D13).
+   Niente bordo-sinistra colorato: gli esiti si distinguono per sfondo. */
+
+.root {
+  margin: 1.5rem 0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(280px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stage {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editorCol {
+  min-width: 0;
+}
+
+/* --- Pannelli di esito ---------------------------------------------------- */
+
+.panel {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm, 10px);
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.08));
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.panelWin {
+  background: color-mix(in srgb, #2f9e44 12%, transparent);
+  border-color: color-mix(in srgb, #2f9e44 35%, transparent);
+}
+
+.panelFail {
+  background: color-mix(in srgb, #d6336c 10%, transparent);
+  border-color: color-mix(in srgb, #d6336c 30%, transparent);
+}
+
+.panelError {
+  background: color-mix(in srgb, #d6336c 6%, transparent);
+  border-color: color-mix(in srgb, #d6336c 25%, transparent);
+}
+
+.panelNeutral {
+  background: var(--at-bg-subtle, rgba(0, 0, 0, 0.025));
+}
+
+.panelTitle {
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.traceback {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius-xs, 6px);
+  background: var(--at-bg-subtle, rgba(0, 0, 0, 0.04));
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.78rem;
+  white-space: pre-wrap;
+  max-height: 180px;
+  overflow: auto;
+}
+
+.panelHint {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  opacity: 0.75;
+}
+
+.winHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.winSteps {
+  font-size: 0.86rem;
+  opacity: 0.85;
+}
+
+.record {
+  color: #2f9e44;
+  font-weight: 700;
+}
+
+.winFlavor {
+  margin: 0;
+}
+
+/* --- Stelle (spec D11) ---------------------------------------------------- */
+
+.stars {
+  display: inline-flex;
+  gap: 3px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.star {
+  color: var(--at-border, rgba(0, 0, 0, 0.18));
+}
+
+.starOn {
+  color: #f0a92b;
+}
+
+html[data-theme='dark'] .star {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+html[data-theme='dark'] .starOn {
+  color: #ffca4b;
+}
+
+/* --- Striscia «completato» (record persistito) --------------------------- */
+
+.completed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 10px);
+  background: color-mix(in srgb, #2f9e44 10%, transparent);
+  border: 1px solid color-mix(in srgb, #2f9e44 28%, transparent);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+/* --- Suggerimenti progressivi (step 15) ---------------------------------- */
+
+.hints {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.hintList {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.hintBtn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.12));
+  background: var(--at-bg-subtle, rgba(0, 0, 0, 0.03));
+  color: inherit;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast, 140ms) var(--ease-smooth, ease),
+    border-color var(--dur-fast, 140ms) var(--ease-smooth, ease),
+    transform var(--dur-fast, 140ms) var(--ease-smooth, ease);
+}
+
+.hintBtn:hover {
+  background: color-mix(in srgb, #f0a92b 14%, transparent);
+  border-color: color-mix(in srgb, #f0a92b 45%, transparent);
+}
+
+.hintBtn:active {
+  transform: scale(0.98);
+}
+
+/* --- Errori di configurazione (props/plugin) ------------------------------ */
+
+.error {
+  margin: 1.5rem 0;
+  padding: 12px;
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-sm, 10px);
+}

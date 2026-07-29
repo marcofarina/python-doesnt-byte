@@ -9,9 +9,6 @@ has_turtle_import = False
 log_line_number_shift = 0
 
 TURTLE_IMPORTS = re.compile(r'(^from turtle import)|(^import turtle)|(^from turtle3d import)|(^import turtle3d)', re.M)
-GRID_IMPORTS = re.compile(r'(^from grid import)|(^import grid)', re.M)
-GRAPHICS_OUTPUT = re.compile(r'^(SETUP_)?GRAPHICS_OUTPUT\s*=\s*(True|1)', re.M)
-CANVAS_OUTPUT = re.compile(r'^(SETUP_)?CANVAS_OUTPUT\s*=\s*(True|1)', re.M)
 TURTLE_TEMPLATE = '''from browser import document
 import turtle
 turtle.restart()

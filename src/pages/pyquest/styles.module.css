@@ -1,0 +1,242 @@
+/* Galleria PyQuest (/pyquest): card mondo con avatar del personaggio, progresso
+   e lista livelli con lucchetti/stelle. Token globali (--radius-*, --dur-*,
+   --ease-*); niente bordo-sinistra colorato. */
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem 1rem 4rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 0.75rem;
+}
+
+.lead {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 62ch;
+  opacity: 0.9;
+}
+
+.empty {
+  padding: 1.25rem;
+  border-radius: var(--radius-sm, 10px);
+  background: var(--at-bg-subtle, rgba(0, 0, 0, 0.03));
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --- Card mondo ----------------------------------------------------------- */
+
+.card {
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.08));
+  border-radius: var(--radius-lg, 18px);
+  padding: 1.5rem;
+  background: var(
+    --ifm-card-background-color,
+    var(--ifm-background-surface-color)
+  );
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.06));
+}
+
+.cardHead {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+
+.avatar {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  border-radius: var(--radius-md, 14px);
+  background: var(--at-bg-subtle, rgba(0, 0, 0, 0.04));
+  /* Vars dello sprite (specular a GameScene.module.css): senza queste lo sprite
+     userebbe i fallback e non seguirebbe il tema. */
+  --pq-hero: var(--at-accent, #0270ad);
+  --pq-hero-track: #3d4759;
+  --pq-hero-panel: rgba(255, 255, 255, 0.35);
+  --pq-hero-led-ring: #ffffff;
+  --pq-hero-led: #22b8cf;
+  --pq-monty: #2f9e44;
+  --pq-monty-hat: #8d6e3f;
+  --pq-monty-eye: #1a1a1a;
+}
+
+:global(html[data-theme='dark']) .avatar {
+  --pq-hero: var(--at-accent, #38bdf8);
+  --pq-hero-track: #566178;
+  --pq-hero-panel: rgba(0, 0, 0, 0.25);
+  --pq-hero-led-ring: #10131a;
+  --pq-hero-led: #3bc9db;
+  --pq-monty: #51cf66;
+  --pq-monty-hat: #a98953;
+  --pq-monty-eye: #10131a;
+}
+
+.avatar svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cardHeadText {
+  min-width: 0;
+}
+
+.cardTitle {
+  margin: 0 0 0.4rem;
+  font-size: 1.5rem;
+}
+
+.cardDesc {
+  margin: 0 0 0.75rem;
+  line-height: 1.55;
+  opacity: 0.88;
+}
+
+.progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.progressChar {
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+/* --- Lista livelli -------------------------------------------------------- */
+
+.levels {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.level {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm, 10px);
+  border: 1px solid var(--at-border, rgba(0, 0, 0, 0.08));
+  background: var(--at-bg-subtle, rgba(0, 0, 0, 0.02));
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background var(--dur-fast, 140ms) var(--ease-smooth, ease),
+    border-color var(--dur-fast, 140ms) var(--ease-smooth, ease),
+    transform var(--dur-fast, 140ms) var(--ease-smooth, ease);
+}
+
+a.level:hover {
+  text-decoration: none;
+  background: color-mix(in srgb, var(--ifm-color-primary) 8%, transparent);
+  border-color: color-mix(in srgb, var(--ifm-color-primary) 35%, transparent);
+  transform: translateY(-1px);
+}
+
+a.level:active {
+  transform: scale(0.99);
+}
+
+.levelDone {
+  background: color-mix(in srgb, #2f9e44 8%, transparent);
+  border-color: color-mix(in srgb, #2f9e44 28%, transparent);
+}
+
+.levelLocked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.levelNum {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-circle, 50%);
+  background: color-mix(in srgb, var(--ifm-color-primary) 14%, transparent);
+  color: var(--ifm-color-primary);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.levelLocked .levelNum {
+  background: var(--at-border, rgba(0, 0, 0, 0.1));
+  color: inherit;
+}
+
+.levelBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.levelTitle {
+  font-weight: 600;
+}
+
+.levelSub {
+  font-size: 0.82rem;
+  opacity: 0.75;
+}
+
+.levelIcon {
+  flex: none;
+  opacity: 0.6;
+}
+
+/* --- Stelle (spec D11) ---------------------------------------------------- */
+
+.stars {
+  display: inline-flex;
+  gap: 3px;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.star {
+  color: var(--at-border, rgba(0, 0, 0, 0.18));
+}
+
+.starOn {
+  color: #f0a92b;
+}
+
+:global(html[data-theme='dark']) .star {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+:global(html[data-theme='dark']) .starOn {
+  color: #ffca4b;
+}
+
+@media (max-width: 600px) {
+  .cardHead {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

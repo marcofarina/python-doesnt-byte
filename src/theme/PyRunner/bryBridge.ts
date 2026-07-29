@@ -25,10 +25,18 @@ export interface RunOptions {
   onLog: (kind: LogKind, text: string) => void;
   onDone: (durationMs: number) => void;
   onError?: (err: Error) => void;
+  /**
+   * Eventi `bry_notify` con un `type` fuori dal protocollo standard
+   * (start/done/stdout/stderr). PyQuest lo usa per gli eventi `game_event`
+   * emessi da `pyquest.py`; il payload applicativo viaggia in `detail.payload`
+   * come stringa JSON (vedi D4 nella spec).
+   */
+  onCustom?: (detail: { type: string } & Record<string, unknown>) => void;
 }
 
 interface BryNotifyDetail {
-  type: 'start' | 'done' | 'stdout' | 'stderr';
+  // `string` (non un'unione chiusa) per accogliere i type applicativi (PyQuest).
+  type: string;
   output?: string;
   time?: number;
 }
@@ -90,6 +98,7 @@ export function runPython(code: string, opts: RunOptions): () => void {
     onLog,
     onDone,
     onError,
+    onCustom,
   } = opts;
 
   // Difensivo: `codeId` viene interpolato in un sorgente Python che poi
@@ -116,6 +125,9 @@ export function runPython(code: string, opts: RunOptions): () => void {
       case 'stdout':
       case 'stderr':
         if (detail.output) onLog(detail.type, detail.output);
+        break;
+      default:
+        onCustom?.(detail as never);
         break;
     }
   };

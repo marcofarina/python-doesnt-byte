@@ -1,0 +1,84 @@
+---
+unlisted: true
+title: PyQuest — pagina di test
+description: Harness di verifica del motore + renderer PyQuest (mini-giochi a griglia)
+---
+
+# PyQuest — sandbox di test
+
+Pagina temporanea per validare **motore + renderer + player** di PyQuest. Non è
+linkata dalla sidebar (`unlisted: true`): la raggiungi solo via URL
+`/docs/pyquest-test`. Il componente è giocabile end-to-end: editor + Esegui +
+board animata passo per passo. I livelli qui sono quelli del mondo pilota
+`mondo-01`; la galleria vera vive su `/pyquest`.
+
+## 1. Livello dal plugin dati (world/level)
+
+Livello `primo-passo` del mondo `mondo-01`, risolto dai global data del plugin
+`pyquest`. Il codice iniziale manda Byte dritto contro il muro di destra: aggiungi
+`turn_right()` e due `move()` per raggiungere la bandiera.
+
+<PyQuest world="mondo-01" level="primo-passo" />
+
+## 2. Navigazione con i sensori
+
+Livello `svolta-al-buio`: un corridoio a L. Fai arrivare Byte sulla bandiera con
+un ciclo `while not on_goal()` che gira quando `is_blocked()`.
+
+<PyQuest world="mondo-01" level="svolta-al-buio" />
+
+## 2-bis. Combat, raccolta, hint e stelle
+
+Livello `il-tesoro-e-la-guardia`: un bug **melee** ti viene incontro. Raccogli
+prima la gemma con `collect()`, poi colpiscilo con `attack()` (ha 2 PV). La
+vittoria richiede *sia* raccogliere la gemma *sia* sconfiggere il bug (`win`
+multipla). Alla vittoria compaiono le stelle (da `par`); i suggerimenti si
+rivelano a scaglioni sotto l'editor; «Spiegamelo facile» copia il prompt negli
+appunti.
+
+<PyQuest world="mondo-01" level="il-tesoro-e-la-guardia" />
+
+## 3. Indipendenza tra istanze
+
+Due istanze dello stesso livello sulla stessa pagina: devono avere trace e player
+indipendenti (esegui l'una, l'altra resta ferma).
+
+<PyQuest world="mondo-01" level="primo-passo" />
+
+## 4. Id ignoto
+
+Un `level` inesistente non deve ripiegare su un livello di riserva: atteso un
+pannello d'errore esplicito.
+
+<PyQuest world="mondo-01" level="non-esiste" />
+
+## Note per la verifica (checklist finale)
+
+- **a)** Livello 1 (`primo-passo`): scrivi la soluzione `move, move, move,
+  turn_right, move, move` → autoplay da passo 0 e, a fine animazione, il pannello
+  di vittoria col flavor text di Byte e 3 stelle (6 azioni, par 6).
+- **b)** Un errore nel codice (es. `boom` a riga 2) → trace parziale animata,
+  poi pannello «C'è un errore nel codice» col traceback (riga giusta).
+- **c)** `while True: move()` → pannello step limit nel tono di Byte; il
+  traceback resta in console.
+- **d)** Slider di seek, play/pausa, passo avanti/indietro, reset; le 4
+  velocità (0,5× 1× 2× 4×) scalano anche la durata delle transizioni.
+- **e)** `print()` interleaved compaiono in console solo quando l'animazione
+  raggiunge il passo in cui sono stati emessi.
+- **f)** Livello 1: scrivi cinque `move()` di fila → Byte arriva al muro e ci
+  sbatte due volte senza vincere → flavor «bump ripetuto».
+- **g)** Dark mode: board, sprite, stelle e pannelli esito leggibili in entrambi
+  i temi; la griglia scala col contenitore (`--pq-cell`).
+- **h)** Livello `il-tesoro-e-la-guardia`: il bug melee si avvicina a ogni
+  azione; con la soluzione (`move, move, collect, move, attack, attack`) la
+  vittoria arriva a `par` azioni → 3 stelle. La trace è **identica** su run
+  ripetuti. Ricaricando la pagina, il livello risulta «Completato · record N».
+- **i)** Morte dell'eroe (es. resta fermo accanto a un nemico che lo colpisce
+  fino a 0 PV): UI di sconfitta (non pannello errore); traceback breve in
+  console.
+- **j)** Suggerimenti: si rivelano uno alla volta (1/3 → 2/3 → 3/3) e non
+  persistono al reload. «Spiegamelo facile» copia un prompt con codice + titolo
+  del livello.
+- **k)** Galleria `/pyquest`: lucchetti che si aprono al completamento, stelle
+  per livello, e da `/pyquest/gioca` la navigazione «Livello successivo» dopo la
+  vittoria.

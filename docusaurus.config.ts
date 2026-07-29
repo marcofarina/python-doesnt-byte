@@ -127,6 +127,7 @@ export default async function createConfig(): Promise<Config> {
 
     plugins: [
       './plugins/pyrunner/index.js',
+      './plugins/pyquest/index.js',
       './plugins/exercise-graph/index.js',
       './plugins/copy-page-md/index.js',
       './plugins/curriculum/index.js',
@@ -255,6 +256,11 @@ export default async function createConfig(): Promise<Config> {
                 label: 'Biblioteca dell’Apprendista',
               },
             ],
+          },
+          {
+            to: '/pyquest',
+            label: 'PyQuest',
+            position: 'left',
           },
           /*        {
                     to: '/blog',

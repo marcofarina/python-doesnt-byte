@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "id": "mondo-01",
+  "title": "I primi passi di Byte",
+  "description": "Cinque missioni per insegnare a Byte il droide a muoversi, ripetere, decidere e — quando serve — menare le mani. Una alla volta: ogni livello sblocca il successivo.",
+  "character": "byte",
+  "volume": "programmatore",
+  "levels": [
+    {
+      "id": "primo-passo",
+      "title": "Il primo passo",
+      "grid": {
+        "legend": { "#": "wall", ".": "floor" },
+        "rows": ["######", "#....#", "####.#", "####.#", "######"]
+      },
+      "hero": { "x": 1, "y": 1, "facing": "east", "hp": 3 },
+      "goal": { "x": 4, "y": 3 },
+      "win": [{ "type": "reach" }],
+      "starterCode": "# Byte deve raggiungere la bandiera.\n# Guarda già verso est: portalo fino al muro di destra.\nmove()\nmove()\nmove()\nmove()\n",
+      "solution": "move()\nmove()\nmove()\nturn_right()\nmove()\nmove()\n",
+      "hints": [
+        "Byte esegue le istruzioni una dopo l’altra, esattamente come le scrivi: nessuna magia, nessuna scorciatoia.",
+        "Tre move() lo portano contro il muro di destra. Da lì deve piegare verso il basso.",
+        "Con turn_right() Byte gira verso sud senza spostarsi; poi altri due move() lo mettono sulla bandiera."
+      ],
+      "par": 6
+    },
+    {
+      "id": "il-lungo-corridoio",
+      "title": "Il lungo corridoio",
+      "grid": {
+        "legend": { "#": "wall", ".": "floor" },
+        "rows": ["##########", "#........#", "##########"]
+      },
+      "hero": { "x": 1, "y": 1, "facing": "east", "hp": 3 },
+      "goal": { "x": 8, "y": 1 },
+      "win": [{ "type": "reach" }],
+      "starterCode": "# Il corridoio è lungo, e scrivere move() a mano è da robot.\n# Completa il ciclo: quante ripetizioni servono?\nfor _ in range(3):\n    move()\n",
+      "solution": "for _ in range(7):\n    move()\n",
+      "hints": [
+        "Un ciclo for ripete lo stesso blocco quante volte gli dici: range(n) significa «fallo n volte».",
+        "Conta le celle tra Byte e la bandiera: da (1, 1) a (8, 1) ci sono sette passi.",
+        "range(3) si ferma a metà strada. Alza il numero finché Byte non tocca la bandiera."
+      ],
+      "par": 7
+    },
+    {
+      "id": "svolta-al-buio",
+      "title": "Svolta al buio",
+      "grid": {
+        "legend": { "#": "wall", ".": "floor" },
+        "rows": ["#######", "#.....#", "#####.#", "#####.#", "#######"]
+      },
+      "hero": { "x": 1, "y": 1, "facing": "east", "hp": 3 },
+      "goal": { "x": 5, "y": 3 },
+      "win": [{ "type": "reach" }],
+      "starterCode": "# Byte non sa dove finisce il muro: deve sentirlo con i sensori.\n# on_goal() è True quando è sulla bandiera; is_blocked() è True\n# se ha un muro proprio davanti.\nwhile not on_goal():\n    move()\n",
+      "solution": "while not on_goal():\n    if is_blocked():\n        turn_right()\n    move()\n",
+      "hints": [
+        "Il ciclo while ripete finché la condizione resta vera: qui, «finché non sei sulla bandiera».",
+        "Se Byte sbatte all’infinito è perché continua ad andare dritto contro il muro. Prima di ogni passo, chiedigli se è bloccato.",
+        "Dentro il while: se is_blocked() allora turn_right(), poi in ogni caso move(). Così gira solo quando serve."
+      ],
+      "par": 7
+    },
+    {
+      "id": "duello-col-bug",
+      "title": "Duello con un bug",
+      "grid": {
+        "legend": { "#": "wall", ".": "floor" },
+        "rows": ["########", "#......#", "########"]
+      },
+      "hero": { "x": 1, "y": 1, "facing": "east", "hp": 4 },
+      "enemies": [
+        { "id": "b1", "kind": "bug", "x": 5, "y": 1, "hp": 2, "behavior": "static" }
+      ],
+      "win": [{ "type": "defeat" }],
+      "starterCode": "# Un bug ostinato blocca il corridoio: non si muove, ma se resti\n# accanto a lui morde. Avvicinati e colpiscilo con attack().\n# Ha 2 punti vita: un colpo solo non basta.\nmove()\nmove()\nmove()\nattack()\n",
+      "solution": "move()\nmove()\nmove()\nattack()\nattack()\n",
+      "hints": [
+        "attack() colpisce solo la cella subito davanti a Byte: devi essere a un passo dal bug, non a due.",
+        "Il bug ha 2 punti vita, quindi servono due attack() di fila. Ogni turno che passi accanto a lui perdi un punto vita: non gironzolare.",
+        "Tre move() ti portano a (4, 1), proprio davanti al bug. Poi due attack() lo mettono ko."
+      ],
+      "par": 5
+    },
+    {
+      "id": "il-tesoro-e-la-guardia",
+      "title": "Il tesoro e la sua guardia",
+      "grid": {
+        "legend": { "#": "wall", ".": "floor" },
+        "rows": ["##########", "#........#", "##########"]
+      },
+      "hero": { "x": 1, "y": 1, "facing": "east", "hp": 5 },
+      "enemies": [
+        { "id": "b1", "kind": "bug", "x": 8, "y": 1, "hp": 2, "behavior": "melee" }
+      ],
+      "resources": [
+        { "id": "g1", "kind": "gem", "x": 3, "y": 1 }
+      ],
+      "win": [
+        { "type": "collect", "kind": "gem", "qty": 1 },
+        { "type": "defeat" }
+      ],
+      "starterCode": "# Due obiettivi in uno: raccogli la gemma E sconfiggi il bug.\n# Questo bug è di tipo melee: ti viene incontro da solo, quindi\n# non serve rincorrerlo. Raccogli prima, combatti dopo.\nmove()\nmove()\ncollect()\n",
+      "solution": "move()\nmove()\ncollect()\nmove()\nattack()\nattack()\n",
+      "hints": [
+        "collect() raccoglie la risorsa solo se Byte è fermo sopra di essa: portalo sulla gemma, poi raccogli.",
+        "Il bug melee si avvicina di una cella a ogni tua azione. Mentre raccogli la gemma, lui è già in viaggio verso di te.",
+        "Presa la gemma in (3, 1), continua verso destra: il bug ti raggiunge a metà corridoio. Due attack() lo fermano e la missione è completa."
+      ],
+      "par": 6
+    }
+  ]
+}
