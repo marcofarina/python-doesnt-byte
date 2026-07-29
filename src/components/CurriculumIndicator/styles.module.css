@@ -1,0 +1,67 @@
+.wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  background: var(--at-accent-chip);
+  border: 1px solid var(--at-accent-chip-border);
+  border-radius: var(--radius-pill);
+  margin: 0 8px;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 4px 6px 4px 10px;
+  border-radius: var(--radius-pill);
+  color: var(--at-accent-soft);
+  transition: color var(--dur-fast) var(--ease-smooth);
+}
+
+.label:hover {
+  color: var(--at-fg-strong);
+  text-decoration: none;
+}
+
+.label:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 1px;
+}
+
+.icon {
+  font-size: 11px;
+}
+
+.close {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-circle);
+  color: var(--at-muted);
+  cursor: pointer;
+  font-size: 11px;
+  transition:
+    color var(--dur-fast) var(--ease-smooth),
+    background var(--dur-fast) var(--ease-smooth);
+}
+
+.close:hover {
+  color: var(--at-fg-strong);
+  background: var(--at-bg-chip);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 1px;
+}

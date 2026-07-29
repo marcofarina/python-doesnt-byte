@@ -1,13 +1,13 @@
 .banner {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
   padding: 10px 14px;
   margin: 0 0 24px;
   border-radius: var(--radius-md);
   background: rgba(245, 158, 11, 0.06);
   border: 1px solid rgba(245, 158, 11, 0.28);
-  border-left-width: 3px;
   color: var(--at-fg-body);
   font-family: var(--font-body);
   font-size: 1rem;
@@ -37,33 +37,13 @@ html[data-theme='dark'] .icon {
   color: var(--at-fg);
 }
 
-.tag {
-  font-family: var(--font-mono-ui);
-  font-size: 0.82em;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 1px 7px;
-  border-radius: var(--radius-xs);
-  background: rgba(245, 158, 11, 0.14);
-  color: #b45309;
+.actions {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
-html[data-theme='dark'] .tag {
-  background: rgba(251, 191, 36, 0.14);
-  color: #fbbf24;
-}
-
-.sep {
-  display: inline-block;
-  margin: 0 8px;
-  color: var(--at-faint);
-}
-
-.minisep {
-  color: var(--at-faint);
-}
-
-.switch {
+.action {
   appearance: none;
   background: none;
   border: none;
@@ -79,6 +59,13 @@ html[data-theme='dark'] .tag {
   text-underline-offset: 2px;
 }
 
-.switch:hover {
+.action:hover {
   color: var(--at-accent-soft);
+  text-decoration: underline;
+}
+
+.sep {
+  display: inline-block;
+  margin: 0 8px;
+  color: var(--at-faint);
 }
