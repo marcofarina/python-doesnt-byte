@@ -101,6 +101,11 @@ export default async function createConfig(): Promise<Config> {
             onInlineAuthors: 'warn',
             onUntruncatedBlogPosts: 'warn',
           },
+          pages: {
+            beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
+            remarkPlugins: [protectCode, smartypants, restoreCode],
+            admonitions,
+          },
           theme: {
             customCss: './src/css/custom.css',
           },

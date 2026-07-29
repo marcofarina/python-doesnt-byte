@@ -114,6 +114,16 @@ export default function Home(): JSX.Element {
         </section>
 
         <BentoFeatures />
+
+        <p className={styles.toolsLink}>
+          Editor, database e algoritmi animati: qui ne hai visto un assaggio.
+          Lo showcase li mostra tutti, uno per uno, con la spiegazione di cosa
+          fanno.{' '}
+          <Link to="/showcase" className={styles.whyPythonLink}>
+            Showcase →
+          </Link>
+        </p>
+
         <ChapterIndex />
       </main>
     </Layout>
