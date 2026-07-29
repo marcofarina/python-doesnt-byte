@@ -77,6 +77,12 @@
   overflow: auto;
 }
 
+.panelHint {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  opacity: 0.75;
+}
+
 .winHead {
   display: flex;
   align-items: center;

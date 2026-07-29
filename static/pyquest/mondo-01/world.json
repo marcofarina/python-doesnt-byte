@@ -16,7 +16,7 @@
       "hero": { "x": 1, "y": 1, "facing": "east", "hp": 3 },
       "goal": { "x": 4, "y": 3 },
       "win": [{ "type": "reach" }],
-      "starterCode": "# Byte deve raggiungere la bandiera.\n# Guarda gia verso est: portalo fino al muro di destra.\nmove()\nmove()\nmove()\nmove()\n",
+      "starterCode": "# Byte deve raggiungere la bandiera.\n# Guarda già verso est: portalo fino al muro di destra.\nmove()\nmove()\nmove()\nmove()\n",
       "solution": "move()\nmove()\nmove()\nturn_right()\nmove()\nmove()\n",
       "hints": [
         "Byte esegue le istruzioni una dopo l’altra, esattamente come le scrivi: nessuna magia, nessuna scorciatoia.",
@@ -35,7 +35,7 @@
       "hero": { "x": 1, "y": 1, "facing": "east", "hp": 3 },
       "goal": { "x": 8, "y": 1 },
       "win": [{ "type": "reach" }],
-      "starterCode": "# Il corridoio e lungo e scrivere move() a mano e da robot.\n# Completa il ciclo: quante ripetizioni servono davvero?\nfor _ in range(3):\n    move()\n",
+      "starterCode": "# Il corridoio è lungo, e scrivere move() a mano è da robot.\n# Completa il ciclo: quante ripetizioni servono?\nfor _ in range(3):\n    move()\n",
       "solution": "for _ in range(7):\n    move()\n",
       "hints": [
         "Un ciclo for ripete lo stesso blocco quante volte gli dici: range(n) significa «fallo n volte».",
@@ -54,7 +54,7 @@
       "hero": { "x": 1, "y": 1, "facing": "east", "hp": 3 },
       "goal": { "x": 5, "y": 3 },
       "win": [{ "type": "reach" }],
-      "starterCode": "# Byte non sa dove finisce il muro: deve sentirlo con i sensori.\n# on_goal() e True quando e sulla bandiera; is_blocked() e True\n# se ha un muro proprio davanti.\nwhile not on_goal():\n    move()\n",
+      "starterCode": "# Byte non sa dove finisce il muro: deve sentirlo con i sensori.\n# on_goal() è True quando è sulla bandiera; is_blocked() è True\n# se ha un muro proprio davanti.\nwhile not on_goal():\n    move()\n",
       "solution": "while not on_goal():\n    if is_blocked():\n        turn_right()\n    move()\n",
       "hints": [
         "Il ciclo while ripete finché la condizione resta vera: qui, «finché non sei sulla bandiera».",
@@ -102,7 +102,7 @@
         { "type": "collect", "kind": "gem", "qty": 1 },
         { "type": "defeat" }
       ],
-      "starterCode": "# Due obiettivi in uno: raccogli la gemma E sconfiggi il bug.\n# Questo bug e di tipo melee: ti viene incontro da solo, quindi\n# non serve rincorrerlo. Raccogli prima, combatti dopo.\nmove()\nmove()\ncollect()\n",
+      "starterCode": "# Due obiettivi in uno: raccogli la gemma E sconfiggi il bug.\n# Questo bug è di tipo melee: ti viene incontro da solo, quindi\n# non serve rincorrerlo. Raccogli prima, combatti dopo.\nmove()\nmove()\ncollect()\n",
       "solution": "move()\nmove()\ncollect()\nmove()\nattack()\nattack()\n",
       "hints": [
         "collect() raccoglie la risorsa solo se Byte è fermo sopra di essa: portalo sulla gemma, poi raccogli.",

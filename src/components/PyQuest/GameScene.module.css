@@ -322,9 +322,13 @@
 
 :global(html[data-theme='dark']) .scene {
   --pq-board-bg: #14161c;
-  --pq-floor: #1e2230;
-  --pq-wall: #2b3245;
-  --pq-grid-line: rgba(255, 255, 255, 0.05);
+  /* Muro e pavimento devono restare distinguibili a colpo d'occhio: il primo
+     tentativo (#1e2230 su #2b3245) stava a 1,3:1 e la mappa spariva. Qui il
+     rapporto è ~3:1, con il muro chiaro sul pavimento scuro — l'inverso del
+     tema light, dove il muro è il colore pieno. */
+  --pq-floor: #151926;
+  --pq-wall: #59637f;
+  --pq-grid-line: rgba(255, 255, 255, 0.07);
   --pq-hero: var(--at-accent, #38bdf8);
   --pq-hero-track: #566178;
   --pq-hero-panel: rgba(0, 0, 0, 0.25);

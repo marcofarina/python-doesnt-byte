@@ -374,6 +374,15 @@ function PyQuestInner(props: PyQuestProps) {
     .filter((l) => l.kind === 'stderr')
     .map((l) => l.text)
     .join('');
+  // Il traceback completo è già nella console del player: il pannello ne mostra
+  // solo l'ultima riga — tipo di errore e messaggio, cioè la parte che dice allo
+  // studente cosa correggere.
+  const errorSummary =
+    stderrText
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .pop() ?? '';
 
   // Azioni e stelle di QUESTA esecuzione (il pannello vittoria le mostra);
   // `savedProgress` porta invece il record persistito, visibile anche a freddo.
@@ -435,7 +444,11 @@ function PyQuestInner(props: PyQuestProps) {
           {phase === 'finished' && outcome === 'error' && (
             <div className={clsx(styles.panel, styles.panelError)}>
               <p className={styles.panelTitle}>C’è un errore nel codice</p>
-              <pre className={styles.traceback}>{stderrText}</pre>
+              <pre className={styles.traceback}>{errorSummary}</pre>
+              <p className={styles.panelHint}>
+                Il traceback completo, con la riga esatta, è qui sopra nella
+                console.
+              </p>
             </div>
           )}
           {phase === 'finished' && outcome === null && bumpCount >= 2 && (

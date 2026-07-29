@@ -13,6 +13,7 @@ import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
 import Link from '@docusaurus/Link';
 import { useHistory, useLocation } from '@docusaurus/router';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowLeft,
@@ -52,15 +53,18 @@ function GiocaInner() {
 
   const handleWin = useCallback(() => setJustWon(true), []);
 
+  // `history.push` è il router grezzo: non antepone il baseUrl (a differenza di
+  // <Link>), quindi il path va risolto a mano o si finisce sulla 404.
+  const playPath = useBaseUrl('/pyquest/gioca');
   const goTo = useCallback(
     (nextLevelId: string) => {
       history.push(
-        `/pyquest/gioca?world=${encodeURIComponent(
+        `${playPath}?world=${encodeURIComponent(
           worldId,
         )}&level=${encodeURIComponent(nextLevelId)}`,
       );
     },
-    [history, worldId],
+    [history, playPath, worldId],
   );
 
   if (!world || !level) {

@@ -113,6 +113,24 @@
   background: var(--at-accent, #0270ad);
 }
 
+/* Su touch i target del transport salgono a 44px (il dito non ha la precisione
+   del mouse); il desktop resta compatto come nel player di Algorithm. */
+@media (pointer: coarse) {
+  .btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .speedBtn {
+    min-height: 44px;
+    padding: 5px 14px;
+  }
+
+  .scrubInput {
+    height: 32px;
+  }
+}
+
 /* --- Console sincronizzata (print/traceback per atStep) ------------------- */
 
 .console {

@@ -259,6 +259,21 @@ function loadWorlds(worldsAbsDir) {
   return worlds;
 }
 
+/**
+ * I global data di Docusaurus finiscono nel bundle principale, servito a ogni
+ * pagina del sito. `solution` serve solo all'autore (calibrare il par, provare
+ * il livello nell'editor): il client non la legge mai, quindi la togliamo —
+ * meno peso su ogni pagina e la risposta non arriva in faccia allo studente
+ * insieme al livello. Resta nel world.json su disco, che è servito come file
+ * statico: chi la cerca la trova, non è una protezione.
+ */
+function stripAuthorFields(world) {
+  return {
+    ...world,
+    levels: world.levels.map(({ solution: _solution, ...level }) => level),
+  };
+}
+
 module.exports = function pyquestPlugin(context, pluginOptions = {}) {
   const opts = { ...DEFAULT_OPTIONS, ...pluginOptions };
   const staticRoot =
@@ -275,7 +290,11 @@ module.exports = function pyquestPlugin(context, pluginOptions = {}) {
     },
 
     async contentLoaded({ content, actions }) {
-      actions.setGlobalData({ worlds: content.worlds });
+      const worlds = {};
+      for (const [id, world] of Object.entries(content.worlds)) {
+        worlds[id] = stripAuthorFields(world);
+      }
+      actions.setGlobalData({ worlds });
     },
 
     getPathsToWatch() {
