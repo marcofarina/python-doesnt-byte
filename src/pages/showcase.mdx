@@ -1,0 +1,147 @@
+---
+title: Showcase
+description: Un esempio per ciascuno degli elementi interattivi che trovi nei capitoli del libro, con una spiegazione di quando e perché li usiamo.
+---
+
+# Showcase
+
+<Epigraph author="Alan Kay, informatico, pioniere della programmazione a oggetti">
+  Il modo migliore per predire il futuro è inventarlo.
+</Epigraph>
+
+Ogni capitolo del libro segue più o meno la stessa struttura: una citazione
+d'apertura, un po' di prosa, qualche definizione, un blocco di codice che gira
+davvero, un quiz alla fine. Questa pagina isola ciascuno di quei pezzi e li
+mostra uno per uno, con una riga su cosa fa e perché lo trovi lì. Comoda prima
+di aprire il primo volume, o quando un componente ti sembra familiare ma non
+ricordi bene come si usa.
+
+## La citazione d'apertura
+
+La frase di Alan Kay qui sopra, con il bordo a fascio di luce e l'attribuzione
+in corsivo, è il componente `<Epigraph>`. Ogni capitolo — e questa pagina non
+fa eccezione — apre con una frase pertinente, tratta da chi ha scritto codice
+o pensato all'informatica prima di noi, per mettere in prospettiva
+l'argomento prima ancora della prima riga di teoria.
+
+## Codice inline con i colori giusti
+
+Nella prosa, i riferimenti al codice non sono tutti uguali: una parola chiave
+come <InlineCode kind="keyword">for</InlineCode> non è la stessa cosa di una
+funzione come <InlineCode kind="function">print()</InlineCode> o di una
+stringa come <InlineCode kind="string">"ciao"</InlineCode>. Il componente
+`<InlineCode>` assegna un colore semantico a ciascun tipo: il colpo d'occhio
+sulla pagina distingue keyword, funzioni e stringhe senza dover leggere la
+frase per intero.
+
+## Termini con la definizione a un clic
+
+Quando compare un termine tecnico nuovo — per esempio un linguaggio <Tooltip def="Un linguaggio è interpretato quando il codice viene eseguito riga per riga da un interprete, senza una fase di compilazione separata.">interpretato</Tooltip> come Python — non serve saltare a un glossario in fondo al libro. Il tooltip mostra la definizione lì, sotto il cursore, e si chiude cliccando fuori o con Esc.
+
+## La segnaletica del capitolo
+
+I capitoli usano callout colorati per separare i contenuti per funzione: una
+definizione non si legge come un avvertimento, un riepilogo non si legge come
+un prerequisito. Sono tredici tipi in tutto; qui ne vedi due.
+
+:::definition
+Un **algoritmo** è una sequenza finita di passi non ambigui che risolve un
+problema o porta a termine un compito.
+:::
+
+:::warning[Attenzione]
+Gli indici delle liste in Python partono da zero: il primo elemento è
+`lista[0]`, non `lista[1]`.
+:::
+
+## Python che gira davvero
+
+Ogni blocco di codice interattivo del libro è un editor vero, con Python
+eseguito nel browser via Brython: nessuna installazione, nessun server.
+Modifica il codice qui sotto e premi Esegui.
+
+<PyRunner
+  title="fibonacci.py"
+  code={`def fibonacci(n):
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+for i in range(10):
+    print(fibonacci(i), end=" ")
+`}
+/>
+
+Il pulsante "Spiegamelo facile" prepara un prompt pronto da incollare nel tuo
+LLM preferito, per quando una riga non torna.
+
+## Un database SQLite vero
+
+Nel volume dell'Archivista i dati non restano chiusi in variabili: finiscono
+in un database. Il blocco qui sotto interroga un vero SQLite compilato in
+WebAssembly, sullo stesso dataset di libri e autori usato nel volume.
+
+```sql live dataset=archivista/biblioteca title="Chi ha scritto cosa"
+SELECT l.titolo, a.nome AS autore, l.anno
+FROM libri AS l
+JOIN autori AS a ON a.id = l.autore_id
+WHERE l.anno > 1950
+ORDER BY l.anno;
+```
+
+## Guardare un algoritmo pensare
+
+Un algoritmo di ordinamento spiegato a parole resta astratto finché non vedi
+le barre muoversi. Qui sotto il bubble sort, passo per passo, con lo
+pseudocodice sincronizzato a fianco.
+
+<Algorithm name="bubble-sort" mode="study" shuffle={7} />
+
+## Verifica sul posto
+
+Alla fine di una sezione, un quiz a scelta multipla controlla se il concetto
+è passato, con un feedback diverso per ogni risposta, anche quelle sbagliate.
+
+<Quiz>
+  <QuizQuestion>
+    Cosa stampa questo codice?
+
+    ```python
+    for i in range(3):
+        print(i)
+    ```
+  </QuizQuestion>
+  <QuizOption>
+    1 2 3
+    <QuizFeedback>
+      Quasi: `range(3)` genera i numeri da zero a due, non da uno a tre.
+    </QuizFeedback>
+  </QuizOption>
+  <QuizOption correct>
+    0 1 2
+    <QuizFeedback>
+      Esatto: `range(3)` produce gli interi da 0 a 2 — tre valori, con
+      l'estremo superiore escluso.
+    </QuizFeedback>
+  </QuizOption>
+  <QuizOption>
+    0 1 2 3
+    <QuizFeedback>
+      `range(3)` si ferma prima di arrivare a 3: sono tre valori, non
+      quattro.
+    </QuizFeedback>
+  </QuizOption>
+  <QuizOption>
+    Un errore
+    <QuizFeedback>
+      Il codice è valido: `range` e `for` sono una coppia collaudata in
+      Python.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+Ritrovi tutti questi elementi nei quattro volumi, in proporzioni diverse:
+molto PyRunner nel Programmatore, molto SQLRunner nell'Archivista, i quiz
+ovunque. Se preferisci vederli al lavoro dentro un capitolo vero invece che
+isolati qui, il [Volume 1 comincia da qui](/programmatore/).
