@@ -58,27 +58,14 @@ const VOLUMES: Volume[] = [
     draft: true,
     chapters: [
       { title: 'Introduzione', lessons: 2, to: '/artefice/' },
-      {
-        title: 'Perché gli oggetti?',
-        lessons: 3,
-        to: '/artefice/perche-gli-oggetti',
-      },
-      {
-        title: 'Classi, istanze e metodi',
-        lessons: 5,
-        to: '/artefice/classi-e-istanze',
-      },
-      {
-        title: 'Metodi di classe e statici',
-        lessons: 3,
-        to: '/artefice/metodi-di-classe-e-statici',
-      },
-      {
-        title: 'Mostrare un oggetto',
-        lessons: 2,
-        to: '/artefice/mostrare-un-oggetto',
-      },
-      { title: 'Incapsulamento', lessons: 4, to: '/artefice/incapsulamento' },
+      // Le 5 lezioni sotto sono in bozza (draft: true) — niente `to` finché
+      // non tornano pubbliche, altrimenti il link punterebbe a una pagina
+      // assente in produzione e romperebbe onBrokenLinks.
+      { title: 'Perché gli oggetti?', lessons: 3 },
+      { title: 'Classi, istanze e metodi', lessons: 5 },
+      { title: 'Metodi di classe e statici', lessons: 3 },
+      { title: 'Mostrare un oggetto', lessons: 2 },
+      { title: 'Incapsulamento', lessons: 4 },
     ],
   },
   {
