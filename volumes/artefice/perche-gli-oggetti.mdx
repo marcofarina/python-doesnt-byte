@@ -2,7 +2,7 @@
 title: Perché gli oggetti?
 sidebar_label: Perché gli oggetti?
 sidebar_position: 2
-description: I limiti del codice procedurale e l'idea-madre della programmazione a oggetti — tenere insieme i dati e il comportamento che li riguarda. Lo scopriamo costruendo una piccola libreria musicale.
+description: Come si rappresenta un’entità in un programma. Le liste parallele si disallineano, i dizionari risolvono metà del problema, le classi dichiarano insieme dati e comportamento. Lo vediamo sulla libreria musicale di Risonanza.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -10,41 +10,41 @@ import TabItem from '@theme/TabItem';
 
 # Perché gli oggetti?
 
-<Epigraph author="Grace Hopper">
+<Epigraph author="Fred Brooks, The Mythical Man-Month (1975)">
 
-La frase più pericolosa in assoluto è: **«L'abbiamo sempre fatto così.»**
+Mostrami i tuoi diagrammi di flusso e nascondimi le tue tabelle, e resterò perplesso. Mostrami le tue tabelle, e di solito i diagrammi non mi serviranno: saranno ovvi.
 
 </Epigraph>
 
-Nel primo volume hai imparato a **dare istruzioni**: variabili, condizioni, cicli, funzioni. Sai dire alla macchina *cosa fare, passo dopo passo*. È un superpotere, e per moltissimi problemi è esattamente l'approccio giusto: a uno script di trenta righe che converte un file non serve nessuna cerimonia in più.
+Nel primo volume hai imparato a dare istruzioni: variabili, condizioni, cicli, funzioni. Sai dire alla macchina cosa fare, passo dopo passo, e per moltissimi problemi è esattamente quello che serve.
 
-In questo volume cambiamo mestiere. Smettiamo di chiederci soltanto «quali passi» e iniziamo a chiederci «quali **cose** esistono nel mio problema, cosa sanno fare, come collaborano». Per scoprire perché ne vale la pena, non partiremo dalla teoria: partiremo costruendo qualcosa e guardandolo rompersi.
+Questo volume aggiunge una domanda che finora non ti sei posto: come rappresento le _cose_ di cui il programma parla? Un brano musicale, un giocatore, un conto corrente non sono passi da eseguire. Sono entità: hanno delle informazioni addosso e delle operazioni che hanno senso solo su di loro. Il modo in cui le rappresenti decide quanto sarà faticoso tutto il resto del programma.
 
-Quel qualcosa è **Risonanza**, un piccolo lettore musicale da terminale che ci accompagnerà per buona parte del volume. Oggi ha tre canzoni. Tra poco ne avrà trecento, e proprio lì il nostro codice procedurale comincerà a scricchiolare.
+Lo vediamo su **Risonanza**, un piccolo lettore musicale da terminale che ci accompagnerà per tutto il volume. La sua libreria, per ora, contiene tre brani — e già con tre bastano due righe di codice per farla sbagliare.
 
 :::prereq
 
 - Sintassi Python di base: variabili, tipi primitivi, condizionali, cicli
 - Funzioni: definizione, parametri, valori di ritorno
 - Liste e dizionari: creazione, accesso per indice e per chiave, `append`
-- *f-string* per comporre messaggi (`f"{nome} ha {eta} anni"`)
+- _f-string_ per comporre messaggi (`f"{nome} ha {eta} anni"`)
 
 :::
 
 :::learn
 
-- Perché il codice puramente procedurale fatica a reggere quando il programma cresce
-- Cos'è il problema delle **liste parallele** e perché genera bug silenziosi
-- Perché anche i dizionari, da soli, non risolvono tutto
-- L'idea-madre della programmazione a oggetti: **tenere insieme dati e comportamento**
-- La differenza intuitiva tra **classe** (lo stampo) e **oggetto** (la cosa concreta)
-- Quando la OOP aiuta davvero e quando sarebbe solo cerimonia inutile
+- Perché la posizione, da sola, è un legame fragile fra dati che descrivono la stessa entità
+- La differenza fra un errore che ferma il programma e uno che lo lascia proseguire con dati sbagliati
+- Cosa risolvono i dizionari e cosa lasciano aperto
+- Cosa sono una **classe**, un **oggetto** e un'**istanza**
+- Cosa significa **coesione** e perché non vuol dire "metti tutto dentro la classe"
+- Con quali criteri decidere se una classe serve
 
 :::
 
-## Un caso concreto: la libreria di Risonanza
+## Rappresentare un brano
 
-Vogliamo rappresentare i brani della nostra libreria. Con gli strumenti del Volume 1, la mossa naturale è una variabile per ogni caratteristica. Tre brani, quattro informazioni a testa (titolo, artista, durata in secondi, numero di riproduzioni): le teniamo in **liste parallele**, cioè liste diverse dove la posizione `i` descrive sempre lo stesso brano.
+Un brano ha un titolo, un artista, una durata in secondi e un contatore di riproduzioni. Con gli strumenti del Volume 1 la strada più diretta è una lista per ogni informazione. A tenere insieme il tutto è la posizione: l'elemento di indice `i` di ogni lista appartiene allo stesso brano. Si chiamano **liste parallele**.
 
 ```py live
 titoli       = ["Blinding Lights", "Bohemian Rhapsody", "Bury a Friend"]
@@ -63,51 +63,49 @@ riproduci(2)
 print(f"\n'{titoli[0]}' è stato ascoltato {riproduzioni[0]} volte")
 ```
 
-Funziona. Premi **Run** e vedrai i brani riprodotti e il contatore aggiornato. Con tre canzoni va tutto liscio: l'indice `0` è sempre *Blinding Lights*, in tutte e quattro le liste. Il dato e il suo significato stanno in piedi grazie a un patto implicito — *"la posizione `i` è sempre lo stesso brano"* — che per ora rispettiamo con disciplina.
+Con tre brani funziona: l'indice `0` è _Blinding Lights_ in tutte e quattro le liste, e `riproduci(0)` incrementa il contatore giusto stampando il titolo giusto.
 
-Il problema dei patti impliciti è che reggono finché qualcuno si ricorda di rispettarli.
+La corrispondenza, però, esiste soltanto nella nostra testa. Python non sa che `titoli[0]` e `durate[0]` parlano della stessa canzone: per lui sono due liste indipendenti che al momento hanno la stessa lunghezza. Tenerle allineate è un lavoro nostro, e nessuno ci avvisa quando smettiamo di farlo.
 
-## Quando la collezione cresce
+## Due modi di rompere l'allineamento
 
-Arriva la prima richiesta: aggiungere **l'anno di uscita** a ogni brano. Con le liste parallele significa creare una quinta lista, `anni = [...]`, e tenerla allineata alle altre quattro. Poi arriva un brano nuovo: per aggiungerlo devi ricordarti di fare `append` su **tutte e cinque** le liste, nello stesso ordine. Ne dimentichi una?
+Aggiungiamo un brano alla libreria. Vanno aggiornate tutte e quattro le liste, nello stesso ordine, e basta una distrazione:
 
 ```python
 titoli.append("As It Was")
 artisti.append("Harry Styles")
 durate.append(167)
-# ...e qui ti squilla il telefono. Riproduzioni e anni non li aggiorni.
 ```
 
-Da questo momento la posizione `i` non descrive più lo stesso brano in tutte le liste. Il patto è rotto, e Python non se ne accorge: continua a indicizzare felice, restituendoti dati di un brano mescolati con quelli di un altro.
+`riproduzioni` è rimasta indietro: ha tre elementi, le altre ne hanno quattro. Questo è il caso fortunato. Alla prima chiamata di `riproduci(3)` Python cerca `riproduzioni[3]`, non lo trova e solleva un `IndexError`. Il programma si ferma e ti dice dove guardare.
 
-Vediamolo in azione con un caso ancora più insidioso. Vogliamo ordinare i brani **dal più lungo al più corto**. Prima di premere Run, prova a **predire l'output**: cosa stamperà questo codice?
+Il caso sfortunato è l'altro: liste della stessa lunghezza, ma non dello stesso ordine. Si presenta appena provi a ordinare i brani dal più lungo al più corto. Prima di eseguire il codice, prova a predire cosa stampa.
 
 ```py live
 titoli = ["Blinding Lights", "Bohemian Rhapsody", "Bury a Friend"]
 durate = [200,               354,                 193]
 
-# Ordino le durate dalla più lunga alla più corta
 durate.sort(reverse=True)
 
 for i in range(len(titoli)):
     print(f"{titoli[i]} — {durate[i]}s")
 ```
 
-Hai predetto durate ordinate accanto ai titoli giusti? Quello che ottieni è *Blinding Lights* che dura 354 secondi (sono quasi sei minuti: chiunque l'abbia ascoltata sa che non è vero) e *Bohemian Rhapsody* sbrigata in 200. Abbiamo riordinato `durate` ma **non** `titoli`: gli indici non si corrispondono più, e ogni titolo si ritrova accanto alla durata di un altro.
+Le durate escono ordinate, 354 → 200 → 193, ma accanto ai titoli sbagliati: _Blinding Lights_ risulta di 354 secondi e _Bohemian Rhapsody_ di 200. Il metodo `sort` ha riordinato `durate` e nient'altro, mentre `titoli` è rimasta com'era. Un solo brano si salva, _Bury a Friend_, e solo perché era già in ultima posizione in entrambe le liste.
 
-:::warning[Il bug peggiore è quello che non urla]
+:::warning[Un errore che il programma non segnala]
 
-Nota una cosa: Python non ha sollevato **nessun** errore. Nessun `IndexError`, nessuna eccezione, nessun avviso rosso. Ti ha restituito risultati sbagliati con la faccia serissima.
+Qui non compare nessuna eccezione, e non è una svista dell'interprete: le due liste hanno tre elementi ciascuna, gli indici da `0` a `2` sono validi in entrambe, ogni accesso restituisce un valore che esiste. L'unica cosa sbagliata è l'_abbinamento_ fra i due valori, e l'abbinamento non è scritto da nessuna parte nel codice. È una convenzione nostra, e Python non può far rispettare una regola che non gli abbiamo mai detto.
 
-I bug che fanno crashare il programma sono fastidiosi ma onesti: ti dicono dove guardare. I bug *silenziosi* — dati corrotti che sembrano plausibili — sono molto peggio, perché finiscono in produzione e li scopri solo quando un utente si lamenta che la sua canzone preferita dura sei minuti. Le liste parallele sono una fabbrica di bug di questo tipo.
+Un programma che si ferma con un errore è scomodo ma leale. Uno che prosegue producendo numeri plausibili ti lascia scoprire il guasto mesi dopo, quando qualcuno segnala che una canzone di tre minuti sull'app ne dura sei.
 
 :::
 
-Il problema di fondo è che le informazioni di un singolo brano sono **sparse** su strutture diverse, tenute insieme solo da un indice numerico e dalla nostra buona memoria. Più la libreria cresce, più liste e più funzioni dobbiamo tenere sincronizzate a mano. È il labirinto da cui vogliamo uscire.
+Il colpevole non è `sort`. Le informazioni di un brano sono sparse su quattro strutture diverse e l'unico legame fra loro è un numero, quindi qualunque operazione che tocchi una lista sola lo spezza. Non è nemmeno colpa della programmazione procedurale: un programma procedurale può rappresentare i brani molto meglio di così, e fra un attimo lo facciamo.
 
-## I dizionari aiutano… ma non bastano
+## I dizionari raccolgono i dati
 
-Hai già uno strumento del Volume 1 che migliora le cose: il **dizionario**. Invece di spargere i campi di un brano su quattro liste, li raccogliamo in un'unica struttura con chiavi parlanti.
+Uno strumento del Volume 1 sistema buona parte della faccenda: il dizionario. Tutte le informazioni di un brano stanno in una struttura sola, con chiavi che dicono cosa sono.
 
 ```py live
 brano = {
@@ -121,30 +119,29 @@ brano["riproduzioni"] += 1
 print(f"{brano['titolo']} — ascoltato {brano['riproduzioni']} volta/e")
 ```
 
-Questo è un passo avanti vero: ora i dati di un brano **viaggiano insieme** in un solo oggetto. Una lista di dizionari la puoi ordinare senza disallineare niente, perché ogni dizionario si porta dietro tutti i suoi campi. Il bug della sezione precedente, qui, sparisce.
+Una lista di dizionari la puoi ordinare, filtrare e rimescolare quanto vuoi: ogni dizionario si porta dietro tutti i suoi campi, quindi il disallineamento della sezione precedente non può proprio nascere. È un passo avanti vero, e per parecchi programmi è già la soluzione definitiva.
 
-E allora basta così, mettiamo tutto in dizionari e andiamo al mare? Non proprio. Restano due crepe:
+Restano due cose che il dizionario non fa.
 
-- **Il comportamento abita altrove.** I *dati* del brano stanno nel dizionario, ma le *azioni* che lo riguardano — riprodurlo, calcolare la durata in minuti, sapere se è un tormentone — vivono in funzioni separate, sparse nel file. Dati di qua, comportamento di là: il legame torna a essere implicito.
-- **Niente difende la coerenza.** Nessuno ti impedisce di scrivere `brano["durata"] = -5` (un brano di durata negativa) o di fare un refuso come `brano["titlo"]`, che Python accetta in silenzio creando una chiave nuova e sbagliata. Il dizionario è un contenitore neutro: non sa cosa significhi *essere un brano valido*, quindi non può proteggerti.
+Le **operazioni stanno altrove**. Riprodurre un brano o convertirne la durata in minuti sono funzioni sparse nel file, e niente nel codice dichiara che riguardano proprio quel tipo di dizionario. Per sapere cosa si può fare con un brano devi leggere il modulo e riconoscere a occhio le funzioni che accettano un brano come argomento.
 
-Ci serve qualcosa che faccia due cose insieme: tenere i dati di un brano e i comportamenti che li riguardano **nello stesso posto**, e dare a quel "posto" un'identità — *questo è un brano*, con le sue regole.
+Non c'è un **posto dove mettere le regole**. `brano["durata"] = -5` viene accettato. Anche `brano["titlo"] = "..."`: Python aggiunge una chiave nuova, il refuso resta lì e te ne accorgi solo quando rileggi `brano["titolo"]` e trovi il valore vecchio. Un dizionario memorizza coppie chiave-valore; il concetto di "brano valido" non esiste al suo interno, quindi non c'è nessun controllo possibile.
 
-## L'idea: tenere insieme dati e comportamento
+## Tenere insieme dati e comportamento
 
-Eccola, l'idea-madre di tutto il volume. Tienila a mente, perché incapsulamento, ereditarietà, polimorfismo e pattern non sono altro che conseguenze e strumenti di questa frase:
+Brooks, in cima alla pagina, aveva ragione a metà: la struttura dei dati rende ovvio il resto del programma, ma solo se il resto le sta vicino. L'idea da cui nasce la programmazione a oggetti aggiunge esattamente questo pezzo — le informazioni che descrivono un'entità e le operazioni che la riguardano si dichiarano nello stesso posto.
 
 :::definition[Oggetto, classe, istanza]
 
-Un **oggetto** raccoglie in un'unica unità i **dati** che descrivono un'entità (il suo <Tooltip def="L'insieme dei valori che un oggetto possiede in un dato momento: per un brano, il titolo, l'artista, la durata e il numero di riproduzioni.">stato</Tooltip>) e i **comportamenti** che operano su quei dati (le sue azioni).
+Un **oggetto** riunisce in un'unica unità i **dati** che descrivono un'entità (il suo <Tooltip def="L'insieme dei valori che un oggetto possiede in un dato momento: per un brano, il titolo, l'artista, la durata e il numero di riproduzioni.">stato</Tooltip>) e i **comportamenti** che operano su quei dati.
 
-Una **classe** è lo **stampo** che descrive com'è fatto un certo tipo di oggetto. Un **oggetto** (o **istanza**) è la creazione concreta prodotta da quello stampo.
+Una **classe** è la descrizione di un tipo di oggetto: stabilisce quali dati avrà e quali operazioni saprà compiere. Un oggetto costruito a partire da una classe si dice anche **istanza** di quella classe.
 
 :::
 
-L'analogia classica è quella dei biscotti. La **classe** è lo stampo per i biscotti: definisce la forma "brano" — avrà un titolo, un artista, una durata, e saprà essere riprodotto. Gli **oggetti** sono i biscotti che sforni: *Bohemian Rhapsody*, *Blinding Lights*, *Bury a Friend*. Ognuno è un brano, ma è un'entità separata con i suoi valori. Lo stampo esiste una volta sola nel codice; gli oggetti possono essere centinaia.
+Una classe funziona come uno stampo: esiste una volta sola nel codice, e da lì escono quanti oggetti vuoi, ciascuno con i propri valori. Lo stampo però non contiene i biscotti e non ne conserva copie — descrive la forma, e la forma viene applicata nel momento in cui crei l'oggetto.
 
-Guarda come diventa la nostra rappresentazione di un brano. Non spaventarti per la parola <InlineCode kind="keyword">class</InlineCode>, per <InlineCode>self</InlineCode> o per quel `__init__` dall'aria criptica: la **meccanica** è il cuore della prossima lezione. Qui voglio che tu noti **una cosa sola** — i dati del brano e ciò che sai farci vivono nello stesso blocco.
+Non serve capire ora `class`, `self` e `__init__`: sono il cuore della prossima lezione. Nella classe `Brano` qui sotto conta una cosa sola, cioè dove stanno le informazioni del brano e dove sta ciò che sai farci.
 
 ```py live
 class Brano:
@@ -166,32 +163,19 @@ print(bohemian.riproduci())
 print(f"'{bohemian.titolo}' ascoltato {bohemian.riproduzioni} volte")
 ```
 
-Nessuna lista parallela. Nessun indice da tenere allineato. Il titolo, la durata e il contatore di riproduzioni sono attaccati a `bohemian`, e l'azione `riproduci()` agisce esattamente su *quel* brano. Se domani crei un secondo brano, avrà il suo stato indipendente — sforniamo lo stampo una volta, sforniamo quanti biscotti vogliamo.
+`titolo`, `artista`, `durata` e `riproduzioni` appartengono a `bohemian`, e `riproduci()` è dichiarata dentro `Brano`: agisce sul brano su cui la chiami, non su un brano generico. Crea un secondo oggetto e avrà il suo contatore, del tutto indipendente dal primo.
 
-Possiamo disegnare lo stampo `Brano` con uno schema — è il primo assaggio di **UML**, la notazione con cui i programmatori si scambiano disegni di classi (la useremo spesso in questo volume):
+:::cleancode[Coesione]
 
-```mermaid
-classDiagram
-    class Brano {
-        +titolo
-        +artista
-        +durata
-        +riproduzioni
-        +riproduci()
-    }
-```
+Il principio ha un nome: **coesione**, cioè quanto le parti di un'unità di codice riguardano la stessa cosa. Le liste parallele ne hanno pochissima — per aggiungere un campo al brano devi modificare quattro punti e ricordarti di tenerli allineati — mentre la classe `Brano` raccoglie in un punto solo la risposta alla domanda "com'è fatto un brano".
 
-Lo scomparto in alto elenca i **dati** (lo stato: titolo, artista, durata, riproduzioni); quello in basso elenca i **comportamenti** (le azioni: `riproduci()`). Il punto non è la grafica: è che entrambi stanno **nella stessa scatola**. Quella scatola è la classe — l'idea-madre resa visibile.
-
-:::history[Da dove arriva tutto questo]
-
-L'idea nasce alla fine degli anni '60 con **Simula**, un linguaggio norvegese pensato per le simulazioni: per simulare un mondo, conveniva rappresentare nel codice le "cose" di quel mondo. Negli anni '70 **Alan Kay**, allo Xerox PARC, la spinge all'estremo con **Smalltalk**: per lui un programma è un insieme di piccole entità — gli oggetti — che si scambiano messaggi, come cellule biologiche o computer in rete. È l'idea che oggi sta dentro Python, Java, C++, Swift e metà di internet.
-
-Curiosità che fa umiltà: Kay stesso ha ripetuto più volte che «la OOP, come la intendevo io, non è quella che la maggior parte dei linguaggi chiama OOP oggi». Morale: prendi sempre con un pizzico di sale anche quello che leggi qui.
+Attenzione a non leggerlo come "tutto ciò che riguarda i brani va dentro `Brano`". Salvarli su disco o cercarli per artista sono compiti che di solito stanno meglio altrove: una classe che li assorbe tutti torna a essere un contenitore di cose scollegate, con un nome più elegante. La coesione premia chi tiene vicino ciò che cambia insieme, non chi ammassa.
 
 :::
 
-E il bug del disallineamento? Semplicemente non può più capitare, perché ogni brano si porta dietro tutti i suoi campi, incollati dentro lo stesso oggetto:
+### Cosa sparisce e cosa no
+
+Il bug dell'ordinamento, con gli oggetti, non è più scrivibile: non esistono due liste da riordinare separatamente, perché titolo e durata sono attributi dello stesso oggetto.
 
 ```py live
 class Brano:
@@ -206,23 +190,36 @@ brani = [
     Brano("Bury a Friend", 193),
 ]
 
+brani.reverse()
+
 for brano in brani:
     print(f"{brano.titolo} — {brano.durata}s")
 ```
 
-Riordina pure questa lista come vuoi: titolo e durata viaggiano insieme dentro l'oggetto, non c'è un secondo elenco da tenere sincronizzato. Il patto implicito è diventato una struttura esplicita.
+Rimescola la lista come preferisci: qualunque cosa tu faccia all'ordine, sposti oggetti interi, e ogni titolo si porta dietro la sua durata.
 
-:::warning[La OOP non è una religione]
+Sparisce quel bug, non la possibilità di sbagliare in generale. Puoi ancora costruire un `Brano` passando la durata di un altro, o scrivere `bohemian.durata = -5` senza che nessuno protesti: la classe che hai appena visto non controlla niente. Darle il potere di rifiutare valori assurdi è possibile ed è l'argomento della lezione sull'_incapsulamento_. Per adesso hai ottenuto qualcosa di più modesto e più utile: un posto preciso in cui quelle regole potranno stare.
 
-Prima che l'entusiasmo prenda il sopravvento: non uscire da questa lezione convinto che «d'ora in poi tutto va in una classe». Non è così. Aggiungere classi a uno script di trenta righe che fa una cosa sola è cerimonia inutile, e a volte un dizionario o una funzione sono semplicemente la risposta giusta.
+### La classe disegnata
 
-La OOP è uno **strumento** per gestire la complessità: brilla quando hai molte entità con stato e comportamento propri, e diventa peso morto quando non ne hai. Nei prossimi mesi imparerai a usarla *e* a sapere quando lasciarla nel cassetto.
+Una classe si può rappresentare anche graficamente, e in questo volume lo faremo spesso:
 
-:::
+```mermaid
+classDiagram
+    class Brano {
+        +titolo
+        +artista
+        +durata
+        +riproduzioni
+        +riproduci()
+    }
+```
 
-### Procedurale contro oggetti, fianco a fianco
+Lo scomparto superiore elenca gli attributi, quello inferiore i metodi. È **UML**, la notazione con cui i programmatori si scambiano la struttura di un sistema senza doverne leggere il codice.
 
-Lo stesso compito — riprodurre un brano e contarne gli ascolti — nei due mondi:
+## Procedurale e oggetti, un confronto onesto
+
+Il confronto con le liste parallele è troppo facile: nessuno le userebbe per scelta. Un programma procedurale scritto con criterio userebbe un dizionario e una funzione che lo riceve come argomento.
 
 <Tabs>
   <TabItem value="oop" label="A oggetti" default>
@@ -236,47 +233,60 @@ Lo stesso compito — riprodurre un brano e contarne gli ascolti — nei due mon
         def riproduci(self):
             self.riproduzioni += 1
 
-    # Dati e comportamento nello stesso posto
     brano = Brano("Bury a Friend", "Billie Eilish")
     brano.riproduci()
     ```
+
   </TabItem>
   <TabItem value="proc" label="Procedurale">
     ```python
-    titoli       = ["Bury a Friend"]
-    artisti      = ["Billie Eilish"]
-    riproduzioni = [0]
+    def crea_brano(titolo, artista):
+        return {
+            "titolo": titolo,
+            "artista": artista,
+            "riproduzioni": 0,
+        }
 
-    # Il comportamento vive lontano dai dati,
-    # tenuto insieme solo dall'indice
-    def riproduci(indice):
-        riproduzioni[indice] += 1
+    def riproduci(brano):
+        brano["riproduzioni"] += 1
 
-    riproduci(0)
+    brano = crea_brano("Bury a Friend", "Billie Eilish")
+    riproduci(brano)
     ```
+
   </TabItem>
 </Tabs>
 
-Non è una questione di righe in meno (a volte la versione a oggetti è perfino più lunga). È una questione di **dove vivono le cose**: nel mondo a oggetti, se devi capire come funziona un brano, sai esattamente dove guardare. Tutto ciò che lo riguarda è dentro la sua classe.
+Le due versioni fanno la stessa cosa e occupano più o meno lo stesso spazio. Le differenze sono altre due, e nessuna riguarda la velocità di esecuzione.
 
-:::cleancode[Tieni vicino ciò che cambia insieme]
+La prima è dove si cerca. Nella versione a oggetti l'elenco di ciò che un brano sa fare coincide con la classe: apri `Brano` e lo leggi tutto. Nella versione procedurale devi scorrere il modulo e capire quali funzioni si aspettano un brano — informazione che non è scritta da nessuna parte, se non nei nomi dei parametri.
 
-Il principio che hai appena visto all'opera ha un nome: **coesione**. Le informazioni e i comportamenti che riguardano la stessa entità dovrebbero stare vicini, idealmente nella stessa unità di codice.
+La seconda è dove si controlla. `riproduci(brano)` si fida di ricevere un dizionario fatto nel modo giusto; se vuoi verificarlo, ogni funzione deve controllare per conto proprio. Una classe ti dà un solo punto d'ingresso in cui stabilire cosa conta come brano valido.
 
-Le liste parallele violano la coesione nel modo più plateale: per cambiare *una* cosa del brano (aggiungere un campo, ordinarli) devi toccare *tre o quattro* posti diversi e ricordarti di tenerli allineati. Una classe `Brano` raccoglie quel sapere in un punto solo — diventa l'**unica fonte di verità** su cosa sia un brano. Quando aggiungerai un campo, lo aggiungerai lì, e basta.
+## Quando conviene
+
+Le classi costano: righe in più e un livello di indirezione fra te e i dati. Il conto torna quando il programma gestisce parecchie entità con stato e comportamento propri, quando le stesse entità compaiono in punti lontani del codice, quando il programma è destinato a durare e a essere modificato da qualcuno che non sei tu. Uno script di trenta righe che legge un file e stampa una media non ci guadagna niente: ci guadagna solo righe.
+
+Python, del resto, non ti chiede di schierarti. Funzioni, dizionari e classi convivono nello stesso file, e i programmi veri le mescolano quasi sempre.
+
+:::history[Da dove arriva]
+
+L'idea nasce alla fine degli anni Sessanta con **Simula**, un linguaggio norvegese pensato per le simulazioni: per simulare un porto o un traffico conveniva rappresentare nel codice le cose di quel mondo, ciascuna con il proprio stato. Negli anni Settanta **Alan Kay**, allo Xerox PARC, la porta all'estremo con **Smalltalk**, dove un programma è un insieme di piccole entità autonome che si scambiano messaggi.
+
+Kay ha poi passato decenni a ripetere che "la OOP, come la intendevo io, non è quella che la maggior parte dei linguaggi chiama OOP oggi": a lui interessava soprattutto lo scambio di messaggi fra entità indipendenti, molto più delle classi. Quello che trovi in Python, in Java o in C++ è una versione più addomesticata di quell'idea.
 
 :::
 
-## Cosa ci portiamo dietro
+## In sintesi
 
 :::nutshell
 
-- Il codice **procedurale** è perfetto per problemi piccoli, ma fatica quando le entità da gestire si moltiplicano.
-- Le **liste parallele** disperdono i dati di un'entità su strutture diverse, tenute insieme solo da un indice: fragili e fonte di **bug silenziosi** (il disallineamento non solleva errori).
-- I **dizionari** raggruppano i dati di un'entità, ma lasciano il comportamento altrove e non difendono la coerenza.
-- L'**idea-madre della OOP**: tenere insieme, in un'unica unità, i **dati** (lo stato) e i **comportamenti** (le azioni) di un'entità.
-- Una **classe** è lo stampo; un **oggetto** (o **istanza**) è la creazione concreta. Uno stampo, tanti biscotti.
-- La OOP è uno **strumento**, non un obbligo: si usa quando la complessità lo ripaga.
+- La difficoltà di un programma che cresce non sta nel numero di righe, ma nel modo in cui rappresenta le sue entità.
+- Le **liste parallele** affidano il legame fra i dati alla posizione. Si rompono in due modi: lunghezze diverse (`IndexError`, esplicito) oppure ordini diversi (nessun errore, dati sbagliati).
+- Un **dizionario** tiene insieme i dati di un'entità, ma lascia le operazioni fuori e non offre un posto dove mettere le regole.
+- Una **classe** dichiara insieme dati e comportamenti; un **oggetto** (o **istanza**) è un esemplare costruito da quella classe, con i propri valori.
+- **Coesione**: tenere vicino ciò che cambia insieme, senza per questo ammassare nella classe tutto ciò che sfiora l'entità.
+- Le classi si usano quando ripagano la complessità che aggiungono, non per principio.
 
 :::
 
@@ -284,78 +294,131 @@ Le liste parallele violano la coesione nel modo più plateale: per cambiare *una
 
 <Quiz>
   <QuizQuestion>
-    Nel codice procedurale con liste parallele, ordini **una sola** delle liste (per esempio `durate`). Qual è il rischio principale?
+    Hai due liste parallele `titoli` e `durate`, entrambe di tre elementi, e ordini soltanto `durate`. Cosa succede?
   </QuizQuestion>
 
-  <QuizOption>
-    Il programma rallenta sensibilmente perché l'ordinamento è un'operazione costosa.
-    <QuizFeedback>
-      Le prestazioni non c'entrano: ordinare poche centinaia di elementi è istantaneo. Il problema è sui dati, non sulla velocità.
-    </QuizFeedback>
-  </QuizOption>
+<QuizOption>
+  Il programma rallenta sensibilmente, perché l'ordinamento è un'operazione
+  costosa.
+  <QuizFeedback>
+    Le prestazioni non c'entrano: ordinare tre elementi è istantaneo. Il
+    problema riguarda quali dati finiscono accanto a quali.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption>
+  Python solleva un `IndexError`.
+  <QuizFeedback>
+    No: `sort` cambia l'ordine degli elementi, non il loro numero. Le due liste
+    restano di tre elementi e tutti gli indici da `0` a `2` restano validi.
+    L'`IndexError` si ottiene nell'altro caso, quando una lista resta più corta
+    delle altre.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption correct>
+  Il programma prosegue senza errori, ma ogni titolo può ritrovarsi accanto alla
+  durata di un altro brano.
+  <QuizFeedback>
+    Esatto. Ogni accesso è legittimo, quindi l'interprete non ha nulla da
+    segnalare: l'unica cosa sbagliata è l'abbinamento, che nel codice non è
+    scritto da nessuna parte.
+  </QuizFeedback>
+</QuizOption>
 
   <QuizOption>
-    Python solleva un `IndexError` perché le liste hanno lunghezze diverse.
+    Le durate vengono eliminate dalla lista.
     <QuizFeedback>
-      Magari! Un errore esplicito sarebbe un favore. Le liste mantengono la stessa lunghezza: cambia solo l'ordine di una di esse, e Python continua a indicizzare senza protestare.
-    </QuizFeedback>
-  </QuizOption>
-
-  <QuizOption correct>
-    Gli indici non si corrispondono più: ogni titolo si ritrova accanto ai dati di un altro brano, **senza alcun errore**.
-    <QuizFeedback>
-      Esatto. È il bug peggiore proprio perché è silenzioso: nessuna eccezione, solo dati plausibili ma sbagliati. È la ragione numero uno per cui le liste parallele non scalano.
-    </QuizFeedback>
-  </QuizOption>
-
-  <QuizOption>
-    Le durate vengono cancellate dalla lista.
-    <QuizFeedback>
-      No: `sort` riordina gli elementi, non li elimina. Restano tutti, ma accoppiati ai titoli sbagliati.
+      No: `sort` riordina gli elementi sul posto, non ne rimuove nessuno.
     </QuizFeedback>
   </QuizOption>
 </Quiz>
 
 <Quiz>
   <QuizQuestion>
-    Qual è l'**idea centrale** della programmazione a oggetti?
+    Qual è l'idea da cui nasce la programmazione a oggetti?
   </QuizQuestion>
 
+<QuizOption>
+  Sostituire le funzioni con le classi: ogni funzione libera è codice da
+  riscrivere.
+  <QuizFeedback>
+    No, ed è un fraintendimento frequente. Le classi convivono con le funzioni,
+    e per molti problemi una funzione resta la scelta migliore.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption correct>
+  Dichiarare nello stesso posto i dati che descrivono un'entità e le operazioni
+  che la riguardano.
+  <QuizFeedback>
+    Esatto. Da qui discende il resto del volume: incapsulamento, ereditarietà e
+    polimorfismo sono modi di sfruttare questa scelta.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption>
+  Evitare i dizionari, che non permettono di proteggere i dati.
+  <QuizFeedback>
+    I dizionari restano uno strumento ottimo: raggruppano i dati di un'entità e
+    risolvono il problema del disallineamento. Non tengono però insieme i dati e
+    le operazioni.
+  </QuizFeedback>
+</QuizOption>
+
   <QuizOption>
-    Sostituire sempre le funzioni con le classi: ogni funzione libera è codice da rifattorizzare.
+    Rendere il programma più veloce da eseguire.
     <QuizFeedback>
-      No, ed è un fraintendimento comune. La OOP è uno strumento, non un obbligo: per molti problemi piccoli una funzione resta la scelta migliore.
+      La programmazione a oggetti riguarda l'organizzazione e la manutenibilità del codice. Un programma a oggetti non è di per sé più rapido di uno procedurale.
     </QuizFeedback>
   </QuizOption>
+</Quiz>
 
-  <QuizOption correct>
-    Tenere insieme, in un'unica unità, i **dati** di un'entità e i **comportamenti** che operano su quei dati.
-    <QuizFeedback>
-      Esatto: è l'idea-madre da cui discende tutto il resto del volume. Un brano e ciò che sai farci vivono nello stesso oggetto.
-    </QuizFeedback>
-  </QuizOption>
+<Quiz>
+  <QuizQuestion>
+    Rappresenti un brano con la classe `Brano` vista in questa lezione. Quale problema **non** hai risolto?
+  </QuizQuestion>
+
+<QuizOption>
+  Ordinare i brani può ancora scollegare il titolo dalla durata.
+  <QuizFeedback>
+    No: titolo e durata sono attributi dello stesso oggetto, e ordinando una
+    lista di brani si spostano insieme all'oggetto che li contiene.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption correct>
+  Niente impedisce di assegnare a un brano una durata negativa.
+  <QuizFeedback>
+    Esatto. La classe mostrata qui riunisce dati e comportamenti, ma non
+    controlla nulla: `bohemian.durata = -5` passa senza obiezioni. Quello che
+    hai guadagnato è un posto dove mettere il controllo, che scriverai nella
+    lezione sull'incapsulamento.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption>
+  Aggiungere un campo ai brani richiede di modificare più punti del codice.
+  <QuizFeedback>
+    Con la classe, la descrizione di un brano sta in un punto solo: il campo
+    nuovo si aggiunge lì. Era il problema delle liste parallele.
+  </QuizFeedback>
+</QuizOption>
 
   <QuizOption>
-    Evitare i dizionari, perché non permettono di proteggere i dati.
+    Ogni brano condivide il contatore delle riproduzioni con gli altri.
     <QuizFeedback>
-      I dizionari non sono il nemico: sono uno strumento utilissimo. Sono un passo avanti rispetto alle liste parallele; semplicemente non bastano da soli a unire dati e comportamento.
-    </QuizFeedback>
-  </QuizOption>
-
-  <QuizOption>
-    Rendere il codice più veloce da eseguire.
-    <QuizFeedback>
-      La OOP riguarda l'**organizzazione** e la manutenibilità del codice, non la sua velocità. Un programma a oggetti non è intrinsecamente più rapido di uno procedurale.
+      No: ogni oggetto ha il proprio stato, quindi ogni brano ha il suo contatore indipendente.
     </QuizFeedback>
   </QuizOption>
 </Quiz>
 
 </QuizDeck>
 
-:::tip[Per andare oltre]
+:::tip[La prossima lezione]
 
-Hai visto *che cosa* fa una classe e *perché* ci serve. La prossima lezione scioglie il **come**: cosa significa davvero `__init__`, perché quel `self` compare ovunque, come si distinguono attributi e metodi. Continueremo proprio da `Brano`, dandogli più comportamenti e affiancandogli la `Playlist`.
+Qui hai visto cosa fa una classe e quando conviene. La prossima smonta il come: cosa succede quando scrivi `Brano(...)`, che ruolo ha `__init__`, perché `self` compare come primo parametro di ogni metodo e non lo passi mai tu. Ripartiamo da `Brano`, gli aggiungiamo comportamenti e gli affianchiamo la `Playlist` di Risonanza.
 
-Nel frattempo, una domanda per riflettere: pensa a un'app che usi ogni giorno (una chat, un gioco, un social). Quali sarebbero i suoi **oggetti**? Per ciascuno, quali **dati** porterebbe con sé e quali **azioni** saprebbe compiere? Non c'è codice da scrivere: è l'allenamento mentale con cui inizia ogni buon progetto a oggetti.
+Nel frattempo, prendi un'app che usi ogni giorno e prova a elencarne le entità: per ciascuna, quali informazioni si porta dietro e quali operazioni hanno senso solo su di lei. Se ti accorgi che un'operazione riguarda due entità diverse, hai già incontrato il problema di cui parla mezzo volume.
 
 :::
