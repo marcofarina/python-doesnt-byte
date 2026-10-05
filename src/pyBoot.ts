@@ -25,6 +25,8 @@ declare global {
         src: string,
         options?: { pythonpath?: string[]; cache?: boolean },
       ) => void;
+      curdir?: string;
+      VFS?: Record<string, [string, string, ...unknown[]]>;
     };
     brython?: (opts?: {
       debug?: number;
@@ -99,6 +101,59 @@ function injectScript(src: string, integrity?: string): Promise<void> {
   });
 }
 
+/**
+ * Imposta `__BRYTHON__.curdir`, la cartella della pagina, come fa `brython()`.
+ *
+ * Il core definisce `runPythonSource` appena è caricato, quindi i controlli di
+ * `ensureBrython` lo vedono «già inizializzato» e `brython()` non parte mai: ma
+ * è `brython()` che imposta `curdir`, e l'`os` della stdlib lo legge in testa al
+ * modulo. Senza, `import os` e `import random` (che fa `from os import urandom`)
+ * falliscono con `AttributeError: … no attribute 'curdir'`.
+ *
+ * Non chiamiamo `brython()` per ottenerlo: con `debug: 0` spegnerebbe
+ * `__debug__` e quindi gli `assert` del codice dello studente. Riproduciamo
+ * solo l'assegnazione che ci serve, con la stessa formula.
+ */
+function ensureCurdir(): void {
+  const b = window.__BRYTHON__;
+  if (!b || b.curdir !== undefined) return;
+  const parts = window.location.href.split('#')[0].split('/');
+  parts.pop();
+  b.curdir = parts.join('/');
+}
+
+/**
+ * Corregge `random.seed()` di Brython perché dia le sequenze di CPython.
+ *
+ * Il generatore (Mersenne Twister) di `_random` è identico a quello di CPython;
+ * sbaglia solo la scomposizione del seme in chiavi da 32 bit, che fa in base
+ * `2**32 - 1` invece di `2**32`. Sotto `2**32 - 1` la chiave è `[seme]` per
+ * tutti e due, sopra diverge: e ci finiscono anche i semi stringa e bytes, che
+ * `random.py` trasforma in interi enormi (`random.seed("drago")`). Il difetto è
+ * ancora nel `master` di Brython.
+ *
+ * Il modulo JS vive come sorgente nella VFS della stdlib e si valuta al primo
+ * `import random`: correggiamo il testo prima che accada. Se il testo non c'è
+ * più (Brython aggiornato), non tocchiamo niente; `prova_random.js` in
+ * `pm/PyQuest/tools/` dice se la divergenza è tornata.
+ *
+ * Resta diverso il seme float: Brython calcola `hash()` dei float in un altro
+ * modo, e `_random` semina con quell'hash.
+ */
+function fixRandomSeed(): void {
+  const entry = window.__BRYTHON__?.VFS?._random;
+  if (!entry || typeof entry[1] !== 'string') return;
+  entry[1] = entry[1].replace(
+    'var int32_1 = 2n ** 32n - 1n',
+    'var int32_1 = 2n ** 32n',
+  );
+}
+
+function patchRuntime(): void {
+  ensureCurdir();
+  fixRandomSeed();
+}
+
 export function ensureBrython(
   libUrl: string,
   brython?: BrythonConfig,
@@ -115,6 +170,7 @@ export function ensureBrython(
       window.__BRYTHON__ &&
       typeof window.__BRYTHON__.runPythonSource === 'function'
     ) {
+      patchRuntime();
       return;
     }
     // Carichiamo gli script on-demand se `brython()` non è ancora disponibile.
@@ -133,6 +189,7 @@ export function ensureBrython(
       window.__BRYTHON__ &&
       typeof window.__BRYTHON__.runPythonSource === 'function'
     ) {
+      patchRuntime();
       return;
     }
     window.brython!({
@@ -140,6 +197,7 @@ export function ensureBrython(
       pythonpath: [libUrl],
       cache: true,
     });
+    fixRandomSeed();
   })();
 
   return window.__PYRUNNER_BOOTED__;
