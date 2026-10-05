@@ -2,7 +2,7 @@
 
 > Il libro di testo, reinventato.
 
-[![Sito](https://img.shields.io/badge/Sito-rainbowbits.cloud-1d68e1?logo=googlechrome&logoColor=white)](https://www.rainbowbits.cloud/python-doesnt-byte/)
+[![Sito](https://img.shields.io/badge/Sito-rainbowbits.cloud-1d68e1?logo=googlechrome&logoColor=white)](https://rainbowbits.cloud/python-doesnt-byte/)
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/marcofarina/python-doesnt-byte/.github%2Fworkflows%2Fdeploy.yml?label=deploy)
 ![Version](https://img.shields.io/badge/Book%20version-0.7.1-orange)
 ![Docusaurus](https://img.shields.io/badge/Built%20with-Docusaurus%203-3ECC5F?logo=docusaurus&logoColor=white)
@@ -10,7 +10,7 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
 
-**[Python doesn’t byte](https://www.rainbowbits.cloud/python-doesnt-byte/)** è un libro di testo digitale e open source per imparare Python, pensato per gli studenti della scuola secondaria di secondo grado — in particolare l’indirizzo _Informatica_ degli Istituti Tecnici e l’articolazione _Scienze Applicate_ del Liceo Scientifico.
+**[Python doesn’t byte](https://rainbowbits.cloud/python-doesnt-byte/)** è un libro di testo digitale e open source per imparare Python, pensato per gli studenti della scuola secondaria di secondo grado — in particolare l’indirizzo _Informatica_ degli Istituti Tecnici e l’articolazione _Scienze Applicate_ del Liceo Scientifico.
 
 Non è un PDF né un sito di sole pagine statiche: ogni esempio di codice **si esegue direttamente nel browser** (niente da installare), con un editor in-pagina e la possibilità di modificare, rieseguire e sperimentare.
 
@@ -46,7 +46,7 @@ Il libro è organizzato in volumi indipendenti, ciascuno con la propria sidebar 
 - **Algorithm** — visualizzatore di algoritmi animati (ordinamento e ricerca) con player passo-passo, pseudocodice sincronizzato e preset _Studio_/_Lab_. Componente `<Algorithm />` in MDX.
 - Contenuti in **MDX** (italiano), con componenti didattici custom (callout Notion-style, quiz, tooltip, indice dei capitoli).
 - **Smart quotes** tipografici applicati automaticamente in build (`remark-smartypants`).
-- Deploy automatico su **GitHub Pages** (dominio custom `www.rainbowbits.cloud`) via GitHub Actions.
+- Deploy automatico su **GitHub Pages** (dominio custom `rainbowbits.cloud`) via GitHub Actions.
 
 ## Sviluppo locale
 
