@@ -43,7 +43,7 @@ export default async function createConfig(): Promise<Config> {
     favicon: 'img/icons/favicon.ico',
 
     // Set the production url of your site here
-    url: 'https://www.rainbowbits.cloud',
+    url: 'https://rainbowbits.cloud',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
     baseUrl: '/python-doesnt-byte/',
@@ -85,22 +85,7 @@ export default async function createConfig(): Promise<Config> {
             remarkPlugins: [protectCode, smartypants, restoreCode],
             admonitions,
           },
-          blog: {
-            showReadingTime: true,
-            feedOptions: {
-              type: ['rss', 'atom'],
-              xslt: true,
-            },
-            // Please change this to your repo.
-            // Remove this to remove the "edit this page" links.
-            //editUrl:
-            //  'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-            // Useful options to enforce blogging best practices
-            remarkPlugins: [protectCode, smartypants, restoreCode],
-            onInlineTags: 'warn',
-            onInlineAuthors: 'warn',
-            onUntruncatedBlogPosts: 'warn',
-          },
+          blog: false,
           pages: {
             beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
             remarkPlugins: [protectCode, smartypants, restoreCode],
@@ -267,10 +252,6 @@ export default async function createConfig(): Promise<Config> {
             label: 'PyQuest',
             position: 'left',
           },
-          /*        {
-                    to: '/blog',
-                    label: 'Blog',
-                    position: 'left'},*/
           // GitHub e "Offrimi un caffè" sono renderizzati come icone+popup
           // (NavbarIconButton) dal swizzle src/theme/Navbar/Content, non
           // tramite navbar items standard.

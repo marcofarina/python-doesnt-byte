@@ -47,3 +47,7 @@ CLAUDE.local.md
 
 # Project management (local, non committato)
 pm/
+
+# Agenti (locali)
+AGENTS.md
+.agents/
