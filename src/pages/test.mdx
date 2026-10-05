@@ -4,6 +4,7 @@ description: Indice delle sandbox di verifica dei componenti interattivi del sit
 ---
 
 import Head from '@docusaurus/Head';
+import Link from '@docusaurus/Link';
 
 <Head>
   <meta name="robots" content="noindex, nofollow" />
@@ -23,9 +24,13 @@ questa pagina di raccolta è a sua volta `noindex`.
 
 Pagine reali, già linkate altrove sul sito ma comode da raggiungere da qui in fase di QA:
 
-- [PyQuest — galleria di gioco](/pyquest)
 - [Showcase](/showcase)
 
 Strumenti d'autore, pubblici ma non linkati né indicizzati:
 
-- [Editor livelli PyQuest](/level-editor)
+{process.env.NODE_ENV !== 'production' && (
+  <ul>
+    <li><Link to="/pyquest">PyQuest — galleria di gioco</Link> (solo in sviluppo)</li>
+    <li><Link to="/level-editor">Editor livelli PyQuest</Link> (solo in sviluppo)</li>
+  </ul>
+)}

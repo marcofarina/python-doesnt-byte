@@ -26,6 +26,11 @@ const admonitions = {
   extendDefaults: true,
 };
 
+// PyQuest (/pyquest, /level-editor e voce di navbar) è visibile solo in sviluppo
+// (npm start): in produzione le pagine sono escluse dal plugin pages. Per
+// riaccenderlo online basta rendere questa costante true.
+const PYQUEST_PUBLIC = process.env.NODE_ENV !== 'production';
+
 // Il config è una funzione async perché remark-smartypants è ESM-only e va
 // caricato con import() dinamico (il config viene valutato in contesto CJS,
 // vedi il require() qui sopra). smartypants converte gli apici dritti della
@@ -87,6 +92,15 @@ export default async function createConfig(): Promise<Config> {
           },
           blog: false,
           pages: {
+            // Gli exclude predefiniti di Docusaurus (GlobExcludeDefault in
+            // @docusaurus/utils) vanno ripetuti: passare `exclude` li sostituisce.
+            exclude: [
+              '**/_*.{js,jsx,ts,tsx,md,mdx}',
+              '**/_*/**',
+              '**/*.test.{js,jsx,ts,tsx}',
+              '**/__tests__/**',
+              ...(PYQUEST_PUBLIC ? [] : ['pyquest/**', 'level-editor.tsx']),
+            ],
             beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
             remarkPlugins: [protectCode, smartypants, restoreCode],
             admonitions,
@@ -247,11 +261,15 @@ export default async function createConfig(): Promise<Config> {
               },
             ],
           },
-          {
-            to: '/pyquest',
-            label: 'PyQuest',
-            position: 'left',
-          },
+          ...(PYQUEST_PUBLIC
+            ? [
+                {
+                  to: '/pyquest',
+                  label: 'PyQuest',
+                  position: 'left' as const,
+                },
+              ]
+            : []),
           // GitHub e "Offrimi un caffè" sono renderizzati come icone+popup
           // (NavbarIconButton) dal swizzle src/theme/Navbar/Content, non
           // tramite navbar items standard.
