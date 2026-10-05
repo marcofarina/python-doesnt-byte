@@ -1,11 +1,13 @@
 // releasesData.ts — dati della pagina "Note di rilascio" (/note-di-rilascio).
 //
-// ⚠️ DATI SEGNAPOSTO. Le due voci qui sotto servono solo a mostrare come si
-// comporta la pagina (blocco feature, gruppi per categoria, badge "Ultima",
-// filtri, timeline). La cronologia reale partirà dalla v1.0.0 al rilascio
-// ufficiale: a quel punto svuota `RELEASES` e aggiungi le voci vere — la più
-// recente in cima, con `latest: true`. Una sola voce può popolare più
-// categorie; tutte sono opzionali.
+// Fonte dei dati: questo file, scritto a mano. La cronologia pubblica parte
+// dalla v0.16.0, la prima versione per gli studenti; le versioni precedenti
+// erano lavoro di cantiere e restano nei tag git e in pm/board.json.
+//
+// Chi lo aggiorna: la procedura di rilascio (fase R7 del piano 0.16.0 e ogni
+// release futura). Aggiungi la voce nuova IN CIMA con `latest: true` e togli
+// `latest` dalla precedente. Una voce può popolare più categorie; tutte sono
+// opzionali. Scrivi solo ciò che è davvero online in quella versione.
 
 import { type IconName } from '@site/src/components/Icon';
 
@@ -62,47 +64,17 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
-    v: '2.3.0',
-    date: '12 giugno 2026',
+    v: '0.16.0',
+    // R7: sostituisci con la data vera del rilascio.
+    date: 'ottobre 2026',
     latest: true,
-    feature: {
-      title: 'Visualizzatore di algoritmi interattivo',
-      body: 'Ordina, cerca, ripeti: i principali algoritmi del primo volume ora si eseguono passo-passo direttamente nella pagina, con controllo della velocità e confronti evidenziati in tempo reale.',
-      shot: 'Visualizzatore Algoritmi',
-    },
     notes: {
-      new: [
-        'Visualizzatore interattivo per Bubble Sort, Selection Sort e ricerca binaria',
-        'Selettore del carattere: leggi in serif o sans con un clic',
-        'Scorciatoia da tastiera per saltare tra i capitoli',
-      ],
-      content: [
-        'Nuovo capitolo «Ricorsione» nel Manuale del Programmatore',
-        'Sezione «Comprensioni di lista» ampliata con cinque nuovi esempi',
+      new: ['Prima versione pubblica del libro per gli studenti.'],
+      fixed: [
+        'Nel PyRunner funzionano import random e import os, e random.seed() produce le stesse sequenze di Python.',
       ],
       improved: [
-        'Caricamento delle pagine più rapido sui dispositivi lenti',
-        'Evidenziazione della sintassi più precisa per f-string e decoratori',
-      ],
-      fixed: [
-        'Il pulsante «Esegui» restava bloccato dopo un errore di runtime',
-        'Alcuni refusi nel capitolo «Cicli for»',
-      ],
-      cleanup: ['Aggiornate le dipendenze di Docusaurus'],
-    },
-  },
-  {
-    v: '2.2.1',
-    date: '28 maggio 2026',
-    notes: {
-      fixed: [
-        'Il menu laterale non si chiudeva dopo aver scelto un capitolo su mobile',
-        'I blocchi di codice molto lunghi uscivano dal margine in lettura serif',
-        'Il tema scuro non veniva ricordato fra una visita e l’altra',
-      ],
-      cleanup: [
-        'Messaggi d’errore dei blocchi di codice più chiari e specifici',
-        'Ridotto il peso delle immagini di copertina dei volumi',
+        'L’indirizzo del sito è ora https://rainbowbits.cloud, senza www.',
       ],
     },
   },

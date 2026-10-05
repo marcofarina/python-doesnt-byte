@@ -95,6 +95,10 @@ html[data-theme='dark'] .logo {
   line-height: 1.6;
 }
 
+.guideLink {
+  margin-top: 20px;
+}
+
 @media (max-width: 700px) {
   .toolsLink {
     padding: 0 20px;

@@ -71,7 +71,7 @@ export default function Home(): JSX.Element {
               to="/programmatore/"
               kicker="Volume 1"
               title="Manuale del Programmatore"
-              desc="Fondamenti del linguaggio: dati, controllo di flusso, funzioni."
+              desc="Il programma di terza: dal primo print() ai file, con liste, dizionari e funzioni."
               icon={<BracketsCurlyIcon />}
               accent="blue"
             />
@@ -79,7 +79,7 @@ export default function Home(): JSX.Element {
               to="/artefice/"
               kicker="Volume 2"
               title="Manuale dell’Artefice"
-              desc="Programmazione ad oggetti: classi, ereditarietà, design pattern."
+              desc="Programmazione a oggetti e progettazione: classi, incapsulamento, ereditarietà."
               icon={<CompassDraftingIcon />}
               accent="pink"
             />
@@ -87,7 +87,7 @@ export default function Home(): JSX.Element {
               to="/archivista/"
               kicker="Volume 3"
               title="Manuale dell’Archivista"
-              desc="Dati e persistenza: file, SQLite, ORM, integrazione."
+              desc="Basi di dati: modellazione, SQL, transazioni e accesso al database da Python."
               icon={<DatabaseIcon />}
               accent="amber"
             />
@@ -95,7 +95,7 @@ export default function Home(): JSX.Element {
               to="/apprendista/"
               kicker="Volume 4"
               title="Biblioteca dell’Apprendista"
-              desc="Esercizi, sfide e progetti di laboratorio."
+              desc="Esercizi e laboratori collegati alle lezioni degli altri volumi."
               icon={<BookOpenCoverIcon />}
               accent="green"
             />
@@ -121,6 +121,17 @@ export default function Home(): JSX.Element {
           fanno.{' '}
           <Link to="/showcase" className={styles.whyPythonLink}>
             Showcase →
+          </Link>
+        </p>
+
+        <p className={`${styles.toolsLink} ${styles.guideLink}`}>
+          Prima di cominciare: come è fatto il libro, come si usano gli esempi e
+          come si lavora con gli esercizi.{' '}
+          <Link
+            to="/docs/come-usare-questo-libro"
+            className={styles.whyPythonLink}
+          >
+            Come usare questo libro →
           </Link>
         </p>
 
