@@ -1,0 +1,383 @@
+---
+title: I dati che non stanno più nel programma
+sidebar_label: I dati fuori dal programma
+sidebar_position: 2
+description: Un registro salvato in JSON conserva i dati ma non risponde a nessuna domanda. Ogni domanda nuova è codice da scrivere, e ogni risposta costa la lettura dell’intero file. Lo vediamo sul registro dei punti delle case di Hogwarts.
+draft: true
+---
+
+# I dati che non stanno più nel programma
+
+<Epigraph author="Albus Silente, Harry Potter e il Calice di Fuoco">
+
+I sometimes find, and I am sure you know the feeling, that I simply have too many thoughts and memories crammed into my mind.
+
+</Epigraph>
+
+Alla fine del Volume 1 hai risolto un problema che ogni programma ha dal primo giorno: quando il programma termina, le sue variabili spariscono. Con JSON una lista di dizionari diventa testo, il testo finisce in un file, e al prossimo avvio il programma lo rilegge e riparte da dove era rimasto. I dati sono usciti dal programma e sopravvivono allo spegnimento.
+
+Questa lezione guarda cosa succede dopo, quando quel file comincia a servire: qualcuno ci fa domande, le domande cambiano, il file cresce. Lo vediamo sul registro in cui Hogwarts annota i punti assegnati e tolti alle case.
+
+:::prereq
+
+- Liste, dizionari e cicli `for`
+- Funzioni con parametri
+- Salvare e rileggere una lista di dizionari con il modulo `json` (Volume 1, capitolo sui file)
+
+:::
+
+:::learn
+
+- Distinguere il posto in cui stanno i dati dal codice che risponde alle domande su quei dati
+- Stimare quanto programma costa una domanda nuova su un archivio in JSON
+- Incrociare due file con un dizionario costruito apposta, e riconoscere quando serve
+- Spiegare perché, con un file, il costo di una risposta cresce con il file e non con la risposta
+
+:::
+
+## Il registro delle case
+
+Ogni volta che un professore assegna o toglie punti, il registro riceve una riga: lo studente, la sua casa, i punti (negativi se tolti) e il professore. Ecco le assegnazioni del primo anno di Harry che ci servono, salvate in `punti.json`:
+
+```json title="punti.json"
+[
+  {"studente": "Hermione Granger", "casa": "Grifondoro",
+   "punti": -5, "professore": "McGranitt"},
+  {"studente": "Harry Potter", "casa": "Grifondoro",
+   "punti": 5, "professore": "McGranitt"},
+  {"studente": "Ron Weasley", "casa": "Grifondoro",
+   "punti": 5, "professore": "McGranitt"},
+  {"studente": "Harry Potter", "casa": "Grifondoro",
+   "punti": -1, "professore": "Piton"},
+  {"studente": "Harry Potter", "casa": "Grifondoro",
+   "punti": -1, "professore": "Piton"},
+  {"studente": "Draco Malfoy", "casa": "Serpeverde",
+   "punti": 10, "professore": "Piton"},
+  {"studente": "Fred Weasley", "casa": "Grifondoro",
+   "punti": -10, "professore": "Piton"},
+  {"studente": "George Weasley", "casa": "Grifondoro",
+   "punti": -10, "professore": "Piton"},
+  {"studente": "Cedric Diggory", "casa": "Tassorosso",
+   "punti": 10, "professore": "Sprite"},
+  {"studente": "Terry Steeval", "casa": "Corvonero",
+   "punti": 10, "professore": "Vitious"},
+  {"studente": "Harry Potter", "casa": "Grifondoro",
+   "punti": -50, "professore": "McGranitt"},
+  {"studente": "Hermione Granger", "casa": "Grifondoro",
+   "punti": -50, "professore": "McGranitt"},
+  {"studente": "Neville Paciock", "casa": "Grifondoro",
+   "punti": -50, "professore": "McGranitt"},
+  {"studente": "Draco Malfoy", "casa": "Serpeverde",
+   "punti": -20, "professore": "McGranitt"},
+  {"studente": "Ron Weasley", "casa": "Grifondoro",
+   "punti": 50, "professore": "Silente"},
+  {"studente": "Hermione Granger", "casa": "Grifondoro",
+   "punti": 50, "professore": "Silente"},
+  {"studente": "Harry Potter", "casa": "Grifondoro",
+   "punti": 60, "professore": "Silente"},
+  {"studente": "Neville Paciock", "casa": "Grifondoro",
+   "punti": 10, "professore": "Silente"}
+]
+```
+
+Per rileggerlo da Python bastano le tre righe che conosci dal Volume 1:
+
+```python
+import json
+
+with open("punti.json", encoding="utf-8") as file_punti:
+    registro = json.load(file_punti)
+```
+
+:::note[In questa pagina non c'è un disco]
+
+Il browser non lascia aprire i file del tuo computer, quindi nei blocchi eseguibili `open` non funziona. Al suo posto trovi `leggi_file("punti.json")`, preparata per questa pagina: restituisce lo stesso testo che leggeresti dal file. `json.loads` lo trasforma nella lista di dizionari, come `json.load` fa con un file aperto. Nel tuo editor scriveresti la versione con `open`.
+
+:::
+
+## Ogni domanda è un programma
+
+La professoressa McGranitt, direttrice di Grifondoro, vuole sapere quanti punti ha la sua casa. Prima di eseguire, scorri il registro e prova a stimare il totale.
+
+```py live
+### PRE
+from archivio_hogwarts import leggi_file
+### POST
+import json
+
+registro = json.loads(leggi_file("punti.json"))
+
+totale = 0
+for assegnazione in registro:
+    if assegnazione["casa"] == "Grifondoro":
+        totale += assegnazione["punti"]
+
+print(f"Grifondoro: {totale} punti")
+```
+
+Tre punti. Un anno di troll, uscite notturne e scacchi giganti, e Grifondoro ha guadagnato appena più di quanto ha perso: i 170 punti di Silente coprono quasi da soli i 150 tolti in una notte da McGranitt.
+
+Seconda domanda: chi, fra i Grifondoro, è costato alla casa più punti? Contano solo i punti tolti, non quelli guadagnati. Prima di eseguire, scegli un nome.
+
+```py live
+### PRE
+from archivio_hogwarts import leggi_file
+### POST
+import json
+
+registro = json.loads(leggi_file("punti.json"))
+
+persi = {}
+for assegnazione in registro:
+    if assegnazione["casa"] == "Grifondoro" and assegnazione["punti"] < 0:
+        nome = assegnazione["studente"]
+        persi[nome] = persi.get(nome, 0) - assegnazione["punti"]
+
+for nome in persi:
+    print(f"{nome}: {persi[nome]}")
+
+peggiore = max(persi, key=persi.get)
+print(f"\nHa fatto perdere più punti: {peggiore}")
+```
+
+Hermione, con 55 punti tolti, davanti a Harry (52) e Neville (50). La notte fuori dal dormitorio è costata 50 punti a tutti e tre; la differenza la fanno i cinque punti del troll, che Hermione si è fatta togliere per coprire Harry e Ron. `max(persi, key=persi.get)` restituisce la chiave del dizionario con il valore più alto: è il nome che cercavi, non il numero.
+
+Adesso guarda i due programmi insieme. Hanno in comune solo le prime due righe, l'import e la lettura del file. Il resto (il ciclo, la condizione, la struttura che accumula) è scritto per una domanda e non serve all'altra, e la struttura cambia perfino forma: un numero per la prima domanda, un dizionario di contatori per la seconda.
+
+Il file, intanto, non è cambiato di un byte. Conserva i dati, ma non sa rispondere a niente: la capacità di rispondere sta tutta nel codice, e il codice esiste solo per le domande che qualcuno ha già previsto. Se McGranitt chiede quale professore ha tolto più punti a Grifondoro, il registro non ha la risposta. L'avrà quando qualcuno avrà scritto, provato e corretto un terzo programma.
+
+Prova a essere quel qualcuno: modifica il secondo blocco perché risponda alla domanda sui professori, e conta le righe che hai dovuto cambiare.
+
+## Una domanda che attraversa due file
+
+Il registro dice di chi sono i punti, ma non in che anno è lo studente. L'anno sta in un altro file, quello degli studenti:
+
+```json title="studenti.json"
+[
+  {"nome": "Harry Potter", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Hermione Granger", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Ron Weasley", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Neville Paciock", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Draco Malfoy", "casa": "Serpeverde", "anno": 1},
+  {"nome": "Terry Steeval", "casa": "Corvonero", "anno": 1},
+  {"nome": "Fred Weasley", "casa": "Grifondoro", "anno": 3},
+  {"nome": "George Weasley", "casa": "Grifondoro", "anno": 3},
+  {"nome": "Cedric Diggory", "casa": "Tassorosso", "anno": 3}
+]
+```
+
+Silente vuole sapere quanti punti hanno portato, in totale, gli studenti di ciascun anno. Nessuno dei due file basta da solo: i punti sono in `punti.json`, gli anni in `studenti.json`, e l'unico legame fra le due cose è il nome dello studente, scritto uguale in entrambi.
+
+```py live
+### PRE
+from archivio_hogwarts import leggi_file
+### POST
+import json
+
+registro = json.loads(leggi_file("punti.json"))
+studenti = json.loads(leggi_file("studenti.json"))
+
+anno_di = {}
+for studente in studenti:
+    anno_di[studente["nome"]] = studente["anno"]
+
+per_anno = {}
+for assegnazione in registro:
+    anno = anno_di[assegnazione["studente"]]
+    per_anno[anno] = per_anno.get(anno, 0) + assegnazione["punti"]
+
+for anno in sorted(per_anno):
+    print(f"{anno}° anno: {per_anno[anno]} punti")
+```
+
+Il programma lavora in due passi. Prima costruisce `anno_di`, un dizionario che dal nome di uno studente porta al suo anno: non sta in nessuno dei due file, esiste solo per fare questo incrocio. Poi scorre il registro e chiede ad `anno_di` l'anno di ogni studente. Senza quel dizionario, per ogni riga del registro dovresti scorrere tutto `studenti.json` alla ricerca del nome, con un ciclo dentro l'altro.
+
+Il legame fra i due file, quindi, esiste solo nel tuo codice. Nessuno dei due sa che i nomi del registro devono comparire anche nell'altro. Per vederlo, aggiungi questa riga subito dopo la lettura dei file e rilancia:
+
+```python
+registro.append({"studente": "Neville Paciok", "casa": "Grifondoro",
+                 "punti": 5, "professore": "Sprite"})
+```
+
+Il programma si ferma con un `KeyError` su `"Neville Paciok"`: il nome è scritto male e in `anno_di` non c'è. È il caso fortunato. Un programma che per prudenza saltasse i nomi che non trova in `anno_di` perderebbe quei cinque punti senza dirlo a nessuno, e il totale del primo anno sarebbe sbagliato senza che niente lo segnali.
+
+C'è poi una scorciatoia ovvia: copiare l'anno dentro ogni assegnazione, come il registro fa già con la casa. L'incrocio sparisce, ma la stessa informazione resta scritta in due posti, e quando Neville passa al secondo anno bisogna ricordarsi di correggerla ovunque. È il problema della prossima lezione.
+
+## Quando il registro cresce
+
+`punti.json` ha 18 assegnazioni perché contiene solo quelle che ci servivano. Il registro di tutta la scuola, in un anno, ne accumula migliaia. Il blocco qui sotto cerca i punti di Neville due volte: nel file piccolo e in uno che contiene le stesse 18 più 20.000 assegnazioni di altri studenti, mescolate. La risposta è la stessa nei due casi. Prima di eseguire, prova a prevedere quante assegnazioni legge il programma la seconda volta.
+
+```py live
+### PRE
+from archivio_hogwarts import leggi_file
+### POST
+import json
+
+def punti_di(nome, testo):
+    registro = json.loads(testo)
+    letti = 0
+    trovati = []
+    for assegnazione in registro:
+        letti += 1
+        if assegnazione["studente"] == nome:
+            trovati.append(assegnazione["punti"])
+    print(f"{len(testo) // 1024} KB, {letti} assegnazioni lette: {trovati}")
+
+punti_di("Neville Paciock", leggi_file("punti.json"))
+punti_di("Neville Paciock", leggi_file("punti_tutta_la_scuola.json"))
+```
+
+Le legge tutte e 20.018. Il programma non sa dove stanno le righe di Neville, né quante sono, quindi non può saltarne nessuna; e prima ancora deve caricare in memoria quasi due megabyte di testo, per estrarne due numeri. Il lavoro cresce con il file, non con la risposta: se il registro raddoppia, raddoppia anche il lavoro per trovare le stesse due righe. Con 20.000 assegnazioni il computer se la cava in un attimo. Con i registri di dieci anni di tutta la scuola, o con i movimenti di tutte le camere blindate della Gringott, leggere l'intero archivio per ogni domanda diventa il collo di bottiglia del programma.
+
+Una via d'uscita la conosci già: un dizionario come `anno_di`, costruito dal nome alle assegnazioni, trova Neville senza guardare gli altri. È un **indice**, e funziona. Però lo scrivi tu, ne serve uno per ogni campo su cui vuoi cercare in fretta, e va ricostruito ogni volta che il file cambia.
+
+Anche aggiungere un'assegnazione costa caro. Un file JSON contiene una lista sola, chiusa da una parentesi quadra, quindi non si può aggiungere un'assegnazione in fondo: bisogna rileggere tutto e riscrivere tutto.
+
+```python
+with open("punti.json", encoding="utf-8") as file_punti:
+    registro = json.load(file_punti)
+
+registro.append({"studente": "Seamus Finnigan", "casa": "Grifondoro",
+                 "punti": -5, "professore": "Vitious"})
+
+with open("punti.json", "w", encoding="utf-8") as file_punti:
+    json.dump(registro, file_punti, ensure_ascii=False, indent=2)
+```
+
+Con il registro di tutta la scuola, per un'assegnazione nuova se ne riscrivono più di 20.000. Cosa succede quando due professori lo fanno nello stesso momento è una delle domande della terza lezione di questo capitolo.
+
+## Cosa vorremmo, invece
+
+Messi in fila, i problemi di questa lezione diventano una lista di richieste:
+
+- fare una domanda nuova senza scrivere un programma nuovo, cioè dire _cosa_ vuoi sapere e lasciare ad altri il _come_;
+- collegare i dati di due archivi senza riscrivere ogni volta l'incrocio;
+- trovare due assegnazioni fra 20.000 senza leggere le altre, e aggiungerne una senza riscriverle tutte.
+
+Il software che soddisfa queste richieste si chiama <Tooltip def="Database Management System: il programma che conserva i dati e risponde alle domande su di essi al posto del tuo codice.">DBMS</Tooltip>, ed è l'argomento di questo volume.
+
+## In sintesi
+
+:::nutshell
+
+- Un file JSON conserva i dati fra un'esecuzione e l'altra, ma non risponde a nessuna domanda: le risposte stanno nel codice.
+- Ogni domanda nuova è un pezzo di programma nuovo, spesso con una struttura diversa dalle precedenti: un totale, un dizionario di contatori, un incrocio.
+- Quando la risposta sta in due file, l'incrocio lo scrivi tu, con un dizionario costruito apposta che lega i record attraverso un campo comune.
+- Il legame fra due file esiste solo nel codice: nessun file sa che un nome deve comparire anche nell'altro.
+- Per rispondere, il programma carica e scorre l'intero file. Il lavoro cresce con il file, non con la risposta.
+- Un indice fatto a mano accelera la ricerca, ma va scritto per ogni campo e ricostruito a ogni modifica.
+- Aggiungere un record a un file JSON significa rileggerlo e riscriverlo tutto.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    McGranitt vuole sapere quale professore ha tolto più punti a Grifondoro. Con il registro salvato in `punti.json`, che cosa serve?
+  </QuizQuestion>
+
+  <QuizOption>
+    Aggiungere a `punti.json` un campo con il totale di ogni professore.
+    <QuizFeedback>
+      Il totale andrebbe calcolato comunque da un programma, e ricalcolato a ogni assegnazione nuova. Avresti spostato il problema senza risolverlo.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Un altro pezzo di programma, che scorre il registro e accumula i punti tolti da ciascun professore.
+    <QuizFeedback>
+      Esatto. Ogni domanda che nessuno aveva previsto diventa codice da scrivere, provare e correggere.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Niente: `json.load` restituisce già i dati raggruppati per professore.
+    <QuizFeedback>
+      `json.load` restituisce la lista così com'è scritta nel file, un'assegnazione dopo l'altra. Raggruppare è compito tuo.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Riordinare il file per professore.
+    <QuizFeedback>
+      Un file ordinato si legge meglio a occhio, ma il programma deve comunque scorrerlo e sommare i punti di ciascun professore.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Il registro di tutta la scuola ha 20.018 assegnazioni, e Neville ne ha due. Quante ne legge la funzione `punti_di` della lezione per trovarle?
+  </QuizQuestion>
+
+  <QuizOption>
+    Due, quelle di Neville.
+    <QuizFeedback>
+      Il programma non sa dove stanno le assegnazioni di Neville: per scoprirlo deve guardarle.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Si ferma alla prima assegnazione di Neville che trova.
+    <QuizFeedback>
+      Il ciclo non ha un `break`, e non potrebbe averlo: il programma non sa quante assegnazioni ha Neville, quindi non sa quando ha finito.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Tutte e 20.018.
+    <QuizFeedback>
+      Esatto. E prima di leggerle deve caricare in memoria l'intero file, anche se alla fine ne tiene due numeri.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Circa metà, in media.
+    <QuizFeedback>
+      Metà, in media, è quanto legge una ricerca che si ferma al primo risultato. Qui le assegnazioni di Neville possono essere più di una, e vanno trovate tutte.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Nel programma che calcola i punti per anno aggiungi al registro un'assegnazione di `"Neville Paciok"`, con il nome scritto male. Che cosa succede?
+  </QuizQuestion>
+
+  <QuizOption correct>
+    Il programma si ferma con un `KeyError`.
+    <QuizFeedback>
+      Esatto: `anno_di` non ha una chiave `"Neville Paciok"`. Nessuno dei due file controlla che i nomi del registro esistano anche fra gli studenti: lo scopri solo quando il tuo codice prova a usarli.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    I cinque punti vengono contati nel primo anno, quello di Neville.
+    <QuizFeedback>
+      Per il programma `"Neville Paciok"` e `"Neville Paciock"` sono due stringhe diverse. Non c'è niente che le colleghi.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    `json.loads` rifiuta il registro.
+    <QuizFeedback>
+      Il registro resta JSON valido: un nome scritto male è una stringa come le altre. JSON controlla la sintassi, non il significato dei dati.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    L'assegnazione viene ignorata in silenzio.
+    <QuizFeedback>
+      Succederebbe se il programma controllasse prima `if nome in anno_di` e saltasse i nomi sconosciuti. Con `anno_di[...]` il programma si ferma: scomodo, ma almeno te ne accorgi.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+Nel registro la casa di ogni studente è scritta due volte: una in `punti.json`, ripetuta a ogni assegnazione, e una in `studenti.json`. Finché le due copie dicono la stessa cosa non te ne accorgi. La prossima lezione mostra cosa succede quando smettono di farlo, e perché a quel punto nessuno sa più quale delle due è vera.
+
+:::
