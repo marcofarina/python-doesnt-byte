@@ -148,7 +148,7 @@ function describe(
     // dimostrato. Ma l'ultima esecuzione gliela diciamo com'è.
     let why = 'non passa il controllo.';
     if (last.esito === 'errore') why = 'si è fermata con un errore.';
-    else if (last.messaggio) why = `non passa il controllo: ${last.messaggio}`;
+    else if (last.messaggio) why = `non passa il controllo. ${last.messaggio}`;
     return {
       tone: 'success',
       icon: faCircleCheck,
