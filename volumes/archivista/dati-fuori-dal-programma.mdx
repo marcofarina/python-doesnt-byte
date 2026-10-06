@@ -116,7 +116,7 @@ for assegnazione in registro:
 print(f"Grifondoro: {totale} punti")
 ```
 
-Tre punti. Un anno di troll, uscite notturne e scacchi giganti, e Grifondoro ha guadagnato appena più di quanto ha perso: i 170 punti di Silente coprono quasi da soli i 150 tolti in una notte da McGonagall.
+Il totale è di <Spoiler>tre punti</Spoiler>. Un anno di troll, uscite notturne e scacchi giganti, e Grifondoro ha guadagnato appena più di quanto ha perso: i 170 punti di Silente coprono quasi da soli i 150 tolti in una notte da McGonagall.
 
 Seconda domanda: quale studente, fra i Grifondoro, è costato più punti alla casa di appartenenza? Contano solo i punti tolti, non quelli guadagnati. Prima di eseguire scegli uno studente, poi scopri se avevi ragione.
 
@@ -140,7 +140,13 @@ peggiore = max(persi, key=persi.get)
 print(f"\nHa fatto perdere più punti: {peggiore}")
 ```
 
-Hermione, con 55 punti tolti, davanti a Harry (52) e Neville (50). La notte fuori dal dormitorio è costata 50 punti a tutti e tre; la differenza la fanno i cinque punti del troll, che Hermione si è fatta togliere per coprire Harry e Ron. `max(persi, key=persi.get)` restituisce la chiave del dizionario con il valore più alto: è il nome che cercavi, non il numero.
+<Spoiler block>
+
+Hermione, con 55 punti tolti, davanti a Harry (52) e Neville (50). La notte fuori dal dormitorio è costata 50 punti a tutti e tre; la differenza la fanno i cinque punti del troll, che Hermione si è fatta togliere per coprire Harry e Ron.
+
+</Spoiler>
+
+`max(persi, key=persi.get)` restituisce la chiave del dizionario con il valore più alto: è il nome che cercavi, non il numero.
 
 Guarda i due programmi insieme: hanno in comune solo le prime due righe, l'import e la lettura del file. Il resto (il ciclo, la condizione, la struttura che accumula) è scritto per rispondere a una domanda specifica e non serve all'altra. La struttura dati addirittura cambia: un numero per la prima domanda, un dizionario di contatori per la seconda.
 
@@ -271,7 +277,7 @@ punti_di("Neville Longbottom", leggi_file("punti.json"))
 punti_di("Neville Longbottom", leggi_file("punti_tutta_la_scuola.json"))
 ```
 
-Le legge tutte e 20.018. Il programma non sa dove stanno le righe di Neville, né quante sono, quindi non può saltarne nessuna; ma prima ancora deve caricare in memoria quasi due megabyte di testo, per estrarre solo due numeri. È importante notare che il lavoro cresce con l'aumentare della dimensione del file, non con la lunghezza della risposta: se il registro raddoppia, raddoppia anche il lavoro per trovare le stesse due righe. Con 20.000 assegnazioni il computer se la cava in un attimo (osserva i tempi di esecuzione del codice). Con i registri di dieci anni di tutta la scuola, o con i movimenti di tutte le camere blindate della Gringott, leggere l'intero archivio per ogni domanda diventa un vero e proprio collo di bottiglia dell'intero programma.
+Le legge tutte e <Spoiler>20.018</Spoiler>. Il programma non sa dove stanno le righe di Neville, né quante sono, quindi non può saltarne nessuna; ma prima ancora deve caricare in memoria quasi due megabyte di testo, per estrarre solo due numeri. È importante notare che il lavoro cresce con l'aumentare della dimensione del file, non con la lunghezza della risposta: se il registro raddoppia, raddoppia anche il lavoro per trovare le stesse due righe. Con 20.000 assegnazioni il computer se la cava in un attimo (osserva i tempi di esecuzione del codice). Con i registri di dieci anni di tutta la scuola, o con i movimenti di tutte le camere blindate della Gringott, leggere l'intero archivio per ogni domanda diventa un vero e proprio collo di bottiglia dell'intero programma.
 
 Una via d'uscita la conosciamo già. Come `anno_di` porta dal nome di uno studente al suo anno, un altro dizionario può portare dal nome di uno studente alla lista delle sue assegnazioni: con quel dizionario le due assegnazioni di Neville si trovano subito, senza leggere le altre 20.016. Un dizionario usato così si chiama indice. Però lo scrivi tu, ne serve uno per ogni campo su cui vuoi cercare in fretta, e va ricostruito ogni volta che il file cambia.
 
