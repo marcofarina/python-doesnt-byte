@@ -154,6 +154,8 @@ Il file JSON, intanto, non è cambiato di un byte. Conserva i dati, ma non sa ri
 
 Prova a essere quel qualcuno. Il programma qui sotto è una copia del secondo: modificalo affinché risponda alla domanda di McGonagall, e tieni il conto delle righe di codice che hai dovuto cambiare.
 
+<Challenge>
+
 ```py live title="Quale professore ha tolto più punti a Grifondoro?"
 from archivio_hogwarts import leggi_file
 ### PRE
@@ -172,13 +174,56 @@ for nome in persi:
 
 peggiore = max(persi, key=persi.get)
 print(f"\nHa fatto perdere più punti: {peggiore}")
+### POST
+assert not contiene("Hermione"), "Il programma elenca ancora gli studenti: il conto deve essere per professore."
+assert contiene("McGonagall"), "Il programma non stampa il nome del professore che cerchi."
+assert contiene("McGonagall", righe()[-1]), "Nell'ultima riga il professore che stampi non è quello che ha tolto più punti: guarda i totali."
 ```
 
-<Spoiler block>
+<Hint>
+  Il programma conta i punti per studente perché la riga `nome =
+  assegnazione["studente"]` sceglie chi viene contato. Quella riga decide a chi
+  vengono attribuiti i punti persi.
+</Hint>
+
+<Hint>
+  Ogni assegnazione del registro ha anche una chiave `"professore"`. Usala al
+  posto di `"studente"` nel punto in cui scegli il nome da contare.
+</Hint>
+
+<Hint>
+  Dopo il cambio il programma calcola quello che vuoi, ma l'ultimo `print` dice
+  ancora «Ha fatto perdere più punti» a proposito di uno studente. Rendi
+  l'etichetta vera.
+</Hint>
+
+<Solved>
 
 È bastato cambiare una parola, `"professore"` al posto di `"studente"`, più l'etichetta dell'ultimo `print` perché dica il vero. Eppure è un programma nuovo: qualcuno ha dovuto scriverlo, eseguirlo e controllarlo, e lo stesso succederà per ogni domanda nuova.
 
-</Spoiler>
+</Solved>
+
+<Answer>
+
+```py
+persi = {}
+for assegnazione in registro:
+    if assegnazione["casa"] == "Grifondoro" and assegnazione["punti"] < 0:
+        nome = assegnazione["professore"]
+        persi[nome] = persi.get(nome, 0) - assegnazione["punti"]
+
+for nome in persi:
+    print(f"{nome}: {persi[nome]}")
+
+peggiore = max(persi, key=persi.get)
+print(f"\nHa tolto più punti: {peggiore}")
+```
+
+La risposta è McGonagall, con 155 punti tolti a Grifondoro contro i 22 di Piton: da sola ne ha tolti 5 per il troll e 150 per la notte fuori dal dormitorio. Il resto del programma non cambia, perché la domanda ha la stessa forma della precedente: si accumulano i punti persi sotto una chiave. Cambia solo la chiave.
+
+</Answer>
+
+</Challenge>
 
 ## Una domanda che attraversa due file
 
