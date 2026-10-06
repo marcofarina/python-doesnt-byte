@@ -1,0 +1,192 @@
+---
+unlisted: true
+title: Esercizi verificati — pagina di test
+description: Sandbox di verifica degli esercizi verificati (Challenge, Hint, Solved, Answer) in PyRunner
+---
+
+# Esercizi verificati — sandbox di test
+
+Pagina di verifica di `<Challenge>`. Non è linkata dalla sidebar (`unlisted: true`).
+Regole: dentro un `<Challenge>` il blocco `### POST` del runner è la verifica, eseguita
+dopo il codice dello studente; ogni tentativo non riuscito sblocca il `<Hint>`
+successivo; `<Answer>` si può aprire dopo la prima esecuzione; `<Solved>` compare solo
+al primo esito «risolto».
+
+Riepilogo atteso al caricamento: **5 esercizi**, tutti con `data-esito="nuovo"`, nessun
+suggerimento, commento o soluzione nel DOM.
+
+## 1. Verifica con `assert` su una variabile
+
+Somma i numeri da 1 a 10 in `totale`. Il codice di partenza si ferma a 9 (risultato 45).
+Il PRE nascosto ha una riga vuota in mezzo: un errore alla riga 3 del codice visibile
+deve comparire nel traceback come «line 3».
+
+<Challenge>
+
+```py live
+PRIMO = 1
+
+ULTIMO = 10
+### PRE
+totale = 0
+for n in range(PRIMO, ULTIMO):
+    totale += n
+print(totale)
+### POST
+assert totale == 55, f"totale vale {totale}: controlla fin dove arriva range."
+```
+
+<Hint>`range(a, b)` si ferma prima di `b`.</Hint>
+
+<Solved>
+
+Esatto: `range` esclude l'ultimo valore, quindi per arrivare a `ULTIMO` serve
+`range(PRIMO, ULTIMO + 1)`. Testo di controllo: COMMENTO-SANDBOX-UNO.
+
+</Solved>
+
+<Answer>
+
+```py
+totale = 0
+for n in range(PRIMO, ULTIMO + 1):
+    totale += n
+print(totale)
+```
+
+Basta un `+ 1` nel secondo argomento di `range`. Testo di controllo: SOLUZIONE-SANDBOX-UNO.
+
+</Answer>
+
+</Challenge>
+
+## 2. Verifica sull'output con `righe()`
+
+Stampa i numeri pari da 2 a 10, uno per riga. Il codice di partenza stampa 0, 2, 4, 6, 8.
+La verifica non guarda le variabili: lo studente può chiamarle come vuole.
+
+<Challenge>
+
+```py live
+for n in range(10):
+    if n % 2 == 0:
+        print(n)
+### POST
+attese = ["2", "4", "6", "8", "10"]
+assert righe() != [], "Il programma non stampa niente."
+assert righe()[0] != "0", "Lo zero non è tra i numeri richiesti: si parte da 2."
+assert righe() == attese, "Devono comparire 2, 4, 6, 8 e 10, uno per riga."
+```
+
+<Hint>Il primo numero da stampare è 2, l'ultimo è 10.</Hint>
+
+<Solved>Giusto. Testo di controllo: COMMENTO-SANDBOX-DUE.</Solved>
+
+<Answer>
+
+```py
+for n in range(2, 11, 2):
+    print(n)
+```
+
+Con il terzo argomento di `range` si salta di due in due e l'`if` non serve più.
+
+</Answer>
+
+</Challenge>
+
+## 3. Tre suggerimenti progressivi, soluzione con un runner
+
+Stampa la parola al contrario. La verifica usa `uguale()`, che ignora maiuscole e spazi:
+`ordnofirg` e `ORDNOFIRG` sono entrambe giuste. Nella soluzione c'è un PyRunner di sola
+lettura: eseguirlo non deve contare come tentativo.
+
+<Challenge>
+
+```py live
+parola = "Grifondoro"
+print(parola)
+### POST
+assert uguale(output(), "ordnofirG"), "La parola stampata non è al contrario."
+```
+
+<Hint>Le stringhe si possono affettare come le liste.</Hint>
+<Hint>Una fetta ha tre parti: inizio, fine e passo.</Hint>
+<Hint>Con un passo negativo la fetta va all'indietro: `parola[::-1]`.</Hint>
+
+<Solved>Bravo. Testo di controllo: COMMENTO-SANDBOX-TRE.</Solved>
+
+<Answer>
+
+```py live readonly
+parola = "Grifondoro"
+print(parola[::-1])
+```
+
+Il passo `-1` legge la stringa dall'ultimo carattere al primo.
+
+</Answer>
+
+</Challenge>
+
+## 4. La verifica fallisce con `NameError`
+
+La verifica controlla `doppio`, ma il codice di partenza usa `risultato`: lo studente vede
+«non ancora» con il testo generico, senza traceback; l'errore va nella console del
+browser. Rinominando la variabile in `doppio` l'esercizio si risolve.
+
+<Challenge>
+
+```py live
+numero = 7
+risultato = numero * 2
+print(risultato)
+### POST
+assert doppio == 14, "doppio deve valere 14."
+```
+
+<Hint>La variabile deve chiamarsi `doppio`.</Hint>
+
+<Solved>Testo di controllo: COMMENTO-SANDBOX-QUATTRO.</Solved>
+
+</Challenge>
+
+## 5. Errore nel codice dello studente
+
+Il codice di partenza ha un `ZeroDivisionError` alla riga 2: traceback in rosso con
+«line 2», esito `errore`, e conta come tentativo (sblocca il suggerimento).
+
+<Challenge>
+
+```py live
+punti = 50
+media = punti / 0
+print(media)
+### POST
+assert media == 25, "La media deve essere 25."
+```
+
+<Hint>Dividi per il numero di prove, che è 2.</Hint>
+
+<Answer>
+
+```py
+punti = 50
+media = punti / 2
+print(media)
+```
+
+</Answer>
+
+</Challenge>
+
+## 6. Regressione: PyRunner senza `<Challenge>`
+
+Un fence con `### POST` fuori da un esercizio: il POST è accodato al codice come prima,
+e la sua stampa compare nell'output. `pdb:runner-done` arriva con `esito: null`.
+
+```py live
+x = 3
+### POST
+print("POST eseguito, x =", x)
+```

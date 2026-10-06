@@ -47,6 +47,17 @@ def get_formatter(line_shift):
         exc_class, exc, tb = sys.exc_info()
         exc_msg = str(exc)
 
+        # Lo studente vede solo il suo codice, che exec compila come
+        # '<string>': i frame del wrapper (lo script che chiama run e
+        # brython_runner stesso) non gli dicono niente e hanno numeri di riga
+        # che non corrispondono all'editor. Un SyntaxError non ha frame del
+        # codice dello studente: resta solo la parte che indica la riga.
+        first = tb
+        while first is not None and first.tb_frame.f_code.co_filename != '<string>':
+            first = first.tb_next
+        if first is not None or isinstance(exc, SyntaxError):
+            tb = first
+
         def handle_repeats(filename, lineno, count_repeats):
             if count_repeats > 0:
                 trace_lines = trace.lines[:]
@@ -74,6 +85,9 @@ def get_formatter(line_shift):
 
         show = True
         started = False
+        # Senza frame (SyntaxError) il ciclo non parte: handle_repeats dopo
+        # il ciclo deve comunque trovare questi nomi.
+        filename = lineno = None
         save_filename = None
         save_lineno = None
         save_scope = None
@@ -105,7 +119,7 @@ def get_formatter(line_shift):
         handle_repeats(filename, lineno, count_repeats)
 
         if isinstance(exc, SyntaxError):
-            trace.write(syntax_error(exc.args))
+            trace.write(syntax_error(exc.args, line_shift))
         else:
             message = exc_msg
             if isinstance(exc, AttributeError):
@@ -130,10 +144,10 @@ def print_exc(file=None, line_shift=0):
     file.write(trace)
     return trace
 
-def syntax_error(args):
+def syntax_error(args, line_shift=0):
     trace = Trace()
     info, [filename, lineno, offset, line, *extra] = args
-    trace.write(f'  File "{filename}", line {lineno}')
+    trace.write(f'  File "{filename}", line {lineno - line_shift}')
     indent = len(line) - len(line.lstrip())
     trace.write("    " + line.strip())
     nb_marks = 1

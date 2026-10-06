@@ -1,0 +1,267 @@
+/* <Challenge>: un runner con la barra dell'esercizio sotto.
+   Cornice esterna radius-lg, runner dentro radius-md: nesting concentrico a
+   passo 4px. Verde, ambra e rosso sono quelli del Quiz. */
+
+.challenge {
+  --challenge-success: #15803d;
+  --challenge-success-bg: rgba(21, 128, 61, 0.07);
+  --challenge-success-border: rgba(21, 128, 61, 0.3);
+  --challenge-pending: #b45309;
+  --challenge-error: #dc2626;
+
+  margin: 1.4em 0;
+  padding: 4px;
+  border: 1px solid var(--at-border);
+  border-radius: var(--radius-lg);
+  background: var(--at-bg-subtle);
+  transition: border-color var(--dur-slow) var(--ease-smooth);
+}
+
+html[data-theme='dark'] .challenge {
+  --challenge-success: #86efac;
+  --challenge-success-bg: rgba(134, 239, 172, 0.06);
+  --challenge-success-border: rgba(134, 239, 172, 0.28);
+  --challenge-pending: #fcd34d;
+  --challenge-error: #fca5a5;
+}
+
+.challenge[data-solved] {
+  border-color: var(--challenge-success-border);
+}
+
+.challenge [data-runner] {
+  margin: 0;
+  border-radius: var(--radius-md);
+}
+
+/* Barra: esito a sinistra, azioni a destra; su schermo stretto vanno a capo. */
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 10px 10px 6px;
+}
+
+/* .challenge davanti: deve battere il margine dei paragrafi di .markdown. */
+.challenge .status {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 1 1 18rem;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--at-fg-body);
+}
+
+.statusIcon {
+  flex-shrink: 0;
+  /* Allinea l'icona alla prima riga del testo. */
+  transform: translateY(0.1em);
+}
+
+.tone_idle .statusIcon {
+  color: var(--at-faint);
+}
+
+.tone_idle {
+  color: var(--at-muted);
+}
+
+.tone_pending .statusIcon {
+  color: var(--challenge-pending);
+}
+
+.tone_error .statusIcon {
+  color: var(--challenge-error);
+}
+
+.tone_success {
+  color: var(--at-fg-strong);
+}
+
+.tone_success .statusIcon {
+  color: var(--challenge-success);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--at-border-strong);
+  background: var(--at-bg-chip);
+  color: var(--at-fg);
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-smooth),
+    color var(--dur-fast) var(--ease-smooth),
+    border-color var(--dur-fast) var(--ease-smooth),
+    transform var(--dur-fast) var(--ease-smooth);
+}
+
+.action:hover:not(:disabled) {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-fg-strong);
+}
+
+.action:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+.action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Suggerimento appena sbloccato: l'accento dice «c'è qualcosa per te». */
+.fresh {
+  border-color: var(--at-accent-chip-border);
+  background: var(--at-accent-chip);
+  color: var(--at-accent-soft);
+  animation: challengeFresh calc(var(--dur-slow) * 3) var(--ease-out);
+}
+
+@keyframes challengeFresh {
+  from {
+    box-shadow: 0 0 0 0 var(--at-accent-chip-border);
+  }
+  to {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+
+/* Pannelli: suggerimenti, commento, soluzione. */
+
+/* .challenge davanti: deve battere il padding delle liste di .markdown. */
+.challenge .hints {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.panel {
+  margin: 4px 0 0;
+  padding: 0.7rem 0.9rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--at-bg-chip);
+  animation: challengePanelIn var(--dur-slow) var(--ease-out);
+}
+
+.panel:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+.hint {
+  background: var(--at-accent-bg);
+}
+
+.success {
+  border-color: var(--challenge-success-border);
+  background: var(--challenge-success-bg);
+}
+
+.panelLabel {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 0.3rem;
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--at-muted);
+}
+
+.hint .panelLabel {
+  color: var(--at-accent-soft);
+}
+
+.success .panelLabel {
+  color: var(--challenge-success);
+}
+
+.panelBody {
+  color: var(--at-fg-body);
+  line-height: 1.6;
+}
+
+.panelBody > :last-child {
+  margin-bottom: 0;
+}
+
+/* Un runner o un blocco di codice nella soluzione non ha bisogno del
+   margine verticale pieno: il pannello lo separa già. */
+.panelBody [data-runner],
+.panelBody pre {
+  margin: 0.6em 0;
+}
+
+@keyframes challengePanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.misplaced {
+  margin: 1em 0;
+  padding: 0.6rem 0.85rem;
+  border: 1px dashed var(--challenge-error, #dc2626);
+  border-radius: var(--radius-sm);
+  color: var(--at-fg);
+  font-family: 'Monaspace Argon', ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Su carta non si esegue niente: niente pulsanti, pannelli tutti aperti
+   (il componente li rende al `beforeprint`). */
+@media print {
+  .actions {
+    display: none;
+  }
+
+  .panel {
+    animation: none;
+    break-inside: avoid;
+  }
+}
