@@ -130,6 +130,7 @@
 
 /* Popover dello spoiler bloccato: stessa pelle del Tooltip. */
 .popover {
+  position: relative;
   z-index: 100;
   max-width: 260px;
   padding: 10px 14px;
@@ -156,7 +157,45 @@ html[data-theme='dark'] .popover {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  margin: 0 0 10px;
+  /* Spazio a destra per la x di chiusura. */
+  margin: 0 22px 10px 0;
+}
+
+.close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-circle);
+  background: transparent;
+  color: var(--at-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.close:hover,
+.close:focus-visible {
+  background: var(--at-bg-chip);
+  color: var(--at-fg);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 1px;
+}
+
+.popoverActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .popoverIcon {
@@ -191,6 +230,32 @@ html[data-theme='dark'] .popover {
   outline-offset: 2px;
 }
 
-.showAnyway:active {
+.showAnyway:active,
+.ok:active {
   transform: scale(0.98);
+}
+
+/* «Ok» è l'azione principale: chiudere e andare a eseguire. */
+.ok {
+  padding: 3px 14px;
+  border: 1px solid var(--at-accent-chip-border);
+  border-radius: var(--radius-pill);
+  background: var(--at-accent-chip);
+  color: var(--at-accent);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.ok:hover {
+  background: var(--at-accent-chip-border);
+}
+
+.ok:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
 }

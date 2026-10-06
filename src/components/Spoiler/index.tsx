@@ -21,7 +21,7 @@ import {
   FloatingFocusManager,
 } from '@floating-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { faLock, faXmark } from '@fortawesome/free-solid-svg-icons';
 import {
   RUNNER_DONE_EVENT,
   RUNNER_SELECTOR,
@@ -80,7 +80,7 @@ export default function Spoiler({ children, block = false }: SpoilerProps) {
   const surfaceRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fieldRef = useRef<ParticleField | null>(null);
-  const showAnywayRef = useRef<HTMLButtonElement | null>(null);
+  const okRef = useRef<HTMLButtonElement | null>(null);
 
   const { refs, floatingStyles, context } = useFloating({
     open: popoverOpen,
@@ -218,7 +218,9 @@ export default function Spoiler({ children, block = false }: SpoilerProps) {
           <FloatingFocusManager
             context={context}
             modal={false}
-            initialFocus={showAnywayRef}
+            // Il fuoco va su «Ok», non su «Mostra comunque»: un Invio di
+            // troppo da tastiera non deve rivelare la risposta.
+            initialFocus={okRef}
           >
             <div
               // `refs.setFloating` è un callback ref di @floating-ui, non un
@@ -232,18 +234,35 @@ export default function Spoiler({ children, block = false }: SpoilerProps) {
               style={floatingStyles}
               {...getFloatingProps()}
             >
+              <button
+                type="button"
+                className={styles.close}
+                aria-label="Chiudi"
+                onClick={() => setPopoverOpen(false)}
+              >
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
               <p id={`${popoverId}-text`} className={styles.popoverText}>
                 <FontAwesomeIcon icon={faLock} className={styles.popoverIcon} />
                 Esegui prima il codice qui sopra.
               </p>
-              <button
-                ref={showAnywayRef}
-                type="button"
-                className={styles.showAnyway}
-                onClick={() => reveal()}
-              >
-                Mostra comunque
-              </button>
+              <div className={styles.popoverActions}>
+                <button
+                  type="button"
+                  className={styles.showAnyway}
+                  onClick={() => reveal()}
+                >
+                  Mostra comunque
+                </button>
+                <button
+                  ref={okRef}
+                  type="button"
+                  className={styles.ok}
+                  onClick={() => setPopoverOpen(false)}
+                >
+                  Ok
+                </button>
+              </div>
             </div>
           </FloatingFocusManager>
         </FloatingPortal>
