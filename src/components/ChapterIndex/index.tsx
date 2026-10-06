@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import clsx from 'clsx';
@@ -8,94 +8,71 @@ import {
   DatabaseIcon,
   BookOpenCoverIcon,
 } from '@site/src/components/VolumeIcons';
+import { useAllDocsData } from '@docusaurus/plugin-content-docs/client';
+import {
+  useCurriculumPluginData,
+  type CurriculumTreeItem,
+} from '@site/src/contexts/CurriculumContext';
+import {
+  resolvePermalink,
+  volumeLabel,
+  type AllDocsData,
+} from '@site/src/lib/docResolve';
 import styles from './styles.module.css';
 
 type Accent = 'blue' | 'pink' | 'amber' | 'green';
 
-interface Chapter {
+interface Lesson {
+  key: string;
   title: string;
-  lessons: number;
-  /** Rotta della pagina, solo per i capitoli già pubblicati. */
-  to?: string;
+  to: string;
+  /** Capitolo (categoria di primo livello della TOC), se c'è. */
+  group?: string;
 }
 
 interface Volume {
+  id: string;
   n: string;
-  label: string;
   accent: Accent;
   icon: (props: { size?: number }) => JSX.Element;
-  chapters: Chapter[];
-  draft?: boolean;
 }
 
 /*
- * TOC pianificata: i capitoli senza `to` non esistono ancora come pagine e i
- * conteggi in `lessons` sono di progetto, non misurati sul contenuto reale.
- * Tenere allineata a mano man mano che i volumi prendono forma; a regime
- * andrà derivata dai globalData delle istanze docs.
+ * L'indice non ha liste scritte a mano: le lezioni vengono dalla TOC del
+ * volume (plugin curriculum) e compaiono solo se la pagina esiste davvero nei
+ * docs pubblicati (useAllDocsData). Una lezione in bozza (draft: true) non è
+ * nella build di produzione, quindi non compare; quando esce dalla bozza
+ * compare da sola.
  */
 const VOLUMES: Volume[] = [
-  {
-    n: '01',
-    label: 'Manuale del Programmatore',
-    accent: 'blue',
-    icon: BracketsCurlyIcon,
-    draft: true,
-    chapters: [
-      { title: 'Introduzione', lessons: 2, to: '/programmatore/' },
-      { title: 'Fondamenti di Python', lessons: 4 },
-      { title: 'Le basi del linguaggio', lessons: 5 },
-      { title: 'Strutture di controllo', lessons: 4 },
-      { title: 'Funzioni', lessons: 4 },
-      { title: 'Strutture dati', lessons: 5 },
-    ],
-  },
-  {
-    n: '02',
-    label: 'Manuale dell’Artefice',
-    accent: 'pink',
-    icon: CompassDraftingIcon,
-    draft: true,
-    chapters: [
-      { title: 'Introduzione', lessons: 2, to: '/artefice/' },
-      // Le 5 lezioni sotto sono in bozza (draft: true) — niente `to` finché
-      // non tornano pubbliche, altrimenti il link punterebbe a una pagina
-      // assente in produzione e romperebbe onBrokenLinks.
-      { title: 'Perché gli oggetti?', lessons: 3 },
-      { title: 'Classi, istanze e metodi', lessons: 5 },
-      { title: 'Metodi di classe e statici', lessons: 3 },
-      { title: 'Mostrare un oggetto', lessons: 2 },
-      { title: 'Incapsulamento', lessons: 4 },
-    ],
-  },
-  {
-    n: '03',
-    label: 'Manuale dell’Archivista',
-    accent: 'amber',
-    icon: DatabaseIcon,
-    draft: true,
-    chapters: [
-      { title: 'Introduzione', lessons: 2, to: '/archivista/' },
-      { title: 'File e formati', lessons: 4 },
-      { title: 'Database relazionali', lessons: 5 },
-      { title: 'SQL essenziale', lessons: 6 },
-      { title: 'Serializzazione', lessons: 3 },
-    ],
-  },
-  {
-    n: '04',
-    label: 'Biblioteca dell’Apprendista',
-    accent: 'green',
-    icon: BookOpenCoverIcon,
-    draft: true,
-    chapters: [
-      { title: 'Introduzione', lessons: 1, to: '/apprendista/' },
-      { title: 'Mini-progetti guidati', lessons: 5 },
-      { title: 'Algoritmi visualizzati', lessons: 4 },
-      { title: 'Sfide di codice', lessons: 6 },
-    ],
-  },
+  { id: 'programmatore', n: '01', accent: 'blue', icon: BracketsCurlyIcon },
+  { id: 'artefice', n: '02', accent: 'pink', icon: CompassDraftingIcon },
+  { id: 'archivista', n: '03', accent: 'amber', icon: DatabaseIcon },
+  { id: 'apprendista', n: '04', accent: 'green', icon: BookOpenCoverIcon },
 ];
+
+/** Lezioni pubblicate di un volume, in ordine di TOC, intro esclusa. */
+function collectLessons(
+  volumeId: string,
+  tree: CurriculumTreeItem[],
+  allData: AllDocsData,
+): Lesson[] {
+  const out: Lesson[] = [];
+  const walk = (items: CurriculumTreeItem[], group?: string) => {
+    for (const item of items) {
+      if (item.type === 'category') {
+        walk(item.items, group ?? item.label);
+        continue;
+      }
+      const docId = item.key.slice(volumeId.length + 1);
+      if (docId === 'intro') continue;
+      const to = resolvePermalink(allData, volumeId, docId);
+      if (to) out.push({ key: item.key, title: item.title, to, group });
+    }
+  };
+  walk(tree);
+  return out;
+}
 
 function ArrowRight() {
   return (
@@ -119,6 +96,14 @@ function ArrowRight() {
 
 export default function ChapterIndex() {
   const [active, setActive] = useState(0);
+  const allData = useAllDocsData();
+  const curriculum = useCurriculumPluginData();
+  const lessonsByVolume = useMemo(() => {
+    const treeById = new Map(curriculum.volumes.map((v) => [v.id, v.tree]));
+    return VOLUMES.map((v) =>
+      collectLessons(v.id, treeById.get(v.id) ?? [], allData),
+    );
+  }, [curriculum, allData]);
   const panelId = 'chapter-index-panel';
 
   const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -179,6 +164,8 @@ export default function ChapterIndex() {
   }
 
   const current = VOLUMES[active];
+  const currentLabel = volumeLabel(current.id);
+  const lessons = lessonsByVolume[active];
 
   return (
     <section className={clsx(styles.wrap, styles[`accent_${current.accent}`])}>
@@ -186,7 +173,7 @@ export default function ChapterIndex() {
         <Heading as="h2" className={styles.label}>
           Indice
         </Heading>
-        <span className={styles.headVolume}>{current.label}</span>
+        <span className={styles.headVolume}>{currentLabel}</span>
       </div>
 
       <div
@@ -225,7 +212,7 @@ export default function ChapterIndex() {
               </span>
               <span className={styles.segTxt}>
                 <span className={styles.segKicker}>VOL. {v.n}</span>
-                <span className={styles.segName}>{v.label}</span>
+                <span className={styles.segName}>{volumeLabel(v.id)}</span>
               </span>
             </button>
           );
@@ -235,47 +222,39 @@ export default function ChapterIndex() {
       <div
         id={panelId}
         role="tabpanel"
-        aria-label={current.label}
+        aria-label={currentLabel}
         className={styles.panel}
       >
         <div key={active} className={styles.list}>
-          {current.chapters.map((ch, i) => {
-            const inner = (
-              <>
+          {lessons.length === 0 ? (
+            <div className={clsx(styles.row, styles.rowSoon)}>
+              <span className={styles.num}>—</span>
+              <span className={styles.title}>
+                In costruzione: le lezioni escono man mano che sono pronte.
+              </span>
+            </div>
+          ) : (
+            lessons.map((l, i) => (
+              <Link
+                key={l.key}
+                to={l.to}
+                className={clsx(styles.row, styles.rowLink)}
+              >
                 <span className={styles.num}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className={styles.title}>{ch.title}</span>
-                <span className={styles.lessons}>
-                  {ch.lessons} {ch.lessons === 1 ? 'lezione' : 'lezioni'}
+                <span className={styles.title}>{l.title}</span>
+                {l.group && <span className={styles.lessons}>{l.group}</span>}
+                <span className={styles.arrow}>
+                  <ArrowRight />
                 </span>
-                {ch.to && (
-                  <span className={styles.arrow}>
-                    <ArrowRight />
-                  </span>
-                )}
-              </>
-            );
-            // Freccia e hover solo sulle righe che portano davvero a una
-            // pagina; i capitoli pianificati restano voci statiche.
-            return ch.to ? (
-              <Link
-                key={ch.title}
-                to={ch.to}
-                className={clsx(styles.row, styles.rowLink)}
-              >
-                {inner}
               </Link>
-            ) : (
-              <div key={ch.title} className={clsx(styles.row, styles.rowSoon)}>
-                {inner}
-              </div>
-            );
-          })}
+            ))
+          )}
         </div>
       </div>
 
-      <div className={clsx(styles.foot, !current.draft && styles.footHidden)}>
+      <div className={styles.foot}>
         <span className={styles.footDot} aria-hidden="true" />
         <span>Volume in stesura · nuovi capitoli in arrivo</span>
       </div>

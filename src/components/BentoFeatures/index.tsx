@@ -201,7 +201,7 @@ const FEATURES: Feature[] = [
   {
     kicker: '03',
     title: 'Algoritmi animati',
-    desc: 'Ordinamento, ricerca, ricorsione: visualizzazioni interattive per vedere ogni passo.',
+    desc: 'Ordinamento e ricerca: visualizzazioni interattive per vedere ogni passo.',
     icon: <ChartDuotone className={styles.iconAlgo} />,
     demo: <Algorithm name="bubble-sort" mode="study" shuffle={6} />,
   },
@@ -258,7 +258,7 @@ const MORE: MoreItem[] = [
   {
     icon: <LinkSwapDuotone />,
     title: 'Esercizi e teoria, collegati',
-    desc: 'Ogni esercizio sa da quale lezione nasce; ogni lezione sa come allenarti.',
+    desc: 'Ogni esercizio indica la lezione da cui nasce; ogni lezione indica come allenarti.',
     accent: 'teal',
   },
 ];
