@@ -35,7 +35,7 @@ Helper:
 Esempio:
 
     ### POST
-    assert contiene("Piton"), "Il professore stampato non è quello giusto."
+    assert contiene("Corvonero"), "La casa stampata non è quella giusta."
     assert len(righe()) == 1, "Stampa una riga sola, con il nome."
 """
 
