@@ -65,11 +65,13 @@ export const CATEGORY_META: Record<
 export const RELEASES: Release[] = [
   {
     v: '0.16.0',
-    // R7: sostituisci con la data vera del rilascio.
-    date: 'ottobre 2026',
+    date: '6 ottobre 2026',
     latest: true,
     notes: {
       new: ['Prima versione pubblica del libro per gli studenti.'],
+      content: [
+        'Volume 3, Manuale dell’Archivista: la prima lezione, «I dati che non stanno più nel programma».',
+      ],
       fixed: [
         'Nel PyRunner funzionano import random e import os, e random.seed() produce le stesse sequenze di Python.',
       ],
