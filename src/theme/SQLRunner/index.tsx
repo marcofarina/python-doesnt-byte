@@ -15,6 +15,7 @@ import { Toolbar } from '../PyRunner/Toolbar';
 import { coerceBool, coerceNumber } from '../PyRunner/coerce';
 import { copyToClipboard } from '../PyRunner/clipboard';
 import { buildExplainText } from '../PyRunner/share';
+import { emitRunnerDone } from '../PyRunner/runnerSignal';
 import { Output } from './Output';
 import { runSql, resetDb, type SqlRunnerUrls } from './sqlBridge';
 import type { RunStatus, SqlRunOutcome } from './types';
@@ -109,6 +110,7 @@ function SQLRunnerInner(props: SQLRunnerProps) {
   const [hasEdits, setHasEdits] = useState(false);
   const [currentCode, setCurrentCode] = useState(code);
   const [toast, setToast] = useState<string | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<EditorHandle | null>(null);
   const toastTimerRef = useRef<number | undefined>(undefined);
   // true dopo il primo run riuscito: serve a distinguere il primo open del DB
@@ -164,6 +166,7 @@ function SQLRunnerInner(props: SQLRunnerProps) {
       })
       .finally(() => {
         runningRef.current = false;
+        emitRunnerDone(rootRef.current);
       });
   }, [
     code,
@@ -232,7 +235,12 @@ function SQLRunnerInner(props: SQLRunnerProps) {
   const maxHeight = `${maxLines * 1.55}em`;
 
   return (
-    <div data-pagefind-ignore className={clsx(pyStyles.runner, 'notranslate')}>
+    <div
+      ref={rootRef}
+      data-runner=""
+      data-pagefind-ignore
+      className={clsx(pyStyles.runner, 'notranslate')}
+    >
       <Toolbar
         title={title}
         status={status}
@@ -276,7 +284,7 @@ export default function SQLRunner(props: SQLRunnerProps) {
   return (
     <BrowserOnly
       fallback={
-        <pre data-pagefind-ignore className={pyStyles.fallback}>
+        <pre data-runner="" data-pagefind-ignore className={pyStyles.fallback}>
           <code>
             {typeof props.code === 'string'
               ? props.code

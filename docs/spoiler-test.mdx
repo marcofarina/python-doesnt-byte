@@ -1,0 +1,68 @@
+---
+unlisted: true
+title: Spoiler — pagina di test
+description: Sandbox di verifica del componente Spoiler (risposta che si scopre dopo aver eseguito)
+---
+
+# Spoiler — sandbox di test
+
+Pagina di verifica del componente `<Spoiler>`. Non è linkata dalla sidebar
+(`unlisted: true`). Regola: uno spoiler si sblocca quando finisce l'esecuzione del
+runner (PyRunner o SQLRunner) **più vicino che lo precede**; senza runner prima si
+rivela con un clic. Da bloccato, un clic apre il popover con «Mostra comunque».
+
+Riepilogo atteso al caricamento: **5 spoiler**, di cui **4 bloccati** (casi 1, 2 e 3)
+e **1 pronto** (caso 0).
+
+## 0. Spoiler senza runner prima
+
+Questo spoiler viene prima di qualunque runner della pagina: la risposta
+è <Spoiler>quarantadue</Spoiler>, e si scopre con un clic.
+
+## 1. Due spoiler inline dopo lo stesso PyRunner
+
+Prima di eseguire: che cosa stampa il programma?
+
+```py live
+parole = ["drago", "elfo", "nano"]
+print(len(parole))
+print(parole[-1])
+```
+
+La prima riga stampa <Spoiler>`3`</Spoiler>, perché la lista ha tre elementi.
+
+La seconda stampa <Spoiler>`nano`</Spoiler>: l'indice `-1` prende l'ultimo elemento.
+
+## 2. Spoiler blocco dopo un SQLRunner
+
+Prima di eseguire: quanti libri ci sono in tutto nella biblioteca, e quali generi ne
+hanno di più?
+
+```sql live dataset=archivista/biblioteca
+SELECT genere, COUNT(*) AS quanti
+FROM libri
+GROUP BY genere
+ORDER BY quanti DESC;
+```
+
+<Spoiler block>
+
+I libri sono **12**. In testa ci sono due generi a pari merito, _fantasy_ e
+_fantascienza_, con 3 libri ciascuno.
+
+- `racconti` e `narrativa`: 2 libri
+- `memorialistica` e `autobiografia`: 1 libro
+
+</Spoiler>
+
+## 3. Runner che solleva un'eccezione
+
+Prima di eseguire: che errore dà Python?
+
+```py live
+inventario = {"spada": 1, "scudo": 2}
+print(inventario["arco"])
+```
+
+L'errore è un <Spoiler>`KeyError`</Spoiler>: la chiave non esiste nel dizionario.
+Lo spoiler deve sbloccarsi anche se l'esecuzione finisce con un errore.

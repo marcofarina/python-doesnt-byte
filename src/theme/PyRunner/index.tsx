@@ -11,6 +11,7 @@ import { ensureBrython, type BrythonConfig } from '@site/src/pyBoot';
 import { coerceBool, coerceNumber } from './coerce';
 import { copyToClipboard } from './clipboard';
 import { encodeCode, DEFAULT_EXPLAIN_PROMPT, buildExplainText } from './share';
+import { emitRunnerDone } from './runnerSignal';
 import type { LogEntry, RunStatus } from './types';
 import styles from './styles.module.css';
 
@@ -174,6 +175,7 @@ function PyRunnerInner(props: PyRunnerProps) {
       onDone: (durationMs) => {
         setStatus((s) => (s === 'error' ? s : 'done'));
         setDuration(durationMs);
+        emitRunnerDone(rootRef.current);
       },
       onError: (err) => {
         setStatus('error');
@@ -181,6 +183,7 @@ function PyRunnerInner(props: PyRunnerProps) {
           ...prev,
           { kind: 'stderr', text: `[PyRunner] ${err.message}\n` },
         ]);
+        emitRunnerDone(rootRef.current);
       },
     });
   }, [code, pre, post, codeId, libUrl, brython]);
@@ -302,6 +305,7 @@ function PyRunnerInner(props: PyRunnerProps) {
   return (
     <div
       ref={rootRef}
+      data-runner=""
       data-pagefind-ignore
       className={clsx(
         styles.runner,
@@ -349,7 +353,7 @@ export default function PyRunner(props: PyRunnerProps) {
   return (
     <BrowserOnly
       fallback={
-        <pre data-pagefind-ignore className={styles.fallback}>
+        <pre data-runner="" data-pagefind-ignore className={styles.fallback}>
           <code>
             {typeof props.children === 'string' ? props.children : ''}
           </code>
