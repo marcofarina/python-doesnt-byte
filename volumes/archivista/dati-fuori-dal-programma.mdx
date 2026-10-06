@@ -174,31 +174,11 @@ peggiore = max(persi, key=persi.get)
 print(f"\nHa fatto perdere più punti: {peggiore}")
 ```
 
-<Solution>
-
-```py live readonly
-from archivio_hogwarts import leggi_file
-### PRE
-import json
-
-registro = json.loads(leggi_file("punti.json"))
-
-persi = {}
-for assegnazione in registro:
-    if assegnazione["casa"] == "Grifondoro" and assegnazione["punti"] < 0:
-        nome = assegnazione["professore"]
-        persi[nome] = persi.get(nome, 0) - assegnazione["punti"]
-
-for nome in persi:
-    print(f"{nome}: {persi[nome]}")
-
-peggiore = max(persi, key=persi.get)
-print(f"\nHa tolto più punti: {peggiore}")
-```
-
-</Solution>
+<Spoiler block>
 
 È bastato cambiare una parola, `"professore"` al posto di `"studente"`, più l'etichetta dell'ultimo `print` perché dica il vero. Eppure è un programma nuovo: qualcuno ha dovuto scriverlo, eseguirlo e controllarlo, e lo stesso succederà per ogni domanda nuova.
+
+</Spoiler>
 
 ## Una domanda che attraversa due file
 
