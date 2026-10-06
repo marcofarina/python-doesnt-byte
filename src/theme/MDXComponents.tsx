@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InlineCode from '@site/src/components/InlineCode';
 import Epigraph from '@site/src/components/Epigraph';
 import Tooltip from '@site/src/components/Tooltip';
+import Spoiler from '@site/src/components/Spoiler';
 import Quiz, {
   QuizDeck,
   QuizQuestion,
@@ -27,6 +28,7 @@ export default {
   InlineCode,
   Epigraph,
   Tooltip,
+  Spoiler,
   Quiz,
   QuizDeck,
   QuizQuestion,
