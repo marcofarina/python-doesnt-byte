@@ -8,6 +8,11 @@ import InlineCode from '@site/src/components/InlineCode';
 import Epigraph from '@site/src/components/Epigraph';
 import Tooltip from '@site/src/components/Tooltip';
 import Spoiler from '@site/src/components/Spoiler';
+import Challenge, {
+  Hint,
+  Solved,
+  Answer,
+} from '@site/src/components/Challenge';
 import Quiz, {
   QuizDeck,
   QuizQuestion,
@@ -29,6 +34,10 @@ export default {
   Epigraph,
   Tooltip,
   Spoiler,
+  Challenge,
+  Hint,
+  Solved,
+  Answer,
   Quiz,
   QuizDeck,
   QuizQuestion,
