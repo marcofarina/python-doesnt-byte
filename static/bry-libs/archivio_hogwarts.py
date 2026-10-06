@@ -10,11 +10,11 @@ import random
 
 _PUNTI = """[
   {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": -5, "professore": "McGranitt"},
+   "punti": -5, "professore": "McGonagall"},
   {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": 5, "professore": "McGranitt"},
+   "punti": 5, "professore": "McGonagall"},
   {"studente": "Ron Weasley", "casa": "Grifondoro",
-   "punti": 5, "professore": "McGranitt"},
+   "punti": 5, "professore": "McGonagall"},
   {"studente": "Harry Potter", "casa": "Grifondoro",
    "punti": -1, "professore": "Piton"},
   {"studente": "Harry Potter", "casa": "Grifondoro",
@@ -25,25 +25,25 @@ _PUNTI = """[
    "punti": -10, "professore": "Piton"},
   {"studente": "George Weasley", "casa": "Grifondoro",
    "punti": -10, "professore": "Piton"},
-  {"studente": "Cedric Diggory", "casa": "Tassorosso",
-   "punti": 10, "professore": "Sprite"},
-  {"studente": "Terry Steeval", "casa": "Corvonero",
-   "punti": 10, "professore": "Vitious"},
+  {"studente": "Cedric Diggory", "casa": "Tassofrasso",
+   "punti": 10, "professore": "Sprout"},
+  {"studente": "Padma Patil", "casa": "Corvonero",
+   "punti": 10, "professore": "Flitwick"},
   {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGranitt"},
+   "punti": -50, "professore": "McGonagall"},
   {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGranitt"},
-  {"studente": "Neville Paciock", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGranitt"},
+   "punti": -50, "professore": "McGonagall"},
+  {"studente": "Neville Longbottom", "casa": "Grifondoro",
+   "punti": -50, "professore": "McGonagall"},
   {"studente": "Draco Malfoy", "casa": "Serpeverde",
-   "punti": -20, "professore": "McGranitt"},
+   "punti": -20, "professore": "McGonagall"},
   {"studente": "Ron Weasley", "casa": "Grifondoro",
    "punti": 50, "professore": "Silente"},
   {"studente": "Hermione Granger", "casa": "Grifondoro",
    "punti": 50, "professore": "Silente"},
   {"studente": "Harry Potter", "casa": "Grifondoro",
    "punti": 60, "professore": "Silente"},
-  {"studente": "Neville Paciock", "casa": "Grifondoro",
+  {"studente": "Neville Longbottom", "casa": "Grifondoro",
    "punti": 10, "professore": "Silente"}
 ]"""
 
@@ -51,37 +51,35 @@ _STUDENTI = """[
   {"nome": "Harry Potter", "casa": "Grifondoro", "anno": 1},
   {"nome": "Hermione Granger", "casa": "Grifondoro", "anno": 1},
   {"nome": "Ron Weasley", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Neville Paciock", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Neville Longbottom", "casa": "Grifondoro", "anno": 1},
   {"nome": "Draco Malfoy", "casa": "Serpeverde", "anno": 1},
-  {"nome": "Terry Steeval", "casa": "Corvonero", "anno": 1},
+  {"nome": "Padma Patil", "casa": "Corvonero", "anno": 1},
   {"nome": "Fred Weasley", "casa": "Grifondoro", "anno": 3},
   {"nome": "George Weasley", "casa": "Grifondoro", "anno": 3},
-  {"nome": "Cedric Diggory", "casa": "Tassorosso", "anno": 3}
+  {"nome": "Cedric Diggory", "casa": "Tassofrasso", "anno": 3}
 ]"""
 
 _ALTRI_STUDENTI = [
-    ("Hannah Abbott", "Tassorosso"),
-    ("Susan Bones", "Tassorosso"),
-    ("Ernie Macmillan", "Tassorosso"),
-    ("Justin Finch-Fletchley", "Tassorosso"),
-    ("Padma Patil", "Corvonero"),
+    ("Hannah Abbott", "Tassofrasso"),
+    ("Susan Bones", "Tassofrasso"),
+    ("Ernie Macmillan", "Tassofrasso"),
+    ("Justin Finch-Fletchley", "Tassofrasso"),
+    ("Cho Chang", "Corvonero"),
     ("Michael Corner", "Corvonero"),
     ("Parvati Patil", "Grifondoro"),
-    ("Lavanda Brown", "Grifondoro"),
     ("Seamus Finnigan", "Grifondoro"),
     ("Dean Thomas", "Grifondoro"),
     ("Katie Bell", "Grifondoro"),
     ("Angelina Johnson", "Grifondoro"),
     ("Lee Jordan", "Grifondoro"),
-    ("Oliver Baston", "Grifondoro"),
-    ("Marcus Flitt", "Serpeverde"),
-    ("Vincent Tiger", "Serpeverde"),
+    ("Oliver Wood", "Grifondoro"),
+    ("Marcus Flint", "Serpeverde"),
     ("Gregory Goyle", "Serpeverde"),
     ("Pansy Parkinson", "Serpeverde"),
     ("Millicent Bulstrode", "Serpeverde"),
 ]
 
-_PROFESSORI = ["McGranitt", "Piton", "Sprite", "Vitious", "Raptor"]
+_PROFESSORI = ["McGonagall", "Piton", "Sprout", "Flitwick"]
 
 
 def _punti_di_tutta_la_scuola():
