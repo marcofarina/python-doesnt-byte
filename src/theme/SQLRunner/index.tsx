@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useContext,
   useEffect,
   useId,
   useMemo,
@@ -15,9 +16,18 @@ import { Toolbar } from '../PyRunner/Toolbar';
 import { coerceBool, coerceNumber } from '../PyRunner/coerce';
 import { copyToClipboard } from '../PyRunner/clipboard';
 import { buildExplainText } from '../PyRunner/share';
-import { emitRunnerDone } from '../PyRunner/runnerSignal';
+import {
+  ChallengeContext,
+  emitRunnerDone,
+  type RunnerDoneDetail,
+} from '../PyRunner/runnerSignal';
 import { Output } from './Output';
-import { runSql, resetDb, type SqlRunnerUrls } from './sqlBridge';
+import {
+  runSql,
+  resetDb,
+  splitSqlSource,
+  type SqlRunnerUrls,
+} from './sqlBridge';
 import type { RunStatus, SqlRunOutcome } from './types';
 import pyStyles from '../PyRunner/styles.module.css';
 
@@ -72,11 +82,21 @@ Query:
 
 const sqlLanguage = sql({ dialect: SQLite, upperCaseKeywords: true });
 
+function rawSource(props: SQLRunnerProps): string {
+  if (typeof props.code === 'string') return props.code;
+  return typeof props.children === 'string' ? props.children : '';
+}
+
 function SQLRunnerInner(props: SQLRunnerProps) {
-  const code = useMemo(() => {
-    if (typeof props.code === 'string') return props.code;
-    return typeof props.children === 'string' ? props.children : '';
-  }, [props.code, props.children]);
+  // `### POST` e `### CONTROLLO` (verifica dell'esercizio) non si mostrano mai.
+  const { code, reference, control } = useMemo(
+    () => splitSqlSource(rawSource(props)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [props.code, props.children],
+  );
+  // Dentro un <Challenge> ogni esecuzione dello studente viene verificata.
+  const challenge = useContext(ChallengeContext);
+  const verified = challenge !== null;
 
   const datasetKey = props.dataset;
   const title =
@@ -117,6 +137,9 @@ function SQLRunnerInner(props: SQLRunnerProps) {
   // (freshDb "fisiologico") da un restore dopo terminate/reset.
   const hasRunRef = useRef(false);
   const runningRef = useRef(false);
+  // L'esecuzione di runOnMount non è un tentativo dello studente: niente
+  // verifica, esito null.
+  const autoRunRef = useRef(false);
 
   const showToast = useCallback((msg: string) => {
     window.clearTimeout(toastTimerRef.current);
@@ -132,6 +155,15 @@ function SQLRunnerInner(props: SQLRunnerProps) {
   const handleRun = useCallback(() => {
     if (runningRef.current) return;
     runningRef.current = true;
+    const attempt = verified && !autoRunRef.current;
+    autoRunRef.current = false;
+    // Senza `### POST` un esercizio è risolto da qualunque esecuzione senza
+    // errori, come in PyRunner senza verifica.
+    const check =
+      attempt && reference
+        ? { reference, control: control || null }
+        : undefined;
+    let verdict: RunnerDoneDetail = { esito: null, messaggio: null };
     const current = editorRef.current?.getCode() ?? code;
     setStatus('running');
     setError(null);
@@ -145,8 +177,17 @@ function SQLRunnerInner(props: SQLRunnerProps) {
       stateful,
       maxRows,
       timeoutMs,
+      check,
     })
       .then((res) => {
+        if (attempt) {
+          verdict = res.verdict ?? { esito: 'risolto', messaggio: null };
+        }
+        if (res.authorError) {
+          console.warn(
+            `[esercizio] la verifica SQL non gira: ${res.authorError}`,
+          );
+        }
         setOutcome(res);
         setStatus('done');
         // In stateful, un DB "fresco" dopo che avevamo già eseguito significa
@@ -157,6 +198,7 @@ function SQLRunnerInner(props: SQLRunnerProps) {
         hasRunRef.current = true;
       })
       .catch((err: Error) => {
+        if (attempt) verdict = { esito: 'errore', messaggio: null };
         setOutcome(null);
         setError(err.message);
         setStatus('error');
@@ -166,10 +208,13 @@ function SQLRunnerInner(props: SQLRunnerProps) {
       })
       .finally(() => {
         runningRef.current = false;
-        emitRunnerDone(rootRef.current);
+        emitRunnerDone(rootRef.current, verdict);
       });
   }, [
     code,
+    reference,
+    control,
+    verified,
     urls,
     instanceId,
     datasetKey,
@@ -226,7 +271,10 @@ function SQLRunnerInner(props: SQLRunnerProps) {
     if (!runOnMount || ranOnMountRef.current) return undefined;
     ranOnMountRef.current = true;
     // Differito: evita setState sincrono dentro l'effect (cascading render).
-    const t = window.setTimeout(handleRun, 0);
+    const t = window.setTimeout(() => {
+      autoRunRef.current = true;
+      handleRun();
+    }, 0);
     return () => window.clearTimeout(t);
   }, [runOnMount, handleRun]);
 
@@ -243,6 +291,7 @@ function SQLRunnerInner(props: SQLRunnerProps) {
     >
       <Toolbar
         title={title}
+        solved={challenge?.solved}
         status={status}
         hasEdits={hasEdits}
         code={currentCode}
@@ -285,13 +334,8 @@ export default function SQLRunner(props: SQLRunnerProps) {
     <BrowserOnly
       fallback={
         <pre data-runner="" data-pagefind-ignore className={pyStyles.fallback}>
-          <code>
-            {typeof props.code === 'string'
-              ? props.code
-              : typeof props.children === 'string'
-                ? props.children
-                : ''}
-          </code>
+          {/* Solo il codice dello studente: la verifica non va nell'HTML. */}
+          <code>{splitSqlSource(rawSource(props)).code}</code>
         </pre>
       }
     >

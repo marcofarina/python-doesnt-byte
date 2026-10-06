@@ -35,6 +35,12 @@ export interface SqlRunRequest {
   stateful: boolean;
   maxRows: number;
   timeoutMs: number;
+  /**
+   * Verifica dell'esercizio (runner dentro <Challenge>): la query di
+   * riferimento (`### POST`) e l'eventuale controllo sullo stato del DB
+   * (`### CONTROLLO`). Semantica in static/sql-runner/worker.js, verifyRun.
+   */
+  check?: { reference: string; control: string | null };
 }
 
 export class SqlTimeoutError extends Error {
@@ -61,6 +67,8 @@ interface WorkerMessage {
   rowsModified?: number;
   freshDb?: boolean;
   durationMs?: number;
+  verdict?: SqlRunOutcome['verdict'];
+  authorError?: string;
 }
 
 /** Timeout per il boot del worker (fetch glue+wasm su rete lenta). */
@@ -207,6 +215,7 @@ export async function runSql(
       dataset,
       stateful: req.stateful,
       maxRows: req.maxRows,
+      check: req.check,
     },
     req.timeoutMs,
   );
@@ -216,6 +225,43 @@ export async function runSql(
     rowsModified: msg.rowsModified ?? 0,
     freshDb: msg.freshDb ?? false,
     durationMs: msg.durationMs ?? 0,
+    verdict: msg.verdict,
+    authorError: msg.authorError,
+  };
+}
+
+const POST_RE = /^###\s*POST\s*$/i;
+const CONTROL_RE = /^###\s*CONTROLLO\s*$/i;
+
+/**
+ * Divide il sorgente di un fence SQL: il codice dello studente, poi la query
+ * di riferimento dopo `### POST` e il controllo dopo `### CONTROLLO`, entrambi
+ * nascosti. Senza marker il codice resta identico al sorgente.
+ */
+export function splitSqlSource(raw: string): {
+  code: string;
+  reference: string;
+  control: string;
+} {
+  const lines = raw.split('\n');
+  if (!lines.some((l) => POST_RE.test(l) || CONTROL_RE.test(l))) {
+    return { code: raw, reference: '', control: '' };
+  }
+  const parts: Record<'code' | 'reference' | 'control', string[]> = {
+    code: [],
+    reference: [],
+    control: [],
+  };
+  let section: keyof typeof parts = 'code';
+  for (const line of lines) {
+    if (POST_RE.test(line)) section = 'reference';
+    else if (CONTROL_RE.test(line)) section = 'control';
+    else parts[section].push(line);
+  }
+  return {
+    code: parts.code.join('\n').replace(/\s+$/, ''),
+    reference: parts.reference.join('\n').trim(),
+    control: parts.control.join('\n').trim(),
   };
 }
 

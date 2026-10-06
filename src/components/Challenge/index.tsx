@@ -8,7 +8,7 @@
  *   ```py live
  *   codice di partenza dello studente
  *   ### POST
- *   assert contiene("Piton"), "messaggio mirato per lo studente"
+ *   assert contiene("Corvonero"), "messaggio mirato per lo studente"
  *   ```
  *
  *   <Hint>primo suggerimento</Hint>
@@ -21,6 +21,9 @@
  * Il runner capisce di essere un esercizio da ChallengeContext: il suo
  * `### POST` diventa la verifica (helper in static/bry-libs/verifica.py) e
  * l'esito arriva qui con `pdb:runner-done` (contratto in runnerSignal.ts).
+ * In un SQLRunner `### POST` è la query di riferimento e `### CONTROLLO` una
+ * SELECT sullo stato del database: semantica in static/sql-runner/worker.js,
+ * verifyRun.
  * L'ordine dei figli nel sorgente non conta: <Hint>, <Solved> e <Answer> si
  * dispongono sempre sotto il runner, nella barra dell'esercizio.
  *
@@ -148,7 +151,7 @@ function describe(
     // dimostrato. Ma l'ultima esecuzione gliela diciamo com'è.
     let why = 'non passa il controllo.';
     if (last.esito === 'errore') why = 'si è fermata con un errore.';
-    else if (last.messaggio) why = `non passa il controllo: ${last.messaggio}`;
+    else if (last.messaggio) why = `non passa il controllo. ${last.messaggio}`;
     return {
       tone: 'success',
       icon: faCircleCheck,
