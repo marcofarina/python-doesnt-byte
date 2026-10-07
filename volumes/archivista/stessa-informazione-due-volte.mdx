@@ -13,7 +13,7 @@ A man with a watch knows what time it is. A man with two watches is never sure.
 
 </Epigraph>
 
-Nella lezione precedente il registro dei punti ha mostrato due limiti: ogni domanda nuova è codice da scrivere, e ogni risposta costa la lettura dell'intero file. Una domanda però era facile: il totale di Grifondoro si calcolava senza aprire `studenti.json`, perché il registro ripete in ogni assegnazione la casa dello studente. La stessa casa è scritta anche in `studenti.json`, quindi ogni studente ha la casa in due posti. In questa lezione vediamo che cosa costa questa comodità.
+Nella lezione precedente il registro dei punti di una casa ha mostrato due limiti: ogni domanda nuova implica la scrittura di nuovo codice, e ogni risposta richiede la lettura dell'intero file. Una domanda però era facile: il totale di Grifondoro si può calcolare senza aprire il file `studenti.json`, perché il registro dei punti ripete in ogni assegnazione la casa dello studente. La stessa informazione, la casa di appartenenza, è scritta anche in `studenti.json`. Ogni studente ha la la propria casa scritta in due posti diversi. In questa lezione vediamo qual è il costo nascosto di questa comodità.
 
 :::prereq
 
@@ -25,7 +25,7 @@ Nella lezione precedente il registro dei punti ha mostrato due limiti: ogni doma
 
 :::learn
 
-- Spiegare perché due copie dello stesso dato finiscono per dire cose diverse, anche quando nessuno sbaglia
+- Spiegare perché due copie dello stesso dato finiscono per dire cose diverse, anche quando nessun codice è sbagliato
 - Scrivere un controllo che trova le copie in disaccordo, e dire che cosa quel controllo non può fare
 - Distinguere un valore ripetuto da un'informazione ripetuta
 - Riconoscere le anomalie di inserimento, aggiornamento e cancellazione in un archivio
@@ -34,7 +34,7 @@ Nella lezione precedente il registro dei punti ha mostrato due limiti: ogni doma
 
 ## Due conteggi, due classifiche
 
-Al registro della lezione precedente si aggiunge un'assegnazione: cinque punti dati a Neville dalla professoressa Sprout. Nella riga, la casa di Neville è scritta sbagliata:
+Aggiungiamo al registro della lezione precedente una nuova assegnazione: cinque punti dati a Neville dalla professoressa Sprout. Nella riga, però, la casa di Neville è sbagliata. Al posto di Grifondoro è stato inserito erroneamente Tassofrasso:
 
 ```json
 {
@@ -45,7 +45,7 @@ Al registro della lezione precedente si aggiunge un'assegnazione: cinque punti d
 }
 ```
 
-Il programma qui sotto calcola i punti di ogni casa in due modi. Il primo usa la casa scritta nel registro, come faceva il conteggio di McGonagall. Il secondo ignora quel campo e prende la casa da `studenti.json`, con lo stesso incrocio che nella lezione precedente serviva per gli anni. Prima di eseguire, prova a prevedere quanti punti ha Grifondoro secondo ciascun conteggio.
+Il programma qui sotto calcola i punti di ogni casa in due modi. Il primo usa la casa scritta nel registro dei punteggi, come faceva il conteggio di McGonagall. Il secondo modo invece ignora quel campo e prende la casa da `studenti.json`, con lo stesso incrocio che nella lezione precedente serviva per gli anni. Prima di eseguire il codice, prova a prevedere quanti punti ha totalizzato Grifondoro secondo ciascun conteggio.
 
 ```py live
 from archivio_hogwarts import leggi_file
@@ -83,7 +83,7 @@ Grifondoro ha tre punti secondo il registro e otto secondo `studenti.json`, e Ta
 
 Nessuno dei due programmi contiene un errore: ognuno somma correttamente i dati che legge. Il guaio sta nei dati, che dicono due cose diverse sulla stessa persona. Tu sai che Neville è un Grifondoro perché conosci la storia; il programma ha due file che si contraddicono e nessun criterio per scegliere. Con il registro di tutta la scuola, 20.000 assegnazioni di studenti che non conosci, saresti nella stessa posizione del programma.
 
-La casa nel registro è una **copia**: un'informazione sullo studente, che ha già il suo posto in `studenti.json`, scritta una seconda volta dove faceva comodo. Finché le due copie coincidono, l'informazione è soltanto ripetuta; la prima volta che non coincidono, l'archivio ha due risposte alla stessa domanda.
+La casa nel registro è una **copia**: un'informazione sullo studente, che ha già il suo posto in `studenti.json`, scritta una seconda volta dove faceva comodo. Finché le due copie coincidono, l'informazione è soltanto ripetuta; la prima volta che non coincidono, l'archivio ha due risposte diverse alla stessa domanda.
 
 Il disaccordo, almeno, puoi trovarlo. Scrivi un controllo che confronti, per ogni assegnazione, la casa scritta nel registro con quella di `studenti.json`, e stampi solo le assegnazioni in cui le due case non coincidono. Il programma qui sotto prepara già il dizionario `casa_di` e scorre il registro, ma per ora stampa tutte le assegnazioni.
 
@@ -145,7 +145,7 @@ for assegnazione in registro:
 
 ## Copie che invecchiano
 
-La casa di Neville era sbagliata dal momento in cui è stata scritta. Una copia però può diventare falsa anche se nessuno sbaglia.
+La casa di Neville era sbagliata dal momento in cui è stata scritta e inserita nell'archivio. Una copia però può diventare falsa anche se nessuno sbaglia l'inserimento.
 
 Nella lezione precedente abbiamo lasciato in sospeso una scorciatoia: copiare l'anno dello studente dentro ogni assegnazione, come il registro fa già con la casa, per calcolare i punti di ogni anno senza incrocio.
 
@@ -159,7 +159,7 @@ Nella lezione precedente abbiamo lasciato in sospeso una scorciatoia: copiare l'
 }
 ```
 
-Per un anno scolastico la scorciatoia funziona. Il 1° settembre ogni studente passa all'anno successivo e `studenti.json` va aggiornato. Le copie nel registro però dicono ancora l'anno vecchio, tutte quante. Per riallinearle, la funzione che apre l'anno nuovo deve scorrere anche il registro:
+Per un anno scolastico la scorciatoia funziona. Il 1° settembre ogni studente passa all'anno successivo e `studenti.json` va aggiornato. Le copie nel registro però memorizzano ancora l'anno vecchio, tutte quante. Per riallinearle, la funzione che apre l'anno nuovo deve scorrere anche il registro:
 
 ```python
 def nuovo_anno(studenti, registro):
@@ -221,7 +221,7 @@ Oggi i due significati danno lo stesso numero, 1; da settembre in poi divergono.
 
 ## Una riga, tre fatti
 
-Il registro ha un altro difetto, meno visibile, e riguarda i professori. Prendi l'assegnazione di Padma e scomponila nelle informazioni che contiene:
+Il registro ha un altro difetto, meno visibile, e riguarda i professori. Prendiamo l'assegnazione di punti di Padma e scomponiamola nelle informazioni che contiene:
 
 | Che cosa dice la riga                     | Di chi è l'informazione | Dove altro è scritta |
 | ----------------------------------------- | ----------------------- | -------------------- |
@@ -258,7 +258,7 @@ Nel secondo elenco manca Flitwick. Annullare l'assegnazione doveva cancellare un
 
 La casa di Padma, invece, è sopravvissuta all'annullamento, perché ha un posto suo in `studenti.json`. Le due informazioni cancellate insieme alla riga erano quelle che non stavano scritte da nessun'altra parte.
 
-Il registro come unico elenco dei professori crea un problema anche quando un professore arriva. Lupin comincia a insegnare a Hogwarts due anni dopo i fatti del registro: finché non assegna o toglie punti a qualcuno, l'archivio non sa che esiste. Per registrarlo subito servirebbe un'assegnazione finta:
+Il registro come unico elenco dei professori crea un problema anche quando un nuovo professore arriva. Supponiamo che Lupin cominci a insegnare a Hogwarts due anni dopo i fatti del registro: finché non assegna o toglie punti a qualcuno, l'archivio non sa che esiste. Per registrarlo subito servirebbe un'assegnazione finta:
 
 ```json
 { "studente": "", "casa": "", "punti": 0, "professore": "Lupin" }
@@ -267,6 +267,8 @@ Il registro come unico elenco dei professori crea un problema anche quando un pr
 Ogni programma che lavora sul registro dovrebbe poi sapere che quella riga non è un'assegnazione. Chi conta le assegnazioni ne troverebbe una in più, senza nessun avviso. Il calcolo dei punti per anno, invece, si fermerebbe con un `KeyError`, perché in `anno_di` non c'è uno studente senza nome.
 
 :::definition[Le tre anomalie]
+
+Gli esempi visiti in questa lezione sono conosciuti in informatica come anomalie di aggiornamento, inserimento e cancellazione:
 
 - **Anomalia di aggiornamento**: un'informazione scritta in più posti va cambiata in tutti, e se ne manca uno l'archivio si contraddice. È l'anno copiato nel registro.
 - **Anomalia di inserimento**: un'informazione non si può registrare finché non esiste un'altra cosa a cui appoggiarla. È Lupin, che per l'archivio non esiste finché non assegna punti.
@@ -286,7 +288,7 @@ Le tre anomalie hanno un rimedio comune: scrivere ogni informazione una volta, n
 
 Le righe dei tre file si collegano attraverso i nomi, come `anno_di` collegava il registro all'elenco degli studenti. Ogni informazione è scritta una volta sola, quindi non c'è un'altra copia che possa contraddirla. Flitwick resta nell'elenco dei professori anche quando un'assegnazione viene annullata, e Lupin ci entra il giorno in cui arriva.
 
-La regola ha un prezzo, e lo conosci dalla lezione precedente. Senza la casa nel registro, anche il totale di Grifondoro richiede l'incrocio con `studenti.json`, scritto a mano, e quasi ogni domanda ne chiede uno. In più il legame fra i file resta affidato al codice: niente impedisce di scrivere nel registro un professore che non compare nell'elenco dei professori, o uno studente con il nome sbagliato come "Logbottom". Togliendo le copie hai scambiato dati che si contraddicono con dati che possono riferirsi a qualcuno che non esiste.
+La regola ha un prezzo, e lo conosciamo dalla lezione precedente. Senza la casa nel registro, anche il totale di Grifondoro richiede l'incrocio con `studenti.json`, scritto a mano, e quasi ogni domanda ne chiede uno. In più il legame fra i file resta affidato al codice: niente impedisce di scrivere nel registro un professore che non compare nell'elenco dei professori, o uno studente con il nome sbagliato come "Logbottom". Togliendo le copie hai scambiato dati che si contraddicono con dati che possono riferirsi a qualcuno che non esiste.
 
 Con i file, quindi, la scelta è fra copie da tenere allineate e incroci da scrivere. Un database tiene ogni informazione al suo posto, ti lascia chiedere un incrocio invece di programmarlo e, se glielo chiedi, rifiuta un nome che non compare nell'elenco a cui deve riferirsi. È l'argomento della prossima lezione.
 
