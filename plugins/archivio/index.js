@@ -56,6 +56,45 @@ module.exports = function archivioPlugin(context) {
       actions.setGlobalData({ file: content.file });
     },
 
+    // Una lezione dichiara i file del pannello Archivio nel frontmatter
+    // (`archivio: [punti.json, studenti.json]`). Un nome che non esiste ferma
+    // la build qui, con la lezione e il file nel messaggio, invece di lasciare
+    // un pannello vuoto in pagina.
+    async allContentLoaded({ allContent }) {
+      const file = allContent[PLUGIN_NAME]?.default?.file ?? {};
+      const disponibili = Object.keys(file).join(', ') || 'nessuno';
+      for (const [pluginName, byInstance] of Object.entries(allContent)) {
+        if (!pluginName.includes('plugin-content-docs')) continue;
+        for (const data of Object.values(byInstance)) {
+          for (const version of data?.loadedVersions ?? []) {
+            for (const doc of version.docs) {
+              const dichiarati = doc.frontMatter.archivio;
+              if (dichiarati === undefined) continue;
+              const lezione = doc.source.replace(/^@site\//, '');
+              if (
+                !Array.isArray(dichiarati) ||
+                !dichiarati.every((n) => typeof n === 'string')
+              ) {
+                throw new Error(
+                  `[archivio] ${lezione}: «archivio:» deve essere una lista di nomi di file, ` +
+                    'per esempio [punti.json, studenti.json].',
+                );
+              }
+              for (const nome of dichiarati) {
+                if (!(nome in file)) {
+                  throw new Error(
+                    `[archivio] ${lezione} dichiara «${nome}» in archivio:, ` +
+                      `ma in static/archivio/ non c'è nessun file con questo nome. ` +
+                      `File disponibili: ${disponibili}.`,
+                  );
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
     getPathsToWatch() {
       return [path.join(archiveAbsDir, '**/*.json')];
     },

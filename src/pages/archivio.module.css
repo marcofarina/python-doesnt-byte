@@ -1,0 +1,124 @@
+.pagina {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 3rem;
+}
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.titolo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-family: var(--font-mono-ui);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--at-fg-strong);
+}
+
+.icona {
+  color: var(--at-accent);
+  font-size: 0.8em;
+}
+
+.testo {
+  margin: 1rem 0;
+  font-size: 1.25rem;
+  color: var(--at-fg-body);
+}
+
+.controlli {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: var(--at-bg-chip);
+}
+
+.controllo {
+  min-width: 3.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--at-bg);
+  box-shadow: var(--shadow-card);
+  color: var(--at-fg-strong);
+  font-family: var(--font-mono-ui);
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.controllo:hover:not(:disabled) {
+  background: var(--at-accent-chip);
+}
+
+.controllo:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.controllo:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.misura {
+  min-width: 4.5rem;
+  text-align: center;
+  font-family: var(--font-mono-ui);
+  font-size: 0.875rem;
+  color: var(--at-muted);
+}
+
+.file :global(.theme-code-block) {
+  margin-bottom: 1rem;
+}
+
+/* Col testo grande le righe possono non starci: vanno a capo con rientro
+   sospeso invece di scorrere di lato, che alla LIM non si vede. */
+.file :global(.theme-code-block code) {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.file :global(.token-line) {
+  padding-left: 4ch;
+  text-indent: -4ch;
+}
+
+.elenco {
+  font-family: var(--font-mono-ui);
+  font-size: 1.25rem;
+}
+
+.elenco li {
+  margin: 0.5rem 0;
+}
+
+.tutti {
+  font-family: var(--font-mono-ui);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 996px) {
+  .pagina {
+    padding: 1rem;
+  }
+
+  .titolo {
+    font-size: 1.25rem;
+  }
+}
