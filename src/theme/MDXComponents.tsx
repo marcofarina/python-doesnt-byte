@@ -26,6 +26,7 @@ import PyQuest from '@site/src/components/PyQuest';
 import ExerciseLink from '@site/src/components/ExerciseLink';
 import Exercise, { LessonMeta, Solution } from '@site/src/components/Exercise';
 import AssignedExercises from '@site/src/components/AssignedExercises';
+import FileArchivio from '@site/src/components/FileArchivio';
 
 export default {
   ...MDXComponents,
@@ -52,4 +53,5 @@ export default {
   LessonMeta,
   Solution,
   AssignedExercises,
+  FileArchivio,
 };

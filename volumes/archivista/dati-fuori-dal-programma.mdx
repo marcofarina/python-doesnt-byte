@@ -41,46 +41,7 @@ Ogni anno a Hogwarts si svolge la Coppa delle Case, il premio annuale assegnato 
 
 Immaginiamo dunque di avere un registro che tiene traccia dei punti assegnati a ogni casa. Ogni volta che un professore assegna o toglie punti a una casa, il registro riceve una riga: lo studente, la sua casa, i punti (negativi se tolti) e il professore che li ha assegnati o sottratti. Nell'esempio seguente immaginiamo di avere le assegnazioni del primo anno di Harry che ci servono, salvate in `punti.json`:
 
-```json title="punti.json"
-[
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": -5, "professore": "McGonagall"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": 5, "professore": "McGonagall"},
-  {"studente": "Ron Weasley", "casa": "Grifondoro",
-   "punti": 5, "professore": "McGonagall"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -1, "professore": "Piton"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -1, "professore": "Piton"},
-  {"studente": "Draco Malfoy", "casa": "Serpeverde",
-   "punti": 10, "professore": "Piton"},
-  {"studente": "Fred Weasley", "casa": "Grifondoro",
-   "punti": -10, "professore": "Piton"},
-  {"studente": "George Weasley", "casa": "Grifondoro",
-   "punti": -10, "professore": "Piton"},
-  {"studente": "Cedric Diggory", "casa": "Tassofrasso",
-   "punti": 10, "professore": "Sprout"},
-  {"studente": "Padma Patil", "casa": "Corvonero",
-   "punti": 10, "professore": "Flitwick"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Neville Longbottom", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Draco Malfoy", "casa": "Serpeverde",
-   "punti": -20, "professore": "McGonagall"},
-  {"studente": "Ron Weasley", "casa": "Grifondoro",
-   "punti": 50, "professore": "Silente"},
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": 50, "professore": "Silente"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": 60, "professore": "Silente"},
-  {"studente": "Neville Longbottom", "casa": "Grifondoro",
-   "punti": 10, "professore": "Silente"}
-]
-```
+<FileArchivio nome="punti.json" />
 
 Per rileggerlo da Python bastano le tre righe che conosciamo dal Volume 1:
 
@@ -229,19 +190,7 @@ La risposta è McGonagall, con 155 punti tolti a Grifondoro contro i 22 di Piton
 
 Il registro dice di chi sono i punti, ma non in che anno è lo studente. L'anno è memorizzato in un altro file, quello degli studenti:
 
-```json title="studenti.json"
-[
-  {"nome": "Harry Potter", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Hermione Granger", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Ron Weasley", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Neville Longbottom", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Draco Malfoy", "casa": "Serpeverde", "anno": 1},
-  {"nome": "Padma Patil", "casa": "Corvonero", "anno": 1},
-  {"nome": "Fred Weasley", "casa": "Grifondoro", "anno": 3},
-  {"nome": "George Weasley", "casa": "Grifondoro", "anno": 3},
-  {"nome": "Cedric Diggory", "casa": "Tassofrasso", "anno": 3}
-]
-```
+<FileArchivio nome="studenti.json" />
 
 Silente vuole sapere con quanti punti hanno contribuito, in totale, gli studenti di ciascun anno. Nessuno dei due file basta da solo: i punti sono in `punti.json`, gli anni in `studenti.json`, e l'unico legame fra le due cose è il nome dello studente, scritto uguale in entrambi.
 
