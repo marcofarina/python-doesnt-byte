@@ -1,0 +1,341 @@
+---
+title: La stessa informazione scritta due volte
+sidebar_label: La stessa informazione due volte
+sidebar_position: 3
+description: Quando un dato è scritto in due posti, prima o poi le due copie si contraddicono e niente dice quale sia vera. Lo vediamo sul registro dei punti di Hogwarts, insieme alle tre anomalie che nascono da una riga che parla di cose diverse.
+---
+
+# La stessa informazione scritta due volte
+
+<Epigraph author="Legge di Segal (1961)">
+
+A man with a watch knows what time it is. A man with two watches is never sure.
+
+</Epigraph>
+
+Nella lezione precedente il registro dei punti ha mostrato due limiti: ogni domanda nuova è codice da scrivere, e ogni risposta costa la lettura dell'intero file. Una domanda però era facile: il totale di Grifondoro si calcolava senza aprire `studenti.json`, perché il registro ripete in ogni assegnazione la casa dello studente. La stessa casa è scritta anche in `studenti.json`, quindi ogni studente ha la casa in due posti. In questa lezione vediamo che cosa costa questa comodità.
+
+:::prereq
+
+- Liste, dizionari e cicli `for`
+- Leggere una lista di dizionari da un file JSON
+- Il registro `punti.json`, l'elenco `studenti.json` e l'incrocio fra i due con un dizionario (lezione precedente)
+
+:::
+
+:::learn
+
+- Spiegare perché due copie dello stesso dato finiscono per dire cose diverse, anche quando nessuno sbaglia
+- Scrivere un controllo che trova le copie in disaccordo, e dire che cosa quel controllo non può fare
+- Distinguere un valore ripetuto da un'informazione ripetuta
+- Riconoscere le anomalie di inserimento, aggiornamento e cancellazione in un archivio
+
+:::
+
+## Due conteggi, due classifiche
+
+Al registro della lezione precedente si aggiunge un'assegnazione: cinque punti dati a Neville dalla professoressa Sprout. Nella riga, la casa di Neville è scritta sbagliata:
+
+```json
+{
+  "studente": "Neville Longbottom",
+  "casa": "Tassofrasso",
+  "punti": 5,
+  "professore": "Sprout"
+}
+```
+
+Il programma qui sotto calcola i punti di ogni casa in due modi. Il primo usa la casa scritta nel registro, come faceva il conteggio di McGonagall. Il secondo ignora quel campo e prende la casa da `studenti.json`, con lo stesso incrocio che nella lezione precedente serviva per gli anni. Prima di eseguire, prova a prevedere quanti punti ha Grifondoro secondo ciascun conteggio.
+
+```py live
+from archivio_hogwarts import leggi_file
+### PRE
+import json
+
+registro = json.loads(leggi_file("punti.json"))
+studenti = json.loads(leggi_file("studenti.json"))
+registro.append({"studente": "Neville Longbottom", "casa": "Tassofrasso",
+                 "punti": 5, "professore": "Sprout"})
+
+casa_di = {}
+for studente in studenti:
+    casa_di[studente["nome"]] = studente["casa"]
+
+dal_registro = {}
+dagli_studenti = {}
+for assegnazione in registro:
+    punti = assegnazione["punti"]
+    casa_scritta = assegnazione["casa"]
+    dal_registro[casa_scritta] = dal_registro.get(casa_scritta, 0) + punti
+    casa_elenco = casa_di[assegnazione["studente"]]
+    dagli_studenti[casa_elenco] = dagli_studenti.get(casa_elenco, 0) + punti
+
+for casa in sorted(dal_registro):
+    print(f"{casa}: {dal_registro[casa]} dal registro, "
+          f"{dagli_studenti[casa]} da studenti.json")
+```
+
+<Spoiler block>
+
+Grifondoro ha tre punti secondo il registro e otto secondo `studenti.json`, e Tassofrasso ne ha cinque in più nel primo conteggio che nel secondo. I cinque punti di Neville finiscono nella casa che ciascun conteggio considera la sua.
+
+</Spoiler>
+
+Nessuno dei due programmi contiene un errore: ognuno somma correttamente i dati che legge. Il guaio sta nei dati, che dicono due cose diverse sulla stessa persona. Tu sai che Neville è un Grifondoro perché conosci la storia; il programma ha due file che si contraddicono e nessun criterio per scegliere. Con il registro di tutta la scuola, 20.000 assegnazioni di studenti che non conosci, saresti nella stessa posizione del programma.
+
+La casa nel registro è una **copia**: un'informazione sullo studente, che ha già il suo posto in `studenti.json`, scritta una seconda volta dove faceva comodo. Finché le due copie coincidono, l'informazione è soltanto ripetuta; la prima volta che non coincidono, l'archivio ha due risposte alla stessa domanda.
+
+Il disaccordo, almeno, puoi trovarlo. Scrivi un controllo che confronti, per ogni assegnazione, la casa scritta nel registro con quella di `studenti.json`, e stampi solo le assegnazioni in cui le due case non coincidono. Il programma qui sotto prepara già il dizionario `casa_di` e scorre il registro, ma per ora stampa tutte le assegnazioni.
+
+<Challenge>
+
+```py live title="Quali assegnazioni contraddicono studenti.json?"
+from archivio_hogwarts import leggi_file
+### PRE
+import json
+
+registro = json.loads(leggi_file("punti.json"))
+studenti = json.loads(leggi_file("studenti.json"))
+registro.append({"studente": "Neville Longbottom", "casa": "Tassofrasso",
+                 "punti": 5, "professore": "Sprout"})
+
+casa_di = {}
+for studente in studenti:
+    casa_di[studente["nome"]] = studente["casa"]
+
+for assegnazione in registro:
+    nome = assegnazione["studente"]
+    print(f"{nome}: {assegnazione['casa']}")
+### POST
+assert not contiene("Draco"), "Il controllo stampa anche assegnazioni in cui le due case coincidono: Draco è di Serpeverde in entrambi i file."
+assert contiene("Neville"), "Il controllo non trova l'assegnazione in disaccordo: confronta la casa del registro con quella di casa_di."
+```
+
+<Hint>
+  Ti serve un `if` dentro il ciclo, che stampi solo quando le due case sono
+  diverse.
+</Hint>
+
+<Hint>
+  La casa scritta nel registro è `assegnazione["casa"]`, quella dell'elenco
+  degli studenti è `casa_di[nome]`. Confrontale con `!=`.
+</Hint>
+
+<Solved>
+
+Il controllo trova l'assegnazione di Neville, ma non può dirti quale delle due case è quella giusta: sa soltanto che sono diverse. A correggere deve essere qualcuno che conosce la risposta. E il controllo vale per i dati di adesso: dopo la prossima assegnazione va rilanciato, e la coerenza dell'archivio dipende dal fatto che qualcuno si ricordi di farlo.
+
+</Solved>
+
+<Answer>
+
+```py
+for assegnazione in registro:
+    nome = assegnazione["studente"]
+    if assegnazione["casa"] != casa_di[nome]:
+        print(f"{nome}: {assegnazione['casa']} nel registro, "
+              f"{casa_di[nome]} in studenti.json")
+```
+
+È il ciclo dell'incrocio della lezione precedente con un `if` in più: `casa_di` porta dal nome alla casa dell'elenco, e l'`if` tiene solo le righe in cui il registro dice altro. Se un nome del registro mancasse in `studenti.json`, il controllo si fermerebbe con un `KeyError`, come il calcolo per anno con "Logbottom".
+
+</Answer>
+
+</Challenge>
+
+## Copie che invecchiano
+
+La casa di Neville era sbagliata dal momento in cui è stata scritta. Una copia però può diventare falsa anche se nessuno sbaglia.
+
+Nella lezione precedente abbiamo lasciato in sospeso una scorciatoia: copiare l'anno dello studente dentro ogni assegnazione, come il registro fa già con la casa, per calcolare i punti di ogni anno senza incrocio.
+
+```json
+{
+  "studente": "Neville Longbottom",
+  "casa": "Grifondoro",
+  "anno": 1,
+  "punti": -50,
+  "professore": "McGonagall"
+}
+```
+
+Per un anno scolastico la scorciatoia funziona. Il 1° settembre ogni studente passa all'anno successivo e `studenti.json` va aggiornato. Le copie nel registro però dicono ancora l'anno vecchio, tutte quante. Per riallinearle, la funzione che apre l'anno nuovo deve scorrere anche il registro:
+
+```python
+def nuovo_anno(studenti, registro):
+    for studente in studenti:
+        studente["anno"] += 1
+    for assegnazione in registro:
+        assegnazione["anno"] += 1
+```
+
+Il primo ciclo aggiorna nove righe, una per studente. Il secondo esiste solo perché l'anno è stato copiato: aggiorna 18 assegnazioni nel registro dell'esempio, più di 20.000 in quello di tutta la scuola, e ogni anno qualcuna di più, perché il registro cresce e le assegnazioni vecchie restano. Un programma che aggiorna `studenti.json` e dimentica il registro, o che si interrompe fra i due cicli, lascia l'archivio con due file che danno due classifiche diverse, come è successo con la casa di Neville. Questa volta però nessuno ha scritto un valore sbagliato. Ogni copia era vera quando è stata scritta, ed è diventata falsa quando è cambiato l'originale.
+
+### Un valore ripetuto non è sempre una copia
+
+Prima di chiamare "copia" un campo, chiediti di che cosa parla. La funzione `nuovo_anno` tratta l'anno nel registro come l'anno _attuale_ dello studente: un'informazione sullo studente, che sta già in `studenti.json`.
+
+Lo stesso campo potrebbe però voler dire un'altra cosa: l'anno che lo studente frequentava quando ha ricevuto quei punti. Questa informazione riguarda l'assegnazione, non lo studente, e il 1° settembre non deve cambiare: i 50 punti persi da Neville nella notte fuori dal dormitorio restano punti del primo anno anche quando lui è al secondo. Su un campo con questo significato, `nuovo_anno` trasformerebbe dati giusti in dati falsi.
+
+Oggi i due significati danno lo stesso numero, 1; da settembre in poi divergono. Il valore ripetuto è identico, l'informazione no. Quale delle due il campo contenga lo decide chi progetta l'archivio, e il file JSON non lo registra da nessuna parte.
+
+<Quiz>
+  <QuizQuestion>
+    Quale campo di un'assegnazione del registro è una copia di un'informazione che appartiene a qualcos'altro?
+  </QuizQuestion>
+
+<QuizOption>
+  `"studente"`
+  <QuizFeedback>
+    Il nome è il collegamento: dice a chi sono andati i punti. Senza il nome
+    l'assegnazione non sarebbe di nessuno, e l'incrocio con `studenti.json` non
+    avrebbe un campo su cui agganciarsi.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption correct>
+  `"casa"`
+  <QuizFeedback>
+    Esatto. La casa è un'informazione sullo studente e sta già in
+    `studenti.json`. Nel registro è ripetuta a ogni assegnazione, ed è per
+    questo che ha potuto contraddire l'elenco.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption>
+  `"punti"`
+  <QuizFeedback>
+    I punti sono il contenuto dell'assegnazione ed esistono solo lì. Due
+    assegnazioni da cinque punti sono due fatti diversi, non due copie dello
+    stesso fatto.
+  </QuizFeedback>
+</QuizOption>
+
+  <QuizOption>
+    `"professore"`
+    <QuizFeedback>
+      Come `"studente"`, è un collegamento: dice chi ha assegnato i punti. Sarebbe una copia un campo con la materia insegnata dal professore, che riguarda lui e non l'assegnazione.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+## Una riga, tre fatti
+
+Il registro ha un altro difetto, meno visibile, e riguarda i professori. Prendi l'assegnazione di Padma e scomponila nelle informazioni che contiene:
+
+| Che cosa dice la riga                     | Di chi è l'informazione | Dove altro è scritta |
+| ----------------------------------------- | ----------------------- | -------------------- |
+| Padma ha ricevuto dieci punti da Flitwick | dell'assegnazione       | da nessuna parte     |
+| Padma è di Corvonero                      | di Padma                | in `studenti.json`   |
+| Flitwick insegna a Hogwarts               | di Flitwick             | da nessuna parte     |
+
+Nessun file elenca i professori: per l'archivio un professore esiste solo se compare in qualche assegnazione. Il blocco qui sotto ricava dal registro l'elenco dei professori, poi annulla l'assegnazione di Padma, che è la decima, e ricava l'elenco di nuovo. Prima di eseguire, prova a prevedere che cosa cambia nel secondo elenco.
+
+```py live
+from archivio_hogwarts import leggi_file
+### PRE
+import json
+
+registro = json.loads(leggi_file("punti.json"))
+
+def professori(registro):
+    elenco = []
+    for assegnazione in registro:
+        if assegnazione["professore"] not in elenco:
+            elenco.append(assegnazione["professore"])
+    return elenco
+
+print(professori(registro))
+del registro[9]
+print(professori(registro))
+```
+
+<Spoiler block>
+
+Nel secondo elenco manca Flitwick. Annullare l'assegnazione doveva cancellare un fatto solo, i dieci punti a Padma, e ne ha cancellato un altro: che Flitwick insegni a Hogwarts era scritto soltanto in quella riga.
+
+</Spoiler>
+
+La casa di Padma, invece, è sopravvissuta all'annullamento, perché ha un posto suo in `studenti.json`. Le due informazioni cancellate insieme alla riga erano quelle che non stavano scritte da nessun'altra parte.
+
+Il registro come unico elenco dei professori crea un problema anche quando un professore arriva. Lupin comincia a insegnare a Hogwarts due anni dopo i fatti del registro: finché non assegna o toglie punti a qualcuno, l'archivio non sa che esiste. Per registrarlo subito servirebbe un'assegnazione finta:
+
+```json
+{ "studente": "", "casa": "", "punti": 0, "professore": "Lupin" }
+```
+
+Ogni programma che lavora sul registro dovrebbe poi sapere che quella riga non è un'assegnazione. Chi conta le assegnazioni ne troverebbe una in più, senza nessun avviso. Il calcolo dei punti per anno, invece, si fermerebbe con un `KeyError`, perché in `anno_di` non c'è uno studente senza nome.
+
+:::definition[Le tre anomalie]
+
+- **Anomalia di aggiornamento**: un'informazione scritta in più posti va cambiata in tutti, e se ne manca uno l'archivio si contraddice. È l'anno copiato nel registro.
+- **Anomalia di inserimento**: un'informazione non si può registrare finché non esiste un'altra cosa a cui appoggiarla. È Lupin, che per l'archivio non esiste finché non assegna punti.
+- **Anomalia di cancellazione**: eliminare un dato ne elimina altri, scritti solo nella stessa riga. È Flitwick, sparito insieme all'assegnazione di Padma.
+
+Le tre anomalie hanno una causa comune: una riga che contiene informazioni su cose diverse. Le riprenderemo in modo formale nel capitolo sulla normalizzazione.
+
+:::
+
+## Un fatto, un posto
+
+Le tre anomalie hanno un rimedio comune: scrivere ogni informazione una volta, nel posto che le appartiene. La casa e l'anno stanno in `studenti.json`; i professori in un file loro; il registro tiene solo ciò che riguarda l'assegnazione, cioè chi ha ricevuto i punti, quanti e da chi.
+
+```json
+{ "studente": "Padma Patil", "punti": 10, "professore": "Flitwick" }
+```
+
+Le righe dei tre file si collegano attraverso i nomi, come `anno_di` collegava il registro all'elenco degli studenti. Ogni informazione è scritta una volta sola, quindi non c'è un'altra copia che possa contraddirla. Flitwick resta nell'elenco dei professori anche quando un'assegnazione viene annullata, e Lupin ci entra il giorno in cui arriva.
+
+La regola ha un prezzo, e lo conosci dalla lezione precedente. Senza la casa nel registro, anche il totale di Grifondoro richiede l'incrocio con `studenti.json`, scritto a mano, e quasi ogni domanda ne chiede uno. In più il legame fra i file resta affidato al codice: niente impedisce di scrivere nel registro un professore che non compare nell'elenco dei professori, o uno studente con il nome sbagliato come "Logbottom". Togliendo le copie hai scambiato dati che si contraddicono con dati che possono riferirsi a qualcuno che non esiste.
+
+Con i file, quindi, la scelta è fra copie da tenere allineate e incroci da scrivere. Un database tiene ogni informazione al suo posto, ti lascia chiedere un incrocio invece di programmarlo e, se glielo chiedi, rifiuta un nome che non compare nell'elenco a cui deve riferirsi. È l'argomento della prossima lezione.
+
+:::nutshell
+
+- Un campo ripetuto può essere la copia di un'informazione che ha già un suo posto: la casa nel registro è la stessa informazione che sta in `studenti.json`.
+- Quando due copie dicono cose diverse, niente nei dati dice quale sia vera: due programmi corretti danno due classifiche diverse.
+- Un controllo di coerenza trova i disaccordi, ma non sa quale copia correggere e va rieseguito dopo ogni modifica.
+- Una copia diventa falsa anche senza errori: quando l'originale cambia, vanno aggiornate tutte le copie insieme.
+- Un valore ripetuto non è sempre una copia: l'anno in cui uno studente ha ricevuto dei punti è un'informazione sull'assegnazione e non cambia.
+- Quando una riga contiene informazioni su cose diverse compaiono le anomalie di inserimento, aggiornamento e cancellazione.
+- Il rimedio è scrivere ogni informazione una volta, nel posto che le appartiene, e collegare i posti con un campo comune. Il prezzo sono gli incroci, e un legame che solo il codice controlla.
+
+:::
+
+<Quiz>
+  <QuizQuestion>
+    La biblioteca tiene un solo file, `prestiti.json`, in cui ogni prestito riporta lo studente, il titolo del libro, l'autore e la data. Un libro è stato prestato una sola volta, e quel prestito viene cancellato. Che cosa perde l'archivio?
+  </QuizQuestion>
+
+<QuizOption>
+  Solo il prestito: il libro resta sullo scaffale.
+  <QuizFeedback>
+    Sullo scaffale sì, ma l'archivio non lo sa più: il titolo era scritto solo
+    dentro quel prestito.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption correct>
+  Anche il fatto che la biblioteca possieda quel libro, e chi l'ha scritto.
+  <QuizFeedback>
+    Esatto: titolo e autore stavano solo dentro il prestito. È un'anomalia di
+    cancellazione, la stessa che ha fatto sparire Flitwick dall'elenco dei
+    professori.
+  </QuizFeedback>
+</QuizOption>
+
+<QuizOption>
+  Niente, perché l'autore compare anche negli altri prestiti.
+  <QuizFeedback>
+    Compare solo se qualcuno ha preso in prestito un altro suo libro. E in ogni
+    caso il titolo di questo libro non sta da nessun'altra parte.
+  </QuizFeedback>
+</QuizOption>
+
+  <QuizOption>
+    Il file non è più JSON valido e `json.loads` lo rifiuta.
+    <QuizFeedback>
+      Una riga in meno lascia il JSON valido. Il danno non riguarda la sintassi: un'informazione è sparita e nessun controllo lo segnala.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
