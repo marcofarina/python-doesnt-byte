@@ -64,9 +64,18 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
-    v: '0.17.0',
+    v: '0.17.1',
     date: '7 ottobre 2026',
     latest: true,
+    notes: {
+      fixed: [
+        'Nei percorsi IT, Liceo e ITS compare anche la prima lezione del Volume 3, «I dati che non stanno più nel programma».',
+      ],
+    },
+  },
+  {
+    v: '0.17.0',
+    date: '7 ottobre 2026',
     notes: {
       content: [
         'Volume 3, Manuale dell’Archivista: la seconda lezione, «La stessa informazione scritta due volte».',
