@@ -1,0 +1,11 @@
+[
+  {"nome": "Harry Potter", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Hermione Granger", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Ron Weasley", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Neville Longbottom", "casa": "Grifondoro", "anno": 1},
+  {"nome": "Draco Malfoy", "casa": "Serpeverde", "anno": 1},
+  {"nome": "Padma Patil", "casa": "Corvonero", "anno": 1},
+  {"nome": "Fred Weasley", "casa": "Grifondoro", "anno": 3},
+  {"nome": "George Weasley", "casa": "Grifondoro", "anno": 3},
+  {"nome": "Cedric Diggory", "casa": "Tassofrasso", "anno": 3}
+]
