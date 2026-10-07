@@ -116,7 +116,7 @@ for assegnazione in registro:
 print(f"Grifondoro: {totale} punti")
 ```
 
-Tre punti. Un anno di troll, uscite notturne e scacchi giganti, e Grifondoro ha guadagnato appena più di quanto ha perso: i 170 punti di Silente coprono quasi da soli i 150 tolti in una notte da McGonagall.
+Il totale è di <Spoiler>tre punti</Spoiler>. Un anno di troll, uscite notturne e scacchi giganti, e Grifondoro ha guadagnato appena più di quanto ha perso: i 170 punti di Silente coprono quasi da soli i 150 tolti in una notte da McGonagall.
 
 Seconda domanda: quale studente, fra i Grifondoro, è costato più punti alla casa di appartenenza? Contano solo i punti tolti, non quelli guadagnati. Prima di eseguire scegli uno studente, poi scopri se avevi ragione.
 
@@ -140,13 +140,21 @@ peggiore = max(persi, key=persi.get)
 print(f"\nHa fatto perdere più punti: {peggiore}")
 ```
 
-Hermione, con 55 punti tolti, davanti a Harry (52) e Neville (50). La notte fuori dal dormitorio è costata 50 punti a tutti e tre; la differenza la fanno i cinque punti del troll, che Hermione si è fatta togliere per coprire Harry e Ron. `max(persi, key=persi.get)` restituisce la chiave del dizionario con il valore più alto: è il nome che cercavi, non il numero.
+<Spoiler block>
+
+Hermione, con 55 punti tolti, davanti a Harry (52) e Neville (50). La notte fuori dal dormitorio è costata 50 punti a tutti e tre; la differenza la fanno i cinque punti del troll, che Hermione si è fatta togliere per coprire Harry e Ron.
+
+</Spoiler>
+
+`max(persi, key=persi.get)` restituisce la chiave del dizionario con il valore più alto: è il nome che cercavi, non il numero.
 
 Guarda i due programmi insieme: hanno in comune solo le prime due righe, l'import e la lettura del file. Il resto (il ciclo, la condizione, la struttura che accumula) è scritto per rispondere a una domanda specifica e non serve all'altra. La struttura dati addirittura cambia: un numero per la prima domanda, un dizionario di contatori per la seconda.
 
 Il file JSON, intanto, non è cambiato di un byte. Conserva i dati, ma non sa rispondere a nessuna domanda: la capacità di rispondere sta tutta nel codice, e il codice esiste solo per le domande che qualcuno ha già previsto. Se McGonagall chiede quale professore ha tolto più punti a Grifondoro, il registro non ha la risposta. L'avrà quando qualcuno avrà scritto, provato e corretto un terzo programma.
 
 Prova a essere quel qualcuno. Il programma qui sotto è una copia del secondo: modificalo affinché risponda alla domanda di McGonagall, e tieni il conto delle righe di codice che hai dovuto cambiare.
+
+<Challenge>
 
 ```py live title="Quale professore ha tolto più punti a Grifondoro?"
 from archivio_hogwarts import leggi_file
@@ -166,17 +174,38 @@ for nome in persi:
 
 peggiore = max(persi, key=persi.get)
 print(f"\nHa fatto perdere più punti: {peggiore}")
+### POST
+assert not contiene("Hermione"), "Il programma elenca ancora gli studenti: il conto deve essere per professore."
+assert contiene("McGonagall"), "Il programma non stampa il nome del professore che cerchi."
+assert contiene("McGonagall", righe()[-1]), "Nell'ultima riga il professore che stampi non è quello che ha tolto più punti: guarda i totali."
 ```
 
-<Solution>
+<Hint>
+  Il programma conta i punti per studente perché la riga `nome =
+  assegnazione["studente"]` sceglie chi viene contato. Quella riga decide a chi
+  vengono attribuiti i punti persi.
+</Hint>
 
-```py live readonly
-from archivio_hogwarts import leggi_file
-### PRE
-import json
+<Hint>
+  Ogni assegnazione del registro ha anche una chiave `"professore"`. Usala al
+  posto di `"studente"` nel punto in cui scegli il nome da contare.
+</Hint>
 
-registro = json.loads(leggi_file("punti.json"))
+<Hint>
+  Dopo il cambio il programma calcola quello che vuoi, ma l'ultimo `print` dice
+  ancora «Ha fatto perdere più punti» a proposito di uno studente. Rendi
+  l'etichetta vera.
+</Hint>
 
+<Solved>
+
+È bastato cambiare una parola, `"professore"` al posto di `"studente"`, più l'etichetta dell'ultimo `print` perché dica il vero. Eppure è un programma nuovo: qualcuno ha dovuto scriverlo, eseguirlo e controllarlo, e lo stesso succederà per ogni domanda nuova.
+
+</Solved>
+
+<Answer>
+
+```py
 persi = {}
 for assegnazione in registro:
     if assegnazione["casa"] == "Grifondoro" and assegnazione["punti"] < 0:
@@ -190,9 +219,11 @@ peggiore = max(persi, key=persi.get)
 print(f"\nHa tolto più punti: {peggiore}")
 ```
 
-</Solution>
+La risposta è McGonagall, con 155 punti tolti a Grifondoro contro i 22 di Piton: da sola ne ha tolti 5 per il troll e 150 per la notte fuori dal dormitorio. Il resto del programma non cambia, perché la domanda ha la stessa forma della precedente: si accumulano i punti persi sotto una chiave. Cambia solo la chiave.
 
-È bastato cambiare una parola, `"professore"` al posto di `"studente"`, più l'etichetta dell'ultimo `print` perché dica il vero. Eppure è un programma nuovo: qualcuno ha dovuto scriverlo, eseguirlo e controllarlo, e lo stesso succederà per ogni domanda nuova.
+</Answer>
+
+</Challenge>
 
 ## Una domanda che attraversa due file
 
@@ -271,7 +302,7 @@ punti_di("Neville Longbottom", leggi_file("punti.json"))
 punti_di("Neville Longbottom", leggi_file("punti_tutta_la_scuola.json"))
 ```
 
-Le legge tutte e 20.018. Il programma non sa dove stanno le righe di Neville, né quante sono, quindi non può saltarne nessuna; ma prima ancora deve caricare in memoria quasi due megabyte di testo, per estrarre solo due numeri. È importante notare che il lavoro cresce con l'aumentare della dimensione del file, non con la lunghezza della risposta: se il registro raddoppia, raddoppia anche il lavoro per trovare le stesse due righe. Con 20.000 assegnazioni il computer se la cava in un attimo (osserva i tempi di esecuzione del codice). Con i registri di dieci anni di tutta la scuola, o con i movimenti di tutte le camere blindate della Gringott, leggere l'intero archivio per ogni domanda diventa un vero e proprio collo di bottiglia dell'intero programma.
+Le legge tutte e <Spoiler>20.018</Spoiler>. Il programma non sa dove stanno le righe di Neville, né quante sono, quindi non può saltarne nessuna; ma prima ancora deve caricare in memoria quasi due megabyte di testo, per estrarre solo due numeri. È importante notare che il lavoro cresce con l'aumentare della dimensione del file, non con la lunghezza della risposta: se il registro raddoppia, raddoppia anche il lavoro per trovare le stesse due righe. Con 20.000 assegnazioni il computer se la cava in un attimo (osserva i tempi di esecuzione del codice). Con i registri di dieci anni di tutta la scuola, o con i movimenti di tutte le camere blindate della Gringott, leggere l'intero archivio per ogni domanda diventa un vero e proprio collo di bottiglia dell'intero programma.
 
 Una via d'uscita la conosciamo già. Come `anno_di` porta dal nome di uno studente al suo anno, un altro dizionario può portare dal nome di uno studente alla lista delle sue assegnazioni: con quel dizionario le due assegnazioni di Neville si trovano subito, senza leggere le altre 20.016. Un dizionario usato così si chiama indice. Però lo scrivi tu, ne serve uno per ogni campo su cui vuoi cercare in fretta, e va ricostruito ogni volta che il file cambia.
 

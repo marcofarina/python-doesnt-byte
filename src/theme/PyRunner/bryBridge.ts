@@ -11,6 +11,7 @@
  */
 
 import { ensureBrython, type BrythonConfig } from '@site/src/pyBoot';
+import type { Esito, RunnerDoneDetail } from './runnerSignal';
 
 export type LogKind = 'stdout' | 'stderr';
 
@@ -18,12 +19,21 @@ export interface RunOptions {
   codeId: string;
   preCode?: string;
   postCode?: string;
+  /**
+   * Verifica dell'esercizio (il `### POST` di un runner dentro <Challenge>).
+   * Se è una stringa, anche vuota, `postCode` va lasciato vuoto: la verifica
+   * gira in una seconda fase (`brython_runner.run`) e prima di `onDone`
+   * arriva `onVerdict`. Con `undefined` niente verifica, come prima.
+   */
+  checkCode?: string;
   libUrl: string;
   /** Coordinate per caricare Brython on-demand (dai global data del plugin). */
   brython?: BrythonConfig;
   onStart: () => void;
   onLog: (kind: LogKind, text: string) => void;
   onDone: (durationMs: number) => void;
+  /** Esito della verifica, solo se `checkCode` è definito. */
+  onVerdict?: (verdict: RunnerDoneDetail) => void;
   onError?: (err: Error) => void;
   /**
    * Eventi `bry_notify` con un `type` fuori dal protocollo standard
@@ -39,9 +49,18 @@ interface BryNotifyDetail {
   type: string;
   output?: string;
   time?: number;
+  /** Solo per `type: 'verifica'`. */
+  esito?: unknown;
+  messaggio?: unknown;
 }
 
 const BRY_EVENT = 'bry_notify';
+
+const ESITI: readonly unknown[] = ['risolto', 'non-risolto', 'errore'];
+
+function isEsito(value: unknown): value is Esito {
+  return ESITI.includes(value);
+}
 
 function communicatorId(codeId: string): string {
   return `py_${codeId}`;
@@ -92,11 +111,13 @@ export function runPython(code: string, opts: RunOptions): () => void {
     codeId,
     preCode = '',
     postCode = '',
+    checkCode,
     libUrl,
     brython,
     onStart,
     onLog,
     onDone,
+    onVerdict,
     onError,
     onCustom,
   } = opts;
@@ -126,6 +147,17 @@ export function runPython(code: string, opts: RunOptions): () => void {
       case 'stderr':
         if (detail.output) onLog(detail.type, detail.output);
         break;
+      case 'verifica':
+        // Il None di Python arriva come oggetto Brython, non come null:
+        // si accettano solo stringhe.
+        onVerdict?.({
+          esito: isEsito(detail.esito) ? detail.esito : 'non-risolto',
+          messaggio:
+            typeof detail.messaggio === 'string' && detail.messaggio
+              ? detail.messaggio
+              : null,
+        });
+        break;
       default:
         onCustom?.(detail as never);
         break;
@@ -138,16 +170,18 @@ export function runPython(code: string, opts: RunOptions): () => void {
     div.removeEventListener(BRY_EVENT, listener);
   };
 
-  const lineShift = preCode
-    .trim()
-    .split(/\n/)
-    .filter((l) => l.length > 0).length;
-  const pre = lineShift > 0 ? `${preCode.trim()}\n` : '';
+  // Le righe del PRE spostano i numeri di riga del traceback: si contano
+  // tutte, anche quelle vuote in mezzo, perché finiscono tutte nello script.
+  const preTrimmed = preCode.trim();
+  const lineShift = preTrimmed ? preTrimmed.split('\n').length : 0;
+  const pre = preTrimmed ? `${preTrimmed}\n` : '';
   const post = postCode.trim().length > 0 ? `\n${postCode.trim()}` : '';
   const userCode = `${pre}${code}${post}`;
-  // Newline di sicurezza prima della chiusura del triple-quote: se userCode
-  // termina con `"`, evita la concatenazione `"` + `"""` → SyntaxError.
-  const wrapped = `from brython_runner import run\nrun("""${escapeForTripleQuote(userCode)}\n""", '${codeId}', ${lineShift})\n`;
+  // Newline di sicurezza prima della chiusura del triple-quote: se il
+  // sorgente termina con `"`, evita la concatenazione `"` + `"""` → SyntaxError.
+  const quote = (src: string) => `"""${escapeForTripleQuote(src)}\n"""`;
+  const check = checkCode === undefined ? 'None' : quote(checkCode.trim());
+  const wrapped = `from brython_runner import run\nrun(${quote(userCode)}, '${codeId}', ${lineShift}, ${check})\n`;
 
   ensureBrython(libUrl, brython)
     .then(() => {

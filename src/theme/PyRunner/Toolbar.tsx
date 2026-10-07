@@ -6,6 +6,7 @@ import {
   faStop,
   faExpand,
   faDatabase,
+  faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import clsx from 'clsx';
 import IconCopy from '@theme/Icon/Copy';
@@ -51,6 +52,8 @@ function CopyCodeButton({ code }: { code: string }) {
 
 export interface ToolbarProps {
   title?: string;
+  /** Il runner è un esercizio (<Challenge>) già risolto: segno «Risolto». */
+  solved?: boolean;
   status: RunStatus;
   hasEdits: boolean;
   code: string;
@@ -67,6 +70,7 @@ export interface ToolbarProps {
 
 export function Toolbar({
   title,
+  solved,
   status,
   hasEdits,
   code,
@@ -89,6 +93,12 @@ export function Toolbar({
           <span className={clsx(styles.tlDot, styles.tlMax)} />
         </div>
         {title && <span className={styles.toolbarTitle}>{title}</span>}
+        {solved && (
+          <span className={styles.solvedChip}>
+            <FontAwesomeIcon icon={faCircleCheck} aria-hidden="true" />
+            Risolto
+          </span>
+        )}
       </div>
       <div className={styles.toolbarRight}>
         {showExplain && onExplain && (

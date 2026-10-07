@@ -64,9 +64,22 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
+    v: '0.17.0',
+    date: '7 ottobre 2026',
+    latest: true,
+    notes: {
+      content: [
+        'Volume 3, Manuale dell’Archivista: la seconda lezione, «La stessa informazione scritta due volte».',
+      ],
+      new: [
+        'Esercizi verificati: nel PyRunner e nello SQLRunner un esercizio può controllare da solo la risposta dello studente.',
+        'Le soluzioni e le risposte alle domande di previsione restano nascoste finché non esegui il codice.',
+      ],
+    },
+  },
+  {
     v: '0.16.0',
     date: '6 ottobre 2026',
-    latest: true,
     notes: {
       new: ['Prima versione pubblica del libro per gli studenti.'],
       content: [

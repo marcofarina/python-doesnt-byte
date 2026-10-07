@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { usePluginData } from '@docusaurus/useGlobalData';
 import useBaseUrl from '@docusaurus/useBaseUrl';
@@ -11,6 +18,11 @@ import { ensureBrython, type BrythonConfig } from '@site/src/pyBoot';
 import { coerceBool, coerceNumber } from './coerce';
 import { copyToClipboard } from './clipboard';
 import { encodeCode, DEFAULT_EXPLAIN_PROMPT, buildExplainText } from './share';
+import {
+  ChallengeContext,
+  emitRunnerDone,
+  type RunnerDoneDetail,
+} from './runnerSignal';
 import type { LogEntry, RunStatus } from './types';
 import styles from './styles.module.css';
 
@@ -76,6 +88,9 @@ function PyRunnerInner(props: PyRunnerProps) {
   const examples = data?.examples;
   const examplesDir = data?.examplesDir ?? '';
   const brython = data?.brython;
+  // Dentro un <Challenge> il `### POST` è la verifica dell'esercizio.
+  const challenge = useContext(ChallengeContext);
+  const verified = challenge !== null;
 
   const rawSource = useMemo(() => {
     if (props.src) {
@@ -139,11 +154,20 @@ function PyRunnerInner(props: PyRunnerProps) {
     let entries = 0;
     let bytes = 0;
 
+    // Fuori da un <Challenge> l'esito è sempre null. Dentro, se la verifica
+    // non risponde (Brython non caricato, eccezione che sfugge a run) vale
+    // come errore: lo studente deve poter riprovare.
+    let verdict: RunnerDoneDetail = {
+      esito: verified ? 'errore' : null,
+      messaggio: null,
+    };
+
     cleanupRef.current?.();
     cleanupRef.current = runPython(current, {
       codeId,
       preCode: pre,
-      postCode: post,
+      postCode: verified ? '' : post,
+      checkCode: verified ? post : undefined,
       libUrl,
       brython,
       onStart: () => {
@@ -171,9 +195,13 @@ function PyRunnerInner(props: PyRunnerProps) {
         setLogs((prev) => [...prev, { kind, text }]);
         if (kind === 'stderr') setStatus('error');
       },
+      onVerdict: (v) => {
+        verdict = v;
+      },
       onDone: (durationMs) => {
         setStatus((s) => (s === 'error' ? s : 'done'));
         setDuration(durationMs);
+        emitRunnerDone(rootRef.current, verdict);
       },
       onError: (err) => {
         setStatus('error');
@@ -181,9 +209,10 @@ function PyRunnerInner(props: PyRunnerProps) {
           ...prev,
           { kind: 'stderr', text: `[PyRunner] ${err.message}\n` },
         ]);
+        emitRunnerDone(rootRef.current, verdict);
       },
     });
-  }, [code, pre, post, codeId, libUrl, brython]);
+  }, [code, pre, post, verified, codeId, libUrl, brython]);
 
   // Precarica Brython (~1,1 MB) quando il runner entra nel viewport, non al
   // mount: una demo sotto la piega (es. la home) non scarica nulla finché non
@@ -302,6 +331,7 @@ function PyRunnerInner(props: PyRunnerProps) {
   return (
     <div
       ref={rootRef}
+      data-runner=""
       data-pagefind-ignore
       className={clsx(
         styles.runner,
@@ -311,6 +341,7 @@ function PyRunnerInner(props: PyRunnerProps) {
     >
       <Toolbar
         title={title}
+        solved={challenge?.solved}
         status={status}
         hasEdits={hasEdits}
         code={currentCode}
@@ -349,7 +380,7 @@ export default function PyRunner(props: PyRunnerProps) {
   return (
     <BrowserOnly
       fallback={
-        <pre data-pagefind-ignore className={styles.fallback}>
+        <pre data-runner="" data-pagefind-ignore className={styles.fallback}>
           <code>
             {typeof props.children === 'string' ? props.children : ''}
           </code>

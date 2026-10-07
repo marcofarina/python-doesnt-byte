@@ -19,4 +19,8 @@ export interface SqlRunOutcome {
   /** true se il DB è stato (ri)aperto dal seed per questo run. */
   freshDb: boolean;
   durationMs: number;
+  /** Esito della verifica, solo se la richiesta aveva `check`. */
+  verdict?: { esito: 'risolto' | 'non-risolto'; messaggio: string | null };
+  /** La verifica non ha potuto girare per un errore dell'autore (console). */
+  authorError?: string;
 }
