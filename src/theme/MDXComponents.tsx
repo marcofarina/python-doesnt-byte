@@ -27,6 +27,7 @@ import ExerciseLink from '@site/src/components/ExerciseLink';
 import Exercise, { LessonMeta, Solution } from '@site/src/components/Exercise';
 import AssignedExercises from '@site/src/components/AssignedExercises';
 import FileArchivio from '@site/src/components/FileArchivio';
+import Esito from '@site/src/components/Esito';
 
 export default {
   ...MDXComponents,
@@ -54,4 +55,5 @@ export default {
   Solution,
   AssignedExercises,
   FileArchivio,
+  Esito,
 };

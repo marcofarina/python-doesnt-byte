@@ -1,0 +1,22 @@
+.ok,
+.no {
+  display: inline-flex;
+  vertical-align: -0.2em;
+  margin-right: 0.35em;
+}
+
+.ok {
+  color: var(--ifm-color-success-dark);
+}
+
+.no {
+  color: var(--ifm-color-danger-dark);
+}
+
+html[data-theme='dark'] .ok {
+  color: var(--ifm-color-success-light);
+}
+
+html[data-theme='dark'] .no {
+  color: var(--ifm-color-danger-light);
+}
