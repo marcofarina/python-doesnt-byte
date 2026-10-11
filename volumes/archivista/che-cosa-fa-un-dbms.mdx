@@ -1,0 +1,370 @@
+---
+title: Che cosa fa un DBMS al posto tuo
+sidebar_label: Che cosa fa un DBMS
+sidebar_position: 4
+description: Un database non è un file più grosso. Il DBMS risponde alle domande, incrocia le tabelle, rifiuta un nome che non esiste e coordina chi scrive insieme, tutti lavori che prima stavano nel tuo programma. Lo vediamo sul registro dei punti di Hogwarts.
+archivio: [punti.json, studenti.json]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Che cosa fa un DBMS al posto tuo
+
+<Epigraph author="E. F. Codd, A Relational Model of Data for Large Shared Data Banks (1970)">
+
+Future users of large data banks must be protected from having to know how the data is organized in the machine (the internal representation).
+
+</Epigraph>
+
+La lezione precedente si è chiusa con una scelta fra due difetti. Con le copie, i file finiscono per contraddirsi. Senza copie, ogni domanda richiede un incrocio scritto a mano, e nessun file controlla che il nome scritto in un'assegnazione compaia fra gli studenti. La prima lezione del capitolo aveva lasciato in sospeso un'altra domanda: che cosa succede se due professori aggiungono un'assegnazione al registro nello stesso momento. In questa lezione mettiamo il registro in un database e guardiamo, un problema alla volta, che cosa fa il DBMS al posto del tuo programma.
+
+:::prereq
+
+- Il registro `punti.json`, l'elenco `studenti.json` e l'incrocio fra i due con un dizionario (prima lezione del capitolo)
+- La ridondanza e la regola "un fatto, un posto" (lezione precedente)
+- Leggere e riscrivere un file JSON con il modulo `json`
+
+:::
+
+:::learn
+
+- Spiegare perché un database non è un file più grosso, nominando i lavori che il DBMS fa al posto del programma
+- Distinguere una domanda che descrive il risultato da un programma che descrive i passi per ottenerlo
+- Prevedere quando un vincolo rifiuta un dato e quando lo lascia passare
+- Riconoscere un aggiornamento perso fra due programmi che riscrivono lo stesso file
+
+:::
+
+## Il registro in un database
+
+Ripartiamo dalla regola con cui si è chiusa la lezione precedente: ogni informazione scritta una volta sola, nel posto che le appartiene. In un database quei posti sono le **tabelle**, e il registro dei punti ne occupa tre. La tabella `studente` contiene nome, casa e anno, come `studenti.json`. La tabella `professore` è l'elenco dei professori, che nell'archivio JSON non c'era. La tabella `assegnazione` registra chi ha ricevuto i punti, quanti e da chi, e non contiene più la casa. Il blocco qui sotto mostra le prime cinque righe della tabella `assegnazione`:
+
+```sql live dataset=archivista/registro-punti hideQuery
+SELECT * FROM assegnazione LIMIT 5;
+```
+
+Ogni riga è un'assegnazione, e ogni colonna un'informazione dell'assegnazione. La colonna `id` è un numero progressivo che il database dà a ogni riga. Le tabelle si collegano attraverso i nomi, come i file della lezione precedente: il valore nella colonna `studente` indica una riga della tabella `studente`, quello nella colonna `professore` una riga della tabella `professore`. Il collegamento per nome regge finché due studenti non hanno lo stesso nome; il problema, e il modo di risolverlo, arrivano nel prossimo capitolo.
+
+Le tabelle stanno in un database, e a gestirlo è il DBMS, un programma a sé che conserva i dati e risponde alle richieste degli altri programmi. Il tuo programma non apre più un file e non lo scorre: manda una richiesta al DBMS e riceve la risposta.
+
+:::note[Il DBMS di questa pagina]
+
+I blocchi SQL di questa pagina usano SQLite, un DBMS che gira dentro il browser, come il Python dei blocchi eseguibili. Ogni blocco parte dalle stesse tre tabelle: quello che cambi in un blocco non arriva agli altri, e ricaricando la pagina tutto torna com'era. Nelle applicazioni vere il DBMS è spesso un server separato, come PostgreSQL o MySQL, a cui si collegano i programmi di molti utenti.
+
+:::
+
+## Domande senza programma
+
+Nella prima lezione ogni domanda era un programma da scrivere. Al DBMS invece si fa una richiesta, e lui risponde con una tabella. La richiesta è scritta in un linguaggio apposito, e si chiama **query**. Il blocco qui sotto chiede il totale dei punti di ogni casa; la query resta nascosta, e con il pulsante "Mostra la query" puoi leggerla.
+
+```sql live dataset=archivista/registro-punti hideQuery
+SELECT studente.casa, SUM(assegnazione.punti) AS totale
+FROM assegnazione
+JOIN studente ON studente.nome = assegnazione.studente
+GROUP BY studente.casa
+ORDER BY totale DESC;
+```
+
+Grifondoro ha tre punti, come nel conteggio di McGonagall della prima lezione. Questa volta però la casa non sta nella tabella `assegnazione`: per sommare i punti di ogni casa il DBMS ha incrociato ogni assegnazione con la riga dello studente. È lo stesso tipo di incrocio che nella prima lezione richiedeva il dizionario `anno_di`, e che nella lezione precedente era il prezzo della regola "un fatto, un posto". Adesso quel prezzo lo paga il DBMS.
+
+Per vedere che cosa cambia nel codice, mettiamo a confronto la domanda di Silente della prima lezione, i punti raccolti dagli studenti di ogni anno, scritta nei due modi.
+
+<Tabs>
+<TabItem value="file" label="Con i file" default>
+
+```python
+anno_di = {}
+for studente in studenti:
+    anno_di[studente["nome"]] = studente["anno"]
+
+per_anno = {}
+for assegnazione in registro:
+    anno = anno_di[assegnazione["studente"]]
+    per_anno[anno] = per_anno.get(anno, 0) + assegnazione["punti"]
+```
+
+</TabItem>
+<TabItem value="dbms" label="Con il DBMS">
+
+```sql live dataset=archivista/registro-punti readonly
+SELECT studente.anno, SUM(assegnazione.punti) AS punti
+FROM assegnazione
+JOIN studente ON studente.nome = assegnazione.studente
+GROUP BY studente.anno;
+```
+
+</TabItem>
+</Tabs>
+
+Il programma Python descrive i passi: costruisci un dizionario, scorri il registro, per ogni assegnazione cerca l'anno e accumula i punti. La query descrive il risultato, e si legge quasi come una frase: l'anno dello studente e la somma dei punti, dalle assegnazioni unite agli studenti con lo stesso nome, raggruppate per anno. Non dice in che ordine leggere le righe né quale struttura usare per accumulare: lo sceglie il DBMS. Esegui la query nella seconda scheda: per il primo anno dà 23 punti e per il terzo −10, gli stessi numeri del programma della prima lezione.
+
+Un linguaggio in cui scrivi che cosa vuoi ottenere, e non come, si chiama **dichiarativo**; Python, in cui scrivi i passi, è un linguaggio **imperativo**. Il linguaggio delle query è SQL, e lo impareremo a leggere e a scrivere a partire dal capitolo sulle interrogazioni: per adesso basta riconoscerne la forma. Separare la domanda dal modo di eseguirla è l'idea con cui Codd apriva nel 1970 l'articolo citato in cima a questa pagina: chi interroga un archivio non deve sapere come i dati sono disposti nella macchina.
+
+Anche la domanda di McGonagall che nella prima lezione hai risolto modificando un programma, quale professore ha tolto più punti a Grifondoro, diventa una query:
+
+```sql live dataset=archivista/registro-punti hideQuery
+SELECT assegnazione.professore, -SUM(assegnazione.punti) AS punti_tolti
+FROM assegnazione
+JOIN studente ON studente.nome = assegnazione.studente
+WHERE studente.casa = 'Grifondoro' AND assegnazione.punti < 0
+GROUP BY assegnazione.professore
+ORDER BY punti_tolti DESC;
+```
+
+Per il DBMS non esistono domande previste e domande nuove: ogni domanda è una query, e il modo di eseguirla lo sceglie lui.
+
+:::info[Trovare senza leggere tutto]
+
+Nella prima lezione, per trovare le due assegnazioni di Neville fra 20.018, il programma le leggeva tutte. La via d'uscita era un dizionario costruito a mano, l'indice, da rifare a ogni modifica del file. Un DBMS costruisce un indice sulla colonna che gli indichi e lo aggiorna da solo a ogni inserimento. Come si chiede un indice, e quanto fa risparmiare, lo vedremo nel capitolo sulle interrogazioni di una tabella.
+
+:::
+
+## Il nome che non esiste
+
+Nella prima lezione hai aggiunto al registro un'assegnazione di `Neville Logbottom`, con il nome scritto male. Nel file JSON l'assegnazione è entrata senza nessuna segnalazione, e l'errore è arrivato dopo, come `KeyError`, al programma che calcolava i punti per anno. Il blocco qui sotto ripete l'errore nel database: aggiunge alla tabella `assegnazione` una riga con lo stesso nome sbagliato. È un'istruzione di scrittura, e si legge come la query di prima: inserisci nella tabella `assegnazione`, nelle colonne `studente`, `punti` e `professore`, questi valori. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+
+```sql live dataset=archivista/registro-punti title="Un'assegnazione con il nome sbagliato"
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Neville Logbottom', 5, 'Sprout');
+```
+
+<Spoiler block>
+
+Il DBMS rifiuta l'inserimento con l'errore `FOREIGN KEY constraint failed`, e la riga non entra nella tabella. Il messaggio non dice quale valore non va: è il nome `Neville Logbottom`, che non compare nella tabella `studente`.
+
+</Spoiler>
+
+Chi ha creato la tabella `assegnazione` ha dichiarato la colonna `studente` come riferimento alla tabella `studente`: ogni valore della colonna deve essere il nome di una riga che esiste. Una regola sui dati che il DBMS fa rispettare si chiama **vincolo**. Il vincolo che lega una colonna alle righe di un'altra tabella si chiama vincolo di chiave esterna, e lo studieremo quando parleremo di integrità referenziale.
+
+Con i file, l'errore arrivava a chi leggeva: al programma dei punti per anno, magari mesi dopo, e solo se quel programma usava il nome. Un programma che saltava i nomi sconosciuti perdeva i cinque punti senza dire niente. Con il DBMS l'errore arriva a chi scrive, nel momento in cui scrive. Il controllo sta nel database e non in un programma, quindi vale per il programma di McGonagall e per quello che qualcuno scriverà l'anno prossimo, anche se chi lo scrive non pensa a controllare i nomi.
+
+Adesso cambia nel blocco il nome in `'Harry Potter'` e rilancia.
+
+:::warning[Un nome che esiste non è il nome giusto]
+
+Il vincolo controlla che il nome esista nella tabella `studente`, non che sia quello giusto:
+
+- <Esito ok={false} /> `'Neville Logbottom'` → rifiutato con `FOREIGN KEY constraint failed`.
+- <Esito ok={false} /> `'Harry Potter'` → accettato: i cinque punti di Neville finiscono a Harry, senza nessun avviso.
+- <Esito /> `'Neville Longbottom'` → accettato, ed è il nome giusto.
+
+Il DBMS ferma i dati impossibili, non quelli sbagliati ma possibili. A chi andassero davvero i punti lo sa soltanto chi li ha assegnati.
+
+:::
+
+Il vincolo ha anche un effetto sull'ordine delle scritture. Nella lezione precedente Lupin non poteva entrare nell'archivio finché non assegnava punti a qualcuno. Nel database la sua prima assegnazione, i dieci punti a Neville, viene rifiutata: anche la colonna `professore` della tabella `assegnazione` ha un vincolo di chiave esterna, verso la tabella `professore`, e Lupin non c'è. Esegui il blocco qui sotto e otterrai lo stesso errore di prima. Poi fai in modo che il database accetti l'assegnazione, senza cambiarla: l'`INSERT` di Neville Logbottom ti fa da modello.
+
+<Challenge>
+
+```sql live dataset=archivista/registro-punti title="La prima assegnazione di Lupin"
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Neville Longbottom', 10, 'Lupin');
+### POST
+INSERT INTO professore (nome) VALUES ('Lupin');
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Neville Longbottom', 10, 'Lupin');
+### CONTROLLO
+SELECT studente, punti, professore FROM assegnazione ORDER BY id;
+SELECT nome FROM professore ORDER BY nome;
+```
+
+<Hint>
+  Il DBMS rifiuta l'assegnazione per lo stesso motivo per cui ha rifiutato
+  Neville Logbottom: uno dei nomi non compare nella tabella a cui si riferisce.
+</Hint>
+
+<Hint>
+  Manca Lupin nella tabella `professore`. Aggiungilo con un `INSERT` sul modello
+  di quello dell'assegnazione: la tabella `professore` ha una sola colonna,
+  `nome`.
+</Hint>
+
+<Hint>
+  L'ordine conta: Lupin deve entrare nella tabella `professore` prima della sua
+  assegnazione.
+</Hint>
+
+<Solved>
+
+Lupin è entrato fra i professori il giorno del suo arrivo, e la sua assegnazione è venuta dopo. È l'anomalia di inserimento della lezione precedente rovesciata: con i file un professore esisteva solo se dava punti, nel database non può dare punti finché non esiste. Il vincolo stabilisce l'ordine delle scritture: prima la riga a cui ci si riferisce, poi quella che vi si riferisce.
+
+</Solved>
+
+<Answer>
+
+```sql
+INSERT INTO professore (nome) VALUES ('Lupin');
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Neville Longbottom', 10, 'Lupin');
+```
+
+La prima istruzione aggiunge Lupin alla tabella `professore`, la seconda è l'assegnazione di partenza, invariata. Con le due istruzioni in ordine inverso l'assegnazione verrebbe rifiutata come prima, perché quando il DBMS la controlla Lupin non è ancora fra i professori.
+
+</Answer>
+
+</Challenge>
+
+## Due professori nello stesso momento
+
+Resta la domanda della prima lezione. Per aggiungere un'assegnazione a `punti.json` un programma rilegge il file, aggiunge la riga alla lista e riscrive tutto. Supponiamo che McGonagall e Piton aggiungano un'assegnazione quasi nello stesso momento, ognuno dal proprio computer, sullo stesso file condiviso. Il blocco qui sotto ricostruisce la sequenza in un ordine fissato: la variabile `disco` fa la parte del file, e ogni professore ha in memoria la propria copia del registro. Il file parte da 18 assegnazioni. Prima di eseguire il blocco, prova a prevedere quante assegnazioni contiene il file alla fine.
+
+```py live
+from archivio_hogwarts import leggi_file
+### PRE
+import json
+
+disco = leggi_file("punti.json")
+
+registro_mcgonagall = json.loads(disco)
+registro_piton = json.loads(disco)
+
+registro_mcgonagall.append({"studente": "Ron Weasley", "casa": "Grifondoro",
+                            "punti": -5, "professore": "McGonagall"})
+registro_piton.append({"studente": "Draco Malfoy", "casa": "Serpeverde",
+                       "punti": 5, "professore": "Piton"})
+
+disco = json.dumps(registro_mcgonagall)
+disco = json.dumps(registro_piton)
+
+registro = json.loads(disco)
+print(len(registro), "assegnazioni nel file")
+for assegnazione in registro[-2:]:
+    print(assegnazione["studente"], assegnazione["punti"], assegnazione["professore"])
+```
+
+<Spoiler block>
+
+Le assegnazioni sono 19, non 20, e l'ultima è quella di Piton: l'assegnazione di McGonagall non c'è. McGonagall ha salvato la sua copia, 19 assegnazioni compresa la sua. Un attimo dopo Piton ha salvato la sua copia, 19 assegnazioni compresa la sua, ma senza quella di McGonagall, che non c'era ancora quando Piton ha letto il file.
+
+</Spoiler>
+
+Nessuna istruzione ha dato errore, e ognuna ha fatto esattamente quello che diceva. McGonagall crede di aver tolto cinque punti a Ron, e nel file quei punti non ci sono. Questo errore si chiama **aggiornamento perso** (in inglese _lost update_): due programmi leggono lo stesso dato, lo modificano ciascuno per conto suo, e l'ultimo che scrive cancella il lavoro dell'altro. Il blocco ha fissato l'ordine delle operazioni. Nella realtà l'ordine dipende da chi salva per ultimo e da quanto tempo passa fra lettura e scrittura: a volte l'errore succede e a volte no, e un errore che succede solo a volte è il più difficile da trovare.
+
+Con un database nessun professore riscrive il registro. Il programma di McGonagall manda al DBMS un `INSERT` con la riga di Ron, quello di Piton un altro `INSERT` con la riga di Draco. Le richieste arrivano tutte al DBMS, che coordina chi scrive: ogni `INSERT` aggiunge la propria riga e non riscrive le altre, quindi alla fine le righe sono 20. Per lo stesso motivo, aggiungere un'assegnazione non richiede più di riscrivere tutto il registro, come succedeva con `json.dump`.
+
+Il coordinamento fra due utenti non si può mostrare in questa pagina, perché il database del browser ha un solo utente, cioè tu. Torneremo sul problema nel capitolo sulla modifica dei dati, dove il caso si fa più difficile, con due professori che non aggiungono righe nuove ma correggono la stessa.
+
+:::nutshell
+
+- Un database non è un file più grosso: il DBMS è un programma che conserva i dati e fa al posto tuo lavori che prima stavano in ogni programma.
+- Al DBMS si manda una query, e la risposta è una tabella; gli incroci fra tabelle li esegue lui.
+- Una query descrive il risultato, un programma Python i passi per ottenerlo: SQL è un linguaggio dichiarativo, Python un linguaggio imperativo.
+- Un vincolo è una regola sui dati che il DBMS fa rispettare a ogni scrittura: un'assegnazione a uno studente che non esiste viene rifiutata, qualunque programma la mandi.
+- Il vincolo controlla che un nome esista, non che sia quello giusto.
+- Il vincolo stabilisce l'ordine delle scritture: prima si registra la riga a cui ci si riferisce, poi quella che vi si riferisce.
+- Due programmi che rileggono e riscrivono lo stesso file possono perdere una scrittura senza nessun errore: è l'aggiornamento perso. Con un DBMS ogni programma manda la propria riga, e il DBMS coordina le scritture.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Nel database della lezione, la professoressa Sprout scrive per sbaglio un'assegnazione di cinque punti a `'Hermione Granger'` invece che a Neville. Che cosa fa il DBMS?
+  </QuizQuestion>
+
+  <QuizOption>
+    Rifiuta l'inserimento con `FOREIGN KEY constraint failed`.
+    <QuizFeedback>
+      Il vincolo rifiuta solo i nomi che non compaiono nella tabella `studente`, e Hermione Granger c'è.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Accetta l'inserimento.
+    <QuizFeedback>
+      Esatto. Il nome esiste, quindi per il vincolo la riga è valida. Che i punti spettassero a Neville lo sa solo chi li ha assegnati.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Accetta l'inserimento, ma avvisa che Hermione ha già altre assegnazioni.
+    <QuizFeedback>
+      Il DBMS controlla le regole che gli sono state dichiarate, e nessuna riguarda quante assegnazioni può avere uno studente.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Chiede conferma prima di scrivere.
+    <QuizFeedback>
+      Il DBMS non chiede conferme: un'istruzione che rispetta i vincoli viene eseguita, una che li viola viene rifiutata.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Perché, con un database, le assegnazioni di McGonagall e Piton non si perdono?
+  </QuizQuestion>
+
+  <QuizOption>
+    Il DBMS fa una copia di sicurezza del registro prima di ogni salvataggio.
+    <QuizFeedback>
+      Una copia di sicurezza permette di recuperare i dati dopo, ma non impedisce che una scrittura cancelli l'altra. E con un DBMS nessuno riscrive il registro.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Ogni programma manda al DBMS solo la propria riga, e il DBMS la aggiunge senza riscrivere le altre.
+    <QuizFeedback>
+      Esatto. L'aggiornamento perso nasce dal riscrivere tutto il file con la propria copia. Con il DBMS nessun programma ha una copia da riscrivere.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il DBMS è più veloce, quindi i due salvataggi non fanno in tempo a sovrapporsi.
+    <QuizFeedback>
+      La velocità accorcia il tempo fra lettura e scrittura, ma non lo azzera: con i file l'errore resterebbe, solo più raro, e quindi più difficile da trovare.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il DBMS accetta un solo utente per volta.
+    <QuizFeedback>
+      Un DBMS serve molti utenti insieme, ed è uno dei motivi per cui esiste. L'utente unico è un limite del database di questa pagina, che gira nel browser.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Un compagno sostiene che un database è un file JSON più grande e più veloce. Quale fatto visto nella lezione lo smentisce?
+  </QuizQuestion>
+
+  <QuizOption>
+    Le tabelle hanno colonne con un nome.
+    <QuizFeedback>
+      Anche i dizionari di un file JSON hanno chiavi con un nome: questo non distingue un database da un file.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Il DBMS ha rifiutato un'assegnazione a uno studente che non esiste.
+    <QuizFeedback>
+      Esatto. Un file conserva qualunque cosa ci scrivi, e nel file JSON `Neville Logbottom` è entrato senza nessuna segnalazione. Il DBMS controlla le scritture secondo regole che valgono per ogni programma.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il DBMS mostra le risposte sotto forma di tabella.
+    <QuizFeedback>
+      La forma della risposta è un dettaglio di presentazione: anche un programma Python può stampare una tabella. La differenza sta in chi calcola la risposta e in chi controlla i dati.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    I dati del database stanno in più tabelle invece che in un file solo.
+    <QuizFeedback>
+      Nella lezione precedente i dati stavano già in più file, uno per ogni tipo di informazione. Dividere i dati non basta: i file restavano senza nessun controllo sui collegamenti.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[Il prossimo capitolo]
+
+Le tre tabelle di questa lezione sono arrivate già pronte. Il prossimo capitolo comincia dal problema che viene prima: dato un dominio, come si decide quali tabelle servono e quali informazioni stanno in ciascuna. Si parte dalle entità e dai loro attributi.
+
+:::

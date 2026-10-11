@@ -4,4 +4,5 @@ module.exports = [
   'intro',
   'dati-fuori-dal-programma',
   'stessa-informazione-due-volte',
+  'che-cosa-fa-un-dbms',
 ];
