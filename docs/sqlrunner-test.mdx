@@ -176,3 +176,37 @@ SELECT nome FROM autori WHERE paese = 'Italia';
   title="prestiti aperti (auto-run)"
   code={"SELECT l.titolo, p.studente\nFROM prestiti AS p\nJOIN libri AS l ON l.id = p.libro_id\nWHERE p.data_restituzione IS NULL;"}
 />
+
+## 17. `hideQuery` — solo il risultato, la query a richiesta
+
+Niente editor né toolbar: la query gira al caricamento (implica `runOnMount`) e si vede
+la sola tabella. «Mostra la query» la apre in sola lettura. Il dataset è
+`archivista/registro-punti`, generato dai JSON dell'archivio (`npm run archivio:sql`).
+
+```sql live dataset=archivista/registro-punti hideQuery
+SELECT s.casa, SUM(a.punti) AS totale
+FROM assegnazione AS a
+JOIN studente AS s ON s.nome = a.studente
+GROUP BY s.casa
+ORDER BY totale DESC;
+```
+
+Lo spoiler qui sotto si sblocca appena il blocco ha finito di girare: <Spoiler>Grifondoro</Spoiler>.
+
+### 17b. `hideQuery` con `stateful`
+
+```sql live dataset=archivista/registro-punti hideQuery stateful
+SELECT professore, COUNT(*) AS assegnazioni
+FROM assegnazione
+GROUP BY professore
+ORDER BY assegnazioni DESC;
+```
+
+### 17c. `hideQuery` con una query che fallisce
+
+L'errore deve restare visibile (la query nascosta non lo nasconde).
+
+```sql live dataset=archivista/registro-punti hideQuery
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Neville Logbottom', 10, 'Piton');
+```

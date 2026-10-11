@@ -10,6 +10,8 @@ import {
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import clsx from 'clsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { sql, SQLite } from '@codemirror/lang-sql';
 import { Editor, type EditorHandle } from '../PyRunner/Editor';
 import { Toolbar } from '../PyRunner/Toolbar';
@@ -30,6 +32,7 @@ import {
 } from './sqlBridge';
 import type { RunStatus, SqlRunOutcome } from './types';
 import pyStyles from '../PyRunner/styles.module.css';
+import styles from './styles.module.css';
 
 export interface SQLRunnerProps {
   /** Sorgente inline (iniettato dal remark plugin per ```sql live```). */
@@ -59,6 +62,14 @@ export interface SQLRunnerProps {
   stateful?: boolean | string;
   /** Esegue subito al mount. */
   runOnMount?: boolean | string;
+  /**
+   * Il blocco mostra solo il risultato: niente editor né toolbar, la query
+   * parte al caricamento della pagina (implica `runOnMount`) e un bottone
+   * «Mostra la query» la rivela in sola lettura. Per le pagine in cui conta
+   * la risposta del DBMS, non la domanda. Compatibile con `dataset` e
+   * `stateful`.
+   */
+  hideQuery?: boolean | string;
   /** Nasconde il bottone "Spiegamelo facile". */
   noExplain?: boolean | string;
   /** Prompt custom per "Spiegamelo facile". Placeholder: `{code}`, `{contextTitle}`. */
@@ -79,6 +90,10 @@ Query:
 {code}
 \`\`\`
 `;
+
+function noop() {
+  // Editor in sola lettura: nessuna modifica, nessuna esecuzione.
+}
 
 const sqlLanguage = sql({ dialect: SQLite, upperCaseKeywords: true });
 
@@ -120,7 +135,10 @@ function SQLRunnerInner(props: SQLRunnerProps) {
   const timeoutMs = coerceNumber(props.timeout, DEFAULT_TIMEOUT_MS);
   const readonly = coerceBool(props.readonly);
   const stateful = coerceBool(props.stateful);
-  const runOnMount = coerceBool(props.runOnMount);
+  const hideQuery = coerceBool(props.hideQuery);
+  // Con hideQuery lo studente non ha un tasto «Esegui»: la query gira da sola.
+  const runOnMount = coerceBool(props.runOnMount) || hideQuery;
+  const [queryShown, setQueryShown] = useState(false);
   const noExplain = coerceBool(props.noExplain);
 
   const [status, setStatus] = useState<RunStatus>('idle');
@@ -278,9 +296,57 @@ function SQLRunnerInner(props: SQLRunnerProps) {
     return () => window.clearTimeout(t);
   }, [runOnMount, handleRun]);
 
+  const handleToggleQuery = useCallback(() => setQueryShown((v) => !v), []);
+
   const lineCount = code.split('\n').length;
   const showLineNumbers = lineCount > 1;
   const maxHeight = `${maxLines * 1.55}em`;
+
+  if (hideQuery) {
+    return (
+      <div
+        ref={rootRef}
+        data-runner=""
+        data-pagefind-ignore
+        className={clsx(pyStyles.runner, styles.resultOnly, 'notranslate')}
+      >
+        <Output
+          status={status}
+          outcome={outcome}
+          error={error}
+          restoredNotice={restoredNotice}
+          bare
+        />
+        <div className={styles.queryBar}>
+          <button
+            type="button"
+            className={clsx(pyStyles.iconBtn, styles.queryToggle)}
+            onClick={handleToggleQuery}
+            aria-expanded={queryShown}
+          >
+            <FontAwesomeIcon
+              icon={queryShown ? faEyeSlash : faEye}
+              aria-hidden="true"
+            />
+            {queryShown ? 'Nascondi la query' : 'Mostra la query'}
+          </button>
+        </div>
+        {queryShown && (
+          <div className={styles.queryWrap} style={{ maxHeight }}>
+            <Editor
+              initialCode={code}
+              showLineNumbers={showLineNumbers}
+              readonly
+              onChange={noop}
+              onRun={noop}
+              language={sqlLanguage}
+              ariaLabel="Query SQL, sola lettura"
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -333,10 +399,24 @@ export default function SQLRunner(props: SQLRunnerProps) {
   return (
     <BrowserOnly
       fallback={
-        <pre data-runner="" data-pagefind-ignore className={pyStyles.fallback}>
-          {/* Solo il codice dello studente: la verifica non va nell'HTML. */}
-          <code>{splitSqlSource(rawSource(props)).code}</code>
-        </pre>
+        coerceBool(props.hideQuery) ? (
+          // La query non va nell'HTML: conta il risultato, che arriva a runtime.
+          <div
+            data-runner=""
+            data-pagefind-ignore
+            className={clsx(pyStyles.runner, styles.resultOnly)}
+            aria-busy="true"
+          />
+        ) : (
+          <pre
+            data-runner=""
+            data-pagefind-ignore
+            className={pyStyles.fallback}
+          >
+            {/* Solo il codice dello studente: la verifica non va nell'HTML. */}
+            <code>{splitSqlSource(rawSource(props)).code}</code>
+          </pre>
+        )
       }
     >
       {() => <SQLRunnerInner {...props} />}

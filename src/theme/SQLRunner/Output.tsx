@@ -12,6 +12,11 @@ export interface SqlOutputProps {
   error: string | null;
   /** Notice "database ripristinato" (stateful dopo un terminate). */
   restoredNotice: boolean;
+  /**
+   * Solo il risultato: niente intestazione di stato né invito a premere
+   * «Esegui» (blocchi `hideQuery`, che partono da soli).
+   */
+  bare?: boolean;
 }
 
 function formatDuration(ms: number): string {
@@ -24,6 +29,7 @@ export function Output({
   outcome,
   error,
   restoredNotice,
+  bare = false,
 }: SqlOutputProps) {
   const statusLabel = (() => {
     switch (status) {
@@ -46,15 +52,31 @@ export function Output({
     status === 'done' && outcome != null && outcome.rowsModified > 0;
 
   return (
-    <div className={clsx(pyStyles.output, !hasContent && pyStyles.outputEmpty)}>
-      <div className={pyStyles.outputHeader}>
-        <span
-          className={clsx(pyStyles.statusDot, pyStyles[`statusDot_${status}`])}
-        />
-        <span className={pyStyles.statusLabel}>{statusLabel}</span>
-      </div>
+    <div
+      className={clsx(
+        pyStyles.output,
+        !hasContent && pyStyles.outputEmpty,
+        bare && styles.outputBare,
+      )}
+    >
+      {!bare && (
+        <div className={pyStyles.outputHeader}>
+          <span
+            className={clsx(
+              pyStyles.statusDot,
+              pyStyles[`statusDot_${status}`],
+            )}
+          />
+          <span className={pyStyles.statusLabel}>{statusLabel}</span>
+        </div>
+      )}
       <div className={clsx(pyStyles.outputBody, styles.sqlOutputBody)}>
-        {status === 'idle' && (
+        {bare && (status === 'idle' || status === 'running') && (
+          <span className={pyStyles.outputPlaceholder}>
+            Interrogo il database…
+          </span>
+        )}
+        {!bare && status === 'idle' && (
           <span className={pyStyles.outputPlaceholder}>
             Premi{' '}
             <span className={pyStyles.placeholderChip}>
