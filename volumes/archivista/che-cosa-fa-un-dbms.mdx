@@ -97,7 +97,7 @@ GROUP BY studente.anno;
 </TabItem>
 </Tabs>
 
-Il programma Python descrive i passi: costruisci un dizionario, scorri il registro, per ogni assegnazione cerca l'anno e accumula i punti. La query descrive il risultato, e si legge quasi come una frase: l'anno dello studente e la somma dei punti, dalle assegnazioni unite agli studenti con lo stesso nome, raggruppate per anno. Non dice in che ordine leggere le righe né quale struttura usare per accumulare: lo sceglie il DBMS. Esegui la query nella seconda scheda: per il primo anno dà 23 punti e per il terzo −10, gli stessi numeri del programma della prima lezione.
+Il programma Python descrive i passi: costruisci un dizionario, scorri il registro, per ogni assegnazione cerca l'anno e accumula i punti. La query descrive il risultato, e si legge quasi come una frase: l'anno dello studente e la somma dei punti, dalle assegnazioni unite agli studenti con lo stesso nome, raggruppate per anno. Non dice in che ordine leggere le righe né quale struttura usare per accumulare: lo sceglie il DBMS. Con una query il DBMS funziona come la Stanza delle Necessità: chiedi quello che ti serve, e come prepararlo è affar suo. Esegui la query nella seconda scheda: per il primo anno dà 23 punti e per il terzo −10, gli stessi numeri del programma della prima lezione.
 
 Un linguaggio in cui scrivi che cosa vuoi ottenere, e non come, si chiama **dichiarativo**; Python, in cui scrivi i passi, è un linguaggio **imperativo**. Il linguaggio delle query è SQL, e lo impareremo a leggere e a scrivere a partire dal capitolo sulle interrogazioni: per adesso basta riconoscerne la forma. Separare la domanda dal modo di eseguirla è l'idea con cui Codd apriva nel 1970 l'articolo citato in cima a questa pagina: chi interroga un archivio non deve sapere come i dati sono disposti nella macchina.
 
@@ -131,7 +131,7 @@ VALUES ('Neville Logbottom', 5, 'Sprout');
 
 <Spoiler block>
 
-Il DBMS rifiuta l'inserimento con l'errore `FOREIGN KEY constraint failed`, e la riga non entra nella tabella. Il messaggio non dice quale valore non va: è il nome `Neville Logbottom`, che non compare nella tabella `studente`.
+Il DBMS rifiuta l'inserimento con l'errore `FOREIGN KEY constraint failed`, e la riga non entra nella tabella. Il messaggio non dice quale valore non va: SQLite è avaro di parole quanto Piton con i Grifondoro. Il valore rifiutato è il nome `Neville Logbottom`, che non compare nella tabella `studente`.
 
 </Spoiler>
 
@@ -146,7 +146,7 @@ Adesso cambia nel blocco il nome in `'Harry Potter'` e rilancia.
 Il vincolo controlla che il nome esista nella tabella `studente`, non che sia quello giusto:
 
 - <Esito ok={false} /> `'Neville Logbottom'` → rifiutato con `FOREIGN KEY constraint failed`.
-- <Esito ok={false} /> `'Harry Potter'` → accettato: i cinque punti di Neville finiscono a Harry, senza nessun avviso.
+- <Esito ok={false} /> `'Harry Potter'` → accettato senza nessun avviso: i cinque punti di Neville finiscono a Harry, che ne aveva già avuti 60 da Silente.
 - <Esito /> `'Neville Longbottom'` → accettato, ed è il nome giusto.
 
 Il DBMS ferma i dati impossibili, non quelli sbagliati ma possibili. A chi andassero davvero i punti lo sa soltanto chi li ha assegnati.
@@ -239,7 +239,7 @@ Le assegnazioni sono 19, non 20, e l'ultima è quella di Piton: l'assegnazione d
 
 </Spoiler>
 
-Nessuna istruzione ha dato errore, e ognuna ha fatto esattamente quello che diceva. McGonagall crede di aver tolto cinque punti a Ron, e nel file quei punti non ci sono. Questo errore si chiama **aggiornamento perso** (in inglese _lost update_): due programmi leggono lo stesso dato, lo modificano ciascuno per conto suo, e l'ultimo che scrive cancella il lavoro dell'altro. Il blocco ha fissato l'ordine delle operazioni. Nella realtà l'ordine dipende da chi salva per ultimo e da quanto tempo passa fra lettura e scrittura: a volte l'errore succede e a volte no, e un errore che succede solo a volte è il più difficile da trovare.
+Nessuna istruzione ha dato errore, e ognuna ha fatto esattamente quello che diceva. McGonagall crede di aver tolto cinque punti a Ron, e nel file quei punti non ci sono. Ron non se ne lamenterà. Un errore come questo si chiama **aggiornamento perso** (in inglese _lost update_): due programmi leggono lo stesso dato, lo modificano ciascuno per conto suo, e l'ultimo che scrive cancella il lavoro dell'altro. Il blocco ha fissato l'ordine delle operazioni. Nella realtà l'ordine dipende da chi salva per ultimo e da quanto tempo passa fra lettura e scrittura: a volte l'errore succede e a volte no, e un errore che succede solo a volte è il più difficile da trovare.
 
 Con un database nessun professore riscrive il registro. Il programma di McGonagall manda al DBMS un `INSERT` con la riga di Ron, quello di Piton un altro `INSERT` con la riga di Draco. Le richieste arrivano tutte al DBMS, che coordina chi scrive: ogni `INSERT` aggiunge la propria riga e non riscrive le altre, quindi alla fine le righe sono 20. Per lo stesso motivo, aggiungere un'assegnazione non richiede più di riscrivere tutto il registro, come succedeva con `json.dump`.
 
@@ -261,7 +261,7 @@ Il coordinamento fra due utenti non si può mostrare in questa pagina, perché i
 
 <Quiz>
   <QuizQuestion>
-    Nel database della lezione, la professoressa Sprout scrive per sbaglio un'assegnazione di cinque punti a `'Hermione Granger'` invece che a Neville. Che cosa fa il DBMS?
+    Nel database della lezione, la professoressa Sprout scrive per sbaglio un'assegnazione di cinque punti a `'Hermione Granger'`, che di punti non ha certo bisogno, invece che a Neville. Che cosa fa il DBMS?
   </QuizQuestion>
 
   <QuizOption>
