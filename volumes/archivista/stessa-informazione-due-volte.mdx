@@ -108,7 +108,7 @@ for assegnazione in registro:
     nome = assegnazione["studente"]
     print(f"{nome}: {assegnazione['casa']}")
 ### POST
-assert not contiene("Draco"), "Il controllo stampa anche assegnazioni in cui le due case coincidono: Draco è di Serpeverde in entrambi i file."
+assert not contiene("Draco"), "Il controllo stampa anche assegnazioni in cui le due case coincidono: Draco, smistato dal Cappello Parlante prima ancora che gli toccasse la testa, è di Serpeverde in entrambi i file."
 assert contiene("Neville"), "Il controllo non trova l'assegnazione in disaccordo: confronta la casa del registro con quella di casa_di."
 ```
 
@@ -144,6 +144,17 @@ for assegnazione in registro:
 
 </Challenge>
 
+:::warning[Virgolette dentro una f-string]
+
+Nel codice di questa lezione la chiave dentro una f-string è scritta fra apici singoli. Con le virgolette doppie, le stesse che aprono la f-string, le versioni di Python precedenti alla 3.12 non capiscono dove finisce la stringa:
+
+- <Esito ok={false} /> `f"{assegnazione["casa"]}"` → `SyntaxError` fino a Python 3.11.
+- <Esito /> `f"{assegnazione['casa']}"` → funziona in ogni versione.
+
+Nei blocchi di questa pagina funzionano tutte e due, perché il motore segue Python 3.12; nell'editor della tua scuola potresti avere una versione più vecchia.
+
+:::
+
 ## Copie che invecchiano
 
 La casa di Neville era sbagliata dal momento in cui è stata scritta e inserita nell'archivio. Una copia però può diventare falsa anche se nessuno sbaglia l'inserimento.
@@ -171,6 +182,12 @@ def nuovo_anno(studenti, registro):
 ```
 
 Il primo ciclo aggiorna nove righe, una per studente. Il secondo esiste solo perché l'anno è stato copiato: aggiorna 18 assegnazioni nel registro dell'esempio, più di 20.000 in quello di tutta la scuola, e ogni anno qualcuna di più, perché il registro cresce e le assegnazioni vecchie restano. Un programma che aggiorna `studenti.json` e dimentica il registro, o che si interrompe fra i due cicli, lascia l'archivio con due file che danno due classifiche diverse, come è successo con la casa di Neville. Questa volta però nessuno ha scritto un valore sbagliato. Ogni copia era vera quando è stata scritta, ed è diventata falsa quando è cambiato l'originale.
+
+:::info[Le copie fatte apposta]
+
+A volte una copia si tiene apposta, per rispondere più in fretta: si chiama **cache**. La casa ripetuta nel registro è una cache improvvisata, che evita l'incrocio con `studenti.json`, e il suo prezzo è quello di questa sezione. Fra i programmatori gira una battuta attribuita a Phil Karlton: in informatica ci sono solo due cose difficili, invalidare la cache e dare i nomi alle cose. Invalidare la cache vuol dire accorgersi che una copia è diventata falsa.
+
+:::
 
 ### Un valore ripetuto non è sempre una copia
 
@@ -259,13 +276,19 @@ Nel secondo elenco manca Flitwick. Annullare l'assegnazione doveva cancellare un
 
 La casa di Padma, invece, è sopravvissuta all'annullamento, perché ha un posto suo in `studenti.json`. Le due informazioni cancellate insieme alla riga erano quelle che non stavano scritte da nessun'altra parte.
 
-Il registro come unico elenco dei professori crea un problema anche quando un nuovo professore arriva. Supponiamo che Lupin cominci a insegnare a Hogwarts due anni dopo i fatti del registro: finché non assegna o toglie punti a qualcuno, l'archivio non sa che esiste. Per registrarlo subito servirebbe un'assegnazione finta:
+:::cleancode[Un elenco senza doppioni]
+
+La funzione `professori` controlla `not in elenco` prima di ogni `append`, per non ripetere un nome. Se conosci gli insiemi, un `set` scarta da solo i doppioni: con `elenco = set()` ed `elenco.add(...)` il controllo sparisce. Qui teniamo la lista perché conserva l'ordine in cui i professori compaiono nel registro, e un insieme no.
+
+:::
+
+Il registro come unico elenco dei professori crea un problema anche quando un nuovo professore arriva. Supponiamo che Lupin cominci a insegnare a Hogwarts due anni dopo i fatti del registro: finché non assegna o toglie punti a qualcuno, l'archivio non sa che esiste. Ci entrerebbe alla sua prima lezione, con i dieci punti dati a Neville per aver vestito Piton con gli abiti della nonna. Per registrarlo subito servirebbe un'assegnazione finta:
 
 ```json
 { "studente": "", "casa": "", "punti": 0, "professore": "Lupin" }
 ```
 
-Ogni programma che lavora sul registro dovrebbe poi sapere che quella riga non è un'assegnazione. Chi conta le assegnazioni ne troverebbe una in più, senza nessun avviso. Il calcolo dei punti per anno, invece, si fermerebbe con un `KeyError`, perché in `anno_di` non c'è uno studente senza nome.
+Ogni programma che lavora sul registro dovrebbe poi sapere che quella riga, zero punti dati da Lupin a nessuno, non è un'assegnazione. Chi conta le assegnazioni ne troverebbe una in più, senza nessun avviso. Il calcolo dei punti per anno, invece, si fermerebbe con un `KeyError`, perché in `anno_di` non c'è uno studente senza nome.
 
 :::definition[Le tre anomalie]
 
