@@ -240,6 +240,26 @@
   color: var(--at-fg-strong);
 }
 
+/* Etichetta delle lezioni in bozza: esistono solo in `npm start`, quindi
+ * l'etichetta non arriva mai in produzione. */
+.draft {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  vertical-align: 0.15em;
+  font-family: var(--font-mono-ui);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ifm-color-warning-darkest);
+  background: color-mix(in oklab, var(--ifm-color-warning) 22%, transparent);
+}
+html[data-theme='dark'] .draft {
+  color: var(--ifm-color-warning-lightest);
+}
+
 .lessons {
   font-family: var(--font-mono-ui);
   font-size: 12px;

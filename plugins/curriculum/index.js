@@ -93,17 +93,21 @@ function flattenTocDocIds(items, tocPath, out = []) {
 }
 
 // Clona l'albero TOC per il client, risolvendo i doc in { key, title }.
-function buildClientTree(items, volumeId, titles) {
+// `draft: true` solo per le lezioni in bozza: in produzione non sono nella
+// build, in sviluppo l'indice della homepage le segnala.
+function buildClientTree(items, volumeId, titles, drafts) {
   return items.map((item) => {
     if (typeof item === 'string' || (item && item.type === 'doc')) {
       const docId = typeof item === 'string' ? item : item.id;
       const key = `${volumeId}/${docId}`;
-      return { type: 'doc', key, title: titles[key] };
+      return drafts.has(key)
+        ? { type: 'doc', key, title: titles[key], draft: true }
+        : { type: 'doc', key, title: titles[key] };
     }
     return {
       type: 'category',
       label: item.label,
-      items: buildClientTree(item.items, volumeId, titles),
+      items: buildClientTree(item.items, volumeId, titles, drafts),
     };
   });
 }
@@ -160,6 +164,7 @@ module.exports = function curriculumPlugin(context) {
       // titles["<volume>/<docId>"] — risolti dal frontmatter come in
       // exercise-graph (title > sidebar_label > H1 > humanize).
       const titles = {};
+      const drafts = new Set();
       const volumes = [];
       const tocKeys = []; // tutte le lezioni, in ordine curricolare
 
@@ -194,13 +199,14 @@ module.exports = function curriculumPlugin(context) {
               frontMatter.sidebar_label) ||
             contentTitle ||
             humanize(docId.split('/').pop());
+          if (frontMatter.draft === true) drafts.add(`${volumeId}/${docId}`);
           tocKeys.push(`${volumeId}/${docId}`);
         }
 
         volumes.push({
           id: volumeId,
           label,
-          tree: buildClientTree(tree, volumeId, titles),
+          tree: buildClientTree(tree, volumeId, titles, drafts),
         });
       }
 

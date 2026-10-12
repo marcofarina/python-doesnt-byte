@@ -28,6 +28,8 @@ interface Lesson {
   to: string;
   /** Capitolo (categoria di primo livello della TOC), se c'è. */
   group?: string;
+  /** In bozza: compare solo in `npm start`, con l'etichetta «bozza». */
+  draft?: boolean;
 }
 
 interface Volume {
@@ -67,7 +69,14 @@ function collectLessons(
       const docId = item.key.slice(volumeId.length + 1);
       if (docId === 'intro') continue;
       const to = resolvePermalink(allData, volumeId, docId);
-      if (to) out.push({ key: item.key, title: item.title, to, group });
+      if (to)
+        out.push({
+          key: item.key,
+          title: item.title,
+          to,
+          group,
+          draft: item.draft,
+        });
     }
   };
   walk(tree);
@@ -243,7 +252,10 @@ export default function ChapterIndex() {
                 <span className={styles.num}>
                   {String(i + 1).padStart(2, '0')}
                 </span>
-                <span className={styles.title}>{l.title}</span>
+                <span className={styles.title}>
+                  {l.title}
+                  {l.draft && <span className={styles.draft}>bozza</span>}
+                </span>
                 {l.group && <span className={styles.lessons}>{l.group}</span>}
                 <span className={styles.arrow}>
                   <ArrowRight />
