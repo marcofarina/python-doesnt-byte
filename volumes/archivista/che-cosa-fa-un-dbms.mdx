@@ -38,13 +38,18 @@ La lezione precedente si è chiusa con una scelta fra due difetti. Con le copie 
 
 ## Il registro in un database
 
-Un **database** (in italiano _base di dati_) è un insieme di dati organizzati secondo una struttura stabilita in anticipo, conservati in modo permanente e condivisi da più programmi e da più utenti. Un **DBMS** (_Database Management System_, cioè sistema di gestione di basi di dati) è il software che gestisce un database: conserva i dati, risponde alle richieste degli altri programmi e fa rispettare le regole stabilite sui dati. Le due parole non sono sinonimi: il database è l'insieme dei dati, il DBMS è il programma che lo gestisce. Con un DBMS il tuo programma non apre più un file e non lo scorre: manda una richiesta al DBMS e riceve la risposta.
+In questa lezione il registro dei punti passa dai file JSON a un database, e a gestirlo è un DBMS.
 
-:::note[Il DBMS di questa pagina]
+:::definition[Database e DBMS]
 
-I blocchi SQL di questa pagina usano SQLite, un DBMS che gira dentro il browser, come il Python dei blocchi eseguibili. Ogni blocco parte dallo stesso registro dei punti: quello che cambi in un blocco non arriva agli altri, e ricaricando la pagina tutto torna com'era. Nelle applicazioni vere il DBMS è spesso un server separato, come PostgreSQL o MySQL, a cui si collegano i programmi di molti utenti.
+- **Database** (in italiano _base di dati_): un insieme di dati organizzati secondo una struttura stabilita in anticipo, conservati in modo permanente e condivisi da più programmi e da più utenti.
+- **DBMS** (_Database Management System_, cioè sistema di gestione di basi di dati): il software che gestisce un database. Conserva i dati, risponde alle richieste degli altri programmi e fa rispettare le regole stabilite sui dati.
+
+Le due parole non sono sinonimi: il database è l'insieme dei dati, il DBMS è il programma che lo gestisce.
 
 :::
+
+Con un DBMS il tuo programma non apre più un file e non lo scorre: manda una richiesta al DBMS e riceve la risposta.
 
 Ripartiamo dalla regola con cui si è chiusa la lezione precedente: ogni informazione scritta una volta sola, nel posto che le appartiene. In un database quei posti sono le **tabelle**, e il registro dei punti ne occupa tre. La tabella `studente` contiene nome, casa e anno, come `studenti.json`. La tabella `professore` è l'elenco dei professori, che nell'archivio JSON non c'era. La tabella `assegnazione` registra chi ha ricevuto i punti, quanti e da chi, e non contiene più la casa. Il blocco qui sotto mostra le prime cinque righe della tabella `assegnazione`:
 
@@ -53,6 +58,12 @@ SELECT * FROM assegnazione LIMIT 5;
 ```
 
 In una tabella ogni riga descrive un elemento e ogni colonna un'informazione, la stessa per tutte le righe: nella tabella `assegnazione` ogni riga è un'assegnazione. La colonna `id` è un numero progressivo che il database dà a ogni riga. Le tabelle si collegano attraverso i nomi, come i file della lezione precedente: il valore nella colonna `studente` indica una riga della tabella `studente`, quello nella colonna `professore` una riga della tabella `professore`. Il collegamento per nome regge finché due studenti non hanno lo stesso nome; il problema, e il modo di risolverlo, arrivano nel prossimo capitolo.
+
+:::note[Il DBMS di questa pagina]
+
+I blocchi SQL di questa pagina usano SQLite, un DBMS che gira dentro il browser, come il Python dei blocchi eseguibili. Ogni blocco parte dalle stesse tre tabelle: quello che cambi in un blocco non arriva agli altri, e ricaricando la pagina tutto torna com'era. Nelle applicazioni vere il DBMS è spesso un server separato, come PostgreSQL o MySQL, a cui si collegano i programmi di molti utenti.
+
+:::
 
 ## Domande senza programma
 
