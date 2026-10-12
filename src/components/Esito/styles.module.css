@@ -20,3 +20,21 @@ html[data-theme='dark'] .ok {
 html[data-theme='dark'] .no {
   color: var(--ifm-color-danger-light);
 }
+
+/* Voce d'elenco che comincia con <Esito>: l'icona prende il posto del pallino.
+   Il margine negativo la porta nella rientranza dell'elenco, e le righe a capo
+   restano allineate al testo. Copre anche le voci spaziate (li > p). */
+li:has(> .ok:first-child),
+li:has(> .no:first-child),
+li:has(> p:first-child > .ok:first-child),
+li:has(> p:first-child > .no:first-child) {
+  list-style: none;
+}
+
+li > .ok:first-child,
+li > .no:first-child,
+li > p:first-child > .ok:first-child,
+li > p:first-child > .no:first-child {
+  margin-left: calc(-16px - 0.5em);
+  margin-right: 0.5em;
+}
