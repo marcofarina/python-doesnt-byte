@@ -40,10 +40,14 @@ function buildChapterMap(items: PropSidebar): Map<string, number> {
       }
     }
   };
+  // Numero esplicito (`customProps.capitolo`) se c'è; altrimenti posizione.
+  // Con un percorso attivo la sidebar arriva filtrata e le category vuote
+  // spariscono: solo il numero esplicito resta stabile.
   let chapter = 0;
   for (const item of items as PropSidebarItem[]) {
     if (item.type === 'category') {
-      chapter += 1;
+      const explicit = item.customProps?.capitolo;
+      chapter = typeof explicit === 'number' ? explicit : chapter + 1;
       if (item.href) map.set(item.href, chapter);
       collect(item.items, chapter);
     }
