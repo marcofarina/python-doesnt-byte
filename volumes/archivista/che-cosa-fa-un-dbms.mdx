@@ -62,13 +62,13 @@ In una tabella ogni riga descrive un elemento e ogni colonna un'informazione, la
 
 :::note[Il DBMS di questa pagina]
 
-I blocchi SQL di questa pagina usano SQLite, un DBMS che gira dentro il browser, come il Python dei blocchi eseguibili. Ogni blocco parte dalle stesse tre tabelle: quello che cambi in un blocco non arriva agli altri, e ricaricando la pagina tutto torna com'era. Nelle applicazioni vere il DBMS è spesso un server separato, come PostgreSQL o MySQL, a cui si collegano i programmi di molti utenti.
+I blocchi di istruzioni di questa pagina usano SQLite, un DBMS che gira dentro il browser, come il Python dei blocchi eseguibili. Ogni blocco parte dalle stesse tre tabelle: quello che cambi in un blocco non si propaga agli altri blocchi, e ricaricando la pagina tutto torna com'era. Nelle applicazioni vere il DBMS è spesso un server separato, come PostgreSQL o MySQL, a cui si collegano i programmi di molti utenti.
 
 :::
 
 ## Domande senza programma
 
-Nella prima lezione ogni domanda era un programma da scrivere. Al DBMS invece si fa una richiesta, e lui risponde con una tabella. La richiesta è scritta in un linguaggio apposito, e si chiama **query**. Il blocco qui sotto chiede il totale dei punti di ogni casa; la query resta nascosta, e con il pulsante "Mostra la query" puoi leggerla.
+Nella prima lezione ogni domanda era un programma da scrivere. Al DBMS invece si fa una richiesta, e lui risponde con una tabella. La richiesta è scritta in un linguaggio ben strutturato apposito, e si chiama **query**. Il blocco qui sotto chiede il totale dei punti di ogni casa; la query per ora è nascosta perché apprenderemo la sintassi nei prossimi capitoli, ma se sei curioso con il pulsante "Mostra la query" puoi leggerla.
 
 ```sql live dataset=archivista/registro-punti hideQuery
 SELECT studente.casa, SUM(assegnazione.punti) AS totale
@@ -109,7 +109,7 @@ GROUP BY studente.anno;
 </TabItem>
 </Tabs>
 
-Il programma Python descrive i passi: costruisci un dizionario, scorri il registro, per ogni assegnazione cerca l'anno e accumula i punti. La query descrive il risultato, e si legge quasi come una frase: l'anno dello studente e la somma dei punti, dalle assegnazioni unite agli studenti con lo stesso nome, raggruppate per anno. Non dice in che ordine leggere le righe né quale struttura usare per accumulare: lo sceglie il DBMS. Con una query il DBMS funziona come la Stanza delle Necessità: chiedi quello che ti serve, e come prepararlo è affar suo. Esegui la query nella seconda scheda: per il primo anno dà 23 punti e per il terzo −10, gli stessi numeri del programma della prima lezione.
+Il programma Python descrive i passi: costruisci un dizionario, scorri il registro, per ogni assegnazione cerca l'anno e accumula i punti. La query **descrive il risultato**, e si legge quasi come una frase: l'anno dello studente e la somma dei punti, dalle assegnazioni unite agli studenti con lo stesso nome, raggruppate per anno. Non dice in che ordine leggere le righe né quale struttura usare per accumulare: lo sceglie il DBMS. Con una query il DBMS funziona come la Stanza delle Necessità: chiedi quello che ti serve, e come prepararlo è affar suo. Esegui la query nella seconda scheda: per il primo anno dà 23 punti e per il terzo −10, gli stessi numeri del programma della prima lezione.
 
 Un linguaggio in cui scrivi che cosa vuoi ottenere, e non come, si chiama **dichiarativo**; Python, in cui scrivi i passi, è un linguaggio **imperativo**. Il linguaggio delle query è SQL, e lo impareremo a leggere e a scrivere a partire dal capitolo sulle interrogazioni: per adesso basta riconoscerne la forma. Separare la domanda dal modo di eseguirla è l'idea con cui Codd apriva nel 1970 l'articolo citato in cima a questa pagina: chi interroga un archivio non deve sapere come i dati sono disposti nella macchina.
 
@@ -134,7 +134,7 @@ Nella prima lezione, per trovare le due assegnazioni di Neville fra 20.018, il p
 
 ## Il nome che non esiste
 
-Nella prima lezione hai aggiunto al registro un'assegnazione di `Neville Logbottom`, con il nome scritto male. Nel file JSON l'assegnazione è entrata senza nessuna segnalazione, e l'errore è arrivato dopo, come `KeyError`, al programma che calcolava i punti per anno. Il blocco qui sotto ripete l'errore nel database: aggiunge alla tabella `assegnazione` una riga con lo stesso nome sbagliato. È un'istruzione di scrittura, e si legge come la query di prima: inserisci nella tabella `assegnazione`, nelle colonne `studente`, `punti` e `professore`, questi valori. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+Nella prima lezione abbiamo aggiunto al registro un'assegnazione di `Neville Logbottom`, con il nome scritto male (manca una "n"). Nel file JSON l'assegnazione è entrata senza nessuna segnalazione, e l'errore è arrivato dopo, come `KeyError`, al programma che calcolava i punti per anno. Il blocco qui sotto ripete l'errore nel database: aggiunge alla tabella `assegnazione` una riga con lo stesso nome sbagliato. È un'istruzione di scrittura, e si legge come la query di prima: inserisci nella tabella `assegnazione`, nelle colonne `studente`, `punti` e `professore`, questi valori. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
 
 ```sql live dataset=archivista/registro-punti title="Un'assegnazione con il nome sbagliato"
 INSERT INTO assegnazione (studente, punti, professore)
@@ -151,7 +151,7 @@ Chi ha creato la tabella `assegnazione` ha dichiarato la colonna `studente` come
 
 Con i file, l'errore arrivava a chi leggeva: al programma dei punti per anno, magari mesi dopo, e solo se quel programma usava il nome. Un programma che saltava i nomi sconosciuti perdeva i cinque punti senza dire niente. Con il DBMS l'errore arriva a chi scrive, nel momento in cui scrive. Il controllo sta nel database e non in un programma, quindi vale per il programma di McGonagall e per quello che qualcuno scriverà l'anno prossimo, anche se chi lo scrive non pensa a controllare i nomi.
 
-Adesso cambia nel blocco il nome in `'Harry Potter'` e rilancia.
+Adesso prova a cambiare nel blocco il nome in `'Harry Potter'` e riesegui.
 
 :::warning[Un nome che esiste non è il nome giusto]
 
@@ -165,7 +165,7 @@ Il DBMS ferma i dati impossibili, non quelli sbagliati ma possibili. A chi andas
 
 :::
 
-Il vincolo ha anche un effetto sull'ordine delle scritture. Nella lezione precedente Lupin non poteva entrare nell'archivio finché non assegnava punti a qualcuno. Nel database la sua prima assegnazione, i dieci punti a Neville, viene rifiutata: anche la colonna `professore` della tabella `assegnazione` ha un vincolo di chiave esterna, verso la tabella `professore`, e Lupin non c'è. Esegui il blocco qui sotto e otterrai lo stesso errore di prima. Poi fai in modo che il database accetti l'assegnazione, senza cambiarla: l'`INSERT` di Neville Logbottom ti fa da modello.
+Il vincolo ha anche un effetto sull'ordine delle scritture. Nella lezione precedente Lupin non poteva entrare nell'archivio finché non assegnava punti a qualcuno. Nel database la sua prima assegnazione, i dieci punti a Neville, viene rifiutata: anche la colonna `professore` della tabella `assegnazione` ha un vincolo verso la tabella `professore`, e Lupin non c'è. Esegui il blocco qui sotto e otterrai lo stesso errore di prima. Poi fai in modo che il database accetti l'assegnazione, senza cambiarla: l'`INSERT` di Neville Longbottom ti fa da modello.
 
 <Challenge>
 
