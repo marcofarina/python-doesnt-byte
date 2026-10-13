@@ -1,8 +1,88 @@
 ---
 slug: /
 sidebar_position: 1
+description: Il terzo volume di Python Doesn’t Byte è dedicato alle basi di dati. Si progetta un database, lo si costruisce, lo si interroga in SQL e lo si collega a un programma Python, con tutti gli esempi ambientati a Hogwarts. Nato per la quinta dell’ITT Informatica, si scrive durante l’anno scolastico 2026/2027.
 ---
 
 # Manuale dell’Archivista
 
-Volume 3 — dati, persistenza, SQLite. Placeholder.
+Nel Volume 1 i dati di un programma sopravvivono allo spegnimento grazie a un file JSON. Il Manuale dell’Archivista comincia dove quel file smette di bastare: quando i dati crescono, quando le domande cambiano ogni settimana, quando a scrivere nello stesso archivio sono in tanti. A quel punto i dati hanno bisogno di un posto proprio, progettato con un metodo e interrogato con un linguaggio fatto apposta. Quel posto è un **database**, e questo volume insegna a progettarlo, a costruirlo, a interrogarlo e a collegarlo a un programma.
+
+Il volume è nato per la **quinta dell’Istituto Tecnico Tecnologico, articolazione Informatica**, dove le basi di dati sono materia della seconda prova dell’Esame di Stato. Non presuppone nessuna conoscenza di database né di SQL: si parte da zero.
+
+:::prereq
+
+- Il Volume 1 fino ai file: liste, dizionari, funzioni, salvataggio e lettura di dati in JSON
+- Per il solo capitolo 12, le classi del Volume 2
+
+:::
+
+Gli esempi sono tutti ambientati nel mondo di Harry Potter: studenti, case, professori, la biblioteca di Hogwarts e i vault della Gringott.
+
+## Alla fine del volume
+
+Conoscenze, abilità e competenze sono ricavate dal programma di basi di dati della quinta.
+
+### Conoscenze
+
+- Il modello concettuale di una base di dati: entità, attributi, associazioni, cardinalità, chiavi.
+- Il modello relazionale: tabelle, chiavi primarie ed esterne, integrità referenziale, il valore `NULL`.
+- Le dipendenze funzionali e le forme normali fino alla terza.
+- Il linguaggio SQL: creazione delle tabelle e dei vincoli, inserimento e modifica dei dati, interrogazioni su una o più tabelle, aggregazioni, sottoquery e viste.
+- Le transazioni e le proprietà ACID.
+- I permessi in un DBMS multiutente, la SQL injection e le query parametrizzate.
+- L’accesso a un database da Python con il modulo `sqlite3`.
+
+### Abilità
+
+- Ricavare un diagramma ER da un testo che descrive un dominio, e tradurlo in uno schema relazionale.
+- Riconoscere le anomalie di uno schema e normalizzarlo fino alla terza forma normale.
+- Creare un database con i vincoli che lo schema richiede, e popolarlo rispettando le dipendenze fra le tabelle.
+- Scrivere interrogazioni con join, raggruppamenti e sottoquery, e prevederne il risultato prima di eseguirle.
+- Raggruppare in una transazione le modifiche che devono riuscire tutte insieme.
+- Scrivere un programma Python che legge e modifica un database usando solo query parametrizzate.
+
+### Competenze
+
+- Progettare la base di dati di un’applicazione a partire dai requisiti, e motivare ogni scelta di progetto: è il compito della seconda prova.
+- Verificare una query scritta da altri, o generata da un assistente, eseguendola e confrontando il risultato con la domanda di partenza.
+- Decidere dove far rispettare una regola sui dati, se nel programma o nel database, e dove difenderli da chi li vuole leggere o alterare.
+
+## Come è costruito
+
+Il volume ha 13 capitoli, raggruppati qui in quattro parti. Un solo esempio li attraversa tutti: lo schema del database di Hogwarts, che nasce al capitolo 2 come diagramma, diventa uno schema di tabelle al capitolo 3, viene corretto al 4, costruito al 5 e interrogato dal 6 in poi. Ogni capitolo ne usa la porzione che gli serve.
+
+### Prima del codice: il problema e il progetto
+
+1. **Perché un database.** Un registro salvato in JSON smette di funzionare appena le domande cambiano, e la stessa informazione scritta in due posti finisce per contraddirsi. Il capitolo mostra che cosa fa un DBMS al posto del programma, e lo fa vedere su un database vero prima di insegnare a interrogarlo. Le lezioni: [I dati che non stanno più nel programma](./dati-fuori-dal-programma.mdx), [La stessa informazione scritta due volte](./stessa-informazione-due-volte.mdx), [Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx).
+2. **Modellare il dominio.** Entità, attributi, associazioni, cardinalità e chiavi, ricavate da un testo con un metodo ripetibile. Si lavora su descrizioni scritte in italiano, non su una sintassi.
+3. **Dal modello allo schema.** Le regole che traducono il diagramma in tabelle senza perdere informazione, le chiavi esterne e il valore `NULL`.
+4. **Normalizzare.** Uno schema sbagliato funziona, finché una cancellazione non porta via un dato che non c’entrava. Le dipendenze funzionali dicono quale forma normale manca e come ripararla.
+
+### Costruire e interrogare
+
+5. **Costruire il database.** `CREATE TABLE`, i tipi, i vincoli, le chiavi esterne dichiarate, i primi `INSERT`. Da questo capitolo ogni blocco SQL si esegue nella pagina.
+6. **Interrogare una tabella.** `SELECT`, i filtri, l’ordinamento e gli indici.
+7. **Interrogare più tabelle.** Il prodotto cartesiano e le join che ricompongono ciò che la normalizzazione aveva separato, comprese le righe che una join scarta senza avvisare.
+8. **Aggregare.** Contare, sommare, raggruppare e filtrare i gruppi, fino all’ordine in cui il DBMS valuta davvero una query.
+9. **Query dentro query.** Le sottoquery per le domande a due tempi e le viste per dare un nome a una domanda.
+
+### Modificare e proteggere
+
+10. **Modificare i dati.** `UPDATE` e `DELETE`, poi le transazioni: un trasferimento di galeoni fra due vault della Gringott deve riuscire per intero o non avvenire affatto.
+11. **Proteggere i dati.** Chi può fare cosa in un database con più utenti, la SQL injection e l’unica difesa che regge, i backup e gli obblighi che vengono con i dati personali.
+
+### Fuori dal database
+
+12. **Il database da un programma.** Python si connette al database, manda query parametrizzate e trasforma le righe in oggetti del Volume 2. Il modulo `sqlite3` non funziona nel browser, quindi in questo capitolo il codice si legge nella pagina e si esegue in laboratorio.
+13. **Oltre il relazionale.** Gli assistenti che traducono una domanda in SQL e gli errori plausibili che commettono, i dati che non stanno bene in una tabella, la ricerca per somiglianza.
+
+Il progetto finale del volume, un’applicazione completa con il suo database, sta nella [Biblioteca dell’Apprendista](/apprendista), insieme agli esercizi.
+
+## A che punto è il volume
+
+Il Manuale dell’Archivista si scrive durante l’anno scolastico 2026/2027, nell’ordine dei capitoli, e ogni lezione esce quando è pronta. Oggi è uscito il capitolo 1. Nella barra laterale compaiono solo i capitoli che hanno almeno una lezione, quindi l’indice qui sopra è l’unico posto in cui il volume si vede per intero.
+
+Se insegni e ti serve solo una parte del libro, la pagina [Percorsi personalizzati](/percorso) costruisce una selezione di lezioni e un codice da dare alla classe.
+
+Il volume usa Python per mostrare i limiti dei file e per collegare il programma al database, e SQL per tutto il resto. Perché proprio Python, e non un altro linguaggio, lo spiega la pagina [Perché Python?](/perche-python).

@@ -1,8 +1,49 @@
 ---
 slug: /
 sidebar_position: 1
+description: Il secondo volume di Python Doesn’t Byte è dedicato alla programmazione a oggetti e alla progettazione, con esempi ambientati in un gioco di ruolo fantasy. Il volume è in revisione e non ha ancora lezioni pubblicate.
 ---
 
 # Manuale dell’Artefice
 
-Volume 2 — programmazione ad oggetti. Placeholder.
+Il Manuale del Programmatore insegna a scrivere programmi che funzionano. Il Manuale dell’Artefice insegna a scriverne di quelli che si possono far crescere: programmi in cui i dati e le regole che li governano stanno insieme, in cui una parte si può cambiare senza rompere le altre, e la cui struttura si può discutere prima di scrivere il codice. Lo strumento è la **programmazione a oggetti**, insieme ai principi di progettazione che la rendono utile.
+
+:::prereq
+
+- Il Volume 1, in particolare liste, dizionari e funzioni con parametri e valore di ritorno
+
+:::
+
+Il volume segue il programma della classe quarta. Gli esempi sono ambientati in un gioco di ruolo fantasy: personaggi con punti vita e inventario, armi, incantesimi, mostri e combattimenti con le loro regole. Un dominio del genere ha bisogno di oggetti che si somigliano senza essere uguali, ed è il terreno in cui ereditarietà e polimorfismo diventano necessari.
+
+## Il percorso, attraverso un personaggio
+
+I sei capitoli seguono la crescita di un unico esempio: il personaggio di un gioco di ruolo, e poi il gioco intorno a lui.
+
+**1 · Oggetti e classi.** Con gli strumenti del Volume 1, il nome, i punti vita e l’inventario di dieci personaggi stanno in liste separate, tenute allineate dalla posizione; basta un inserimento sbagliato perché i punti vita di un personaggio finiscano a un altro. La classe tiene insieme i dati che appartengono alla stessa cosa. Il capitolo distingue la classe dalle sue istanze, i metodi che riguardano la singola istanza da quelli che riguardano la classe, e insegna a un oggetto come mostrarsi quando lo si stampa.
+
+**2 · Proteggere lo stato.** Un personaggio con i punti vita negativi è uno stato impossibile, e un attributo pubblico lo permette a chiunque. Qui l’oggetto diventa responsabile dei propri valori: incapsulamento, property e duck typing, il modo in cui Python guarda a che cosa un oggetto sa fare invece che alla sua classe.
+
+**3 · Riusare senza copiare.** Guerriero, mago e ladro hanno quasi tutto in comune. Copiare la classe del guerriero per farne un mago vuol dire correggere ogni errore due volte; l’ereditarietà permette di specializzare senza copiare. Il capitolo prosegue con l’override e `super()`, il polimorfismo, la scelta fra ereditarietà e composizione e le classi astratte.
+
+**4 · Il contratto dell’oggetto.** Confrontare due armi, ordinare un inventario, sommare due borse di monete: gli operatori di Python funzionano anche sugli oggetti che definisci tu, attraverso i metodi speciali. Il capitolo si chiude con le dataclass, che scrivono al posto tuo il codice ripetitivo di una classe.
+
+**5 · Quando le cose vanno storte.** Un incantesimo lanciato senza abbastanza mana, un oggetto che non c’è nell’inventario. Le eccezioni decidono chi si occupa di un errore e a quale livello del programma; il capitolo insegna a gestirle, a sollevarle e a definirne di proprie.
+
+**6 · Progettare con gli oggetti.** Quando il gioco cresce, la sua struttura va decisa prima di scrivere il codice. I diagrammi UML la rendono discutibile sulla carta, il pattern Model-View-Controller separa le regole del gioco da ciò che compare sullo schermo, e i principi di progettazione spiegano perché certe classi diventano difficili da modificare.
+
+Gli oggetti del volume tornano nel capitolo 12 del [Manuale dell’Archivista](/archivista), dove prendono i loro dati da un database.
+
+## Conoscenze, abilità, competenze
+
+**Conoscenze.** Classi, istanze, attributi e metodi; metodi di classe e metodi statici; la rappresentazione di un oggetto con `__str__` e `__repr__`; incapsulamento, property e duck typing; ereditarietà, override, `super()`, polimorfismo, composizione e classi astratte; i metodi speciali e le dataclass; le eccezioni; i diagrammi delle classi UML, il pattern Model-View-Controller e i principi di progettazione.
+
+**Abilità.** Modellare un dominio con classi che tengono insieme dati e comportamento; proteggere lo stato di un oggetto con controlli che nessun chiamante può aggirare; costruire una gerarchia di classi che riusa il codice senza duplicarlo; far funzionare gli operatori di Python sui propri oggetti; gestire e sollevare eccezioni al livello giusto del programma; leggere e disegnare un diagramma delle classi.
+
+**Competenze.** Progettare un programma a oggetti a partire da un problema, discutendone la struttura prima di scriverla; valutare una gerarchia di classi esistente e riconoscere dove si romperà quando i requisiti cambiano; separare in un’applicazione le regole, i dati e la loro presentazione.
+
+## Stato del volume
+
+Il Manuale dell’Artefice è **in revisione e non ha ancora lezioni pubblicate**. Cinque lezioni del capitolo 1 e del capitolo 2 sono scritte e restano in bozza finché non saranno rilette con gli standard attuali del libro e riordinate nei capitoli qui sopra. Le altre sono da scrivere. Ogni lezione comparirà nella barra laterale quando sarà pubblicata.
+
+Perché il libro insegna la programmazione a oggetti in Python, e non in un linguaggio più spesso associato agli oggetti come Java, lo spiega la pagina [Perché Python?](/perche-python).
