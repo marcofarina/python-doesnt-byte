@@ -14,12 +14,18 @@
  *   in:  {type:'boot', glueUrl, wasmUrl}
  *   out: {type:'ready'} | {type:'boot-error', message}
  *   in:  {type:'run', id, instanceId, sql, dataset?: {key, text},
- *         stateful, maxRows, check?: {reference, control}}
+ *         stateful, maxRows, check?: {reference, control}, snapshot?}
  *   out: {type:'result', id, results, rowsModified, freshDb, durationMs,
- *         verdict?: {esito, messaggio}, authorError?}
- *      | {type:'error', id, message}
+ *         verdict?: {esito, messaggio}, authorError?, snapshot?}
+ *      | {type:'error', id, message, snapshot?}
  *   in:  {type:'reset-db', id, instanceId}
  *   out: {type:'db-reset', id}
+ *   in:  {type:'seed-snapshot', id, dataset?: {key, text}}
+ *   out: {type:'seed-snapshot', id, snapshot} | {type:'error', id, message}
+ *
+ * Con `snapshot: true` nel messaggio `run`, sia `result` sia `error` portano
+ * `snapshot`: la foto delle tabelle dopo il run, confrontata con quelle di
+ * prima (pannello «Database», vedi la sezione «Foto del DB» più sotto).
  *
  * Strategia di restore: per ogni dataset costruiamo UNA volta il DB dal dump
  * .sql e ne teniamo lo snapshot serializzato (db.export() → Uint8Array).
@@ -98,6 +104,182 @@ function cellValue(v) {
 function approxBytes(v) {
   if (v == null) return 4;
   return String(v).length;
+}
+
+// ─── Foto del DB per il pannello «Database» ─────────────────────────────────
+//
+// Piano pm/piano-2026-10-pannello-database.md, fase T1. Con `snapshot: true`
+// il worker legge le tabelle dopo il run e le confronta con quelle di prima:
+// per un blocco normale «prima» è il seed, per un blocco stateful il DB com'era
+// prima di questo run. Le righe si riconoscono per rowid: dopo un DELETE e un
+// INSERT SQLite può riusare il rowid, e la riga risulta «modificata» invece che
+// tolta più nuova (limite accettato nel piano). Le tabelle WITHOUT ROWID e
+// quelle oltre SNAPSHOT_DIFF_MAX_ROWS si mostrano senza confronto.
+
+/** Righe confrontate per tabella; oltre, la tabella si mostra senza confronto. */
+const SNAPSHOT_DIFF_MAX_ROWS = 2000;
+/** Righe mostrate per tabella, più tutte quelle cambiate (e righe tolte). */
+const SNAPSHOT_SHOWN_ROWS = 100;
+/** Tabelle nella foto: i dataset del libro ne hanno poche. */
+const SNAPSHOT_MAX_TABLES = 20;
+/** Un testo lungo in una cella si accorcia nella foto (non nel confronto). */
+const SNAPSHOT_CELL_MAX_CHARS = 200;
+
+/** datasetKey → lettura delle tabelle del seed ('' = DB vuoto). */
+const seedDumps = new Map();
+
+function quoteIdent(name) {
+  return '"' + String(name).replace(/"/g, '""') + '"';
+}
+
+function selectAll(db, sqlText) {
+  const stmt = db.prepare(sqlText);
+  try {
+    const columns = stmt.getColumnNames();
+    const rows = [];
+    while (stmt.step()) rows.push(stmt.get().map(cellValue));
+    return { columns, rows };
+  } finally {
+    stmt.free();
+  }
+}
+
+/**
+ * Legge le tabelle utente del DB: name → {columns, rows: [{rowid, values}],
+ * totalRows, comparable}. `comparable` è falso senza rowid o oltre il cap: in
+ * quel caso `rows` contiene solo le prime SNAPSHOT_SHOWN_ROWS righe.
+ */
+function dumpDb(db) {
+  const tables = new Map();
+  const names = selectAll(
+    db,
+    "SELECT name FROM sqlite_master WHERE type = 'table' " +
+      "AND name NOT LIKE 'sqlite\\_%' ESCAPE '\\' ORDER BY rowid",
+  ).rows.map((r) => r[0]);
+
+  for (const name of names.slice(0, SNAPSHOT_MAX_TABLES)) {
+    const q = quoteIdent(name);
+    const totalRows = selectAll(db, 'SELECT count(*) FROM ' + q).rows[0][0];
+    const tooMany = totalRows > SNAPSHOT_DIFF_MAX_ROWS;
+    const limit = tooMany ? ' LIMIT ' + SNAPSHOT_SHOWN_ROWS : '';
+    let read = null;
+    let hasRowid = true;
+    try {
+      read = selectAll(db, 'SELECT _rowid_, * FROM ' + q + ' ORDER BY _rowid_' + limit);
+    } catch (e) {
+      // WITHOUT ROWID, o una colonna che si chiama _rowid_: niente confronto.
+      hasRowid = false;
+      read = selectAll(db, 'SELECT * FROM ' + q + limit);
+    }
+    const rows = read.rows.map((values) =>
+      hasRowid
+        ? { rowid: values[0], values: values.slice(1) }
+        : { rowid: null, values },
+    );
+    tables.set(name, {
+      columns: hasRowid ? read.columns.slice(1) : read.columns,
+      rows,
+      totalRows,
+      comparable: hasRowid && !tooMany,
+    });
+  }
+  return tables;
+}
+
+function seedDump(datasetKey) {
+  let dump = seedDumps.get(datasetKey);
+  if (!dump) {
+    const db = openFromSeed(datasetKey);
+    try {
+      dump = dumpDb(db);
+    } finally {
+      db.close();
+    }
+    seedDumps.set(datasetKey, dump);
+  }
+  return dump;
+}
+
+function shortCell(v) {
+  return typeof v === 'string' && v.length > SNAPSHOT_CELL_MAX_CHARS
+    ? v.slice(0, SNAPSHOT_CELL_MAX_CHARS) + '…'
+    : v;
+}
+
+function shownRow(row, extra) {
+  return Object.assign({ rowid: row.rowid, values: row.values.map(shortCell) }, extra);
+}
+
+/**
+ * Confronta due letture e costruisce la foto per il pannello (DbSnapshot in
+ * src/theme/SQLRunner/types.ts). Una tabella che prima non c'era vale come
+ * tabella vuota: tutte le sue righe sono nuove.
+ */
+function buildSnapshot(before, after) {
+  const tables = [];
+  let changedRows = 0;
+
+  for (const [name, now] of after) {
+    const prev = before.get(name);
+    const comparable = now.comparable && (!prev || prev.comparable);
+    if (!comparable) {
+      tables.push({
+        name,
+        columns: now.columns,
+        rows: now.rows.slice(0, SNAPSHOT_SHOWN_ROWS).map((r) => shownRow(r)),
+        totalRows: now.totalRows,
+        removed: [],
+        removedTotal: 0,
+        status: prev ? 'unchanged' : 'created',
+        diffSkipped: true,
+      });
+      continue;
+    }
+
+    // Colonne per nome: dopo un ALTER TABLE le posizioni possono cambiare.
+    const prevCols = prev ? prev.columns : [];
+    const prevIndex = now.columns.map((c) => prevCols.indexOf(c));
+    const prevRows = new Map((prev ? prev.rows : []).map((r) => [r.rowid, r]));
+
+    const rows = [];
+    let changedHere = 0;
+    now.rows.forEach((row, i) => {
+      const old = prevRows.get(row.rowid);
+      let extra = null;
+      if (!old) {
+        extra = { change: 'added' };
+      } else {
+        prevRows.delete(row.rowid);
+        const changedCells = [];
+        row.values.forEach((v, c) => {
+          const j = prevIndex[c];
+          const was = j < 0 ? null : old.values[j];
+          if (v !== was) changedCells.push(c);
+        });
+        if (changedCells.length > 0) extra = { change: 'modified', changedCells };
+      }
+      if (extra) changedHere++;
+      if (extra || i < SNAPSHOT_SHOWN_ROWS) rows.push(shownRow(row, extra));
+    });
+    // Le righe rimaste in prevRows non ci sono più.
+    const removedAll = [...prevRows.values()];
+    changedHere += removedAll.length;
+    changedRows += changedHere;
+
+    tables.push({
+      name,
+      columns: now.columns,
+      rows,
+      totalRows: now.totalRows,
+      removed: removedAll.slice(0, SNAPSHOT_SHOWN_ROWS).map((r) => shownRow(r)),
+      removedTotal: removedAll.length,
+      status: !prev ? 'created' : changedHere > 0 ? 'changed' : 'unchanged',
+      diffSkipped: false,
+    });
+  }
+
+  const droppedTables = [...before.keys()].filter((n) => !after.has(n));
+  return { tables, droppedTables, changedRows };
 }
 
 /** total_changes() di SQLite: contatore cumulativo di righe INSERT/UPDATE/DELETE. */
@@ -382,11 +564,11 @@ function verifyRun(db, baseline, studentLast, check) {
   }
 }
 
-function handleRun(msg) {
-  const { id, instanceId, sql, dataset, stateful, maxRows, check } = msg;
-  const t0 = Date.now();
-
-  // 1. Seed: costruito una sola volta per dataset, poi snapshot in cache.
+/**
+ * Seed: costruito una sola volta per dataset, poi snapshot in cache. Restituisce
+ * la chiave ('' = DB vuoto), oppure null dopo aver mandato l'errore.
+ */
+function ensureSeed(id, dataset) {
   const datasetKey = dataset ? dataset.key : '';
   if (datasetKey && !seeds.has(datasetKey)) {
     try {
@@ -397,9 +579,28 @@ function handleRun(msg) {
         id,
         message: 'Errore nel dataset «' + datasetKey + '»: ' + e.message,
       });
-      return;
+      return null;
     }
   }
+  return datasetKey;
+}
+
+/** La foto del DB dopo un run; un errore nella lettura non deve coprire quello del run. */
+function snapshotAfter(db, before) {
+  try {
+    return buildSnapshot(before, dumpDb(db));
+  } catch (e) {
+    return undefined;
+  }
+}
+
+function handleRun(msg) {
+  const { id, instanceId, sql, dataset, stateful, maxRows, check, snapshot } = msg;
+  const t0 = Date.now();
+
+  // 1. Seed.
+  const datasetKey = ensureSeed(id, dataset);
+  if (datasetKey === null) return;
 
   // 2. Database: fresco dallo snapshot (stateless) o vivo tra i run (stateful).
   let db = null;
@@ -431,10 +632,22 @@ function handleRun(msg) {
     }
   }
 
+  // Per il pannello «Database»: le tabelle com'erano prima del run.
+  let before = null;
+  if (snapshot) {
+    try {
+      before = freshDb ? seedDump(datasetKey) : dumpDb(db);
+    } catch (e) {
+      before = null;
+    }
+  }
+
   // 3. Esecuzione, poi verifica (solo se lo script dello studente è andato:
   // un errore SQL arriva come 'error' e il componente lo conta come tale).
   try {
     const { results, rowsModified, last } = runScript(db, sql, maxRows, !!check);
+    // Prima della verifica: il CONTROLLO gira in un SAVEPOINT sul DB dello studente.
+    const shot = before ? snapshotAfter(db, before) : undefined;
     const outcome = check ? verifyRun(db, baseline, last, check) : {};
     postMessage({
       type: 'result',
@@ -445,9 +658,12 @@ function handleRun(msg) {
       durationMs: Date.now() - t0,
       verdict: outcome.verdict,
       authorError: outcome.authorError,
+      snapshot: shot,
     });
   } catch (e) {
-    postMessage({ type: 'error', id, message: e.message });
+    // Le istruzioni eseguite prima dell'errore restano nel DB: la foto le mostra.
+    const shot = before ? snapshotAfter(db, before) : undefined;
+    postMessage({ type: 'error', id, message: e.message, snapshot: shot });
     if (stateful) {
       // Errore in stateful: il DB resta com'è (l'errore SQL non lo corrompe,
       // SQLite fa rollback dello statement fallito).
@@ -482,6 +698,22 @@ self.onmessage = function (event) {
       }
       handleRun(msg);
       break;
+
+    case 'seed-snapshot': {
+      if (!SQL) {
+        postMessage({ type: 'error', id: msg.id, message: 'Worker non inizializzato' });
+        return;
+      }
+      const datasetKey = ensureSeed(msg.id, msg.dataset);
+      if (datasetKey === null) return;
+      try {
+        const dump = seedDump(datasetKey);
+        postMessage({ type: 'seed-snapshot', id: msg.id, snapshot: buildSnapshot(dump, dump) });
+      } catch (e) {
+        postMessage({ type: 'error', id: msg.id, message: e.message });
+      }
+      break;
+    }
 
     case 'reset-db': {
       const live = liveDbs.get(msg.instanceId);
