@@ -1,8 +1,60 @@
 ---
 slug: /
 sidebar_position: 1
+description: Il primo volume di Python Doesn’t Byte copre il programma di terza, dal primo print() ai file, con liste, dizionari, funzioni, git e cenni di crittografia. Ogni esempio si esegue nella pagina, senza installare niente.
 ---
 
 # Manuale del Programmatore
 
-Volume 1 — primo anno di Python. Placeholder.
+Questo è il volume da cui si comincia. Non dà per scontato niente: parte dalla definizione di algoritmo e arriva a un programma che salva i propri dati in un file e li ritrova all’avvio successivo. In mezzo c’è tutto il programma di informatica della classe terza, comprese le parti che non riguardano il linguaggio: le strutture dati più avanzate, il version control con git e un primo sguardo alla crittografia.
+
+Il linguaggio è Python, scelto per le ragioni che spiega la pagina [Perché Python?](/perche-python). Ogni blocco di codice del volume si può eseguire e modificare nella pagina, senza installare niente; per scrivere codice libero, fuori dalle lezioni, c’è il [Playground](/playground).
+
+## Obiettivi
+
+Le **competenze** che il volume costruisce sono tre: risolvere un problema scomponendolo in passi e tradurre la soluzione in un programma Python funzionante; leggere un programma scritto da altri, prevederne il comportamento e trovarne gli errori; gestire il proprio codice con git e conservare in un file i dati di un programma.
+
+Conoscenze e abilità, divise per area:
+
+| Area | Conoscenze | Abilità |
+|---|---|---|
+| Algoritmi | Definizione e proprietà di un algoritmo; l’IDE | Distinguere un algoritmo da una procedura ambigua; scrivere ed eseguire un programma |
+| Dati e operazioni | Variabili, tipi di dato, operatori, input e output, stringhe e f-string | Scegliere il tipo adatto a un dato; convertire l’input; comporre messaggi leggibili |
+| Controllo del flusso | Condizioni, operatori logici, tabelle di verità, cicli `for` e `while` | Scrivere condizioni corrette; scegliere il ciclo adatto; validare un input |
+| Strutture dati | Liste, dizionari, matrici, pila e coda, alberi, tuple e insiemi | Scegliere la struttura adatta a un problema; scorrerla e modificarla; copiarla quando serve |
+| Funzioni e moduli | Parametri, valore di ritorno, visibilità delle variabili, moduli, `random`, operatore `%` | Scomporre un programma in funzioni; costruire e importare una libreria |
+| File | Apertura e chiusura, modalità, `with`, JSON, encoding | Salvare e rileggere dati strutturati senza perderli |
+| Strumenti | Version control, git e GitHub, cifrari storici | Fare commit e push di un progetto; cifrare e decifrare con un cifrario a sostituzione |
+
+## Come è costruito
+
+Il volume ha 13 capitoli, raggruppati qui in quattro parti. I primi 11 costruiscono il linguaggio un pezzo alla volta, e ognuno usa quello che i precedenti hanno introdotto; gli ultimi due escono dal linguaggio ma restano nel programma di terza.
+
+### Primi passi
+
+1. **Risolvere problemi con l’informatica.** Che cos’è un algoritmo, e dove si scrive ed esegue un programma.
+2. **Far dire qualcosa al programma.** Output, variabili, tipi di dato, contatori e accumulatori, input.
+3. **Decidere.** Condizioni, operatori logici e tabelle di verità.
+4. **Ripetere.** I cicli `for` e `while` e la validazione dell’input.
+
+### Organizzare dati e codice
+
+5. **Le stringhe.** Indici, f-string, immutabilità, caratteri e numeri.
+6. **Le liste.** Creare, scorrere, modificare e copiare una lista.
+7. **Funzioni.** Parametri, valore di ritorno, visibilità delle variabili, moduli.
+
+### Altri strumenti per i dati
+
+8. **Numeri e casualità.** Il modulo `random` e l’operatore `%`.
+9. **I dizionari.** Recuperare un dato per nome invece che per posizione.
+10. **Strutture dati avanzate.** Matrici, pila e coda, alberi, tuple e insiemi.
+11. **I file.** Leggere e scrivere file, i dati strutturati in JSON, l’encoding. Da qui parte il [Manuale dell’Archivista](/archivista).
+
+### Oltre il linguaggio
+
+12. **Tenere traccia del lavoro.** Il version control con git e GitHub.
+13. **Cenni di crittografia.** Il cifrario di Cesare, la crittoanalisi statistica, i principi di Kerckhoffs.
+
+## A che punto è il volume
+
+<AvanzamentoVolume volume="programmatore" previste={49} />
