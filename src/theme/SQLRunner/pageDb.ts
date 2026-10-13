@@ -45,6 +45,17 @@ export function publishPageDb(next: Omit<PageDbEntry, 'seq'>): void {
   for (const listener of listeners) listener();
 }
 
+/**
+ * Dimentica l'ultima foto. Lo chiama il pannello quando entra in una pagina:
+ * tornando su una lezione, il pannello riparte dallo «Stato iniziale» anche se
+ * la foto in memoria era di quella stessa pagina.
+ */
+export function clearPageDb(): void {
+  if (entry === null) return;
+  entry = null;
+  for (const listener of listeners) listener();
+}
+
 /** L'ultima foto di questa pagina, oppure null se nessun blocco ha pubblicato. */
 export function usePageDb(): PageDbEntry | null {
   const { pathname } = useLocation();
