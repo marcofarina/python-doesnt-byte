@@ -73,8 +73,10 @@
   },
   "overrides": {
     "webpack-dev-server": "^5.2.1",
-    "shell-quote": "^1.8.4",
-    "websocket-driver": "^0.7.5"
+    "shell-quote": "^1.11.0",
+    "websocket-driver": "^0.7.5",
+    "proxy-addr": "^2.0.8",
+    "tinypool": "^2.1.2"
   },
   "browserslist": {
     "production": [
