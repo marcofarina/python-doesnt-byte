@@ -28,6 +28,7 @@ import Exercise, { LessonMeta, Solution } from '@site/src/components/Exercise';
 import AssignedExercises from '@site/src/components/AssignedExercises';
 import FileArchivio from '@site/src/components/FileArchivio';
 import Esito from '@site/src/components/Esito';
+import AvanzamentoVolume from '@site/src/components/AvanzamentoVolume';
 
 export default {
   ...MDXComponents,
@@ -56,4 +57,5 @@ export default {
   AssignedExercises,
   FileArchivio,
   Esito,
+  AvanzamentoVolume,
 };
