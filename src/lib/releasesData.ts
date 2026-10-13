@@ -64,9 +64,29 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
+    v: '0.18.0',
+    date: '13 ottobre 2026',
+    latest: true,
+    notes: {
+      content: [
+        'Volume 3, Manuale dell’Archivista: la terza lezione, «Che cosa fa un DBMS al posto tuo», che chiude il capitolo 1.',
+        'Le introduzioni dei quattro volumi: obiettivi con conoscenze, abilità e competenze, e come è costruito ogni volume, capitolo per capitolo.',
+        'Volume 3: le prime due lezioni rilette, con più callout e qualche momento più leggero.',
+      ],
+      new: [
+        'Pannello «Archivio»: nelle lezioni del Volume 3 i file su cui si lavora, come punti.json e studenti.json, restano consultabili accanto al testo e si aprono a tutto schermo per la LIM.',
+        'Nello SQLRunner una query può restare nascosta, con il solo risultato in vista: il pulsante «Mostra la query» la rivela.',
+        'Nell’introduzione di ogni volume di teoria, una barra mostra quante lezioni sono uscite su quelle previste.',
+      ],
+      improved: [
+        'Nella barra laterale le lezioni del Volume 3 sono raggruppate per capitolo.',
+        'Nei confronti fra codice giusto e sbagliato, icone disegnate al posto delle emoji ✅ e ❌.',
+      ],
+    },
+  },
+  {
     v: '0.17.1',
     date: '7 ottobre 2026',
-    latest: true,
     notes: {
       fixed: [
         'Nei percorsi IT, Liceo e ITS compare anche la prima lezione del Volume 3, «I dati che non stanno più nel programma».',

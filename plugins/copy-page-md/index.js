@@ -27,6 +27,14 @@ function inlinePyRunnerSrc(src, siteDir) {
   }
 }
 
+// Inline del file d'archivio di `<FileArchivio nome="punti.json" />` come blocco
+// ```json, dal contenuto del plugin archivio (fonte unica static/archivio/).
+function inlineFileArchivio(nome, archivio) {
+  const testo = archivio[nome];
+  if (testo === undefined) return OMITTED;
+  return `\`\`\`json title="${nome}"\n${testo.trimEnd()}\n\`\`\``;
+}
+
 // Componenti interattivi che non hanno una resa testuale utile → placeholder.
 const INTERACTIVE = [
   'Quiz',
@@ -39,7 +47,7 @@ const INTERACTIVE = [
 
 // Trasforma il JSX della PROSA (i blocchi/inline di codice sono già protetti dal
 // chiamante, così esempi che mostrano `<Tag>` non vengono toccati).
-function transformJsx(s, siteDir) {
+function transformJsx(s, siteDir, archivio) {
   // Righe di import/export MDX e commenti JSX `{/* … */}`.
   s = s.replace(/^\s*(?:import|export)\s.+$/gm, '');
   s = s.replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
@@ -48,6 +56,12 @@ function transformJsx(s, siteDir) {
   s = s.replace(
     /<PyRunner\b[^>]*\bsrc=["']([^"']+)["'][^>]*\/>/g,
     (_m, src) => inlinePyRunnerSrc(src, siteDir),
+  );
+
+  // <FileArchivio nome="…" /> → inline del file d'archivio.
+  s = s.replace(
+    /<FileArchivio\b[^>]*\bnome=["']([^"']+)["'][^>]*\/>/g,
+    (_m, nome) => inlineFileArchivio(nome, archivio),
   );
 
   // <InlineCode …>x</InlineCode> → `x` (tollera attributi, es. kind="keyword").
@@ -82,7 +96,7 @@ function transformJsx(s, siteDir) {
   return s;
 }
 
-function sanitize(body, siteDir) {
+function sanitize(body, siteDir, archivio) {
   // Normalizza l'info-string dei fence (solo le righe di apertura: i chiusi sono
   // ``` nudi e non matchano `py`/`sql`).
   let s = body
@@ -96,7 +110,7 @@ function sanitize(body, siteDir) {
   const inlines = [];
   s = s.replace(/`[^`\n]+`/g, (m) => `\x00I${inlines.push(m) - 1}\x00`);
 
-  s = transformJsx(s, siteDir);
+  s = transformJsx(s, siteDir, archivio);
 
   // Ripristina (inline prima, poi blocchi).
   s = s.replace(/\x00I(\d+)\x00/g, (_m, i) => inlines[+i]);
@@ -106,7 +120,7 @@ function sanitize(body, siteDir) {
   return s.replace(/\n{3,}/g, '\n\n').trim();
 }
 
-async function toCleanMarkdown(absPath, doc, context) {
+async function toCleanMarkdown(absPath, doc, context, archivio) {
   const fileContent = fs.readFileSync(absPath, 'utf-8');
   const { content } = await parseMarkdownFile({
     filePath: absPath,
@@ -117,7 +131,7 @@ async function toCleanMarkdown(absPath, doc, context) {
 
   const siteUrl = context.siteConfig.url.replace(/\/$/, '');
   const pageUrl = siteUrl + doc.permalink;
-  const body = sanitize(content, context.siteDir);
+  const body = sanitize(content, context.siteDir, archivio);
 
   return (
     `# ${doc.title}\n\n` +
@@ -148,6 +162,7 @@ module.exports = function copyPageMd(context) {
 
     async allContentLoaded({ allContent, actions }) {
       manifest = [];
+      const archivio = allContent.archivio?.default?.file ?? {};
       for (const [pluginName, byInstance] of Object.entries(allContent)) {
         if (!pluginName.includes('plugin-content-docs')) continue;
         for (const data of Object.values(byInstance)) {
@@ -158,7 +173,7 @@ module.exports = function copyPageMd(context) {
           for (const doc of version?.docs ?? []) {
             const abs = doc.source.replace(/^@site/, context.siteDir);
             try {
-              const md = await toCleanMarkdown(abs, doc, context);
+              const md = await toCleanMarkdown(abs, doc, context, archivio);
               manifest.push({ permalink: doc.permalink, md });
             } catch (err) {
               console.warn(

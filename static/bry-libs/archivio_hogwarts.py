@@ -1,63 +1,37 @@
-# File finti per la lezione «I dati che non stanno più nel programma»
-# (volumes/archivista/dati-fuori-dal-programma.mdx).
+# File dell'archivio di Hogwarts per le lezioni del Volume 3 (la prima è
+# volumes/archivista/dati-fuori-dal-programma.mdx).
 #
-# In pagina Brython non ha un disco: leggi_file(nome) restituisce il testo che
-# il file avrebbe su disco. Il contenuto di punti.json e studenti.json deve
-# restare identico ai blocchi ```json mostrati nella lezione.
+# In pagina Brython non ha un disco: leggi_file(nome) restituisce il testo del
+# file con lo stesso nome in static/archivio/hogwarts/, scaricato con una
+# richiesta sincrona. È la fonte unica: la stessa cartella la legge il plugin
+# plugins/archivio/ per mostrare i file nelle lezioni (<FileArchivio>).
+#
+# L'indirizzo della cartella si ricava da __file__, che Brython imposta all'URL
+# di questo modulo (…/bry-libs/archivio_hogwarts.py): così il baseUrl del sito
+# non è scritto qui.
+#
+# punti_tutta_la_scuola.json non è su disco: lo genera questo modulo partendo
+# da punti.json.
 
 import json
 import random
 
-_PUNTI = """[
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": -5, "professore": "McGonagall"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": 5, "professore": "McGonagall"},
-  {"studente": "Ron Weasley", "casa": "Grifondoro",
-   "punti": 5, "professore": "McGonagall"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -1, "professore": "Piton"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -1, "professore": "Piton"},
-  {"studente": "Draco Malfoy", "casa": "Serpeverde",
-   "punti": 10, "professore": "Piton"},
-  {"studente": "Fred Weasley", "casa": "Grifondoro",
-   "punti": -10, "professore": "Piton"},
-  {"studente": "George Weasley", "casa": "Grifondoro",
-   "punti": -10, "professore": "Piton"},
-  {"studente": "Cedric Diggory", "casa": "Tassofrasso",
-   "punti": 10, "professore": "Sprout"},
-  {"studente": "Padma Patil", "casa": "Corvonero",
-   "punti": 10, "professore": "Flitwick"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Neville Longbottom", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Draco Malfoy", "casa": "Serpeverde",
-   "punti": -20, "professore": "McGonagall"},
-  {"studente": "Ron Weasley", "casa": "Grifondoro",
-   "punti": 50, "professore": "Silente"},
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": 50, "professore": "Silente"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": 60, "professore": "Silente"},
-  {"studente": "Neville Longbottom", "casa": "Grifondoro",
-   "punti": 10, "professore": "Silente"}
-]"""
+from browser import window
 
-_STUDENTI = """[
-  {"nome": "Harry Potter", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Hermione Granger", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Ron Weasley", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Neville Longbottom", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Draco Malfoy", "casa": "Serpeverde", "anno": 1},
-  {"nome": "Padma Patil", "casa": "Corvonero", "anno": 1},
-  {"nome": "Fred Weasley", "casa": "Grifondoro", "anno": 3},
-  {"nome": "George Weasley", "casa": "Grifondoro", "anno": 3},
-  {"nome": "Cedric Diggory", "casa": "Tassofrasso", "anno": 3}
-]"""
+_CARTELLA = __file__.rsplit("/", 2)[0] + "/archivio/hogwarts/"
+
+
+def _scarica(nome):
+    richiesta = window.XMLHttpRequest.new()
+    richiesta.open("GET", _CARTELLA + nome, False)
+    richiesta.send()
+    # Il dev server risponde 200 con la pagina HTML del sito anche ai file che
+    # non esistono: conta solo una risposta JSON.
+    tipo = richiesta.getResponseHeader("Content-Type") or ""
+    if richiesta.status != 200 or not tipo.startswith("application/json"):
+        raise FileNotFoundError(f"Nessun file chiamato '{nome}'")
+    return richiesta.responseText
+
 
 _ALTRI_STUDENTI = [
     ("Hannah Abbott", "Tassofrasso"),
@@ -86,7 +60,7 @@ def _punti_di_tutta_la_scuola():
     # Le 18 assegnazioni di punti.json più 20 000 di altri studenti, mescolate.
     # Il seme fisso rende il file identico a ogni esecuzione.
     random.seed(1991)
-    registro = json.loads(_PUNTI)
+    registro = json.loads(_scarica("punti.json"))
     for _ in range(20000):
         studente, casa = random.choice(_ALTRI_STUDENTI)
         registro.append({
@@ -100,10 +74,6 @@ def _punti_di_tutta_la_scuola():
 
 
 def leggi_file(nome):
-    if nome == "punti.json":
-        return _PUNTI
-    if nome == "studenti.json":
-        return _STUDENTI
     if nome == "punti_tutta_la_scuola.json":
         return _punti_di_tutta_la_scuola()
-    raise FileNotFoundError(f"Nessun file chiamato '{nome}'")
+    return _scarica(nome)

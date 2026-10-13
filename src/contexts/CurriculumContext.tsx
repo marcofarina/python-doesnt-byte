@@ -43,6 +43,8 @@ export interface CurriculumTreeDoc {
   type: 'doc';
   key: string;
   title: string;
+  /** Lezione in bozza (`draft: true`): esiste solo in sviluppo. */
+  draft?: boolean;
 }
 
 export interface CurriculumTreeCategory {

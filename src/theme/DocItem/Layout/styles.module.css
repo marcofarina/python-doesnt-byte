@@ -1,0 +1,28 @@
+/* Copia di theme-classic 3.10.1 (DocItem/Layout/styles.module.css) più le
+   regole della colonna «Archivio» in coda. */
+
+.docItemContainer header + *,
+.docItemContainer article > *:first-child {
+  margin-top: 0;
+}
+
+@media (min-width: 997px) {
+  .docItemCol {
+    max-width: 75% !important;
+  }
+
+  /* Archivio aperto: la colonna destra passa da 25% a --archivio-colonna, il
+     testo cede lo stesso spazio. Doppia classe per battere .col--3 di Infima. */
+  .docItemCol.docItemColArchivio {
+    max-width: calc(100% - var(--archivio-colonna)) !important;
+  }
+
+  .colonna.colonnaAperta {
+    --ifm-col-width: var(--archivio-colonna);
+  }
+}
+
+.docItemColArchivio,
+.colonnaAperta {
+  --archivio-colonna: 45%;
+}

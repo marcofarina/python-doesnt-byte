@@ -300,3 +300,43 @@ Nessuna verifica: `pdb:runner-done` arriva con `esito: null`.
 ```sql live dataset=archivista/biblioteca
 SELECT COUNT(*) AS libri FROM libri;
 ```
+
+## 11. SQL, vincolo violato: il codice di partenza è rifiutato dalla chiave esterna
+
+Dataset `archivista/registro-punti`. Lupin vuole dare 10 punti a Neville, ma non è
+nell'elenco dei professori: l'`INSERT` di partenza viene rifiutato dalla chiave esterna
+(`FOREIGN KEY constraint failed`). Al codice di partenza l'esito deve essere «non ancora»
+(`data-esito="errore"`, nessuna riga inserita); alla soluzione, «Risolto». Dopo aver
+risolto, esegui `SELECT * FROM professore;` e controlla che Lupin sia l'ultima riga.
+
+<Challenge>
+
+```sql live dataset=archivista/registro-punti stateful
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Neville Longbottom', 10, 'Lupin');
+### POST
+INSERT INTO professore (nome) VALUES ('Lupin');
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Neville Longbottom', 10, 'Lupin');
+### CONTROLLO
+SELECT studente, punti, professore FROM assegnazione ORDER BY id;
+SELECT nome FROM professore ORDER BY nome;
+```
+
+<Hint>Prima di dare punti, Lupin deve comparire fra i professori.</Hint>
+
+<Solved>
+  Vincolo rispettato. Testo di controllo: COMMENTO-SANDBOX-SQL-VINCOLO.
+</Solved>
+
+<Answer>
+
+```sql
+INSERT INTO professore (nome) VALUES ('Lupin');
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Neville Longbottom', 10, 'Lupin');
+```
+
+</Answer>
+
+</Challenge>

@@ -1,0 +1,66 @@
+---
+unlisted: true
+title: Archivio — pagina di test
+description: Sandbox di verifica del pannello Archivio (file del volume accanto al testo) e della pagina della LIM
+archivio: [punti.json, studenti.json]
+---
+
+# Archivio — sandbox di test
+
+Pagina di verifica del pannello «Archivio». Non è linkata dalla sidebar
+(`unlisted: true`). Il frontmatter dichiara `archivio: [punti.json, studenti.json]`.
+
+Cosa controllare:
+
+- **Desktop:** in testa alla colonna dell'indice c'è il pulsante «Archivio · 2 file».
+  Aperto, il pannello prende il posto dell'indice, ha una scheda per file e resta
+  fermo mentre il testo scorre. Esc (col focus nel pannello) lo chiude.
+- **Telefono:** pulsante flottante in basso a sinistra; il pannello sale fino a metà
+  schermo e si chiude con la X, con Esc e con un tocco fuori.
+- **Fra le pagine:** con il pannello aperto, passa a un'altra pagina che dichiara
+  l'archivio e torna qui: il pannello è ancora aperto, sulla stessa scheda.
+- **LIM:** «Apri in una nuova scheda» apre `/archivio?file=…` con il file scelto.
+
+## Un file accanto al testo
+
+Il blocco qui sotto legge `punti.json` dallo stesso posto da cui lo prende il
+pannello: se i due testi non coincidono, la fonte unica si è rotta.
+
+<FileArchivio nome="punti.json" />
+
+## Testo per far scorrere la pagina
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a
+ante venenatis dapibus posuere velit aliquet. Donec ullamcorper nulla non metus
+auctor fringilla. Vestibulum id ligula porta felis euismod semper. Cras mattis
+consectetur purus sit amet fermentum. Maecenas faucibus mollis interdum.
+
+Nullam quis risus eget urna mollis ornare vel eu leo. Etiam porta sem malesuada
+magna mollis euismod. Aenean lacinia bibendum nulla sed consectetur. Cum sociis
+natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Sed posuere consectetur est at lobortis. Duis mollis, est non commodo luctus,
+nisi erat porttitor ligula, eget lacinia odio sem nec elit. Morbi leo risus,
+porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna, vel
+scelerisque nisl consectetur et.
+
+## Ancora testo
+
+Curabitur blandit tempus porttitor. Vivamus sagittis lacus vel augue laoreet
+rutrum faucibus dolor auctor. Fusce dapibus, tellus ac cursus commodo, tortor
+mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+
+<FileArchivio nome="studenti.json" />
+
+Donec sed odio dui. Nulla vitae elit libero, a pharetra augue. Maecenas sed diam
+eget risus varius blandit sit amet non magna. Etiam porta sem malesuada magna
+mollis euismod. Vestibulum id ligula porta felis euismod semper.
+
+## In fondo
+
+Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras justo
+odio, dapibus ac facilisis in, egestas eget quam. Aenean eu leo quam.
+Pellentesque ornare sem lacinia quam venenatis vestibulum.
+
+Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Nullam id dolor id
+nibh ultricies vehicula ut id elit. Maecenas faucibus mollis interdum.

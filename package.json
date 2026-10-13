@@ -1,6 +1,6 @@
 {
   "name": "python-doesnt-byte",
-  "version": "0.17.1",
+  "version": "0.18.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
@@ -17,6 +17,7 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md,mdx}\"",
+    "archivio:sql": "node scripts/archivio-sql.mjs",
     "curriculum:new-epoch": "node scripts/curriculum-new-epoch.js",
     "curriculum:check": "node scripts/check-manifest-append-only.js",
     "version": "node scripts/sync-pm-version.mjs"

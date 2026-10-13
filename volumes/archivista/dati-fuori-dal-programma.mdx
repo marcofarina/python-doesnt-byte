@@ -3,6 +3,7 @@ title: I dati che non stanno più nel programma
 sidebar_label: I dati fuori dal programma
 sidebar_position: 2
 description: Un registro salvato in JSON conserva i dati ma non risponde a nessuna domanda. Ogni domanda nuova è codice da scrivere, e ogni risposta costa la lettura dell’intero file. Lo vediamo sul registro dei punti delle case di Hogwarts.
+archivio: [punti.json, studenti.json]
 ---
 
 # I dati che non stanno più nel programma
@@ -41,46 +42,7 @@ Ogni anno a Hogwarts si svolge la Coppa delle Case, il premio annuale assegnato 
 
 Immaginiamo dunque di avere un registro che tiene traccia dei punti assegnati a ogni casa. Ogni volta che un professore assegna o toglie punti a una casa, il registro riceve una riga: lo studente, la sua casa, i punti (negativi se tolti) e il professore che li ha assegnati o sottratti. Nell'esempio seguente immaginiamo di avere le assegnazioni del primo anno di Harry che ci servono, salvate in `punti.json`:
 
-```json title="punti.json"
-[
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": -5, "professore": "McGonagall"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": 5, "professore": "McGonagall"},
-  {"studente": "Ron Weasley", "casa": "Grifondoro",
-   "punti": 5, "professore": "McGonagall"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -1, "professore": "Piton"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -1, "professore": "Piton"},
-  {"studente": "Draco Malfoy", "casa": "Serpeverde",
-   "punti": 10, "professore": "Piton"},
-  {"studente": "Fred Weasley", "casa": "Grifondoro",
-   "punti": -10, "professore": "Piton"},
-  {"studente": "George Weasley", "casa": "Grifondoro",
-   "punti": -10, "professore": "Piton"},
-  {"studente": "Cedric Diggory", "casa": "Tassofrasso",
-   "punti": 10, "professore": "Sprout"},
-  {"studente": "Padma Patil", "casa": "Corvonero",
-   "punti": 10, "professore": "Flitwick"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Neville Longbottom", "casa": "Grifondoro",
-   "punti": -50, "professore": "McGonagall"},
-  {"studente": "Draco Malfoy", "casa": "Serpeverde",
-   "punti": -20, "professore": "McGonagall"},
-  {"studente": "Ron Weasley", "casa": "Grifondoro",
-   "punti": 50, "professore": "Silente"},
-  {"studente": "Hermione Granger", "casa": "Grifondoro",
-   "punti": 50, "professore": "Silente"},
-  {"studente": "Harry Potter", "casa": "Grifondoro",
-   "punti": 60, "professore": "Silente"},
-  {"studente": "Neville Longbottom", "casa": "Grifondoro",
-   "punti": 10, "professore": "Silente"}
-]
-```
+<FileArchivio nome="punti.json" />
 
 Per rileggerlo da Python bastano le tre righe che conosciamo dal Volume 1:
 
@@ -142,15 +104,23 @@ print(f"\nHa fatto perdere più punti: {peggiore}")
 
 <Spoiler block>
 
-Hermione, con 55 punti tolti, davanti a Harry (52) e Neville (50). La notte fuori dal dormitorio è costata 50 punti a tutti e tre; la differenza la fanno i cinque punti del troll, che Hermione si è fatta togliere per coprire Harry e Ron.
+Hermione, prima della classe anche in questa classifica, con 55 punti tolti, davanti a Harry (52) e Neville (50). La notte fuori dal dormitorio è costata 50 punti a tutti e tre; la differenza la fanno i cinque punti del troll, che Hermione si è fatta togliere per coprire Harry e Ron.
 
 </Spoiler>
 
-`max(persi, key=persi.get)` restituisce la chiave del dizionario con il valore più alto: è il nome che cercavi, non il numero.
+:::warning[Il massimo di un dizionario]
+
+`max(persi, key=persi.get)` restituisce la chiave del dizionario con il valore più alto: è il nome che cercavi, non il numero. Le due versioni più corte sbagliano, ciascuna a modo suo:
+
+- <Esito ok={false} /> `max(persi)` → `"Neville Longbottom"`: confronta le chiavi, quindi trova l'ultimo nome in ordine alfabetico.
+- <Esito ok={false} /> `max(persi.values())` → `55`: il valore più alto, ma non dice di chi è.
+- <Esito /> `max(persi, key=persi.get)` → il nome con più punti persi.
+
+:::
 
 Guarda i due programmi insieme: hanno in comune solo le prime due righe, l'import e la lettura del file. Il resto (il ciclo, la condizione, la struttura che accumula) è scritto per rispondere a una domanda specifica e non serve all'altra. La struttura dati addirittura cambia: un numero per la prima domanda, un dizionario di contatori per la seconda.
 
-Il file JSON, intanto, non è cambiato di un byte. Conserva i dati, ma non sa rispondere a nessuna domanda: la capacità di rispondere sta tutta nel codice, e il codice esiste solo per le domande che qualcuno ha già previsto. Se McGonagall chiede quale professore ha tolto più punti a Grifondoro, il registro non ha la risposta. L'avrà quando qualcuno avrà scritto, provato e corretto un terzo programma.
+Il file JSON, intanto, non è cambiato di un byte. Conserva i dati, ma non sa rispondere a nessuna domanda. Non è il diario di Tom Riddle: se ci scrivi una domanda, resta lì senza risposta. La capacità di rispondere sta tutta nel codice, e il codice esiste solo per le domande che qualcuno ha già previsto. Se McGonagall chiede quale professore ha tolto più punti a Grifondoro, il registro non ha la risposta. L'avrà quando qualcuno avrà scritto, provato e corretto un terzo programma.
 
 Prova a essere quel qualcuno. Il programma qui sotto è una copia del secondo: modificalo affinché risponda alla domanda di McGonagall, e tieni il conto delle righe di codice che hai dovuto cambiare.
 
@@ -175,7 +145,7 @@ for nome in persi:
 peggiore = max(persi, key=persi.get)
 print(f"\nHa fatto perdere più punti: {peggiore}")
 ### POST
-assert not contiene("Hermione"), "Il programma elenca ancora gli studenti: il conto deve essere per professore."
+assert not contiene("Hermione"), "Il programma elenca ancora gli studenti, e Hermione non è (ancora) una professoressa: il conto deve essere per professore."
 assert contiene("McGonagall"), "Il programma non stampa il nome del professore che cerchi."
 assert contiene("McGonagall", righe()[-1]), "Nell'ultima riga il professore che stampi non è quello che ha tolto più punti: guarda i totali."
 ```
@@ -229,19 +199,7 @@ La risposta è McGonagall, con 155 punti tolti a Grifondoro contro i 22 di Piton
 
 Il registro dice di chi sono i punti, ma non in che anno è lo studente. L'anno è memorizzato in un altro file, quello degli studenti:
 
-```json title="studenti.json"
-[
-  {"nome": "Harry Potter", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Hermione Granger", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Ron Weasley", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Neville Longbottom", "casa": "Grifondoro", "anno": 1},
-  {"nome": "Draco Malfoy", "casa": "Serpeverde", "anno": 1},
-  {"nome": "Padma Patil", "casa": "Corvonero", "anno": 1},
-  {"nome": "Fred Weasley", "casa": "Grifondoro", "anno": 3},
-  {"nome": "George Weasley", "casa": "Grifondoro", "anno": 3},
-  {"nome": "Cedric Diggory", "casa": "Tassofrasso", "anno": 3}
-]
-```
+<FileArchivio nome="studenti.json" />
 
 Silente vuole sapere con quanti punti hanno contribuito, in totale, gli studenti di ciascun anno. Nessuno dei due file basta da solo: i punti sono in `punti.json`, gli anni in `studenti.json`, e l'unico legame fra le due cose è il nome dello studente, scritto uguale in entrambi.
 
@@ -321,6 +279,12 @@ with open("punti.json", "w", encoding="utf-8") as file_punti:
 
 Con il registro di tutta la scuola, per un'assegnazione nuova se ne riscrivono più di 20.000. E cosa succede se due professori fanno questa operazione nello stesso momento? È una delle domande che affronteremo nella terza lezione di questo capitolo.
 
+:::danger[Aprire in scrittura svuota il file]
+
+`open("punti.json", "w")` cancella il contenuto del file nel momento in cui lo apre, prima che `json.dump` scriva qualcosa. Se il programma si interrompe a metà, per un valore che JSON non sa scrivere o per un computer che si spegne, il registro resta vuoto o troncato e la versione di prima è persa. Per questo, nel codice qui sopra, il file si legge tutto prima di aprirlo in scrittura.
+
+:::
+
 ## Cosa vorremmo, invece
 
 Messi in fila, i problemi di questa lezione diventano una lista di richieste:
@@ -330,6 +294,12 @@ Messi in fila, i problemi di questa lezione diventano una lista di richieste:
 - trovare due assegnazioni fra 20.000 senza leggere tutte le altre, e aggiungerne una senza riscriverle tutte.
 
 Il software che soddisfa queste richieste si chiama <Tooltip def="Database Management System: il programma che conserva i dati e risponde alle domande su di essi al posto del tuo codice.">DBMS</Tooltip>, ed è l'argomento di questo intero volume.
+
+:::history[Un database per andare sulla Luna]
+
+Uno dei primi DBMS, IMS, nasce nel 1966 per il programma Apollo, da un gruppo di IBM, North American Rockwell e Caterpillar: doveva tenere la distinta dei componenti del razzo Saturn V. Viene installato nel 1968, e IBM lo sviluppa ancora oggi.
+
+:::
 
 ## In sintesi
 

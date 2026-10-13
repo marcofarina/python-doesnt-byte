@@ -1,0 +1,33 @@
+---
+unlisted: true
+title: Avanzamento del volume — pagina di test
+description: Sandbox della barra di avanzamento dei volumi a percentuali diverse
+---
+
+# Avanzamento del volume — sandbox di test
+
+Pagina di verifica di `<AvanzamentoVolume>`. Non è linkata dalla sidebar
+(`unlisted: true`). Le barre qui sotto forzano il numero di lezioni pubblicate
+con la prop `pubblicate`; nelle introduzioni dei volumi il numero viene dalla TOC.
+
+## Dati reali
+
+<AvanzamentoVolume volume="archivista" previste={64} />
+
+## Percentuali forzate
+
+<AvanzamentoVolume volume="programmatore" previste={49} pubblicate={0} />
+
+<AvanzamentoVolume volume="archivista" previste={64} pubblicate={3} />
+
+<AvanzamentoVolume volume="artefice" previste={21} pubblicate={6} />
+
+<AvanzamentoVolume volume="programmatore" previste={49} pubblicate={25} />
+
+<AvanzamentoVolume volume="archivista" previste={64} pubblicate={45} />
+
+<AvanzamentoVolume volume="artefice" previste={21} pubblicate={18} />
+
+<AvanzamentoVolume volume="programmatore" previste={49} pubblicate={48} />
+
+<AvanzamentoVolume volume="archivista" previste={64} pubblicate={64} />

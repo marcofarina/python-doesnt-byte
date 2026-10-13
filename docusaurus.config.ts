@@ -135,6 +135,7 @@ export default async function createConfig(): Promise<Config> {
       './plugins/exercise-graph/index.js',
       './plugins/copy-page-md/index.js',
       './plugins/curriculum/index.js',
+      './plugins/archivio/index.js',
       [
         '@docusaurus/plugin-content-docs',
         {

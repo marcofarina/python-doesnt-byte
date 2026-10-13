@@ -1,0 +1,287 @@
+/* ─────────────── Desktop: colonna dell'indice ─────────────── */
+
+/* La colonna intera resta ferma mentre il testo scorre: pulsante e indice (o
+   pannello) stanno in un solo contenitore sticky, con le misure dell'indice
+   originale di Docusaurus (TOC/styles.module.css). */
+.rail {
+  position: sticky;
+  top: calc(var(--ifm-navbar-height) + 1rem);
+  max-height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.railAperto {
+  height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
+}
+
+/* L'indice di Docusaurus è sticky e ha già un'altezza massima sua: dentro il
+   rail scorre e basta, altrimenti si sommerebbe al pulsante e sborderebbe. */
+.indice {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.indice :global(.theme-doc-toc-desktop) {
+  position: static;
+  max-height: none;
+  overflow: visible;
+}
+
+.interruttore {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--at-border);
+  border-radius: var(--radius-sm);
+  background: var(--at-bg-subtle);
+  color: var(--at-fg);
+  font-family: var(--font-mono-ui);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.interruttore:hover {
+  background: var(--at-bg-chip);
+  border-color: var(--at-border-strong);
+}
+
+.interruttore:active {
+  transform: scale(0.98);
+}
+
+.interruttore[aria-expanded='true'] {
+  background: var(--at-accent-chip);
+  border-color: var(--at-accent-chip-border);
+  color: var(--at-accent);
+}
+
+.icona {
+  color: var(--at-accent);
+}
+
+.etichetta {
+  font-weight: 600;
+}
+
+.conta {
+  color: var(--at-muted);
+}
+
+.interruttore[aria-expanded='true'] .conta {
+  color: inherit;
+}
+
+.freccia {
+  margin-left: auto;
+  font-size: 0.75em;
+  color: var(--at-muted);
+  transition: transform var(--dur-normal) var(--ease-smooth);
+}
+
+.interruttore[aria-expanded='true'] .freccia {
+  transform: rotate(180deg);
+  color: inherit;
+}
+
+.pannello {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  border: 1px solid var(--at-border);
+  border-radius: var(--radius-md);
+  background: var(--at-bg-panel);
+  box-shadow: var(--shadow-card);
+}
+
+/* ─────────────── Contenuto comune ─────────────── */
+
+.schede {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  background: var(--at-bg-chip);
+  overflow-x: auto;
+  flex: 0 0 auto;
+}
+
+.scheda {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--at-muted);
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.scheda:hover {
+  color: var(--at-fg);
+}
+
+.schedaAttiva {
+  background: var(--at-bg);
+  color: var(--at-fg-strong);
+  box-shadow: var(--shadow-card);
+}
+
+.file {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0.5rem;
+  overflow: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* Il blocco di codice riempie il pannello: niente margine né ombra sua, testo
+   più piccolo, e le righe lunghe vanno a capo invece di scorrere di lato. */
+.file :global(.theme-code-block) {
+  --ifm-code-font-size: 11px;
+  margin: 0;
+  box-shadow: none;
+}
+
+.file :global(.theme-code-block code) {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Rientro sospeso: il seguito di una riga spezzata resta dentro il record,
+   invece di ripartire dal margine. */
+.file :global(.token-line) {
+  padding-left: 4ch;
+  text-indent: -4ch;
+}
+
+.lim {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  margin-top: 0.5rem;
+  padding: 0.25rem;
+  color: var(--at-accent);
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+}
+
+.lim:hover {
+  color: var(--at-accent-soft);
+}
+
+/* ─────────────── Telefono ─────────────── */
+
+/* In basso a sinistra: a destra c'è il «torna su» di Docusaurus. */
+.flottante {
+  position: fixed;
+  left: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: calc(var(--ifm-z-index-fixed) - 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--at-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--at-bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow-elevated);
+  color: var(--at-fg);
+  font-family: var(--font-mono-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.flottante svg {
+  color: var(--at-accent);
+}
+
+.flottante:active {
+  transform: scale(0.98);
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: calc(var(--ifm-z-index-fixed) - 1);
+  height: 50vh;
+  height: 50dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--at-border-strong);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: var(--at-bg);
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(100%);
+  visibility: hidden;
+  /* Chiuso: prima scende, poi sparisce (anche per il lettore di schermo e
+     per il Tab). Aperto: visibile subito, poi sale. */
+  transition:
+    transform var(--dur-slow) var(--ease-smooth),
+    visibility 0s linear var(--dur-slow);
+}
+
+.sheetAperto {
+  transform: none;
+  visibility: visible;
+  transition:
+    transform var(--dur-slow) var(--ease-smooth),
+    visibility 0s;
+}
+
+.testata {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.titolo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--at-fg);
+}
+
+.chiudi {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0;
+  border-radius: var(--radius-circle);
+  background: var(--at-bg-chip);
+  color: var(--at-fg);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.chiudi:active {
+  transform: scale(0.98);
+}

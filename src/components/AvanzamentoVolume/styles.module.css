@@ -1,0 +1,188 @@
+/*
+ * Barra di avanzamento del volume. Le grandezze che crescono con la
+ * percentuale arrivano come variabili dal componente (--p, --fill, --grad,
+ * --h, --speed, --glow, --glow-alpha); qui c'è solo come usarle.
+ */
+
+.card {
+  --vc: var(--at-accent);
+  margin: 1.5rem 0 2rem;
+  padding: 1.1rem 1.25rem 1rem;
+  border: 1px solid var(--at-border);
+  border-radius: var(--radius-md);
+  background: var(--at-bg-panel);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.7rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.count strong {
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--at-fg-strong);
+}
+
+.of {
+  margin-left: 0.4rem;
+  font-size: 1rem;
+  color: var(--at-muted);
+}
+
+.percent {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--vc);
+}
+
+.hot .percent,
+.done .percent {
+  background-image: var(--grad);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: scorre var(--speed) linear infinite;
+}
+
+.track {
+  position: relative;
+  height: var(--h);
+  border-radius: var(--radius-pill);
+  background: var(--at-bg-chip);
+  box-shadow: inset 0 0 0 1px var(--at-border);
+  will-change: transform;
+}
+
+.fill {
+  position: relative;
+  height: 100%;
+  width: var(--fill);
+  min-width: var(--h);
+  border-radius: inherit;
+  background-image: var(--grad);
+  background-size: 200% 100%;
+  box-shadow: 0 0 var(--glow)
+    color-mix(in srgb, var(--vc) var(--glow-alpha), transparent);
+  animation: scorre var(--speed) linear infinite;
+  overflow: hidden;
+}
+
+/* Strisce di energia che corrono sopra il gradiente: compaiono oltre il 30%. */
+.fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.28) 0 6px,
+    transparent 6px 16px
+  );
+  background-size: 34px 100%;
+  opacity: clamp(0, calc((var(--p) - 0.3) * 1.4), 0.8);
+  animation: strisce calc(var(--speed) / 3) linear infinite;
+  mix-blend-mode: overlay;
+}
+
+/* La scintilla in testa alla barra: visibile solo quando la barra è calda. */
+.spark {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: calc(var(--h) * 1.1);
+  height: calc(var(--h) * 1.1);
+  border-radius: var(--radius-circle);
+  background: radial-gradient(circle, #fff 0 25%, transparent 70%);
+  transform: translate(35%, -50%);
+  opacity: 0;
+}
+
+.hot .spark {
+  opacity: 1;
+  animation: pulsa 0.6s var(--ease-smooth) infinite alternate;
+}
+
+.hot .fill {
+  filter: saturate(1.25);
+}
+
+.done .fill {
+  animation:
+    scorre 1.6s linear infinite,
+    respira 2.2s var(--ease-smooth) infinite alternate;
+}
+
+.done .spark {
+  opacity: 0;
+}
+
+.caption {
+  margin-top: 0.7rem;
+  font-size: 0.85rem;
+  color: var(--at-muted);
+}
+
+@keyframes scorre {
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes strisce {
+  to {
+    background-position: 34px 0;
+  }
+}
+
+@keyframes pulsa {
+  from {
+    transform: translate(35%, -50%) scale(0.8);
+  }
+  to {
+    transform: translate(35%, -50%) scale(1.25);
+  }
+}
+
+@keyframes respira {
+  from {
+    box-shadow: 0 0 12px color-mix(in srgb, var(--vc) 45%, transparent);
+  }
+  to {
+    box-shadow:
+      0 0 28px color-mix(in srgb, #db2777 55%, transparent),
+      0 0 48px color-mix(in srgb, #7c3aed 35%, transparent);
+  }
+}
+
+/* Accenti per volume, come in ChapterIndex. */
+.accent_blue {
+  --vc: #1d68e1;
+}
+.accent_pink {
+  --vc: #d946a0;
+}
+.accent_amber {
+  --vc: #d97706;
+}
+.accent_green {
+  --vc: #16a34a;
+}
+html[data-theme='dark'] .accent_blue {
+  --vc: #75a3ed;
+}
+html[data-theme='dark'] .accent_pink {
+  --vc: #f0a8d4;
+}
+html[data-theme='dark'] .accent_amber {
+  --vc: #f5b860;
+}
+html[data-theme='dark'] .accent_green {
+  --vc: #6ed699;
+}
