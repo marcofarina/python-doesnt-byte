@@ -23,7 +23,7 @@ export interface Donor {
 
 export const V4V_GOALS = {
   currency: '€',
-  raised: 4, // PLACEHOLDER
+  raised: 5, // PLACEHOLDER
   year: 2026,
   costNote:
     'Il sito è ospitato gratis su GitHub Pages: restano il dominio e gli strumenti con cui sviluppo e aggiorno il libro (sì, anche l’assistente AI che mi dà una mano). Ogni traguardo sblocca qualcosa di concreto.',
@@ -53,6 +53,7 @@ export const V4V_GOALS = {
 export const V4V_DONORS: Donor[] = [
   { name: 'Thomas A.', tier: 1 },
   { name: 'Maggy B.', tier: 1 },
+  { name: 'Daniele P.', tier: 1 },
 ];
 
 // Metodi di donazione.
