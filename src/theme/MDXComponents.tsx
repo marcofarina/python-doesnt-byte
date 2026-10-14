@@ -29,6 +29,7 @@ import AssignedExercises from '@site/src/components/AssignedExercises';
 import FileArchivio from '@site/src/components/FileArchivio';
 import Esito from '@site/src/components/Esito';
 import AvanzamentoVolume from '@site/src/components/AvanzamentoVolume';
+import DiagrammaER from '@site/src/components/DiagrammaER';
 
 export default {
   ...MDXComponents,
@@ -58,4 +59,5 @@ export default {
   FileArchivio,
   Esito,
   AvanzamentoVolume,
+  DiagrammaER,
 };

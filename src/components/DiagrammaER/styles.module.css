@@ -8,8 +8,11 @@
 
 .figura {
   margin: 1.75rem 0;
-  display: flex;
-  justify-content: center;
+  display: block;
+  /* La figura scorre dentro di sé quando la colonna è più stretta del minimo
+     leggibile (vedi minWidth in index.tsx): la pagina no. */
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 /* Niente oklch qui: gotcha P3 (override dark su html[data-theme]). */
@@ -18,10 +21,11 @@
   --er-fondo-entita: #f3f5f9;
   --er-fondo-assoc: #f3f5f9;
   --er-fondo-pagina: var(--ifm-background-color);
+  display: block;
+  margin: 0 auto;
   width: 100%;
   height: auto;
   color: var(--er-tratto);
-  overflow: visible;
 }
 
 :global(html[data-theme='dark']) .diagramma {
@@ -42,6 +46,10 @@
   stroke: none;
 }
 
+.linea.tratto {
+  stroke-width: 1.5;
+}
+
 .entita.fill {
   fill: var(--er-fondo-entita);
 }
@@ -50,26 +58,39 @@
   fill: var(--er-fondo-assoc);
 }
 
-.pallino.fill {
+.pallino.fill,
+.ellisse.fill {
   fill: var(--er-fondo-pagina);
 }
 
-.pallinoPieno.fill {
+.pallinoPieno.fill,
+.freccia.fill {
   fill: currentColor;
 }
 
 .testo {
   font-family: 'Excalifont', 'Virgil', 'Comic Sans MS', cursive;
+  font-weight: 400;
   fill: currentColor;
 }
 
-.testoEntita,
-.testoAssoc,
-.testoAttr,
-.testoCard {
-  font-weight: 400;
-}
+/* Stampa: tratto nero, fondi bianchi, mai lo scroll interno. */
+@media print {
+  .figura {
+    overflow: visible;
+    break-inside: avoid;
+    /* Anche se la pagina è in tema scuro: il tratto nero resta leggibile. */
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 
-.linea {
-  stroke-width: 1.5;
+  .diagramma,
+  :global(html[data-theme='dark']) .diagramma {
+    --er-tratto: #000;
+    --er-fondo-entita: #fff;
+    --er-fondo-assoc: #fff;
+    --er-fondo-pagina: #fff;
+    min-width: 0 !important;
+  }
 }
