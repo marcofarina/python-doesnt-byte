@@ -1,0 +1,75 @@
+/* Excalifont (Excalidraw, licenza OFL), frammento latino: alfabeto,
+   accentate italiane e virgolette curve. Self-hosted come gli altri font. */
+@font-face {
+  font-family: 'Excalifont';
+  src: url('./Excalifont-Regular-latin.woff2') format('woff2');
+  font-display: swap;
+}
+
+.figura {
+  margin: 1.75rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Niente oklch qui: gotcha P3 (override dark su html[data-theme]). */
+.diagramma {
+  --er-tratto: #1f2328;
+  --er-fondo-entita: #f3f5f9;
+  --er-fondo-assoc: #f3f5f9;
+  --er-fondo-pagina: var(--ifm-background-color);
+  width: 100%;
+  height: auto;
+  color: var(--er-tratto);
+  overflow: visible;
+}
+
+:global(html[data-theme='dark']) .diagramma {
+  --er-tratto: #e6e8ee;
+  --er-fondo-entita: #262b36;
+  --er-fondo-assoc: #262b36;
+}
+
+.tratto {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fill {
+  stroke: none;
+}
+
+.entita.fill {
+  fill: var(--er-fondo-entita);
+}
+
+.associazione.fill {
+  fill: var(--er-fondo-assoc);
+}
+
+.pallino.fill {
+  fill: var(--er-fondo-pagina);
+}
+
+.pallinoPieno.fill {
+  fill: currentColor;
+}
+
+.testo {
+  font-family: 'Excalifont', 'Virgil', 'Comic Sans MS', cursive;
+  fill: currentColor;
+}
+
+.testoEntita,
+.testoAssoc,
+.testoAttr,
+.testoCard {
+  font-weight: 400;
+}
+
+.linea {
+  stroke-width: 1.5;
+}

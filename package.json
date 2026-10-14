@@ -50,6 +50,7 @@
     "qrcode.react": "^4.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "roughjs": "^4.6.6",
     "sql.js": "^1.14.1"
   },
   "devDependencies": {
