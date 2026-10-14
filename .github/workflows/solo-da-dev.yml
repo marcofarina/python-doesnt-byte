@@ -1,0 +1,28 @@
+name: Solo da dev
+
+# Le pull request verso main sono ammesse solo se arrivano dal branch dev
+# dello stesso repository (la release). Le altre vanno aperte verso dev.
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, synchronize, edited]
+
+jobs:
+  solo-da-dev:
+    name: Solo da dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verifica il branch di origine
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          if [ "$HEAD_REF" = "dev" ] && [ "$HEAD_REPO" = "$BASE_REPO" ]; then
+            echo "OK: release da dev."
+          else
+            echo "::error::Le pull request verso main arrivano solo da dev. Cambia la base della pull request in dev."
+            exit 1
+          fi
