@@ -1,14 +1,16 @@
 ---
 unlisted: true
-title: Archivio — pagina di test
-description: Sandbox di verifica del pannello Archivio (file del volume accanto al testo) e della pagina della LIM
+title: Archivio e Database — pagina di test
+description: Sandbox di verifica dei pannelli Archivio (file del volume accanto al testo, pagina della LIM) e Database (le tabelle dopo l'ultimo blocco SQL eseguito)
 archivio: [punti.json, studenti.json]
+database: archivista/registro-punti
 ---
 
-# Archivio — sandbox di test
+# Archivio e Database — sandbox di test
 
-Pagina di verifica del pannello «Archivio». Non è linkata dalla sidebar
-(`unlisted: true`). Il frontmatter dichiara `archivio: [punti.json, studenti.json]`.
+Pagina di verifica dei pannelli «Archivio» e «Database». Non è linkata dalla
+sidebar (`unlisted: true`). Il frontmatter dichiara `archivio: [punti.json,
+studenti.json]` e `database: archivista/registro-punti`.
 
 Cosa controllare:
 
@@ -27,6 +29,96 @@ Il blocco qui sotto legge `punti.json` dallo stesso posto da cui lo prende il
 pannello: se i due testi non coincidono, la fonte unica si è rotta.
 
 <FileArchivio nome="punti.json" />
+
+## Il pannello Database
+
+Piano `pm/piano-2026-10-pannello-database.md`. Cosa controllare:
+
+- **Desktop:** sotto «Archivio» c'è il pulsante «Database». Si apre un pannello alla
+  volta; chiusi entrambi torna l'indice. Aperto prima di ogni run, il pannello dice
+  «Stato iniziale» e mostra le tabelle del seed.
+- **Dopo un run:** il pannello mostra le tabelle come le ha lasciate l'ultimo blocco
+  eseguito, con il suo nome in testa (cliccandolo si torna al blocco), e passa alla
+  prima tabella cambiata. Righe nuove, modificate (cella cambiata marcata) e tolte
+  (barrate, in coda).
+- **Pannello chiuso:** un run che scrive accende il pallino sul pulsante, con
+  l'`aria-label` «N modifiche da vedere»; aprendo il pannello il pallino sparisce.
+- **Al caricamento:** il blocco `hideQuery` qui sotto gira da solo e non tocca il
+  pannello.
+- **Telefono:** il pulsante flottante apre un pannello con due schede, «Archivio» e
+  «Database», e porta il pallino.
+- **Fra le pagine:** andando su un'altra pagina e tornando qui, il pannello riparte
+  da «Stato iniziale».
+
+```sql live dataset=archivista/registro-punti hideQuery
+SELECT nome, casa FROM studente WHERE anno = 3;
+```
+
+### Una riga nuova
+
+```sql live dataset=archivista/registro-punti title="Una riga nuova"
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Harry Potter', 10, 'Silente');
+```
+
+### Una riga modificata
+
+```sql live dataset=archivista/registro-punti title="Una riga modificata"
+UPDATE assegnazione SET punti = 20 WHERE id = 9;
+```
+
+### Righe tolte
+
+```sql live dataset=archivista/registro-punti title="Righe tolte"
+DELETE FROM assegnazione WHERE professore = 'Piton';
+```
+
+### Errore a metà
+
+La prima istruzione resta scritta, la seconda fallisce: il pannello dice «finito
+con un errore» e mostra Lupin fra i professori.
+
+```sql live dataset=archivista/registro-punti title="Errore a metà"
+INSERT INTO professore (nome) VALUES ('Lupin');
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Nessuno', 1, 'Lupin');
+```
+
+### Tabella creata e tabella tolta
+
+```sql live dataset=archivista/registro-punti title="CREATE e DROP"
+CREATE TABLE casa (nome TEXT PRIMARY KEY, fondatore TEXT);
+INSERT INTO casa VALUES
+    ('Grifondoro', 'Godric Grifondoro'),
+    ('Serpeverde', 'Salazar Serpeverde');
+DROP TABLE assegnazione;
+```
+
+### Stateful
+
+Eseguito due volte, alla seconda è nuova solo la riga del secondo run.
+
+```sql live dataset=archivista/registro-punti stateful title="Stateful"
+INSERT INTO assegnazione (studente, punti, professore)
+VALUES ('Ron Weasley', 1, 'McGonagall');
+```
+
+### Senza titolo e senza modifiche
+
+Il pannello lo chiama «blocco N», dalla sua posizione fra i blocchi SQL della pagina
+(il blocco `hideQuery` conta).
+
+```sql live dataset=archivista/registro-punti
+SELECT count(*) AS assegnazioni FROM assegnazione;
+```
+
+### Un altro dataset
+
+Il pannello mostra comunque l'ultimo blocco eseguito e nomina il dataset in testa.
+
+```sql live dataset=archivista/biblioteca title="La biblioteca"
+INSERT INTO autori (nome, paese) VALUES ('Bathilda Bath', 'Regno Unito');
+```
 
 ## Testo per far scorrere la pagina
 
