@@ -1,0 +1,299 @@
+---
+title: Entità e attributi
+sidebar_label: Entità e attributi
+sidebar_position: 5
+description: Che cosa diventa un’entità e che cosa resta un attributo non è una questione di gusto, lo decidono le domande a cui il database deve rispondere. Lo vediamo sulle case di Hogwarts, prima scritte dentro ogni studente e poi registrate per conto loro.
+archivio: [studenti.json, case.json]
+database: archivista/casa-attributo
+---
+
+# Entità e attributi
+
+<Epigraph author="G. E. P. Box, Robustness in the Strategy of Scientific Model Building (1979)">
+
+All models are wrong but some are useful.
+
+</Epigraph>
+
+Le tre tabelle della lezione precedente sono arrivate già pronte, con le colonne decise. Prima che esistessero, qualcuno ha stabilito che il registro dei punti avesse bisogno di tre tabelle e non di due o di cinque, e che la casa fosse una colonna della tabella `studente`. Questo capitolo si occupa di quella decisione, che viene prima delle tabelle: quali cose il database deve conservare, e che cosa deve conservare di ciascuna.
+
+La parte di mondo di cui un database conserva i dati si chiama **dominio**: per il registro dei punti, il dominio è Hogwarts, con i suoi studenti, le sue case e i suoi professori. Un **modello concettuale** è la descrizione di un dominio che stabilisce quali cose vanno registrate, quali informazioni conservare su ciascuna e come le cose sono legate fra loro, senza ancora dire come i dati saranno memorizzati.
+
+Il modello concettuale più usato è il **modello Entità-Associazione** (in inglese _Entity-Relationship_, da cui la sigla E/R), che descrive il dominio con entità, attributi e associazioni, e lo disegna in un diagramma. L'inglese _relationship_ in italiano si può tradurre anche con "relazione", ma in questo libro diciamo "associazione": nel capitolo 3 la parola "relazione" sarà il nome tecnico della tabella.
+
+:::prereq
+
+- La tabella `studente` del registro dei punti, con nome, casa e anno (lezione precedente)
+- La ridondanza e le anomalie di inserimento, aggiornamento e cancellazione (seconda lezione del capitolo 1)
+- Leggere un'istruzione al DBMS come una frase, senza conoscerne ancora la sintassi (lezione precedente)
+
+:::
+
+:::learn
+
+- Spiegare che cos'è un modello concettuale e di quali elementi è fatto un modello E/R
+- Decidere se una cosa del dominio è un'entità o un attributo, motivando la scelta con le domande a cui il database deve rispondere
+- Riconoscere i due errori opposti: l'entità nascosta in un gruppo di attributi e l'entità che non aggiunge informazione
+- Disegnare un'entità con i suoi attributi, compresi quelli composti e opzionali, e riconoscere un attributo derivato
+
+:::
+
+## Una casa che è solo un nome
+
+Nella tabella `studente` della lezione precedente la casa è una colonna di testo: per il database Grifondoro è la parola `Grifondoro`, scritta accanto al nome di ogni studente della casa. Finché le domande riguardano gli studenti, una parola basta. Ora la professoressa McGonagall chiede di registrare anche i colori e l'animale dello stemma di ogni casa, che servono per gli stendardi del banchetto di fine anno.
+
+Con le tabelle che abbiamo, l'unico posto in cui scrivere colori e animale è la tabella `studente`, con due colonne nuove: `colori_casa` e `animale_casa`. Chiamiamo questa la prima versione delle tabelle. Il blocco qui sotto mostra la tabella `studente` con le due colonne aggiunte; la query è nascosta, come nella lezione precedente.
+
+```sql live dataset=archivista/casa-attributo hideQuery
+SELECT * FROM studente;
+```
+
+I colori di Grifondoro, `rosso e oro`, sono scritti sei volte, una per ogni studente della casa, e il leone altrettante. È la ridondanza della seconda lezione del capitolo 1: per cambiare i colori di Grifondoro bisogna correggere sei righe, e una riga dimenticata basta a dare alla casa due coppie di colori.
+
+C'è anche un difetto meno visibile. Padma Patil è l'unica studentessa di Corvonero nella tabella. Il blocco qui sotto contiene due istruzioni, che si leggono come frasi: cancella (`DELETE`) dalla tabella `studente` la riga in cui il nome è `Padma Patil`; poi elenca casa, colori e animale che compaiono nella tabella `studente`, ogni combinazione una volta sola (`DISTINCT`). Prima di eseguire il blocco, prova a prevedere quante case elenca la seconda istruzione.
+
+```sql live dataset=archivista/casa-attributo title="La tabella studente senza Padma Patil"
+DELETE FROM studente WHERE nome = 'Padma Patil';
+SELECT DISTINCT casa, colori_casa, animale_casa FROM studente;
+```
+
+<Spoiler block>
+
+Le case elencate sono tre: Grifondoro, Serpeverde e Tassofrasso. Corvonero è sparita insieme a Padma, e al prossimo smistamento il Cappello Parlante avrebbe una casa in meno fra cui scegliere. Con Corvonero sono spariti anche i colori blu e bronzo e l'aquila, che stavano solo nella riga di Padma.
+
+</Spoiler>
+
+Nessuna istruzione ha cancellato Corvonero. Il problema è che nella tabella `studente` una casa non ha un posto suo: esiste finché almeno uno studente la nomina. È l'anomalia di cancellazione della seconda lezione del capitolo 1, e anche allora c'era di mezzo Padma, che a quanto pare non riesce a uscire dall'archivio senza portarsi via qualcuno: con la sua unica assegnazione era sparito Flitwick. Per lo stesso motivo una casa senza studenti non si può registrare, ed è l'anomalia di inserimento.
+
+Nel pannello "Database" della colonna di destra la riga di Padma compare segnata come tolta. Come nella lezione precedente, ogni blocco di istruzioni riparte comunque dalle tabelle iniziali.
+
+## La casa come entità
+
+Colori e animale sono informazioni sulla casa, e le abbiamo messe nella tabella `studente`: ogni riga della tabella `studente` adesso parla di due cose diverse, lo studente e la sua casa. Nella seconda versione delle tabelle la casa ha una tabella propria, `casa`, con nome, colori e animale, mostrata qui sotto. La tabella `studente` torna ad avere nome, casa e anno, e nella colonna `casa` c'è soltanto il nome, che rimanda a una riga della tabella `casa`.
+
+```sql live dataset=archivista/casa-entita hideQuery
+SELECT * FROM casa;
+```
+
+I colori di Grifondoro adesso sono scritti una volta sola. Il blocco qui sotto esegue sulla seconda versione la stessa cancellazione di prima, e poi elenca la tabella `casa`.
+
+```sql live dataset=archivista/casa-entita title="Lo stesso DELETE sulla seconda versione"
+DELETE FROM studente WHERE nome = 'Padma Patil';
+SELECT * FROM casa;
+```
+
+Le case restano quattro. Corvonero è una riga della tabella `casa`, e la riga di Padma nella tabella `studente` la nominava soltanto: cancellando Padma, Corvonero non perde niente. Anche una casa ancora senza studenti si può registrare, con una riga nella tabella `casa`.
+
+Nella seconda versione la casa è un'entità; nella prima era un attributo dello studente.
+
+:::definition[Entità e attributo]
+
+Un'**entità** è un insieme di oggetti del dominio che hanno le stesse proprietà ed esistono per conto proprio, indipendentemente dagli altri oggetti: gli studenti, le case. Ogni singolo oggetto, come Corvonero, è un'**occorrenza** dell'entità.
+
+Un **attributo** è una proprietà di un'entità, che per ogni occorrenza ha un valore: il nome e l'anno di uno studente, i colori e l'animale di una casa.
+
+:::
+
+Se hai già scritto classi in Python, la coppia entità e occorrenza ti ricorda la coppia classe e istanza, con una differenza: un'entità ha attributi e nessun metodo. Che cosa fare con i dati lo stabilisce chi scrive i programmi che usano il database.
+
+La casa è diventata un'entità per due motivi, e sono anche il criterio per decidere. Chi usa il database vuole sapere della casa qualcosa oltre al nome: i colori e l'animale. Inoltre una casa esiste anche senza studenti: Corvonero resta una casa di Hogwarts anche quando Padma non c'è più. Una cosa che soddisfa queste due condizioni è un'entità; una cosa di cui interessa soltanto il valore è un attributo. Il criterio quindi dipende dalle domande a cui il database deve rispondere, e non dalla cosa in sé. Nel registro dei punti del capitolo 1 nessuno chiedeva i colori delle case, e la casa come colonna di testo andava bene: è diventata una scelta sbagliata quando McGonagall ha fatto una domanda nuova.
+
+Resta la colonna `casa` della tabella `studente`, che collega ogni studente alla sua casa. Nel modello E/R quel collegamento non è un attributo dello studente: è un'associazione fra due entità, e la vedremo nella prossima lezione.
+
+:::history[Peter Chen, 1976]
+
+Il modello E/R è stato proposto da Peter Chen, allora al MIT, nell'articolo _The Entity-Relationship Model — Toward a Unified View of Data_, uscito nel marzo 1976 sul primo numero della rivista _ACM Transactions on Database Systems_. Chen lo presentava come una base comune ai modelli dei dati dell'epoca, e insieme al modello introduceva il diagramma: un rettangolo per ogni insieme di entità, un rombo per ogni associazione. Nei diagrammi di quell'articolo gli attributi non compaiono: i cerchi che useremo più avanti in questa lezione sono un'aggiunta successiva.
+
+:::
+
+## L'errore opposto
+
+Il criterio non dice di fare di ogni cosa un'entità. Proviamo con l'anno di corso. Potremmo dargli una tabella propria, `anno`, con una sola colonna `numero` e le righe da 1 a 7, e nella tabella `studente` la colonna `anno` rimanderebbe a una di quelle righe. Le tabelle funzionano, ma la tabella `anno` non contiene niente che la colonna `anno` di `studente` non contenesse già: aggiunge una tabella da tenere aggiornata, sette righe che cambieranno solo il giorno in cui Hogwarts aprirà un ottavo anno, e nessuna informazione. Di un anno di corso, in questo dominio, interessa soltanto il numero: l'anno è un attributo dello studente.
+
+In un altro dominio la stessa cosa può diventare un'entità. Nel registro di una scuola italiana la classe di uno studente, per esempio la 3A, è un attributo finché interessa solo la sigla; se la scuola vuole sapere anche l'aula e il coordinatore di ogni classe, la classe diventa un'entità. Nessun modello registra tutto di un dominio: il nostro non dice niente dei fondatori delle case né dei loro fantasmi. È il senso della frase di Box in cima alla pagina: un modello è utile se risponde alle domande per cui è stato costruito.
+
+:::warning[Due segnali da riconoscere]
+
+- <Esito ok={false} /> `colori_casa` e `animale_casa` come colonne di `studente` → due attributi con la stessa parte di nome descrivono un'altra cosa, la casa: è un'entità nascosta.
+- <Esito ok={false} /> un'entità `anno` con il solo attributo `numero` → un'entità con un solo attributo è probabilmente un attributo di un'altra entità.
+- <Esito /> l'entità `casa` con nome, colori e animale, e l'entità `studente` con nome e anno.
+
+:::
+
+Sono segnali, non regole: un'entità con un solo attributo può servire, se esiste per conto proprio e se chi usa il database ne vorrà sapere altro.
+
+Il direttore di una casa, per esempio McGonagall per Grifondoro, non ricade in nessuno dei due segnali. Il direttore non è un attributo della casa, perché è un professore, e di un professore interessano il nome, la materia e i punti che assegna. Non serve nemmeno un'entità nuova, perché nel registro dei punti la tabella `professore` c'è già. Il direttore è un legame fra due entità che esistono già, la casa e il professore: è un'associazione, ed è l'argomento della prossima lezione.
+
+## Disegnare entità e attributi
+
+Un modello E/R si disegna. Nei diagrammi di questo libro un'entità è un rettangolo con il nome al centro, e un attributo è un segmento che esce dal rettangolo e finisce in un piccolo cerchio, con il nome accanto. Prima di disegnare lo studente servono due decisioni.
+
+La prima riguarda il nome. Nella tabella `studente` il nome è un solo testo, `Fred Weasley`. Se il database deve rispondere alla domanda "quanti Weasley ci sono a Hogwarts?", un solo testo non basta: per contare i Weasley bisognerebbe tagliare ogni nome dopo lo spazio. Nel file `studenti.json`, che trovi nel pannello "Archivio", i Weasley sono tre: Ron, Fred e George. Negli anni da Hogwarts passano anche Percy e Ginny, e prima di loro Bill e Charlie: con i Weasley la domanda non è mai oziosa. Perché il conto si faccia senza tagliare i testi, il cognome deve essere un dato a sé.
+
+Un **attributo composto** è un attributo formato da più parti, ognuna con un significato proprio: il nominativo di uno studente, cioè il nome completo, è formato da nome e cognome. Se nessuno chiedesse dei cognomi, il nominativo potrebbe restare un solo testo.
+
+La seconda riguarda le informazioni che non tutti hanno. Supponiamo di voler registrare il Patronus di ogni studente. Harry evoca il suo, un cervo, al terzo anno, e quasi nessuno studente del primo anno ne ha uno: al primo anno si fatica già a far volare una piuma. Un **attributo opzionale** è un attributo che per alcune occorrenze può non avere un valore. Nel diagramma un attributo opzionale porta il segno `(0,1)` accanto al nome: il primo numero è il minimo dei valori che può avere, il secondo il massimo, quindi nessun valore oppure uno. Nelle tabelle il valore che manca ha un nome e un comportamento tutto suo, `NULL`, e lo vedremo nella lezione "Il valore che non c'è", nel capitolo 3.
+
+Il diagramma qui sotto mostra le due entità di questa lezione, con l'attributo composto `nominativo` disegnato come un'ellisse da cui escono le sue parti.
+
+<DiagrammaER
+  titolo="Le entità studente e casa con i loro attributi"
+  descrizione="L'entità studente ha l'attributo composto nominativo, formato da nome e cognome, l'attributo anno e l'attributo opzionale patronus (0,1). L'entità casa ha gli attributi nome, colori e animale. Nessun attributo è segnato come identificatore e le due entità non sono collegate."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: [
+        { nome: 'nominativo', componenti: ['nome', 'cognome'], lato: 'sopra' },
+        { nome: 'anno', lato: 'sotto' },
+        { nome: 'patronus', card: '(0,1)', lato: 'sotto' },
+      ],
+    },
+    {
+      id: 'casa',
+      col: 0,
+      riga: 1,
+      attributi: ['nome', 'colori', 'animale'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  cella={[280, 200]}
+/>
+
+Nel diagramma mancano due cose. La colonna `casa` non compare fra gli attributi di `studente`, e le due entità non sono collegate: il legame fra uno studente e la sua casa è un'associazione, e il rombo che la disegna arriva nella prossima lezione. Inoltre tutti i cerchi sono vuoti. Un cerchio pieno segna l'attributo che distingue un'occorrenza da tutte le altre, e quale attributo distingua davvero uno studente è il problema lasciato aperto nella lezione precedente: lo risolveremo più avanti in questo capitolo, nella lezione "Identificare senza ambiguità: le chiavi".
+
+:::warning[Il totale dei punti non è un attributo della casa]
+
+Il totale dei punti di una casa sembra un'informazione sulla casa, ma si calcola dalle assegnazioni, con la query della lezione precedente. Un **attributo derivato** è un attributo il cui valore si può calcolare da altri dati del database.
+
+- <Esito ok={false} /> `totale_punti` come attributo di `casa` → una seconda copia delle assegnazioni, da aggiornare a ogni punto dato o tolto: il giorno in cui un programma lo dimentica, il totale e le assegnazioni si contraddicono.
+- <Esito /> il totale calcolato con una query quando serve → è sempre la somma delle assegnazioni.
+
+:::
+
+Un attributo derivato è ridondanza con un'altra forma. Per questo nei diagrammi di questo libro gli attributi derivati non compaiono: quando servono, si calcolano.
+
+:::nutshell
+
+- Il dominio è la parte di mondo di cui un database conserva i dati; il modello concettuale stabilisce quali cose registrare e che cosa conservare di ciascuna, prima delle tabelle.
+- Il modello E/R descrive il dominio con entità, attributi e associazioni, e lo disegna in un diagramma.
+- Un'entità è un insieme di oggetti con le stesse proprietà e un'esistenza propria; un attributo è una proprietà che per ogni occorrenza ha un valore.
+- Una cosa è un'entità quando interessa sapere altro di lei oltre al nome e quando esiste anche senza le altre. Lo decidono le domande a cui il database deve rispondere, non la cosa.
+- Attributi con la stessa parte di nome indicano un'entità nascosta; un'entità con un solo attributo è probabilmente un attributo. Sono segnali, non regole.
+- Un attributo composto è formato da parti con un significato proprio; un attributo opzionale può non avere un valore e si segna con `(0,1)`.
+- Un attributo derivato si calcola da altri dati: memorizzarlo crea una seconda copia, e per questo nei nostri diagrammi non compare.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Un testo descrive il dominio così: "A Hogwarts ogni studente ha un nome e frequenta un anno di corso, dal primo al settimo." Un compagno disegna tre entità: `studente`, `nome` e `anno`. Che cosa non va?
+  </QuizQuestion>
+
+  <QuizOption>
+    Niente: ogni sostantivo del testo è un'entità.
+    <QuizFeedback>
+      Un sostantivo indica al più un candidato. Del nome e dell'anno il testo registra soltanto il valore, e nessuno dei due ha proprietà proprie: sono attributi.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Nome e anno sono valori che appartengono allo studente, e di loro non interessa altro: sono attributi di `studente`.
+    <QuizFeedback>
+      Esatto. Un'entità serve quando interessa sapere altro della cosa oltre al suo valore. Qui l'unica cosa con proprietà proprie è lo studente.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    `anno` va bene come entità, perché lo stesso numero, da 1 a 7, compare nelle righe di molti studenti.
+    <QuizFeedback>
+      Un valore che si ripete non è un'informazione ripetuta: due studenti del primo anno hanno lo stesso numero, ma sono due fatti diversi, uno per ogni studente. Un'entità `anno` con il solo `numero` aggiunge una tabella e nessuna informazione.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Manca l'entità `Hogwarts`, che contiene tutte le altre.
+    <QuizFeedback>
+      Nel dominio c'è una scuola sola, e il testo non dice niente di lei: un'entità con una sola occorrenza e nessun attributo richiesto non registra niente.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Un database deve rispondere a una sola domanda sulle bacchette: di che legno è quella di ogni studente. Un compagno crea l'entità `bacchetta` con il solo attributo `legno`. Che cosa ne pensi?
+  </QuizQuestion>
+
+  <QuizOption>
+    Va bene, perché la bacchetta è un oggetto fisico e non una proprietà.
+    <QuizFeedback>
+      Che una cosa si possa toccare non la rende un'entità. Decidono le domande: qui della bacchetta interessa soltanto il legno.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Va bene, perché lo stesso legno compare per più studenti.
+    <QuizFeedback>
+      Un valore ripetuto non è un'informazione ripetuta. Due studenti con la bacchetta di agrifoglio non scrivono due volte la stessa informazione, ma due fatti diversi.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    In questo dominio il legno della bacchetta è un attributo dello studente: l'entità aggiunge una tabella e nessuna informazione.
+    <QuizFeedback>
+      Esatto. Un'entità con un solo attributo è il segnale dell'errore opposto. Se interessassero anche il nucleo e la lunghezza, la bacchetta avrebbe proprietà proprie e diventerebbe un'entità.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Va invertita: `legno` è l'entità e `bacchetta` il suo attributo.
+    <QuizFeedback>
+      Anche del legno interessa soltanto il nome, quindi neanche il legno ha bisogno di un'entità propria.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Un compagno propone di aggiungere all'entità `casa` l'attributo `totale_punti`, così la classifica si legge senza fare calcoli. Che cosa succede?
+  </QuizQuestion>
+
+  <QuizOption>
+    Niente di male: il totale è un'informazione sulla casa, quindi è un suo attributo.
+    <QuizFeedback>
+      Il totale riguarda la casa, ma si calcola dalle assegnazioni. Memorizzato, è una seconda copia di dati che esistono già.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Il totale è un attributo derivato: memorizzarlo crea una seconda copia, che ogni nuova assegnazione deve aggiornare.
+    <QuizFeedback>
+      Esatto. Se un programma aggiunge un'assegnazione e non aggiorna il totale, il database dà due risposte diverse alla stessa domanda: è la ridondanza del capitolo 1.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Va bene, purché il totale venga ricalcolato una volta al giorno.
+    <QuizFeedback>
+      Fra un ricalcolo e l'altro il totale e le assegnazioni si contraddicono, e la classifica che si legge è quella sbagliata. Calcolarlo quando serve elimina il problema.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il totale dovrebbe essere un'entità a parte, collegata alla casa.
+    <QuizFeedback>
+      Del totale interessa soltanto il valore, e il valore si calcola: un'entità non risolve la seconda copia, la sposta in un'altra tabella.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+La colonna `casa` della tabella `studente` e il direttore di ogni casa hanno una cosa in comune: non sono proprietà di un'entità, ma legami fra due entità. Nella prossima lezione li disegniamo con il rombo del modello E/R, e vediamo che cosa deve esprimere un'associazione.
+
+:::

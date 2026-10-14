@@ -18,4 +18,10 @@ module.exports = [
       'che-cosa-fa-un-dbms',
     ],
   },
+  {
+    type: 'category',
+    label: '2 · Modellare il dominio',
+    customProps: { capitolo: 2 },
+    items: ['entita-e-attributi'],
+  },
 ];
