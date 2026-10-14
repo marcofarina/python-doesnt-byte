@@ -1,0 +1,96 @@
+/* Excalifont (Excalidraw, licenza OFL), frammento latino: alfabeto,
+   accentate italiane e virgolette curve. Self-hosted come gli altri font. */
+@font-face {
+  font-family: 'Excalifont';
+  src: url('./Excalifont-Regular-latin.woff2') format('woff2');
+  font-display: swap;
+}
+
+.figura {
+  margin: 1.75rem 0;
+  display: block;
+  /* La figura scorre dentro di sé quando la colonna è più stretta del minimo
+     leggibile (vedi minWidth in index.tsx): la pagina no. */
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* Niente oklch qui: gotcha P3 (override dark su html[data-theme]). */
+.diagramma {
+  --er-tratto: #1f2328;
+  --er-fondo-entita: #f3f5f9;
+  --er-fondo-assoc: #f3f5f9;
+  --er-fondo-pagina: var(--ifm-background-color);
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  height: auto;
+  color: var(--er-tratto);
+}
+
+:global(html[data-theme='dark']) .diagramma {
+  --er-tratto: #e6e8ee;
+  --er-fondo-entita: #262b36;
+  --er-fondo-assoc: #262b36;
+}
+
+.tratto {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.fill {
+  stroke: none;
+}
+
+.linea.tratto {
+  stroke-width: 1.5;
+}
+
+.entita.fill {
+  fill: var(--er-fondo-entita);
+}
+
+.associazione.fill {
+  fill: var(--er-fondo-assoc);
+}
+
+.pallino.fill,
+.ellisse.fill {
+  fill: var(--er-fondo-pagina);
+}
+
+.pallinoPieno.fill,
+.freccia.fill {
+  fill: currentColor;
+}
+
+.testo {
+  font-family: 'Excalifont', 'Virgil', 'Comic Sans MS', cursive;
+  font-weight: 400;
+  fill: currentColor;
+}
+
+/* Stampa: tratto nero, fondi bianchi, mai lo scroll interno. */
+@media print {
+  .figura {
+    overflow: visible;
+    break-inside: avoid;
+    /* Anche se la pagina è in tema scuro: il tratto nero resta leggibile. */
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .diagramma,
+  :global(html[data-theme='dark']) .diagramma {
+    --er-tratto: #000;
+    --er-fondo-entita: #fff;
+    --er-fondo-assoc: #fff;
+    --er-fondo-pagina: #fff;
+    min-width: 0 !important;
+  }
+}
