@@ -9,6 +9,7 @@ import {
 } from 'react';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import { useLocation } from '@docusaurus/router';
 import clsx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -28,9 +29,11 @@ import {
   runSql,
   resetDb,
   splitSqlSource,
+  SqlRunError,
   type SqlRunnerUrls,
 } from './sqlBridge';
-import type { RunStatus, SqlRunOutcome } from './types';
+import { isPageDbActive, publishPageDb } from './pageDb';
+import type { DbSnapshot, RunStatus, SqlRunOutcome } from './types';
 import pyStyles from '../PyRunner/styles.module.css';
 import styles from './styles.module.css';
 
@@ -120,6 +123,10 @@ function SQLRunnerInner(props: SQLRunnerProps) {
   // useId è stabile tra i render e unico per istanza sulla pagina: due
   // blocchi stateful con lo stesso codice non condividono il DB per sbaglio.
   const instanceId = useId();
+  // id DOM del blocco: il pannello «Database» ci scorre sopra.
+  const elementId = `sql-${instanceId.replace(/[^a-zA-Z0-9_-]/g, '')}`;
+  const { pathname } = useLocation();
+  const explicitTitle = props.title;
 
   const workerUrl = useBaseUrl('/sql-runner/worker.js');
   const glueUrl = useBaseUrl('/sql-runner/sql-wasm.js');
@@ -170,11 +177,33 @@ function SQLRunnerInner(props: SQLRunnerProps) {
 
   useEffect(() => () => window.clearTimeout(toastTimerRef.current), []);
 
+  /** Pubblica la foto delle tabelle per il pannello «Database» della pagina. */
+  const publishSnapshot = useCallback(
+    (snapshot: DbSnapshot, failed: boolean) => {
+      const blocks = Array.from(document.querySelectorAll('[data-sql-runner]'));
+      const position = rootRef.current
+        ? blocks.indexOf(rootRef.current) + 1
+        : 0;
+      publishPageDb({
+        pathname,
+        datasetKey: datasetKey ?? null,
+        blockLabel: explicitTitle ?? `blocco ${position}`,
+        blockElementId: elementId,
+        snapshot,
+        failed,
+      });
+    },
+    [pathname, datasetKey, explicitTitle, elementId],
+  );
+
   const handleRun = useCallback(() => {
     if (runningRef.current) return;
     runningRef.current = true;
-    const attempt = verified && !autoRunRef.current;
+    const auto = autoRunRef.current;
     autoRunRef.current = false;
+    const attempt = verified && !auto;
+    // I run automatici (runOnMount, hideQuery) non toccano il pannello.
+    const wantSnapshot = !auto && isPageDbActive();
     // Senza `### POST` un esercizio è risolto da qualunque esecuzione senza
     // errori, come in PyRunner senza verifica.
     const check =
@@ -196,8 +225,10 @@ function SQLRunnerInner(props: SQLRunnerProps) {
       maxRows,
       timeoutMs,
       check,
+      snapshot: wantSnapshot,
     })
       .then((res) => {
+        if (wantSnapshot && res.snapshot) publishSnapshot(res.snapshot, false);
         if (attempt) {
           verdict = res.verdict ?? { esito: 'risolto', messaggio: null };
         }
@@ -216,6 +247,9 @@ function SQLRunnerInner(props: SQLRunnerProps) {
         hasRunRef.current = true;
       })
       .catch((err: Error) => {
+        if (wantSnapshot && err instanceof SqlRunError && err.snapshot) {
+          publishSnapshot(err.snapshot, true);
+        }
         if (attempt) verdict = { esito: 'errore', messaggio: null };
         setOutcome(null);
         setError(err.message);
@@ -240,6 +274,7 @@ function SQLRunnerInner(props: SQLRunnerProps) {
     stateful,
     maxRows,
     timeoutMs,
+    publishSnapshot,
   ]);
 
   const handleResetCode = useCallback(() => {
@@ -306,7 +341,9 @@ function SQLRunnerInner(props: SQLRunnerProps) {
     return (
       <div
         ref={rootRef}
+        id={elementId}
         data-runner=""
+        data-sql-runner=""
         data-pagefind-ignore
         className={clsx(pyStyles.runner, styles.resultOnly, 'notranslate')}
       >
@@ -351,7 +388,9 @@ function SQLRunnerInner(props: SQLRunnerProps) {
   return (
     <div
       ref={rootRef}
+      id={elementId}
       data-runner=""
+      data-sql-runner=""
       data-pagefind-ignore
       className={clsx(pyStyles.runner, 'notranslate')}
     >

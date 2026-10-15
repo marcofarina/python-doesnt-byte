@@ -1,5 +1,6 @@
 ---
 unlisted: true
+database: archivista/casa-attributo
 title: SQLRunner — pagina di test
 description: Sandbox di verifica del componente SQLRunner (SQL Live Blocks)
 ---
@@ -209,4 +210,40 @@ L'errore deve restare visibile (la query nascosta non lo nasconde).
 ```sql live dataset=archivista/registro-punti hideQuery
 INSERT INTO assegnazione (studente, punti, professore)
 VALUES ('Neville Logbottom', 10, 'Piton');
+```
+
+## 18. Il `DELETE` di Padma e le case che restano (fase E2 del piano «Entità e attributi»)
+
+Due seed generati da `case.json` e `studenti.json` (`npm run archivio:sql`). Il
+frontmatter di questa pagina dichiara `database: archivista/casa-attributo`: il
+pannello «Database» parte da lì.
+
+### 18a. Forma A — un solo blocco, `DELETE` e `SELECT` insieme
+
+Prima schema con la casa come colonna: dopo il `DELETE` devono restare **3** case.
+
+```sql live dataset=archivista/casa-attributo title="casa come attributo"
+DELETE FROM studente WHERE nome = 'Padma Patil';
+SELECT DISTINCT casa FROM studente;
+```
+
+Spoiler dopo il blocco: <Spoiler>tre case</Spoiler>.
+
+Poi schema con la casa come entità: dopo il `DELETE` devono restare **4** case.
+
+```sql live dataset=archivista/casa-entita title="casa come entità"
+DELETE FROM studente WHERE nome = 'Padma Patil';
+SELECT nome FROM casa;
+```
+
+Spoiler dopo il blocco: <Spoiler>quattro case</Spoiler>.
+
+### 18b. Forma B — `DELETE` in un blocco, `hideQuery` stateful in un altro
+
+```sql live dataset=archivista/casa-attributo stateful title="B: DELETE"
+DELETE FROM studente WHERE nome = 'Padma Patil';
+```
+
+```sql live dataset=archivista/casa-attributo stateful hideQuery title="B: case rimaste"
+SELECT DISTINCT casa FROM studente;
 ```

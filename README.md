@@ -77,7 +77,7 @@ npm run clear       # svuota la cache di Docusaurus (.docusaurus/)
 
 ## Contributi
 
-Questo è un progetto open source! Se hai suggerimenti, correzioni o nuovi materiali da condividere, sentiti libero di aprire una _issue_ o inviare una _pull request_. Prima di contribuire, dai un’occhiata al [Code of Conduct](code_of_conduct.md).
+Questo è un progetto open source! Se hai suggerimenti, correzioni o nuovi materiali da condividere, sentiti libero di aprire una _issue_ o inviare una _pull request_. Prima di contribuire, leggi [CONTRIBUTING.md](CONTRIBUTING.md) (le pull request vanno su `dev`) e dai un’occhiata al [Code of Conduct](code_of_conduct.md).
 
 ## Contatti
 

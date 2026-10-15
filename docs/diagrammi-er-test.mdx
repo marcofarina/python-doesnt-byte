@@ -1,0 +1,256 @@
+---
+unlisted: true
+title: Diagrammi ER — pagina di test
+description: "Sandbox del componente DiagrammaER (rough.js + Excalifont, notazione Batini): un caso per ogni elemento della notazione."
+---
+
+# Diagrammi ER — pagina di test
+
+Sandbox di `<DiagrammaER>` (fase E1 di `pm/piano-2026-10-lezione-entita-attributi.md`),
+registrato in `MDXComponents`. Un caso per voce della notazione; il caso 11 è quello largo
+per la prova a 375 px.
+
+## 1 — Attributi sui quattro lati
+
+Un'entità sola, con un attributo per ogni lato del rettangolo.
+
+<DiagrammaER
+  titolo="Un'entità con attributi sui quattro lati"
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: [
+        { nome: 'nome', lato: 'sopra' },
+        { nome: 'anno', lato: 'sotto' },
+        { nome: 'matricola', lato: 'sinistra' },
+        { nome: 'classe', lato: 'destra' },
+      ],
+    },
+  ]}
+/>
+
+## 2 — Identificatore semplice
+
+Il cerchio pieno marca l'attributo che identifica l'entità.
+
+<DiagrammaER
+  titolo="La casa con l'identificatore nome"
+  entita={[
+    {
+      id: 'casa',
+      col: 0,
+      riga: 0,
+      attributi: [{ nome: 'nome', identificatore: true }, 'colori', 'animale'],
+    },
+  ]}
+/>
+
+## 3 — Identificatore composto
+
+Il segmento attraversa gli steli di `studente` e `corso` e finisce in un cerchio pieno.
+
+<DiagrammaER
+  titolo="L'esame identificato da studente e corso insieme"
+  entita={[
+    {
+      id: 'esame',
+      col: 0,
+      riga: 0,
+      attributi: ['studente', 'corso', 'data'],
+      identificatore: ['studente', 'corso'],
+    },
+  ]}
+/>
+
+## 4 — Attributo opzionale e multivalore
+
+`telefono` è opzionale `(0,1)`, `soprannome` è multivalore `(1,N)`.
+
+<DiagrammaER
+  titolo="Uno studente con un attributo opzionale e uno multivalore"
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: [
+        'nome',
+        { nome: 'telefono', card: '(0,1)' },
+        { nome: 'soprannome', card: '(1,N)' },
+      ],
+    },
+  ]}
+/>
+
+## 5 — Attributo composto
+
+`indirizzo` è un'ellisse da cui escono i suoi componenti.
+
+<DiagrammaER
+  titolo="Uno studente con l'indirizzo come attributo composto"
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: [
+        'nome',
+        { nome: 'indirizzo', componenti: ['via', 'civico', 'città'] },
+      ],
+    },
+  ]}
+  cella={[260, 230]}
+/>
+
+## 6 — Associazione orizzontale
+
+
+
+<DiagrammaER
+  titolo="Lo studente frequenta il corso"
+  entita={[
+    { id: 'studente', col: 0, riga: 0, attributi: ['nome'] },
+    { id: 'corso', col: 2, riga: 0, attributi: ['titolo'] },
+  ]}
+  associazioni={[
+    {
+      id: 'frequenta',
+      col: 1,
+      riga: 0,
+      tra: [
+        { entita: 'studente', card: '(1,N)' },
+        { entita: 'corso', card: '(0,N)' },
+      ],
+    },
+  ]}
+/>
+
+## 7 — Associazione verticale
+
+Le cardinalità stanno a destra della linea.
+
+<DiagrammaER
+  titolo="La casa è diretta da un professore"
+  entita={[
+    { id: 'casa', col: 0, riga: 0, attributi: ['nome'] },
+    {
+      id: 'professore',
+      col: 0,
+      riga: 2,
+      attributi: ['nome'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'dirige',
+      col: 0,
+      riga: 1,
+      tra: [
+        { entita: 'casa', card: '(1,1)' },
+        { entita: 'professore', card: '(0,1)' },
+      ],
+    },
+  ]}
+/>
+
+## 8 — Linea obliqua
+
+L'associazione sta in diagonale rispetto alle entità: le linee sono oblique.
+
+<DiagrammaER
+  titolo="Una associazione in diagonale fra due entità"
+  entita={[
+    { id: 'studente', col: 0, riga: 0, attributi: ['nome'] },
+    { id: 'casa', col: 2, riga: 0, attributi: ['nome'] },
+  ]}
+  associazioni={[
+    {
+      id: 'appartiene',
+      col: 1,
+      riga: 1,
+      tra: [
+        { entita: 'studente', card: '(1,1)' },
+        { entita: 'casa', card: '(0,N)' },
+      ],
+    },
+  ]}
+/>
+
+## 9 — Associazione con attributi
+
+`voto` appartiene all'associazione `iscrizione`, non a una delle due entità.
+
+<DiagrammaER
+  titolo="Lo studente si iscrive al corso, con un voto"
+  entita={[
+    { id: 'studente', col: 0, riga: 0, attributi: ['nome'] },
+    { id: 'corso', col: 2, riga: 0, attributi: ['titolo'] },
+  ]}
+  associazioni={[
+    {
+      id: 'iscrizione',
+      col: 1,
+      riga: 0,
+      attributi: ['voto'],
+      tra: [
+        { entita: 'studente', card: '(0,N)' },
+        { entita: 'corso', card: '(0,N)' },
+      ],
+    },
+  ]}
+/>
+
+## 10 — Generalizzazione
+
+`persona` è il padre, `studente` e `professore` i figli: copertura totale ed esclusiva `(t,e)`.
+
+<DiagrammaER
+  titolo="Persona generalizza studente e professore"
+  entita={[
+    { id: 'persona', col: 1, riga: 0, attributi: ['nome'] },
+    {
+      id: 'studente',
+      col: 0,
+      riga: 2,
+      attributi: ['anno'],
+      latoAttributi: 'sotto',
+    },
+    {
+      id: 'professore',
+      col: 2,
+      riga: 2,
+      attributi: ['materia'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  generalizzazioni={[
+    { padre: 'persona', figli: ['studente', 'professore'], copertura: '(t,e)' },
+  ]}
+/>
+
+## 11 — Il caso largo di E0, per la prova a 375 px
+
+A 375 px il diagramma non si rimpicciolisce sotto il corpo leggibile: scorre dentro la figura.
+
+<DiagrammaER
+  titolo="Le entità casa e studente, collegate dall'associazione appartiene"
+  descrizione="casa ha gli attributi nome, colori e animale; studente ha nome e anno. Ogni studente appartiene a una e una sola casa (1,1); una casa ha da zero a molti studenti (0,N)."
+  entita={[
+    { id: 'casa', col: 0, riga: 0, attributi: ['nome', 'colori', 'animale'] },
+    { id: 'studente', col: 2, riga: 0, attributi: ['nome', 'anno'] },
+  ]}
+  associazioni={[
+    {
+      id: 'appartiene',
+      col: 1,
+      riga: 0,
+      tra: [
+        { entita: 'casa', card: '(0,N)' },
+        { entita: 'studente', card: '(1,1)' },
+      ],
+    },
+  ]}
+/>

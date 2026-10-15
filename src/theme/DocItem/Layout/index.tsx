@@ -1,13 +1,16 @@
 /**
  * Swizzle EJECT di @theme/DocItem/Layout (theme-classic 3.10.1).
  *
- * Copia dell'originale più il pannello «Archivio» (piano
- * pm/piano-2026-10-archivio.md, fase A2). Le aggiunte sono marcate «Archivio».
+ * Copia dell'originale più la colonna destra con i pannelli «Archivio» (piano
+ * pm/piano-2026-10-archivio.md, fase A2) e «Database» (piano
+ * pm/piano-2026-10-pannello-database.md, fase T2), in src/components/Colonna/.
+ * Le aggiunte sono marcate «Colonna».
  *
- * Eject e non wrap: il pannello deve stare DENTRO la colonna dell'indice, che
+ * Eject e non wrap: i pannelli devono stare DENTRO la colonna dell'indice, che
  * questo componente costruisce; la colonna deve esserci anche nelle pagine
- * senza indice; e aperto, il pannello allarga la colonna a spese del testo.
- * Un wrapper vede solo il Layout dall'esterno e non può fare nessuna delle tre.
+ * senza indice; e con un pannello aperto la colonna si allarga a spese del
+ * testo. Un wrapper vede solo il Layout dall'esterno e non può fare nessuna
+ * delle tre. Questo è l'unico punto che decide la larghezza delle colonne.
  *
  * Agli upgrade di Docusaurus: riconfrontare con
  * node_modules/@docusaurus/theme-classic/src/theme/DocItem/Layout/index.tsx.
@@ -28,10 +31,10 @@ import ContentVisibility from '@theme/ContentVisibility';
 import type { Props } from '@theme/DocItem/Layout';
 
 import {
-  ArchivioRail,
-  ArchivioSheet,
-  useArchivio,
-} from '@site/src/components/Archivio';
+  ColonnaRail,
+  ColonnaSheet,
+  useColonna,
+} from '@site/src/components/Colonna';
 
 import styles from './styles.module.css';
 
@@ -62,19 +65,20 @@ function useDocTOC() {
 export default function DocItemLayout({ children }: Props): ReactNode {
   const docTOC = useDocTOC();
   const { metadata } = useDoc();
-  // Archivio: su desktop (e in SSR, come l'indice) sta nella colonna destra,
-  // su telefono è un pannello flottante fuori dalla griglia.
-  const archivio = useArchivio();
+  // Colonna: su desktop (e in SSR, come l'indice) Archivio e Database stanno
+  // nella colonna destra, su telefono in un pannello flottante fuori dalla
+  // griglia. Un pannello aperto allarga la colonna.
+  const colonna = useColonna();
   const windowSize = useWindowSize();
-  const archivioInColonna = archivio !== null && windowSize !== 'mobile';
-  const archivioAperto = archivioInColonna && archivio.aperto;
+  const inColonna = colonna !== null && windowSize !== 'mobile';
+  const aperta = inColonna && colonna.aperta !== null;
   return (
     <div className="row">
       <div
         className={clsx(
           'col',
-          (!docTOC.hidden || archivioInColonna) && styles.docItemCol,
-          archivioAperto && styles.docItemColArchivio,
+          (!docTOC.hidden || inColonna) && styles.docItemCol,
+          aperta && styles.docItemColAperta,
         )}
       >
         <ContentVisibility metadata={metadata} />
@@ -90,21 +94,21 @@ export default function DocItemLayout({ children }: Props): ReactNode {
           <DocItemPaginator />
         </div>
       </div>
-      {archivioInColonna ? (
+      {inColonna ? (
         <div
           className={clsx(
             'col col--3',
             styles.colonna,
-            archivioAperto && styles.colonnaAperta,
+            aperta && styles.colonnaAperta,
           )}
         >
-          <ArchivioRail archivio={archivio} toc={docTOC.desktop} />
+          <ColonnaRail colonna={colonna} toc={docTOC.desktop} />
         </div>
       ) : (
         docTOC.desktop && <div className="col col--3">{docTOC.desktop}</div>
       )}
-      {archivio !== null && windowSize === 'mobile' && (
-        <ArchivioSheet archivio={archivio} />
+      {colonna !== null && windowSize === 'mobile' && (
+        <ColonnaSheet colonna={colonna} />
       )}
     </div>
   );

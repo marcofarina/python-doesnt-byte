@@ -10,6 +10,9 @@
  *  - cache dei dataset: il testo .sql viene fetch-ato una volta per pagina e
  *    riusato da tutti i blocchi; lo snapshot binario del seed vive nel worker.
  *
+ * Con `snapshot` il worker manda anche la foto delle tabelle dopo il run, per
+ * il pannello «Database»; `seedSnapshot` dà la foto del seed (stato iniziale).
+ *
  * Il worker è un singleton per pagina: i blocchi stateless aprono comunque un
  * DB fresco a ogni run; i blocchi stateful hanno ciascuno il proprio DB keyed
  * per instanceId. Un terminate (timeout) butta via anche i DB stateful degli
@@ -17,7 +20,7 @@
  * il componente mostra la notice "database ripristinato".
  */
 
-import type { SqlRunOutcome } from './types';
+import type { DbSnapshot, SqlRunOutcome } from './types';
 
 export interface SqlRunnerUrls {
   workerUrl: string;
@@ -41,6 +44,23 @@ export interface SqlRunRequest {
    * (`### CONTROLLO`). Semantica in static/sql-runner/worker.js, verifyRun.
    */
   check?: { reference: string; control: string | null };
+  /**
+   * Chiede al worker la foto delle tabelle dopo il run, per il pannello
+   * «Database» (src/theme/SQLRunner/pageDb.ts). Arriva anche sull'errore,
+   * nella proprietà `snapshot` di SqlRunError.
+   */
+  snapshot?: boolean;
+}
+
+/** Errore SQL dello script, con la foto delle tabelle se era stata chiesta. */
+export class SqlRunError extends Error {
+  snapshot?: DbSnapshot;
+
+  constructor(message: string, snapshot?: DbSnapshot) {
+    super(message);
+    this.name = 'SqlRunError';
+    this.snapshot = snapshot;
+  }
 }
 
 export class SqlTimeoutError extends Error {
@@ -60,7 +80,13 @@ interface Pending {
 }
 
 interface WorkerMessage {
-  type: 'ready' | 'boot-error' | 'result' | 'error' | 'db-reset';
+  type:
+    | 'ready'
+    | 'boot-error'
+    | 'result'
+    | 'error'
+    | 'db-reset'
+    | 'seed-snapshot';
   id?: number;
   message?: string;
   results?: SqlRunOutcome['results'];
@@ -69,10 +95,13 @@ interface WorkerMessage {
   durationMs?: number;
   verdict?: SqlRunOutcome['verdict'];
   authorError?: string;
+  snapshot?: DbSnapshot;
 }
 
 /** Timeout per il boot del worker (fetch glue+wasm su rete lenta). */
 const BOOT_TIMEOUT_MS = 30_000;
+/** Timeout per la foto del seed (costruzione del seed compresa). */
+const SEED_SNAPSHOT_TIMEOUT_MS = 10_000;
 
 let worker: Worker | null = null;
 let bootPromise: Promise<void> | null = null;
@@ -126,7 +155,9 @@ function ensureWorker(urls: SqlRunnerUrls): Promise<void> {
     pending.delete(msg.id);
     window.clearTimeout(p.timer);
     if (msg.type === 'error') {
-      p.reject(new Error(msg.message ?? 'Errore SQL sconosciuto'));
+      p.reject(
+        new SqlRunError(msg.message ?? 'Errore SQL sconosciuto', msg.snapshot),
+      );
     } else {
       p.resolve(msg);
     }
@@ -216,6 +247,7 @@ export async function runSql(
       stateful: req.stateful,
       maxRows: req.maxRows,
       check: req.check,
+      snapshot: req.snapshot ?? false,
     },
     req.timeoutMs,
   );
@@ -227,7 +259,32 @@ export async function runSql(
     durationMs: msg.durationMs ?? 0,
     verdict: msg.verdict,
     authorError: msg.authorError,
+    snapshot: msg.snapshot,
   };
+}
+
+/**
+ * Le tabelle del seed, senza eseguire niente: lo «Stato iniziale» del pannello
+ * «Database». Senza dataset il DB è vuoto e la foto non ha tabelle.
+ */
+export async function seedSnapshot(
+  urls: SqlRunnerUrls,
+  datasetKey?: string,
+  datasetUrl?: string,
+): Promise<DbSnapshot> {
+  let dataset: { key: string; text: string } | null = null;
+  if (datasetKey && datasetUrl) {
+    dataset = {
+      key: datasetKey,
+      text: await fetchDataset(datasetKey, datasetUrl),
+    };
+  }
+  await ensureWorker(urls);
+  const msg = await postWithWatchdog<WorkerMessage>(
+    { type: 'seed-snapshot', dataset },
+    SEED_SNAPSHOT_TIMEOUT_MS,
+  );
+  return msg.snapshot ?? { tables: [], droppedTables: [], changedRows: 0 };
 }
 
 const POST_RE = /^###\s*POST\s*$/i;

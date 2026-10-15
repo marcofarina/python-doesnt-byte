@@ -8,6 +8,9 @@ const fs = require('fs');
 
 const PLUGIN_NAME = 'archivio';
 const ARCHIVE_DIR = 'archivio';
+// Seed dei SQLRunner: il frontmatter `database:` ne nomina uno per chiave
+// (archivista/registro-punti → static/sql-datasets/archivista/registro-punti.sql).
+const DATASET_DIR = 'sql-datasets';
 
 function walkJsonFiles(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -24,6 +27,30 @@ module.exports = function archivioPlugin(context) {
       context.siteConfig.staticDirectories[0]) ||
     'static';
   const archiveAbsDir = path.join(context.siteDir, staticRoot, ARCHIVE_DIR);
+  const datasetAbsDir = path.join(context.siteDir, staticRoot, DATASET_DIR);
+
+  function controllaDatabase(lezione, chiave) {
+    if (chiave === undefined) return;
+    if (typeof chiave !== 'string' || chiave.trim() === '') {
+      throw new Error(
+        `[archivio] ${lezione}: «database:» deve essere la chiave di un dataset, ` +
+          'per esempio archivista/registro-punti.',
+      );
+    }
+    const seed = path.join(datasetAbsDir, `${chiave}.sql`);
+    // La chiave non deve uscire da static/sql-datasets/.
+    const dentro = path.relative(datasetAbsDir, seed);
+    if (
+      dentro.startsWith('..') ||
+      path.isAbsolute(dentro) ||
+      !fs.existsSync(seed)
+    ) {
+      throw new Error(
+        `[archivio] ${lezione} dichiara «${chiave}» in database:, ` +
+          `ma il file static/${DATASET_DIR}/${chiave}.sql non esiste.`,
+      );
+    }
+  }
 
   return {
     name: PLUGIN_NAME,
@@ -57,9 +84,11 @@ module.exports = function archivioPlugin(context) {
     },
 
     // Una lezione dichiara i file del pannello Archivio nel frontmatter
-    // (`archivio: [punti.json, studenti.json]`). Un nome che non esiste ferma
-    // la build qui, con la lezione e il file nel messaggio, invece di lasciare
-    // un pannello vuoto in pagina.
+    // (`archivio: [punti.json, studenti.json]`) e il dataset del pannello
+    // Database (`database: archivista/registro-punti`, piano
+    // pm/piano-2026-10-pannello-database.md). Un nome che non esiste ferma la
+    // build qui, con la lezione e il nome nel messaggio, invece di lasciare un
+    // pannello vuoto in pagina.
     async allContentLoaded({ allContent }) {
       const file = allContent[PLUGIN_NAME]?.default?.file ?? {};
       const disponibili = Object.keys(file).join(', ') || 'nessuno';
@@ -68,9 +97,10 @@ module.exports = function archivioPlugin(context) {
         for (const data of Object.values(byInstance)) {
           for (const version of data?.loadedVersions ?? []) {
             for (const doc of version.docs) {
+              const lezione = doc.source.replace(/^@site\//, '');
+              controllaDatabase(lezione, doc.frontMatter.database);
               const dichiarati = doc.frontMatter.archivio;
               if (dichiarati === undefined) continue;
-              const lezione = doc.source.replace(/^@site\//, '');
               if (
                 !Array.isArray(dichiarati) ||
                 !dichiarati.every((n) => typeof n === 'string')

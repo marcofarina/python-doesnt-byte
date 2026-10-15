@@ -4,6 +4,7 @@ sidebar_label: Che cosa fa un DBMS
 sidebar_position: 4
 description: Un database non è un file più grosso. Il DBMS risponde alle domande, incrocia le tabelle, rifiuta un nome che non esiste e coordina chi scrive insieme, tutti lavori che prima stavano nel tuo programma. Lo vediamo sul registro dei punti di Hogwarts.
 archivio: [punti.json, studenti.json]
+database: archivista/registro-punti
 ---
 
 import Tabs from '@theme/Tabs';
@@ -62,7 +63,7 @@ In una tabella ogni riga descrive un elemento e ogni colonna un'informazione, la
 
 :::note[Il DBMS di questa pagina]
 
-I blocchi di istruzioni di questa pagina usano SQLite, un DBMS che gira dentro il browser, come il Python dei blocchi eseguibili. Ogni blocco parte dalle stesse tre tabelle: quello che cambi in un blocco non si propaga agli altri blocchi, e ricaricando la pagina tutto torna com'era. Nelle applicazioni vere il DBMS è spesso un server separato, come PostgreSQL o MySQL, a cui si collegano i programmi di molti utenti.
+I blocchi di istruzioni di questa pagina usano SQLite, un DBMS che gira dentro il browser, come il Python dei blocchi eseguibili. Ogni blocco parte dalle stesse tre tabelle: quello che cambi in un blocco non si propaga agli altri blocchi, e ricaricando la pagina tutto torna com'era. Sotto «Archivio», nella colonna di destra, il pulsante «Database» apre un pannello con le tre tabelle come le ha lasciate l'ultimo blocco di istruzioni che hai eseguito: le righe nuove, modificate o tolte rispetto alle tabelle iniziali sono evidenziate. Il pannello mostra soltanto: ogni blocco riparte comunque dalle tabelle iniziali. Nelle applicazioni vere il DBMS è spesso un server separato, come PostgreSQL o MySQL, a cui si collegano i programmi di molti utenti.
 
 :::
 
@@ -200,6 +201,8 @@ SELECT nome FROM professore ORDER BY nome;
 <Solved>
 
 Lupin è entrato fra i professori il giorno del suo arrivo, e la sua assegnazione è venuta dopo. È l'anomalia di inserimento della lezione precedente rovesciata: con i file un professore esisteva solo se dava punti, nel database non può dare punti finché non esiste. Il vincolo stabilisce l'ordine delle scritture: prima la riga a cui ci si riferisce, poi quella che vi si riferisce.
+
+Apri il pannello «Database» e controlla le due scritture: la tabella `professore` ha una riga nuova, quella di Lupin, e la tabella `assegnazione` ne ha una, la sua assegnazione.
 
 </Solved>
 
