@@ -64,9 +64,25 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
+    v: '0.19.0',
+    date: '15 ottobre 2026',
+    latest: true,
+    notes: {
+      content: [
+        'Volume 3, Manuale dell’Archivista: si apre il capitolo 2, «Modellare il dominio», con la lezione «Entità e attributi».',
+      ],
+      new: [
+        'Diagrammi E/R disegnati a mano libera, in notazione italiana: rettangoli per le entità, rombi per le associazioni, cerchi per gli attributi.',
+        'Pannello «Database»: nelle lezioni del Volume 3 le tabelle come le ha lasciate l’ultimo blocco eseguito, con le righe nuove, modificate e tolte evidenziate.',
+      ],
+      improved: [
+        'Nella pagina Supporta il totale raccolto si legge all’italiana, con la virgola.',
+      ],
+    },
+  },
+  {
     v: '0.18.0',
     date: '13 ottobre 2026',
-    latest: true,
     notes: {
       content: [
         'Volume 3, Manuale dell’Archivista: la terza lezione, «Che cosa fa un DBMS al posto tuo», che chiude il capitolo 1.',
