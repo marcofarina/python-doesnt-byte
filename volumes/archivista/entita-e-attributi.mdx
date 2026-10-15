@@ -11,11 +11,11 @@ database: archivista/casa-attributo
 
 <Epigraph author="G. E. P. Box, Robustness in the Strategy of Scientific Model Building (1979)">
 
-All models are wrong but some are useful.
+All models are wrong, but some are useful.
 
 </Epigraph>
 
-Le tre tabelle della lezione precedente sono arrivate già pronte, con le colonne decise. Prima che esistessero, qualcuno ha stabilito che il registro dei punti avesse bisogno di tre tabelle e non di due o di cinque, e che la casa fosse una colonna della tabella `studente`. Questo capitolo si occupa di quella decisione, che viene prima delle tabelle: quali cose il database deve conservare, e che cosa deve conservare di ciascuna.
+Le tre tabelle della lezione precedente le avete trovate già pronte, con le colonne decise. Prima che esistessero però, qualcuno ha dovuto stabilire che il registro dei punti avesse bisogno di tre tabelle e non di due o di cinque, che la casa fosse una colonna della tabella `studente`, eccetera. Questo capitolo si occupa di quelle decisioni, che vanno effettuate prima delle tabelle: quali cose il database deve conservare, e che cosa deve conservare di ciascuna.
 
 La parte di mondo di cui un database conserva i dati si chiama **dominio**: per il registro dei punti, il dominio è Hogwarts, con i suoi studenti, le sue case e i suoi professori. Un **modello concettuale** è la descrizione di un dominio che stabilisce quali cose vanno registrate, quali informazioni conservare su ciascuna e come le cose sono legate fra loro, senza ancora dire come i dati saranno memorizzati.
 
@@ -40,15 +40,15 @@ Il modello concettuale più usato è il **modello Entità-Associazione** (in ing
 
 ## Una casa che è solo un nome
 
-Nella tabella `studente` della lezione precedente la casa è una colonna di testo: per il database Grifondoro è la parola `Grifondoro`, scritta accanto al nome di ogni studente della casa. Finché le domande riguardano gli studenti, una parola basta. Ora la professoressa McGonagall chiede di registrare anche i colori e l'animale dello stemma di ogni casa, che servono per gli stendardi del banchetto di fine anno.
+Nella tabella `studente` della lezione precedente la casa è una colonna di testo: per il database Grifondoro è la parola `Grifondoro`, scritta accanto al nome di ogni studente della casa. Finché le domande riguardano gli studenti, una parola basta. Ora, però, immaginiamo che la professoressa McGonagall chieda di registrare anche i colori e l'animale dello stemma di ogni casa, che servono per gli stendardi del banchetto di fine anno.
 
-Con le tabelle che abbiamo, l'unico posto in cui scrivere colori e animale è la tabella `studente`, con due colonne nuove: `colori_casa` e `animale_casa`. Chiamiamo questa la prima versione delle tabelle. Il blocco qui sotto mostra la tabella `studente` con le due colonne aggiunte; la query è nascosta, come nella lezione precedente.
+Con le tabelle che abbiamo, l'unico posto in cui scrivere colori e animale è la tabella `studente`, con due colonne nuove: `colori_casa` e `animale_casa`. Chiamiamo questa la prima versione delle tabelle. Il blocco qui sotto mostra la tabella `studente` con le due colonne aggiunte.
 
 ```sql live dataset=archivista/casa-attributo hideQuery
 SELECT * FROM studente;
 ```
 
-I colori di Grifondoro, `rosso e oro`, sono scritti sei volte, una per ogni studente della casa, e il leone altrettante. È la ridondanza della seconda lezione del capitolo 1: per cambiare i colori di Grifondoro bisogna correggere sei righe, e una riga dimenticata basta a dare alla casa due coppie di colori.
+I colori di Grifondoro, `rosso e oro`, sono scritti sei volte, una per ogni studente della casa, e il leone altrettante. Riconoscerai sicuramente la ridondanza della seconda lezione del capitolo 1: ad esempio, per cambiare i colori di Grifondoro bisogna correggere sei righe! Una riga dimenticata basta a dare alla casa due coppie di colori.
 
 C'è anche un difetto meno visibile. Padma Patil è l'unica studentessa di Corvonero nella tabella. Il blocco qui sotto contiene due istruzioni, che si leggono come frasi: cancella (`DELETE`) dalla tabella `studente` la riga in cui il nome è `Padma Patil`; poi elenca casa, colori e animale che compaiono nella tabella `studente`, ogni combinazione una volta sola (`DISTINCT`). Prima di eseguire il blocco, prova a prevedere quante case elenca la seconda istruzione.
 
@@ -63,7 +63,7 @@ Le case elencate sono tre: Grifondoro, Serpeverde e Tassofrasso. Corvonero è sp
 
 </Spoiler>
 
-Nessuna istruzione ha cancellato Corvonero. Il problema è che nella tabella `studente` una casa non ha un posto suo: esiste finché almeno uno studente la nomina. È l'anomalia di cancellazione della seconda lezione del capitolo 1, e anche allora c'era di mezzo Padma, che a quanto pare non riesce a uscire dall'archivio senza portarsi via qualcuno: con la sua unica assegnazione era sparito Flitwick. Per lo stesso motivo una casa senza studenti non si può registrare, ed è l'anomalia di inserimento.
+Nessuna istruzione ha cancellato Corvonero. Il problema è che nella tabella `studente` una casa non ha un posto suo: esiste finché almeno uno studente la nomina. Questa è l'anomalia di cancellazione della seconda lezione del capitolo 1, e anche allora c'era di mezzo Padma, che a quanto pare non riesce a uscire dall'archivio senza portarsi via qualcuno: con la sua unica assegnazione era sparito Flitwick. Per lo stesso motivo una casa senza studenti non si può registrare, ed è l'anomalia di inserimento.
 
 Nel pannello "Database" della colonna di destra la riga di Padma compare segnata come tolta. Come nella lezione precedente, ogni blocco di istruzioni riparte comunque dalle tabelle iniziali.
 
