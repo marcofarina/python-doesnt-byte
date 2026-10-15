@@ -945,7 +945,10 @@ function GoalsBlock({
           }}
         >
           {g.currency}
-          {r}
+          {r.toLocaleString('it-IT', {
+            minimumFractionDigits: Number.isInteger(r) ? 0 : 2,
+            maximumFractionDigits: 2,
+          })}
         </span>
         <span style={{ fontFamily: T.body, fontSize: 16, color: T.muted }}>
           raccolti su {g.currency}
