@@ -33,8 +33,12 @@ export interface Entita {
 
 export interface Partecipazione {
   entita: string;
-  /** Cardinalità in notazione (min,max), es. `(1,1)` o `(0,N)`. */
-  card: string;
+  /**
+   * Cardinalità in notazione (min,max), es. `(1,1)`, `(0,N)` o `(2,2)`.
+   * Facoltativa: senza, la linea non ha etichetta (lezioni che vengono prima
+   * delle cardinalità).
+   */
+  card?: string;
 }
 
 export interface Associazione {
