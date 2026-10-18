@@ -1,0 +1,305 @@
+---
+title: Generalizzazioni
+sidebar_label: Generalizzazioni
+sidebar_position: 11
+description: Studenti e professori hanno nome, cognome e una bacchetta, e il modello li può raccogliere sotto un’entità più generale, la persona. Una generalizzazione però non ha una traduzione unica in tabelle, e ognuno dei tre modi di farla perde qualcosa di diverso. Lo vediamo con Hagrid, Piton e Lupin.
+---
+
+# Generalizzazioni
+
+<Epigraph author="George Orwell, La fattoria degli animali (1945)">
+
+All animals are equal, but some animals are more equal than others.
+
+</Epigraph>
+
+Nella lezione precedente studenti e professori erano due entità separate, ognuna con il suo nome e il suo identificatore. Le due entità hanno però molto in comune: nome e cognome, una bacchetta, un Patronus. Ogni volta che il dominio chiede qualcosa di nuovo su tutte le persone di Hogwarts, il modello deve scriverlo due volte, una per entità. In questa lezione raccogliamo ciò che studenti e professori hanno in comune in un'entità più generale, e vediamo che questa raccolta, comoda nel diagramma, si può trasformare in tabelle in tre modi, nessuno dei quali conserva tutto.
+
+:::prereq
+
+- Entità, attributi, identificatori assegnati apposta (lezioni "Entità e attributi" e "Identificare senza ambiguità: le chiavi")
+- L'entità `bacchetta` e l'associazione `possiede`, con le sue cardinalità (lezione "Le cardinalità")
+- L'archivio di tutti gli studenti passati da Hogwarts (lezione "Identificare senza ambiguità: le chiavi")
+- La ridondanza e le tabelle unite con `JOIN` (capitolo 1)
+
+:::
+
+:::learn
+
+- Riconoscere quando più entità sono casi particolari di un'entità più generale
+- Disegnare una generalizzazione e indicarne la copertura
+- Spiegare che cosa le entità figlie ereditano dal padre
+- Dire che cosa perde ciascuno dei tre modi di trasformare una generalizzazione in tabelle
+
+:::
+
+## Due entità con le stesse proprietà
+
+Immaginiamo che il database di Hogwarts debba registrare le bacchette di tutti, studenti e professori: anche Piton ha una bacchetta, come Harry. Con il modello che abbiamo servono due associazioni `possiede`, una fra `studente` e `bacchetta` e una fra `professore` e `bacchetta`, con le stesse cardinalità. Lo stesso vale per nome e cognome, che compaiono fra gli attributi di tutte e due le entità, e per il Patronus della lezione "Entità e attributi", che hanno anche i professori: quello di Piton è una cerva.
+
+Studenti e professori sono due casi particolari della stessa cosa, una persona che vive a Hogwarts. Il modello E/R lo esprime con una generalizzazione: un'entità `persona`, con gli attributi e le associazioni che tutte le persone hanno, e sotto di lei le entità `studente` e `professore`, ognuna con ciò che riguarda solo lei: l'anno per lo studente, la materia per il professore.
+
+:::definition[Generalizzazione ed ereditarietà]
+
+Una **generalizzazione** lega un'entità, detta **padre**, a una o più entità, dette **figlie**, che ne sono casi particolari: ogni occorrenza di un'entità figlia è anche un'occorrenza del padre. Ogni studente è una persona, mentre non ogni persona è uno studente.
+
+Le entità figlie **ereditano** dal padre gli attributi, l'identificatore e le associazioni: uno studente ha un nome, è identificato come persona e possiede una bacchetta, anche se il diagramma lo scrive una volta sola, nel padre.
+
+:::
+
+Se hai già scritto classi in Python, la generalizzazione ti ricorda l'ereditarietà fra classi, e il parallelo regge: la figlia ha tutto ciò che ha il padre, più qualcosa di suo. Come per entità e classi, nel modello E/R mancano i metodi.
+
+<DiagrammaER
+  titolo="La persona generalizza lo studente e il professore"
+  descrizione="L'entità persona, con il codice come identificatore, nome e cognome, è collegata all'entità bacchetta dall'associazione possiede: (0,N) accanto a persona, (1,1) accanto a bacchetta. Sotto la persona, una generalizzazione parziale ed esclusiva (p,e) ha due entità figlie: studente, con l'attributo anno, e professore, con l'attributo materia."
+  entita={[
+    {
+      id: 'bacchetta',
+      col: 1,
+      riga: 0,
+      attributi: ['legno', 'nucleo', 'lunghezza'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'persona',
+      col: 1,
+      riga: 2,
+      attributi: [{ nome: 'codice', identificatore: true }, 'nome', 'cognome'],
+      latoAttributi: 'destra',
+    },
+    {
+      id: 'studente',
+      col: 0,
+      riga: 4,
+      attributi: ['anno'],
+      latoAttributi: 'sotto',
+    },
+    {
+      id: 'professore',
+      col: 2,
+      riga: 4,
+      attributi: ['materia'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'possiede',
+      col: 1,
+      riga: 1,
+      tra: [
+        { entita: 'persona', card: '(0,N)' },
+        { entita: 'bacchetta', card: '(1,1)' },
+      ],
+    },
+  ]}
+  generalizzazioni={[
+    { padre: 'persona', figli: ['studente', 'professore'], copertura: '(p,e)' },
+  ]}
+  cella={[180, 120]}
+/>
+
+Nel diagramma la generalizzazione è una freccia che va dalle entità figlie al padre. Accanto a `persona`, in `possiede`, il minimo è 0: a Hagrid la bacchetta l'hanno spezzata quando è stato espulso. Gli attributi di `studente` e `professore` sono soltanto quelli propri: il nome, il codice e la bacchetta di uno studente stanno nel padre, e valgono per lui come per ogni altra persona.
+
+:::warning[Una generalizzazione non è un'associazione]
+
+- <Esito ok={false} /> un rombo `è` fra `studente` e `persona` → Harry diventa due occorrenze, una persona e uno studente, legate da una coppia; lo studente non eredita niente, e il nome va scritto in tutte e due.
+- <Esito /> una generalizzazione fra `persona` e `studente` → Harry è un'occorrenza sola, che appartiene a `persona` e a `studente` insieme.
+
+:::
+
+## La copertura
+
+Accanto alla freccia il diagramma porta due lettere, `(p,e)`. Sono la **copertura** della generalizzazione, e rispondono a due domande sul dominio, come le cardinalità.
+
+La prima domanda: ogni persona registrata è per forza uno studente o un professore? Hagrid no. Nei primi due anni di Harry a Hogwarts è il guardiacaccia della scuola, e non è né uno studente né un professore. Se il database registra anche Hagrid, alcune persone non appartengono a nessuna entità figlia, e la generalizzazione è parziale, `p`. Se ogni persona registrata è per forza uno studente o un professore, è totale, `t`.
+
+La seconda domanda: una persona può essere studente e professore insieme? Fra gli studenti e i professori di un anno scolastico, no: la generalizzazione è esclusiva, `e`. Immaginiamo però l'archivio della lezione sulle chiavi, con tutti gli studenti passati da Hogwarts. Piton e Lupin a Hogwarts hanno studiato, e anni dopo ci insegnano: nell'archivio Piton è un'occorrenza di `studente` e anche di `professore`, e la generalizzazione è sovrapposta, `o`, dall'inglese _overlapping_.
+
+:::definition[Copertura]
+
+La **copertura** di una generalizzazione è **totale** se ogni occorrenza del padre appartiene ad almeno un'entità figlia, **parziale** se alcune occorrenze del padre non appartengono a nessuna. È **esclusiva** se ogni occorrenza appartiene al massimo a un'entità figlia, **sovrapposta** se può appartenere a più di una. Si scrive con due lettere accanto alla freccia: `(t,e)`, `(t,o)`, `(p,e)` o `(p,o)`. Alcuni libri scrivono `s` per sovrapposta, al posto di `o`.
+
+:::
+
+La copertura, come le cardinalità, non si ricava dai nomi delle entità. Le persone di Hogwarts sono le stesse, ma il database di un anno scolastico ha la copertura `(p,e)`, e l'archivio di tutti gli anni `(p,o)`. Nell'archivio anche Hagrid smette di essere un caso a parte: prima di diventare guardiacaccia è stato studente, fino all'espulsione al terzo anno, e dal terzo anno di Harry è anche professore.
+
+## Tre modi di farne tabelle
+
+Le tabelle non hanno generalizzazioni: una tabella non ha figlie. Prima di trasformare il modello in tabelle, quindi, ogni generalizzazione va tolta, e i modi di toglierla sono tre. Le regole complete per passare dal modello alle tabelle arrivano nel capitolo 3; qui guardiamo soltanto che cosa perde ciascuno dei tre modi, sulle persone di Hogwarts.
+
+### Solo il padre
+
+Le figlie spariscono dentro il padre. La tabella `persona` riceve le colonne di tutte le figlie, più una colonna `tipo` che dice a quale figlia appartiene ogni riga.
+
+| codice | nome    | cognome | tipo       | anno | materia |
+| ------ | ------- | ------- | ---------- | ---- | ------- |
+| 1      | Harry   | Potter  | studente   | 1    |         |
+| 2      | Severus | Piton   | professore |      | Pozioni |
+| 3      | Rubeus  | Hagrid  |            |      |         |
+
+Hagrid ci sta, con il `tipo` vuoto, e l'associazione `possiede` resta una sola. Si perdono però le regole delle figlie: niente impedisce una riga di tipo `studente` con una materia, o uno studente senza anno. E un'associazione che riguarda solo gli studenti, come `appartiene`, diventa un'associazione di tutte le persone, professori compresi. Con la copertura sovrapposta, poi, una colonna `tipo` con un valore solo non sa dire che Piton è stato studente ed è professore.
+
+### Solo le figlie
+
+Il padre sparisce, e ogni figlia riceve i suoi attributi: la tabella `studente` ha codice, nome, cognome e anno, la tabella `professore` codice, nome, cognome e materia.
+
+| codice | nome  | cognome | anno |
+| ------ | ----- | ------- | ---- |
+| 1      | Harry | Potter  | 1    |
+
+| codice | nome    | cognome | materia |
+| ------ | ------- | ------- | ------- |
+| 2      | Severus | Piton   | Pozioni |
+
+Le regole delle figlie restano: uno studente ha un anno e non ha una materia. Si perde invece la persona. Hagrid, che non è né studente né professore, non ha una tabella in cui stare: una copertura parziale con questo modo non si può registrare. Nell'archivio, Piton compare in tutte e due le tabelle, con nome e cognome scritti due volte, ed è la ridondanza del capitolo 1. E l'associazione `possiede` va raddoppiata, una per tabella.
+
+### Padre e figlie, collegati
+
+Restano tutte e tre le entità. La tabella `persona` ha codice, nome e cognome; la tabella `studente` ha il codice e l'anno, la tabella `professore` il codice e la materia, e il codice di ogni riga di una figlia indica una riga di `persona`.
+
+| codice | nome    | cognome |
+| ------ | ------- | ------- |
+| 1      | Harry   | Potter  |
+| 2      | Severus | Piton   |
+| 3      | Rubeus  | Hagrid  |
+
+| codice | anno |
+| ------ | ---- |
+| 1      | 1    |
+
+| codice | materia |
+| ------ | ------- |
+| 2      | Pozioni |
+
+Hagrid sta nella tabella `persona` e in nessuna figlia, Piton nell'archivio avrebbe una riga in `persona` e una in ciascuna figlia, e nome e cognome sono scritti una volta sola. Il prezzo sono gli incroci: per avere il nome e l'anno di uno studente servono due tabelle, unite come il DBMS unisce `assegnazione` e `studente`. E neanche questo modo fa rispettare la copertura: in una generalizzazione esclusiva, niente impedisce che lo stesso codice compaia in tutte e due le figlie.
+
+| Modo                 | Conserva                                     | Perde                                                        |
+| -------------------- | -------------------------------------------- | ------------------------------------------------------------ |
+| solo il padre        | le persone senza figlia, un'associazione sola | le regole delle figlie e la copertura sovrapposta            |
+| solo le figlie       | le regole delle figlie                       | le persone senza figlia; nome e cognome scritti due volte    |
+| padre e figlie       | tutte le informazioni                        | la semplicità delle interrogazioni, e il controllo della copertura |
+
+Nessuno dei tre modi va bene in ogni caso. Chi progetta sceglie guardando che cosa il dominio non può permettersi di perdere: con Hagrid da registrare, il modo "solo le figlie" è escluso; con tante interrogazioni su studenti e professori insieme, "padre e figlie" costa un incrocio a ogni domanda.
+
+:::nutshell
+
+- Una generalizzazione lega un'entità padre a entità figlie che ne sono casi particolari: ogni occorrenza di una figlia è anche un'occorrenza del padre.
+- Le figlie ereditano attributi, identificatore e associazioni del padre; nel diagramma hanno soltanto gli attributi propri.
+- Una generalizzazione non è un'associazione: lo studente e la persona sono la stessa occorrenza, non due occorrenze legate.
+- La copertura è totale o parziale, esclusiva o sovrapposta, e dipende da che cosa il database registra: il database di un anno e l'archivio di tutti gli anni hanno coperture diverse.
+- Una generalizzazione si trasforma in tabelle in tre modi: solo il padre perde le regole delle figlie, solo le figlie perde le occorrenze senza figlia e scrive due volte quelle sovrapposte, padre e figlie conserva tutto e paga in incroci.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Un database registra soltanto gli studenti e i professori dell'anno scolastico in corso, sotto l'entità `persona`. Che copertura ha la generalizzazione?
+  </QuizQuestion>
+
+  <QuizOption correct>
+    `(t,e)`: ogni persona registrata è uno studente o un professore, e nessuno è tutti e due.
+    <QuizFeedback>
+      Esatto. Senza Hagrid ogni persona appartiene a una figlia, e in un anno solo nessuno è studente e professore insieme.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    `(p,e)`: a Hogwarts ci sono anche persone che non sono né studenti né professori.
+    <QuizFeedback>
+      A Hogwarts sì, ma il database registra solo studenti e professori: la copertura riguarda le occorrenze registrate, non la scuola.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    `(t,o)`: Piton è stato studente ed è professore.
+    <QuizFeedback>
+      Piton è stato studente anni fa, ma questo database registra solo l'anno in corso, in cui Piton è soltanto professore.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Non si può dire senza vedere i dati.
+    <QuizFeedback>
+      La copertura si decide sul dominio, non sui dati: basta sapere che cosa il database registra, e la descrizione lo dice.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Nel diagramma della lezione l'entità `studente` ha un solo attributo, `anno`. Uno studente ha un nome?
+  </QuizQuestion>
+
+  <QuizOption>
+    No: il nome non compare fra gli attributi di `studente`.
+    <QuizFeedback>
+      Il nome non è disegnato accanto a `studente` perché sta nel padre: le figlie lo ereditano.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Sì: lo eredita da `persona`, come il codice e l'associazione `possiede`.
+    <QuizFeedback>
+      Esatto. Ogni studente è una persona, e ha tutto ciò che ha una persona, più l'anno.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Sì, ma va aggiunto anche fra gli attributi di `studente`, per chiarezza.
+    <QuizFeedback>
+      Scritto due volte, il nome diventerebbe un attributo del padre e uno della figlia: la generalizzazione serve proprio a scriverlo una volta.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Solo se la copertura è totale.
+    <QuizFeedback>
+      La copertura dice quali persone sono studenti, non che cosa eredita uno studente. L'ereditarietà vale con ogni copertura.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Il database deve registrare anche Hagrid, che non è né studente né professore. Quale dei tre modi di trasformare la generalizzazione in tabelle non può farlo?
+  </QuizQuestion>
+
+  <QuizOption>
+    Solo il padre.
+    <QuizFeedback>
+      Con il solo padre Hagrid è una riga di `persona` con il `tipo` vuoto: ci sta.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Solo le figlie.
+    <QuizFeedback>
+      Esatto. Senza la tabella `persona` restano solo `studente` e `professore`, e Hagrid non appartiene a nessuna delle due.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Padre e figlie, collegati.
+    <QuizFeedback>
+      Hagrid ha una riga in `persona` e nessuna nelle figlie: è proprio il caso che questo modo registra senza perdite.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Nessuno dei tre: Hagrid va registrato in un'entità figlia nuova.
+    <QuizFeedback>
+      Un'entità `guardiacaccia` con una sola occorrenza e nessun attributo proprio è l'errore opposto della lezione "Entità e attributi". Due dei tre modi registrano Hagrid così com'è.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[Il prossimo capitolo]
+
+Con le generalizzazioni il modello E/R è completo: entità, attributi, associazioni, cardinalità, identificatori e gerarchie. Il prossimo capitolo comincia dove questa lezione si è fermata, dalle tabelle: che cosa è davvero una tabella nel modello relazionale, e quali regole trasformano ogni elemento del diagramma in tabelle senza perdere informazione.
+
+:::

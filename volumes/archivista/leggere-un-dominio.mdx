@@ -1,0 +1,343 @@
+---
+title: Leggere un dominio e ricavarne il modello
+sidebar_label: Leggere un dominio
+sidebar_position: 10
+description: Il modello E/R si ricava da un testo con un metodo ripetibile, non per intuizione. I sostantivi danno i candidati, i verbi le associazioni, le quantità le cardinalità, e ciò che il testo non dice diventa un’ipotesi scritta. Lo applichiamo alla biblioteca di Hogwarts, poi tocca a te con la Coppa di Quidditch.
+---
+
+# Leggere un dominio e ricavarne il modello
+
+<Epigraph author="Sherlock Holmes, Uno scandalo in Boemia (1891)">
+
+You see, but you do not observe.
+
+</Epigraph>
+
+Nelle lezioni di questo capitolo il modello di Hogwarts è cresciuto una richiesta alla volta: i colori delle case, il direttore, le bacchette, i corsi. Quando si progetta un database davvero, e anche in una prova scritta di progettazione, il dominio arriva invece tutto insieme, in un testo che descrive che cosa si vuole registrare. Chi lo legge per la prima volta tende a disegnare subito i rettangoli che gli vengono in mente, e a scoprire le decisioni sbagliate quando il diagramma è già pieno di linee. In questa lezione leggiamo un testo di dominio con un metodo in quattro passi, che rimette in ordine le decisioni delle lezioni precedenti in modo che nessuna resti a metà. Alla fine il metodo lo applichi tu, su un testo nuovo.
+
+:::prereq
+
+- Entità e attributi, e il criterio per decidere fra le due (lezione "Entità e attributi")
+- Associazioni, associazioni derivate e cardinalità (lezioni "Le associazioni" e "Le cardinalità")
+- Identificatori semplici, composti e assegnati apposta (lezione "Identificare senza ambiguità: le chiavi")
+- Associazioni molti a molti e il caso in cui serve un'entità al posto di un'associazione (lezione precedente)
+
+:::
+
+:::learn
+
+- Ricavare da un testo di dominio i candidati a entità, attributi e associazioni, e decidere su ciascuno
+- Tradurre le quantità del testo in cardinalità, e scrivere come ipotesi ciò che il testo non dice
+- Scrivere accanto al diagramma i vincoli che il diagramma non può esprimere
+- Produrre e motivare il diagramma E/R di un dominio nuovo
+
+:::
+
+## Il testo
+
+Immaginiamo che la biblioteca di Hogwarts voglia un database per i suoi prestiti, e che la richiesta arrivi scritta così:
+
+> La biblioteca di Hogwarts vuole un database per i suoi prestiti. Di ogni libro la bibliotecaria registra il titolo, l'anno di pubblicazione e gli autori: un libro può avere più autori, e di ogni autore interessano nome e cognome. Di molti libri la biblioteca possiede più copie, e ogni copia ha un numero d'inventario scritto sul dorso e uno stato di conservazione. Gli studenti prendono in prestito le copie: di ogni prestito si registrano la data in cui la copia esce e la data in cui rientra, che resta vuota finché la copia non torna. Uno studente può avere più copie in prestito nello stesso momento. Alcuni libri sono riservati: si prendono in prestito solo con il permesso firmato da un professore, e la biblioteca vuole sapere quale professore ha firmato ogni permesso.
+
+Il testo è breve, ma contiene tutto quello che il capitolo ha messo in campo: entità e attributi, un'associazione molti a molti, un'entità che sembra un'associazione, attributi opzionali e una regola che nessun rombo può disegnare.
+
+## Primo passo: i candidati
+
+Il primo passo lavora sui sostantivi del testo. Ogni sostantivo è un **candidato**: una cosa che il modello potrebbe registrare. Un candidato non è ancora un'entità; per ognuno facciamo la domanda della lezione "Entità e attributi": interessa sapere qualcosa di lui oltre al nome, ed esiste anche senza le altre cose? La tabella qui sotto raccoglie i sostantivi del testo, il verdetto e il motivo.
+
+| Candidato                                 | Verdetto                 | Perché                                                                                  |
+| ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------- |
+| biblioteca                                | scartato                 | ce n'è una sola, e il testo non chiede niente di lei                                    |
+| database, bibliotecaria                   | scartati                 | il database è lo strumento; della bibliotecaria il testo non chiede niente              |
+| libro                                     | entità                   | ha titolo, anno e autori, ed esiste anche senza prestiti                                |
+| titolo, anno di pubblicazione             | attributi di `libro`     | interessa solo il valore                                                                |
+| autore                                    | entità                   | ha nome e cognome, e lo stesso autore può aver scritto più libri                        |
+| nome, cognome                             | attributi di `autore`    | interessa solo il valore                                                                |
+| copia                                     | entità                   | ha numero d'inventario e stato, che riguardano l'oggetto e non il libro                 |
+| numero d'inventario, stato                | attributi di `copia`     | interessa solo il valore                                                                |
+| studente, professore                      | entità                   | sono già nel modello di Hogwarts                                                        |
+| prestito                                  | da decidere              | ha due date; se sia un'entità o un'associazione lo decide il secondo passo              |
+| data di uscita, data di rientro           | attributi di `prestito`  | interessa solo il valore; la data di rientro è opzionale                                |
+| permesso                                  | da decidere              | il testo chiede solo chi l'ha firmato: lo decide il secondo passo                       |
+| libro riservato                           | attributo di `libro`     | un libro è riservato oppure no: `riservato` vale sì o no                                |
+
+La decisione più delicata del primo passo è la coppia libro e copia. Nell'italiano di tutti i giorni "libro" vuol dire due cose: l'opera, quando diciamo "ho letto quel libro", e l'oggetto, quando diciamo "ho perso il libro". Il testo le distingue con due parole diverse, e il modello deve fare lo stesso. Se `libro` e `copia` diventassero una sola entità, con il numero d'inventario fra gli attributi, il titolo e gli autori di un libro con tre copie sarebbero scritti tre volte: è la ridondanza del capitolo 1, travestita da comodità. Il prestito riguarda la copia, perché è la copia che esce dalla biblioteca e ci rientra; il titolo riguarda il libro.
+
+## Secondo passo: i legami
+
+Il secondo passo lavora sui verbi e sulle frasi che mettono in relazione due candidati: "un libro può avere più autori", "possiede più copie", "gli studenti prendono in prestito le copie", "il permesso firmato da un professore". Ogni frase così è una candidata associazione, e per ognuna facciamo le domande delle lezioni precedenti.
+
+Fra `autore` e `libro` c'è l'associazione `scrive`: un autore scrive più libri, un libro ha più autori, quindi è molti a molti, e non ha attributi. Fra `copia` e `libro` c'è un'associazione uno a molti, `esemplare`: ogni copia è un esemplare di un libro solo.
+
+Il prestito sembra un'associazione molti a molti fra `studente` e `copia`, con le due date come attributi. La domanda della lezione precedente decide: la stessa coppia può comparire più di una volta? Sì: Hermione può prendere in prestito la stessa copia a ottobre e di nuovo a maggio. Il prestito è quindi un'entità, legata alla copia dall'associazione `riguarda` e allo studente dall'associazione `richiede`.
+
+Il permesso, invece, del testo ha una sola informazione: quale professore l'ha firmato. Un'entità `permesso` senza attributi propri sarebbe l'errore opposto della lezione "Entità e attributi". Il permesso è un legame fra un prestito e un professore, cioè l'associazione `firma`.
+
+Resta un legame che il testo suggerisce ma il modello non deve disegnare: il libro di un prestito. Dal prestito si arriva alla copia, e dalla copia al suo libro, sempre: un'associazione fra `prestito` e `libro` sarebbe un'associazione derivata, cioè una copia.
+
+## Terzo passo: le quantità
+
+Il terzo passo cerca nel testo le parole che contano: "ogni", "più", "alcuni", "può", "solo". Ogni parola di questo tipo è un pezzo di cardinalità, e va letta partendo dall'entità di cui parla.
+
+- "Un libro può avere più autori": accanto a `libro` in `scrive` il massimo è N.
+- "Di molti libri la biblioteca possiede più copie": accanto a `libro` in `esemplare` il massimo è N. "Ogni copia ha un numero d'inventario": accanto a `copia`, `(1,1)`, perché una copia è un esemplare di un libro solo.
+- "Uno studente può avere più copie in prestito": accanto a `studente` in `richiede` il massimo è N, e il minimo è 0, perché uno studente può non aver mai preso un libro.
+- "Di ogni prestito si registrano…": ogni prestito riguarda una copia e un solo studente, `(1,1)` in `riguarda` e in `richiede`.
+- "Alcuni libri sono riservati": solo alcuni prestiti hanno una firma, quindi accanto a `prestito` in `firma` c'è `(0,1)`.
+- "La data in cui rientra, che resta vuota finché la copia non torna": l'attributo `rientro` è opzionale, `(0,1)`.
+
+Alcune cardinalità il testo non le dice. Un libro registrato può non avere nessuna copia? Un autore può essere registrato senza nessun libro della biblioteca? Il testo tace, e chi progetta deve scegliere e dirlo: una scelta non scritta sembra una svista a chi legge il diagramma. Le scelte si scrivono come **ipotesi**, accanto al diagramma:
+
+1. Ogni libro registrato ha almeno una copia: accanto a `libro` in `esemplare`, `(1,N)`.
+2. Ogni autore registrato ha scritto almeno un libro della biblioteca: accanto ad `autore` in `scrive`, `(1,N)`.
+3. Un professore può firmare quanti permessi vuole, anche nessuno: accanto a `professore` in `firma`, `(0,N)`.
+
+Infine, alcune regole del testo non entrano in nessuna cardinalità. "Si prendono in prestito solo con il permesso" lega la firma a un attributo del libro, `riservato`, che sta due associazioni più in là: il diagramma può esprimere che un prestito ha al massimo una firma, ma non che ce l'ha se e solo se il libro è riservato. E una copia non può essere in prestito a due studenti nello stesso momento, ma le cardinalità contano le coppie, non le date. Le regole di questo tipo si chiamano **vincoli non esprimibili**, e si scrivono anch'esse accanto al diagramma:
+
+1. Un prestito ha una firma se e solo se la copia è un esemplare di un libro riservato.
+2. Una copia ha al massimo un prestito con la data di rientro vuota.
+
+Nel capitolo 5 vedremo che alcuni di questi vincoli si possono far rispettare al DBMS; altri restano compito dei programmi che usano il database.
+
+## Quarto passo: gli identificatori
+
+L'ultimo passo dà a ogni entità il suo identificatore, con il criterio della lezione sulle chiavi: serve una regola che garantisca valori diversi, oggi e domani. La copia ha già un identificatore assegnato apposta, il numero d'inventario: lo scrive la biblioteca sul dorso, e non lo ripete. Il titolo non identifica un libro, perché due libri diversi possono avere lo stesso titolo, e nome e cognome non identificano un autore: a entrambi diamo un codice. Il prestito ha il suo numero progressivo, come l'assegnazione del registro dei punti; lo studente ha la matricola, e il professore un codice come l'autore.
+
+Il diagramma qui sotto mette insieme i quattro passi. È più largo della colonna: su uno schermo stretto scorre di lato dentro la figura.
+
+<DiagrammaER
+  titolo="Il modello della biblioteca di Hogwarts"
+  descrizione="Sei entità. Autore (codice, nome, cognome) e libro (codice, titolo, anno, riservato) sono collegati da scrive, (1,N) da tutti e due i lati. Copia (inventario, stato) è collegata a libro da esemplare: (1,1) accanto a copia, (1,N) accanto a libro. Prestito (id, uscita, rientro opzionale) è collegato a copia da riguarda, (1,1) accanto a prestito e (0,N) accanto a copia; a studente (matricola, nome) da richiede, (1,1) accanto a prestito e (0,N) accanto a studente; a professore (codice, nome) da firma, (0,1) accanto a prestito e (0,N) accanto a professore."
+  entita={[
+    {
+      id: 'autore',
+      col: 1,
+      riga: 0,
+      attributi: [{ nome: 'codice', identificatore: true }, 'nome', 'cognome'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'libro',
+      col: 3,
+      riga: 0,
+      attributi: [
+        { nome: 'codice', identificatore: true },
+        'titolo',
+        'anno',
+        'riservato',
+      ],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'copia',
+      col: 3,
+      riga: 2,
+      attributi: [{ nome: 'inventario', identificatore: true }, 'stato'],
+      latoAttributi: 'sotto',
+    },
+    {
+      id: 'prestito',
+      col: 1,
+      riga: 2,
+      attributi: [
+        { nome: 'id', identificatore: true },
+        'uscita',
+        { nome: 'rientro', card: '(0,1)' },
+      ],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'professore',
+      col: 0,
+      riga: 4,
+      attributi: [{ nome: 'codice', identificatore: true }, 'nome'],
+      latoAttributi: 'sotto',
+    },
+    {
+      id: 'studente',
+      col: 1,
+      riga: 4,
+      attributi: [{ nome: 'matricola', identificatore: true }, 'nome'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'scrive',
+      col: 2,
+      riga: 0,
+      tra: [
+        { entita: 'autore', card: '(1,N)' },
+        { entita: 'libro', card: '(1,N)' },
+      ],
+    },
+    {
+      id: 'esemplare',
+      col: 3,
+      riga: 1,
+      tra: [
+        { entita: 'copia', card: '(1,1)' },
+        { entita: 'libro', card: '(1,N)' },
+      ],
+    },
+    {
+      id: 'riguarda',
+      col: 2,
+      riga: 2,
+      tra: [
+        { entita: 'prestito', card: '(1,1)' },
+        { entita: 'copia', card: '(0,N)' },
+      ],
+    },
+    {
+      id: 'richiede',
+      col: 1,
+      riga: 3,
+      tra: [
+        { entita: 'prestito', card: '(1,1)' },
+        { entita: 'studente', card: '(0,N)' },
+      ],
+    },
+    {
+      id: 'firma',
+      col: 0,
+      riga: 2,
+      tra: [
+        { entita: 'prestito', card: '(0,1)' },
+        { entita: 'professore', card: '(0,N)' },
+      ],
+    },
+  ]}
+  cella={[220, 150]}
+/>
+
+Il diagramma da solo non è il modello. Il modello completo è il diagramma con le tre ipotesi e i due vincoli non esprimibili scritti accanto: chi lo legge, che sia un collega o chi corregge una prova scritta, deve poter capire ogni scelta senza chiederla a chi l'ha fatta.
+
+:::warning[Due scorciatoie che costano care]
+
+- <Esito ok={false} /> un rettangolo per ogni sostantivo del testo → `biblioteca`, `permesso` e `bibliotecaria` diventano entità che non registrano niente.
+- <Esito ok={false} /> le cardinalità che il testo non dice, scelte senza scriverlo → chi legge non sa se `(1,N)` accanto a `libro` è una decisione o una distrazione.
+- <Esito /> ogni candidato con il suo verdetto, ogni scelta con la sua ipotesi scritta → chi rilegge il modello vede dove una decisione potrebbe essere sbagliata, e può correggerla.
+
+:::
+
+## Il tuo turno
+
+Applica i quattro passi a questo testo. Lavora su carta: per ogni passo scrivi i candidati con il verdetto, le associazioni, le cardinalità e gli identificatori; poi disegna il diagramma, con le ipotesi e i vincoli non esprimibili accanto.
+
+> Ogni anno a Hogwarts le quattro case si contendono la Coppa di Quidditch. Ogni casa ha una squadra di sette giocatori, tutti studenti della casa, e il database registra la squadra di quest'anno. Di ogni giocatore interessa il ruolo, e uno dei sette è il capitano della squadra. Ogni partita si gioca in una data fra due case, e il database deve registrare i punti segnati da ciascuna delle due. Ogni partita è arbitrata da un professore.
+
+<details>
+<summary>Una soluzione possibile</summary>
+
+**Primo passo.** Le entità sono `casa`, `studente`, `partita` e `professore`. La squadra non è un'entità a parte: ogni casa ne ha una, e il testo non chiede niente della squadra che non sia già della casa. La Coppa è una sola, e del Quidditch il testo non chiede niente: entrambi scartati. Il ruolo e i punti sono attributi, e il secondo passo decide di che cosa.
+
+**Secondo passo.** I giocatori sono studenti che fanno parte della squadra di una casa: è l'associazione `gioca` fra `studente` e `casa`, con l'attributo `ruolo`, che è un'informazione sul giocatore in squadra. Il capitano è un'altra associazione fra le stesse due entità, `capitano`, con coppie diverse da `gioca`: è il caso dei due rombi legittimi della lezione "Le associazioni". I punti di una partita sono un attributo della coppia partita–casa, come il voto della lezione precedente: l'associazione `sfida` fra `partita` e `casa` ha l'attributo `punti`. Ogni partita è arbitrata da un professore: l'associazione `arbitra`.
+
+**Terzo passo.** Accanto a `casa` in `gioca` c'è `(7,7)`: ogni squadra ha esattamente sette giocatori. Accanto a `studente`, `(0,1)`: la maggior parte degli studenti non gioca. In `capitano`, `(1,1)` accanto a `casa` e `(0,1)` accanto a `studente`. In `sfida`, `(2,2)` accanto a `partita`, perché ogni partita si gioca fra esattamente due case, e `(0,N)` accanto a `casa`. In `arbitra`, `(1,1)` accanto a `partita` e `(0,N)` accanto a `professore`.
+
+**Quarto passo.** La casa si identifica con il nome, lo studente con la matricola, il professore con il suo codice e la partita con un numero progressivo.
+
+<DiagrammaER
+  titolo="Una soluzione per la Coppa di Quidditch"
+  descrizione="Lo studente (matricola, nome) è collegato alla casa (nome) da due associazioni: gioca, con l'attributo ruolo, (0,1) accanto a studente e (7,7) accanto a casa; e capitano, (0,1) accanto a studente e (1,1) accanto a casa. La casa è collegata alla partita (id, data) da sfida, con l'attributo punti, (0,N) accanto a casa e (2,2) accanto a partita. La partita è collegata al professore (codice, nome) da arbitra, (1,1) accanto a partita e (0,N) accanto a professore."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 1,
+      attributi: [{ nome: 'matricola', identificatore: true }, 'nome'],
+      latoAttributi: 'sinistra',
+    },
+    {
+      id: 'casa',
+      col: 2,
+      riga: 1,
+      attributi: [{ nome: 'nome', identificatore: true }],
+      latoAttributi: 'sinistra',
+    },
+    {
+      id: 'partita',
+      col: 4,
+      riga: 1,
+      attributi: [{ nome: 'id', identificatore: true }, 'data'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'professore',
+      col: 4,
+      riga: 3,
+      attributi: [{ nome: 'codice', identificatore: true }, 'nome'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'gioca',
+      col: 1,
+      riga: 0,
+      attributi: ['ruolo'],
+      latoAttributi: 'sopra',
+      tra: [
+        { entita: 'studente', card: '(0,1)' },
+        { entita: 'casa', card: '(7,7)' },
+      ],
+    },
+    {
+      id: 'capitano',
+      col: 1,
+      riga: 2,
+      tra: [
+        { entita: 'studente', card: '(0,1)' },
+        { entita: 'casa', card: '(1,1)' },
+      ],
+    },
+    {
+      id: 'sfida',
+      col: 3,
+      riga: 1,
+      attributi: ['punti'],
+      latoAttributi: 'sopra',
+      tra: [
+        { entita: 'casa', card: '(0,N)' },
+        { entita: 'partita', card: '(2,2)' },
+      ],
+    },
+    {
+      id: 'arbitra',
+      col: 4,
+      riga: 2,
+      tra: [
+        { entita: 'partita', card: '(1,1)' },
+        { entita: 'professore', card: '(0,N)' },
+      ],
+    },
+  ]}
+  cella={[190, 200]}
+/>
+
+**Ipotesi.** Il database registra solo la squadra dell'anno in corso, come dice il testo: con le squadre degli anni passati, la stessa coppia studente–casa comparirebbe più volte in `gioca`, e servirebbe un'entità, come per le assegnazioni. Una casa può non aver ancora giocato nessuna partita.
+
+**Vincoli non esprimibili.** Un giocatore appartiene alla casa per cui gioca. Il capitano è uno dei sette giocatori della sua squadra. Le due case di una partita sono diverse.
+
+Altre soluzioni sono accettabili, se motivate. Per esempio, visto che un giocatore gioca sempre per la sua casa, `gioca` si può sostituire con un attributo opzionale `ruolo` di `studente`, `(0,1)`: il vincolo "sette giocatori per casa" diventa allora un vincolo non esprimibile.
+
+</details>
+
+:::nutshell
+
+- Il modello si ricava dal testo in quattro passi: i candidati, i legami, le quantità, gli identificatori.
+- I sostantivi sono candidati, non entità: ognuno passa dalla domanda della lezione "Entità e attributi" e riceve un verdetto, anche "scartato".
+- Una parola del linguaggio comune può nascondere due entità, come libro e copia.
+- I verbi danno le associazioni; quando la stessa coppia può ripetersi, il fatto è un'entità, e un legame che si ricava da altri non si disegna.
+- Le parole come "ogni", "più", "alcuni", "solo" sono pezzi di cardinalità, da leggere partendo dall'entità di cui parlano.
+- Ciò che il testo non dice si sceglie e si scrive come ipotesi; le regole che il diagramma non può disegnare si scrivono come vincoli non esprimibili.
+- Il modello è il diagramma più le ipotesi e i vincoli scritti accanto.
+
+:::
+
+:::tip[La prossima lezione]
+
+Nel modello della biblioteca e in quello del Quidditch, studenti e professori sono due entità separate, ognuna con nome e identificatore, e tutte e due si possono legare alla stessa cosa, come una bacchetta. Nella prossima lezione, l'ultima del capitolo, vediamo come il modello E/R raccoglie in un'entità sola ciò che più entità hanno in comune: le generalizzazioni.
+
+:::
