@@ -338,7 +338,9 @@ function QRModal({
           background: T.dark ? '#161619' : '#ffffff',
           border: `1px solid ${T.border}`,
           borderRadius: 'var(--radius-lg)',
-          padding: '30px 26px 26px',
+          /* top ≥ top+altezza del bottone Chiudi (12+32) + respiro: il QR
+             non deve finire sotto la ×. */
+          padding: '56px 26px 26px',
           textAlign: 'center',
           boxShadow: '0 24px 60px rgba(0,0,0,0.4)',
         }}
