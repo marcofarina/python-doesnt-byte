@@ -22,6 +22,14 @@ module.exports = [
     type: 'category',
     label: '2 · Modellare il dominio',
     customProps: { capitolo: 2 },
-    items: ['entita-e-attributi'],
+    items: [
+      'entita-e-attributi',
+      'le-associazioni',
+      'le-cardinalita',
+      'le-chiavi',
+      'associazioni-molti-a-molti',
+      'leggere-un-dominio',
+      'generalizzazioni',
+    ],
   },
 ];

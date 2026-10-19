@@ -1,0 +1,299 @@
+---
+title: Le associazioni
+sidebar_label: Le associazioni
+sidebar_position: 6
+description: Un’associazione non è una linea fra due entità che hanno qualcosa a che fare. Registra un fatto preciso, ha un nome, si legge nei due versi e, se si ricava da altre associazioni, è una copia. Lo vediamo sulla casa di ogni studente e sul direttore di ogni casa.
+archivio: [punti.json, studenti.json]
+---
+
+# Le associazioni
+
+<Epigraph author="Albus Silente, Harry Potter e il Calice di Fuoco (2000)">
+
+We are only as strong as we are united, as weak as we are divided.
+
+</Epigraph>
+
+Alla fine della lezione precedente due cose sono rimaste fuori dal diagramma: la colonna `casa` della tabella `studente` e il direttore di ogni casa. Nessuna delle due è una proprietà di un'entità. La colonna `casa` lega uno studente a una casa, e il direttore lega una casa a un professore. Nel modello E/R questi legami si chiamano associazioni, e in questa lezione vediamo che un'associazione non è una linea qualunque fra due entità che hanno qualcosa a che fare: registra un fatto preciso, e il modello deve dire quale.
+
+:::prereq
+
+- Entità, attributo e occorrenza; le entità `studente` e `casa` (lezione precedente)
+- L'attributo derivato e il motivo per cui nei nostri diagrammi non compare (lezione precedente)
+- La casa ripetuta in ogni assegnazione del registro dei punti e le copie che si contraddicono (seconda lezione del capitolo 1)
+- Leggere come una frase un'istruzione che unisce due tabelle con `JOIN` (lezione "Che cosa fa un DBMS al posto tuo")
+
+:::
+
+:::learn
+
+- Spiegare che cos'è un'associazione e che cos'è una sua occorrenza
+- Riconoscere un'associazione nascosta in un attributo che contiene il nome di un'altra occorrenza
+- Dare a un'associazione un nome che dica il fatto registrato, e leggerla nei due versi senza raddoppiarla
+- Distinguere un'associazione che si ricava da altre, e quindi è una copia, da una che registra un fatto nuovo
+
+:::
+
+## La colonna che collega
+
+Riprendiamo la seconda versione delle tabelle della lezione precedente: la tabella `casa` con nome, colori e animale, e la tabella `studente` con nome, casa e anno. Le colonne `anno` e `casa` della tabella `studente` sembrano dello stesso tipo, ma contengono due cose diverse. Il numero 3 accanto a Fred Weasley è l'anno che Fred frequenta, e non rimanda a nient'altro. La parola `Grifondoro` accanto a Fred è invece il nome di una riga di un'altra tabella: rimanda alla riga di Grifondoro nella tabella `casa`, dove stanno i colori e l'animale. La colonna `anno` descrive lo studente; la colonna `casa` lo collega a un'occorrenza di un'altra entità.
+
+Il collegamento registra un fatto: "Fred Weasley appartiene a Grifondoro". Un fatto dello stesso tipo lega ogni studente alla sua casa: Harry Potter con Grifondoro, Draco Malfoy con Serpeverde, Padma Patil con Corvonero, Cedric Diggory con Tassofrasso, e così via. Nel modello E/R l'insieme di tutte queste coppie è un'associazione.
+
+:::definition[Associazione e occorrenza di associazione]
+
+Un'**associazione** è un legame fra due entità che il database deve registrare: l'associazione `appartiene` lega l'entità `studente` all'entità `casa`.
+
+Un'**occorrenza di associazione** è una coppia formata da un'occorrenza di ciascuna delle due entità, per cui il legame vale: la coppia (Harry Potter, Grifondoro) è un'occorrenza di `appartiene`. L'associazione è l'insieme delle sue occorrenze.
+
+:::
+
+Esistono anche associazioni fra tre o più entità, ma sono rare e in questo libro non servono: le nostre associazioni legano sempre due entità.
+
+Il nome di un'associazione è di solito un verbo, scelto in modo che insieme ai nomi delle due entità formi una frase vera: lo studente _appartiene_ alla casa. Nel diagramma un'associazione è un rombo con il nome dentro, collegato con una linea a ciascuna delle due entità. Da questa lezione in avanti i diagrammi mostrano di ogni entità soltanto gli attributi che servono al discorso.
+
+<DiagrammaER
+  titolo="Lo studente appartiene a una casa"
+  descrizione="L'entità studente, con gli attributi nome e anno, è collegata all'entità casa, con gli attributi nome, colori e animale, dall'associazione appartiene. Le linee non hanno cardinalità."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: ['nome', 'anno'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'casa',
+      col: 0,
+      riga: 2,
+      attributi: ['nome', 'colori', 'animale'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'appartiene',
+      col: 0,
+      riga: 1,
+      tra: [{ entita: 'studente' }, { entita: 'casa' }],
+    },
+  ]}
+  cella={[280, 130]}
+/>
+
+Fra gli attributi di `studente` la casa non c'è più: il suo posto è il rombo. Quando nel capitolo 3 trasformeremo il modello in tabelle, l'associazione `appartiene` tornerà a essere una colonna della tabella `studente`, perché è così che le tabelle registrano un legame. Il modello concettuale però non decide le colonne: registra il fatto che uno studente appartiene a una casa, e il modo di scriverlo nelle tabelle lo decideremo nel capitolo 3. Le linee del diagramma, per ora, non hanno numeri; i numeri arrivano nella prossima lezione.
+
+## Un fatto, due versi
+
+La frase "Harry appartiene a Grifondoro" si può girare: "Grifondoro accoglie Harry". Le due frasi parlano della stessa coppia, (Harry Potter, Grifondoro), quindi dello stesso fatto. Chi legge il diagramma partendo dalla casa legge la stessa associazione nell'altro verso. Chi progetta il modello sceglie il nome leggendo l'associazione in uno dei due versi, e quel nome vale per tutti e due.
+
+:::warning[Una frase girata non è un'altra associazione]
+
+- <Esito ok={false} /> due rombi fra `studente` e `casa`, `appartiene` e `accoglie` → le stesse coppie registrate due volte. È la ridondanza del capitolo 1: il giorno in cui un programma aggiorna una sola delle due, Harry appartiene a Grifondoro e Serpeverde lo accoglie.
+- <Esito /> un solo rombo, `appartiene`, letto nei due versi.
+
+:::
+
+Due rombi fra le stesse entità però non sono sempre un errore. Harry appartiene a Grifondoro, e dal primo anno gioca anche nella squadra di Quidditch di Grifondoro. Se il database deve registrare le squadre, `gioca` è un'associazione fra `studente` e `casa` diversa da `appartiene`: le sue coppie sono soltanto quelle dei giocatori, e non si ricavano da `appartiene`, perché anche Hermione appartiene a Grifondoro, e il Quidditch preferisce studiarlo sui libri. Per decidere se due associazioni fra le stesse entità sono una sola, confronta le coppie: se sono le stesse, l'associazione è una; se sono diverse, i fatti registrati sono due.
+
+## Il direttore
+
+Nella lezione precedente abbiamo deciso che il direttore di una casa non è un attributo della casa, perché è un professore. Con la colonna `casa` della tabella `studente` abbiamo appena trovato un modo per riconoscere questo errore anche quando non conosciamo il dominio. Se la tabella `casa` avesse una colonna `direttore`, nella riga di Grifondoro conterrebbe `McGonagall`: il nome di un'occorrenza di un'altra entità, `professore`, come `Grifondoro` nella riga di Fred è il nome di un'occorrenza di `casa`.
+
+Un attributo che contiene i nomi delle occorrenze di un'altra entità è un'associazione travestita da attributo. Il direttore diventa quindi l'associazione `dirige`, fra `professore` e `casa`. Le sue coppie sono quattro, una per casa: (McGonagall, Grifondoro), (Piton, Serpeverde), (Flitwick, Corvonero) e (Sprout, Tassofrasso). Silente, che è il preside, non dirige nessuna casa e non compare in nessuna coppia.
+
+<DiagrammaER
+  titolo="Lo studente appartiene a una casa, la casa è diretta da un professore"
+  descrizione="Tre entità impilate: studente (nome, anno), casa (nome, colori, animale) e professore (nome, materia). L'associazione appartiene collega studente e casa, l'associazione dirige collega casa e professore. Le linee non hanno cardinalità."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: ['nome', 'anno'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'casa',
+      col: 0,
+      riga: 2,
+      attributi: ['nome', 'colori', 'animale'],
+      latoAttributi: 'destra',
+    },
+    {
+      id: 'professore',
+      col: 0,
+      riga: 4,
+      attributi: ['nome', 'materia'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'appartiene',
+      col: 0,
+      riga: 1,
+      tra: [{ entita: 'studente' }, { entita: 'casa' }],
+    },
+    {
+      id: 'dirige',
+      col: 0,
+      riga: 3,
+      tra: [{ entita: 'professore' }, { entita: 'casa' }],
+    },
+  ]}
+  cella={[280, 130]}
+/>
+
+Il diagramma si legge dall'alto in basso come due frasi: lo studente appartiene a una casa, il professore dirige una casa. La casa sta in mezzo, ed è l'unica entità che partecipa a due associazioni.
+
+## L'associazione che si ricava
+
+Nella seconda lezione del capitolo 1 il registro dei punti scriveva la casa dello studente in ogni assegnazione. Anche l'assegnazione è un'entità del registro: ogni assegnazione ha i suoi punti, ed è legata allo studente che li ha ricevuti e al professore che li ha dati. Perché sia un'entità e non un'associazione lo vedremo nella lezione sulle associazioni molti a molti. La casa scritta in ogni assegnazione, nel modello E/R, era un'associazione fra `assegnazione` e `casa`. Questa associazione si ricava dalle altre: dall'assegnazione si arriva allo studente, e dallo studente alla sua casa, sempre, per qualunque assegnazione.
+
+Un'associazione le cui coppie si ottengono sempre passando da altre associazioni è un'**associazione derivata**. Come l'attributo derivato della lezione precedente, è una seconda copia di informazioni che il database contiene già, e può contraddire l'originale: nel capitolo 1, i cinque punti di Neville finivano a Tassofrasso in un conteggio e a Grifondoro nell'altro.
+
+Un giro chiuso nel diagramma, però, non basta a dire che un'associazione è derivata. Anche `dirige` chiude un giro: un professore dà punti agli studenti, gli studenti appartengono a una casa, e la casa è diretta da un professore. Se ogni professore desse punti soltanto agli studenti della casa che dirige, `dirige` si potrebbe ricavare dalle assegnazioni e il rombo sarebbe una copia.
+
+Il blocco qui sotto mette alla prova l'idea sul registro dei punti. L'istruzione si legge così: il professore e la casa dello studente, senza ripetizioni (`DISTINCT`), dalle assegnazioni unite agli studenti con lo stesso nome, in ordine di professore. Se `dirige` si ricavasse dalle assegnazioni, ogni professore comparirebbe con una casa sola, quella che dirige. Prima di eseguire il blocco, prova a prevedere con quante case compare McGonagall.
+
+```sql live dataset=archivista/registro-punti title="Le case a cui ogni professore ha dato punti"
+SELECT DISTINCT assegnazione.professore, studente.casa
+FROM assegnazione
+JOIN studente ON studente.nome = assegnazione.studente
+ORDER BY assegnazione.professore;
+```
+
+<Spoiler block>
+
+McGonagall compare con due case, Grifondoro e Serpeverde: oltre ai punti dati e tolti agli studenti di Grifondoro, ha tolto venti punti a Draco Malfoy. Anche Piton compare con Grifondoro e Serpeverde, con idee molto chiare su quale delle due debba ricevere punti e quale perderli, e Silente compare con Grifondoro, una casa che non dirige.
+
+</Spoiler>
+
+Dalle assegnazioni non si ricava chi dirige una casa: `dirige` registra un fatto che nel database non sta da nessun'altra parte, e il suo rombo serve. Per la casa di un'assegnazione vale il contrario, perché i punti di un'assegnazione vanno sempre alla casa dello studente che li riceve: è una regola del dominio, valida per tutte le assegnazioni di oggi e di domani.
+
+C'è un'asimmetria fra le due prove. Per dire che un'associazione non si ricava basta un'eccezione nei dati, come le due case di McGonagall. Per dire che si ricava i dati non bastano mai: anche se oggi ogni professore avesse dato punti solo alla casa che dirige, domani McGonagall potrebbe togliere punti a uno studente di Serpeverde. Serve una regola del dominio, e nei dati una regola non sta scritta: la conosce chi usa il database.
+
+:::nutshell
+
+- Un'associazione è un legame fra due entità che il database deve registrare; una sua occorrenza è una coppia di occorrenze per cui il legame vale.
+- Nel diagramma un'associazione è un rombo collegato alle due entità. Il suo nome è di solito un verbo che, con i nomi delle due entità, forma una frase vera.
+- Un attributo che contiene i nomi delle occorrenze di un'altra entità è un'associazione travestita: il direttore di una casa è l'associazione `dirige`, non un attributo.
+- Un'associazione si legge nei due versi: "appartiene" e "accoglie" sono la stessa associazione, e due rombi per le stesse coppie sono ridondanza.
+- Due associazioni fra le stesse entità sono legittime se registrano coppie diverse, come `appartiene` e `gioca`.
+- Un'associazione derivata si ricava sempre da altre associazioni, e memorizzarla crea una copia. Un'eccezione nei dati basta a dire che un'associazione non è derivata; per dire che lo è serve una regola del dominio.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Un compagno disegna l'entità `professore` con gli attributi `nome`, `materia` e `casa_diretta`, che per McGonagall vale "Grifondoro". Che cosa non va?
+  </QuizQuestion>
+
+  <QuizOption>
+    Niente: un professore dirige al massimo una casa, quindi un attributo basta.
+    <QuizFeedback>
+      Che ci sia al massimo un valore non decide niente. Il valore di `casa_diretta` è il nome di un'occorrenza di `casa`, ed è questo che fa di `casa_diretta` un legame fra due entità.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    `casa_diretta` contiene il nome di un'occorrenza di un'altra entità: è l'associazione `dirige` fra `professore` e `casa`, travestita da attributo.
+    <QuizFeedback>
+      Esatto. È lo stesso segnale della colonna `casa` della tabella `studente`: l'attributo rimanda a un'altra occorrenza, e nel modello E/R quel rimando è un rombo.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Serve un'entità `direttore`, con gli attributi `nome` e `casa`.
+    <QuizFeedback>
+      Un direttore è un professore: un'entità `direttore` registrerebbe di nuovo nome e materia di McGonagall, che stanno già in `professore`. Il direttore è un legame fra due entità che esistono già.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    L'attributo va spostato nell'entità `casa`, con il nome `direttore`.
+    <QuizFeedback>
+      Spostato nella casa, l'attributo contiene il nome di un professore e resta un'associazione travestita, solo vista dall'altro lato.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    In un diagramma ci sono due rombi fra `studente` e `casa`: `appartiene`, letto dallo studente, e `accoglie`, letto dalla casa. Le coppie dei due rombi sono le stesse. Che cosa ne pensi?
+  </QuizQuestion>
+
+  <QuizOption>
+    Va bene: ogni associazione ha un verso, e servono due rombi per leggerla nei due versi.
+    <QuizFeedback>
+      Un'associazione si legge in tutti e due i versi con un solo rombo. Il nome si sceglie leggendola in un verso, ma il fatto registrato è uno.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Va bene, purché uno dei due rombi abbia un attributo in più.
+    <QuizFeedback>
+      Un attributo in più non cambia le coppie. Finché le coppie sono le stesse, i due rombi registrano lo stesso fatto due volte.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    È la stessa associazione disegnata due volte: le stesse coppie in due posti, che prima o poi si contraddicono.
+    <QuizFeedback>
+      Esatto. Basta un programma che aggiorna `appartiene` e dimentica `accoglie` perché lo stesso studente risulti in due case diverse.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    È un errore solo se le due associazioni hanno lo stesso nome.
+    <QuizFeedback>
+      Il nome non conta: contano le coppie. Due nomi diversi per le stesse coppie sono lo stesso fatto scritto due volte.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    In un database, oggi, ogni professore ha dato punti soltanto agli studenti della casa che dirige. Un compagno conclude che `dirige` si ricava dalle assegnazioni e toglie il rombo. Che cosa ne pensi?
+  </QuizQuestion>
+
+  <QuizOption>
+    Ha ragione: se i dati coincidono, `dirige` è una copia.
+    <QuizFeedback>
+      I dati di oggi coincidono per caso. La prima volta che un professore toglie punti a uno studente di un'altra casa, la regola ricavata dai dati smette di valere.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Ha torto: per dire che un'associazione si ricava serve una regola del dominio, e nessuna regola dice che un professore dà punti solo alla casa che dirige.
+    <QuizFeedback>
+      Esatto. I dati possono smentire una derivazione, come le due case di McGonagall nel registro, ma non possono dimostrarla.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Ha ragione, purché ogni professore abbia dato almeno un'assegnazione.
+    <QuizFeedback>
+      Anche con un'assegnazione per professore, la coincidenza riguarda i dati di oggi. Un professore nuovo, che non ha ancora dato punti, non risulterebbe direttore di nessuna casa.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Ha torto, perché un giro chiuso nel diagramma è sempre un errore.
+    <QuizFeedback>
+      Un giro chiuso non è un errore in sé: `appartiene`, `dirige` e le assegnazioni formano un giro, e servono tutte e tre. Un'associazione nel giro è una copia solo se una regola del dominio permette di ricavarla.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+Nei diagrammi di questa lezione le linee fra le entità e i rombi sono rimaste senza numeri. Uno studente appartiene a una casa sola, una casa accoglie molti studenti, un professore dirige al massimo una casa: nella prossima lezione questi conteggi diventano le cardinalità, e vediamo che decidono la struttura del database.
+
+:::

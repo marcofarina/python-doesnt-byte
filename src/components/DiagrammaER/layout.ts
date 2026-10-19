@@ -34,7 +34,8 @@ const PALLINO = 11;
 const ELLISSE_A = 30;
 const MARGINE_VB = 12;
 
-const RE_CARD = /^\((0|1), ?(1|n|N)\)$/;
+// Minimo e massimo: 0, 1 o un numero (es. «(2,2)»); il massimo anche N.
+const RE_CARD = /^\((\d+), ?(\d+|n|N)\)$/;
 const COPERTURE = ['(t,e)', '(t,o)', '(p,e)', '(p,o)'];
 const LATI: Lato[] = ['sopra', 'sotto', 'sinistra', 'destra'];
 
@@ -254,7 +255,7 @@ export function calcola(props: DiagrammaERProps): Disegno {
           `l'associazione «${r.id}» partecipa con l'entità «${p.entita}», che non esiste`,
         );
       }
-      if (!cardOk(p.card)) {
+      if (p.card !== undefined && !cardOk(p.card)) {
         throw err(
           `cardinalità non valida «${p.card}» in «${r.id}» (attesa, per esempio, «(1,N)»)`,
         );
@@ -343,7 +344,7 @@ export function calcola(props: DiagrammaERProps): Disegno {
   interface Collegamento {
     r: Associazione;
     entita: string;
-    card: string;
+    card?: string;
     latoEntita: Lato;
     latoRombo: Lato;
   }
@@ -732,7 +733,9 @@ export function calcola(props: DiagrammaERProps): Disegno {
       rombo.cy + vy * rombo.hh,
     ];
     const chiave = `${c.r.id}/${c.entita}`;
-    if (orizzontale(c.latoEntita)) {
+    if (c.card === undefined) {
+      // cardinalità facoltativa: la linea senza etichetta
+    } else if (orizzontale(c.latoEntita)) {
       const sotto = c.latoEntita === 'sotto';
       testo(
         da[0] + 12,

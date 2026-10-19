@@ -1,0 +1,329 @@
+---
+title: Le cardinalità
+sidebar_label: Le cardinalità
+sidebar_position: 7
+description: Le cardinalità non sono un’etichetta da aggiungere alla fine del diagramma. Il minimo decide se un’occorrenza può esistere senza l’altra, il massimo se il legame sta in una colonna. Lo vediamo con una studentessa non ancora smistata e con le due bacchette di Ron.
+---
+
+# Le cardinalità
+
+<Epigraph author="Highlander (1986)">
+
+There can be only one.
+
+</Epigraph>
+
+Nella lezione precedente le linee dei diagrammi sono rimaste senza numeri, ma qualche conteggio l'abbiamo già fatto a voce: ogni studente appartiene a una casa sola, e Silente non dirige nessuna casa. In questa lezione quei conteggi entrano nel modello, e si chiamano cardinalità. Chi comincia a modellare le scrive per ultime, come un'etichetta da attaccare alla linea quando il diagramma è finito. Vedremo invece che le cardinalità decidono quali dati il database accetta e quale forma avranno le sue tabelle.
+
+:::prereq
+
+- Associazioni e occorrenze di associazione; `appartiene` e `dirige` (lezione precedente)
+- L'attributo opzionale e il segno `(0,1)` (lezione "Entità e attributi")
+- La bacchetta, che diventa un'entità quando interessano anche il nucleo e la lunghezza (quiz della lezione "Entità e attributi")
+- Un vincolo che il DBMS fa rispettare rifiutando una scrittura (lezione "Che cosa fa un DBMS al posto tuo")
+
+:::
+
+:::learn
+
+- Scrivere le cardinalità di un'associazione leggendo il dominio nei due versi, e metterle dal lato giusto
+- Spiegare che cosa decidono il minimo e il massimo, e quale domanda al dominio stabilisce ciascuno
+- Riconoscere un'associazione uno a uno, uno a molti o molti a molti
+- Prevedere quando una cardinalità impedisce al database di registrare un fatto vero
+
+:::
+
+## Quante case per uno studente
+
+Prendiamo l'associazione `appartiene` e contiamo le sue coppie, partendo da uno studente. Harry appartiene a Grifondoro e a nessun'altra casa: compare in una coppia sola, e lo stesso vale per ogni altro studente. Partendo da una casa il conto cambia: nel registro dei punti Grifondoro compare in sei coppie, una per ogni suo studente, e Corvonero in una. Nella lezione "Entità e attributi", dopo la cancellazione di Padma, Corvonero è rimasta una casa con zero studenti, e il database l'ha conservata.
+
+Il modello registra questi conteggi con due numeri per ogni entità che partecipa all'associazione, scritti fra parentesi accanto all'entità: il minimo e il massimo delle coppie in cui ogni sua occorrenza può comparire. Per `appartiene`, accanto a `studente` c'è `(1,1)`: ogni studente compare in almeno una coppia e al massimo in una, perché di case, come di Highlander, ce ne può essere una sola. Accanto a `casa` c'è `(0,N)`: una casa può non comparire in nessuna coppia, e non ha un massimo fissato. La lettera `N` vuol dire "quante se ne vuole". È la stessa notazione dell'attributo opzionale della lezione "Entità e attributi", dove `(0,1)` accanto al Patronus voleva dire nessun valore oppure uno.
+
+<DiagrammaER
+  titolo="Lo studente appartiene a una casa, con le cardinalità"
+  descrizione="L'entità studente, con nome e anno, è collegata all'entità casa, con nome, colori e animale, dall'associazione appartiene. Accanto a studente la cardinalità è (1,1), accanto a casa (0,N)."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: ['nome', 'anno'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'casa',
+      col: 0,
+      riga: 2,
+      attributi: ['nome', 'colori', 'animale'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'appartiene',
+      col: 0,
+      riga: 1,
+      tra: [
+        { entita: 'studente', card: '(1,1)' },
+        { entita: 'casa', card: '(0,N)' },
+      ],
+    },
+  ]}
+  cella={[280, 130]}
+/>
+
+Le cardinalità si leggono partendo dall'entità che hanno accanto: "ogni studente appartiene ad almeno una casa e al massimo a una", "ogni casa accoglie da zero a N studenti". Sono le due letture della stessa associazione della lezione precedente, una per verso, e ognuna ha i suoi numeri.
+
+:::warning[I numeri stanno accanto all'entità che descrivono]
+
+In altre notazioni, come i diagrammi delle classi UML (il linguaggio grafico più usato per descrivere i programmi a oggetti) o la notazione "a zampa di gallina" (_crow's foot_), il numero si scrive all'altro capo della linea, e chi le ha già viste tende a invertire i lati.
+
+- <Esito ok={false} /> `(0,N)` accanto a `studente` e `(1,1)` accanto a `casa` → il diagramma dice che ogni casa ha esattamente uno studente, e che uno studente può appartenere a più case o a nessuna.
+- <Esito /> `(1,1)` accanto a `studente` e `(0,N)` accanto a `casa` → ogni studente ha una casa, ogni casa ha da zero a N studenti.
+
+Per controllare, leggi la frase partendo dall'entità accanto ai numeri: se la frase è falsa nel dominio, i numeri sono dal lato sbagliato.
+
+:::
+
+## Prima dello smistamento
+
+Il minimo 1 accanto a `studente` dice che uno studente senza casa non esiste. Nella seconda versione delle tabelle della lezione "Entità e attributi" questo minimo è già diventato una regola che il DBMS fa rispettare: la colonna `casa` della tabella `studente` è obbligatoria, e una riga senza la casa viene rifiutata. Come si dichiara una colonna obbligatoria lo vedremo nel capitolo 5.
+
+Immaginiamo che la segreteria di Hogwarts voglia registrare ogni studente nuovo appena parte la sua lettera di ammissione, durante l'estate. Ginny Weasley arriva a Hogwarts l'anno dopo Harry: riceve la lettera in estate, e il Cappello Parlante la smista solo la sera del 1° settembre, al banchetto di inizio anno. Il blocco qui sotto prova a registrarla in agosto, e si legge così: inserisci nella tabella `studente`, nelle colonne `nome` e `anno`, i valori `Ginny Weasley` e 1. La casa manca, perché ancora nessuno la conosce. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+
+```sql live dataset=archivista/casa-entita title="Ginny Weasley prima dello smistamento"
+INSERT INTO studente (nome, anno)
+VALUES ('Ginny Weasley', 1);
+```
+
+<Spoiler block>
+
+Il DBMS rifiuta l'inserimento con l'errore `NOT NULL constraint failed: studente.casa`: la colonna `casa` della tabella `studente` non può restare vuota. Ginny non entra nel database finché il Cappello Parlante non ha deciso, il che per una Weasley è una formalità.
+
+</Spoiler>
+
+Il DBMS fa rispettare il minimo che il modello ha fissato: con il minimo a 1, uno studente senza casa è un dato impossibile. Per questo dominio, però, è il minimo a essere sbagliato. Se il database registra gli studenti solo dopo lo smistamento, `(1,1)` va bene e Ginny entra il 1° settembre. Se li registra dalla lettera di ammissione, per qualche settimana uno studente esiste senza casa, e accanto a `studente` serve `(0,1)`.
+
+Il minimo risponde a una domanda precisa: un'occorrenza di questa entità può esistere senza comparire in nessuna coppia dell'associazione? La risposta non si ricava dai nomi delle entità. Dipende da che cosa il database deve registrare, e da quando: a Hogwarts, lo stesso studente può entrare nel database prima o dopo lo smistamento, e il minimo giusto cambia con quel giorno. Con il minimo a 0 la casa di Ginny resterebbe vuota fino allo smistamento, e il valore che manca ha nelle tabelle un nome e un comportamento tutto suo, `NULL`, che vedremo nel capitolo 3.
+
+## La seconda bacchetta di Ron
+
+Il massimo decide un'altra cosa. Nella lezione "Entità e attributi" un quiz chiedeva che cosa fare della bacchetta: finché interessa solo il legno, è un attributo dello studente; se interessano anche il nucleo e la lunghezza, diventa un'entità. Supponiamo che interessino. La bacchetta è un'entità con gli attributi `legno`, `nucleo` e `lunghezza`, legata allo studente dall'associazione `possiede`.
+
+Se il database registra la bacchetta che ogni studente usa adesso, le cardinalità sono `(1,1)` dai due lati: ogni studente ha una bacchetta, e ogni bacchetta registrata è di uno studente. Ron Weasley però, a Hogwarts, ha avuto due bacchette. La prima era quella vecchia di suo fratello Charlie, e si è spezzata al secondo anno, quando Ron e Harry sono arrivati a scuola sulla Ford Anglia volante del padre di Ron, atterrando su un albero che non l'ha presa bene. Al terzo anno Ron ne ha una nuova: salice, crine di unicorno, quattordici pollici.
+
+Se il database deve conservare tutte le bacchette che ogni studente ha avuto, il massimo accanto a `studente` diventa N, e la cardinalità `(1,N)`.
+
+<DiagrammaER
+  titolo="Lo studente possiede una o più bacchette"
+  descrizione="L'entità studente, con nome e anno, è collegata all'entità bacchetta, con legno, nucleo e lunghezza, dall'associazione possiede. Accanto a studente la cardinalità è (1,N), accanto a bacchetta (1,1)."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: ['nome', 'anno'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'bacchetta',
+      col: 0,
+      riga: 2,
+      attributi: ['legno', 'nucleo', 'lunghezza'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'possiede',
+      col: 0,
+      riga: 1,
+      tra: [
+        { entita: 'studente', card: '(1,N)' },
+        { entita: 'bacchetta', card: '(1,1)' },
+      ],
+    },
+  ]}
+  cella={[280, 130]}
+/>
+
+Nel diagramma è cambiato un carattere, da 1 a N. Nel database è cambiata la struttura. Con il massimo a 1, legno, nucleo e lunghezza potrebbero stare nella riga dello studente, una volta sola; se convenga oppure no, lo vedremo nel capitolo 3. Con il massimo a N, nella riga di Ron servirebbero due legni, due nuclei e due lunghezze, e una cella di una tabella contiene un valore solo: perché, lo spiega la prima lezione del capitolo 3. Aggiungere le colonne `legno_2`, `nucleo_2` e `lunghezza_2` sposta il problema alla terza bacchetta. Le bacchette devono stare in una tabella propria, con una riga per bacchetta e il nome del proprietario in ogni riga, come le assegnazioni del registro dei punti contengono il nome dello studente.
+
+Il massimo risponde quindi a un'altra domanda: un'occorrenza di questa entità può comparire in più di una coppia? Anche questa risposta dipende da che cosa il database registra, la bacchetta di adesso o tutte quelle avute.
+
+## Uno a uno, uno a molti, molti a molti
+
+:::definition[Cardinalità e partecipazione]
+
+La **cardinalità** di un'entità in un'associazione è la coppia `(min,max)` che indica in quante occorrenze dell'associazione può comparire ogni occorrenza dell'entità, come minimo e come massimo.
+
+La **partecipazione** di un'entità a un'associazione è **obbligatoria** se il minimo è 1, cioè se ogni occorrenza deve comparire in almeno una coppia; è **opzionale** se il minimo è 0.
+
+:::
+
+I massimi dei due lati danno il nome al tipo di associazione:
+
+- **uno a uno** (1:1), con il massimo 1 da tutti e due i lati, come `possiede` quando registra solo la bacchetta di adesso;
+- **uno a molti** (1:N), con il massimo 1 da un lato e N dall'altro, come `appartiene` e come `possiede` quando registra tutte le bacchette;
+- **molti a molti** (N:N), con il massimo N da tutti e due i lati, come l'associazione fra studenti e corsi: ogni studente segue più corsi, e ogni corso ha più studenti.
+
+I minimi non entrano nel nome. L'associazione `dirige` è uno a uno: ogni casa ha esattamente un direttore, `(1,1)`, e ogni professore dirige al massimo una casa, `(0,1)`. Il minimo 0 accanto a `professore` serve a Silente, che è il preside e non dirige nessuna casa, e a ogni professore che non ne dirige una.
+
+<DiagrammaER
+  titolo="La casa è diretta da un professore"
+  descrizione="L'entità casa è collegata all'entità professore dall'associazione dirige. Accanto a casa la cardinalità è (1,1), accanto a professore (0,1)."
+  entita={[
+    {
+      id: 'casa',
+      col: 0,
+      riga: 0,
+      attributi: ['nome', 'colori', 'animale'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'professore',
+      col: 0,
+      riga: 2,
+      attributi: ['nome', 'materia'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'dirige',
+      col: 0,
+      riga: 1,
+      tra: [
+        { entita: 'casa', card: '(1,1)' },
+        { entita: 'professore', card: '(0,1)' },
+      ],
+    },
+  ]}
+  cella={[280, 130]}
+/>
+
+Le associazioni molti a molti hanno problemi tutti loro, e li vedremo in una lezione dedicata, più avanti in questo capitolo. Prima serve un modo per distinguere senza ambiguità le occorrenze che le coppie nominano.
+
+:::nutshell
+
+- La cardinalità `(min,max)` si scrive accanto all'entità che descrive, per ogni entità che partecipa all'associazione, e si legge partendo da quell'entità.
+- Il minimo dice se un'occorrenza può esistere senza comparire in nessuna coppia: 0 per la partecipazione opzionale, 1 per quella obbligatoria.
+- Il massimo dice se un'occorrenza può comparire in più coppie: 1 oppure N.
+- Un minimo sbagliato fa rifiutare al database un fatto vero, come Ginny prima dello smistamento.
+- Un massimo sbagliato cambia la struttura: con il massimo a N il legame non sta più in una colonna, e servono righe in una tabella propria.
+- I massimi dei due lati danno il tipo: uno a uno, uno a molti, molti a molti. I minimi non entrano nel nome.
+- Le cardinalità giuste dipendono da che cosa il database registra e da quando: sono domande da fare al dominio.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Un compagno disegna l'associazione `appartiene` con `(0,N)` accanto a `studente` e `(1,1)` accanto a `casa`. Che cosa dice il suo diagramma?
+  </QuizQuestion>
+
+  <QuizOption>
+    Ogni studente appartiene a una sola casa, e ogni casa ha da zero a N studenti.
+    <QuizFeedback>
+      È quello che il compagno voleva dire, ma i numeri dicono altro: si leggono partendo dall'entità che hanno accanto, e `(0,N)` accanto a `studente` parla degli studenti.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Ogni casa ha esattamente uno studente, e uno studente può appartenere a nessuna casa o a molte.
+    <QuizFeedback>
+      Esatto. Il compagno ha scritto i numeri all'altro capo della linea, come si fa in UML. Nella notazione di questo libro stanno accanto all'entità che descrivono.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Ogni studente appartiene ad almeno una casa, e ogni casa ha al massimo uno studente.
+    <QuizFeedback>
+      Accanto a `studente` il minimo è 0, quindi il diagramma permette uno studente senza casa. E accanto a `casa` c'è `(1,1)`: esattamente uno, non al massimo uno.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Niente: le due cardinalità si possono scambiare senza cambiare il significato.
+    <QuizFeedback>
+      Scambiandole cambiano entrambe le frasi. Prova a leggerle partendo dall'entità accanto ai numeri: "ogni casa ha esattamente uno studente" è falsa a Hogwarts.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Nel modello di Hogwarts un compagno scrive `(1,1)` accanto a `professore` nell'associazione `dirige`. Che cosa succede quando il database deve registrare Silente?
+  </QuizQuestion>
+
+  <QuizOption>
+    Niente di particolare: Silente è il preside, e il preside dirige tutte le case.
+    <QuizFeedback>
+      Il preside non è il direttore di nessuna casa: i direttori sono McGonagall, Piton, Flitwick e Sprout. E con `(1,1)` Silente potrebbe comparire al massimo in una coppia.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Silente non può essere registrato senza dirigere una casa: il minimo giusto accanto a `professore` è 0.
+    <QuizFeedback>
+      Esatto. Con il minimo 1 ogni professore deve comparire in una coppia di `dirige`. Silente, Lupin e ogni professore che non dirige una casa sarebbero dati impossibili.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Silente viene registrato, e la sua casa resta vuota.
+    <QuizFeedback>
+      Con il minimo 1 la casa diretta non può restare vuota: il DBMS rifiuterebbe Silente, come ha rifiutato Ginny senza casa.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Bisogna cambiare il massimo accanto a `casa` da 1 a N.
+    <QuizFeedback>
+      Il massimo accanto a `casa` direbbe che una casa può avere più direttori, e il problema di Silente resterebbe: riguarda il minimo accanto a `professore`.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Il database conserva tutte le bacchette avute da ogni studente, e anche i loro proprietari precedenti: la prima bacchetta di Ron era stata di suo fratello Charlie, come i vestiti di Bill e il topo di Percy. Che cardinalità ha `bacchetta` nell'associazione `possiede`?
+  </QuizQuestion>
+
+  <QuizOption>
+    `(1,1)`: ogni bacchetta appartiene a un solo studente.
+    <QuizFeedback>
+      Vale per la bacchetta di adesso. Con i proprietari precedenti, la bacchetta di Charlie compare in due coppie: (Charlie, bacchetta) e (Ron, bacchetta).
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    `(0,1)`: alcune bacchette non hanno proprietario.
+    <QuizFeedback>
+      Il minimo 0 risolverebbe un altro problema, le bacchette senza proprietario. Qui il problema è il massimo: una bacchetta può avere avuto più proprietari.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    `(1,N)`: una bacchetta può essere passata da più proprietari, e `possiede` diventa molti a molti.
+    <QuizFeedback>
+      Esatto. Con `(1,N)` da tutti e due i lati l'associazione è molti a molti: è il caso di una lezione più avanti in questo capitolo.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Non si può dire: dipende da quante bacchette ha avuto Charlie.
+    <QuizFeedback>
+      La cardinalità non conta le bacchette di una persona: dice quante coppie una bacchetta può avere. Basta un caso nel dominio, la bacchetta di Charlie, per sapere che il massimo è N.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+Le coppie di un'associazione nominano le occorrenze, e finora le abbiamo nominate per nome: (Harry Potter, Grifondoro), (Ron Weasley, la sua seconda bacchetta). Il nome funziona finché due studenti non si chiamano allo stesso modo. Nella prossima lezione succede, e cerchiamo un modo di distinguere ogni occorrenza che non si affidi alla fortuna.
+
+:::
