@@ -99,7 +99,7 @@ Se hai già scritto classi in Python, la generalizzazione ti ricorda l'ereditari
   cella={[180, 120]}
 />
 
-Nel diagramma la generalizzazione è una freccia che va dalle entità figlie al padre. Accanto a `persona`, in `possiede`, il minimo è 0: a Hagrid la bacchetta l'hanno spezzata quando è stato espulso. Gli attributi di `studente` e `professore` sono soltanto quelli propri: il nome, il codice e la bacchetta di uno studente stanno nel padre, e valgono per lui come per ogni altra persona.
+Nel diagramma la generalizzazione è una freccia che va dalle entità figlie al padre. Accanto a `persona`, in `possiede`, il minimo è 0: a Hagrid la bacchetta l'hanno spezzata quando è stato espulso, e da allora la sua magia passa da un ombrello rosa. Gli attributi di `studente` e `professore` sono soltanto quelli propri: il nome, il codice e la bacchetta di uno studente stanno nel padre, e valgono per lui come per ogni altra persona.
 
 :::warning[Una generalizzazione non è un'associazione]
 
@@ -114,7 +114,7 @@ Accanto alla freccia il diagramma porta due lettere, `(p,e)`. Sono la **copertur
 
 La prima domanda: ogni persona registrata è per forza uno studente o un professore? Hagrid no. Nei primi due anni di Harry a Hogwarts è il guardiacaccia della scuola, e non è né uno studente né un professore. Se il database registra anche Hagrid, alcune persone non appartengono a nessuna entità figlia, e la generalizzazione è parziale, `p`. Se ogni persona registrata è per forza uno studente o un professore, è totale, `t`.
 
-La seconda domanda: una persona può essere studente e professore insieme? Fra gli studenti e i professori di un anno scolastico, no: la generalizzazione è esclusiva, `e`. Immaginiamo però l'archivio della lezione sulle chiavi, con tutti gli studenti passati da Hogwarts. Piton e Lupin a Hogwarts hanno studiato, e anni dopo ci insegnano: nell'archivio Piton è un'occorrenza di `studente` e anche di `professore`, e la generalizzazione è sovrapposta, `o`, dall'inglese _overlapping_.
+La seconda domanda: una persona può essere studente e professore insieme? Fra gli studenti e i professori di un anno scolastico, no: la generalizzazione è esclusiva, `e`. Immaginiamo però l'archivio della lezione sulle chiavi, con tutti gli studenti passati da Hogwarts. Piton e Lupin a Hogwarts hanno studiato, e anni dopo insegnato, senza essersi mai resi simpatici né agli studenti né ai professori: nell'archivio Piton è un'occorrenza di `studente` e anche di `professore`, e la generalizzazione è sovrapposta, `o`, dall'inglese _overlapping_.
 
 :::definition[Copertura]
 
@@ -122,7 +122,7 @@ La **copertura** di una generalizzazione è **totale** se ogni occorrenza del pa
 
 :::
 
-La copertura, come le cardinalità, non si ricava dai nomi delle entità. Le persone di Hogwarts sono le stesse, ma il database di un anno scolastico ha la copertura `(p,e)`, e l'archivio di tutti gli anni `(p,o)`. Nell'archivio anche Hagrid smette di essere un caso a parte: prima di diventare guardiacaccia è stato studente, fino all'espulsione al terzo anno, e dal terzo anno di Harry è anche professore.
+La copertura, come le cardinalità, non si ricava dai nomi delle entità. Le persone di Hogwarts sono le stesse, ma il database di un anno scolastico ha la copertura `(p,e)`, e l'archivio di tutti gli anni `(p,o)`. Nell'archivio anche Hagrid smette di essere un caso a parte: prima di diventare guardiacaccia è stato studente, fino all'espulsione al terzo anno, e dal terzo anno di Harry è anche professore, con un libro di testo che morde (al contrario di Python Doesn't Byte).
 
 ## Tre modi di farne tabelle
 

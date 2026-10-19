@@ -119,7 +119,7 @@ WHERE studente = 'Neville Longbottom';
 
 <Spoiler block>
 
-Il voto più alto di Neville è in Erbologia, 10; in Pozioni ha 4. Nella tabella `iscrizione` lo stesso Neville compare in quattro coppie, con quattro voti diversi: il voto sta nella coppia, non nello studente.
+Il voto più alto di Neville è in Erbologia, 10; in Pozioni ha 4, e chi l'ha visto sciogliere un calderone alla prima lezione non se ne stupisce. Nella tabella `iscrizione` lo stesso Neville compare in quattro coppie, con quattro voti diversi: il voto sta nella coppia, non nello studente.
 
 </Spoiler>
 
@@ -127,7 +127,7 @@ Il voto più alto di Neville è in Erbologia, 10; in Pozioni ha 4. Nella tabella
 
 Torniamo al registro dei punti. Ogni assegnazione lega un professore a uno studente e ha un valore, i punti. Ogni professore dà punti a molti studenti, e ogni studente ne riceve da molti professori: l'assegnazione sembra un'associazione molti a molti fra `professore` e `studente`, con l'attributo `punti`, costruita come l'iscrizione con il voto.
 
-Nel file `punti.json`, che trovi nel pannello "Archivio", la quarta e la quinta assegnazione sono identiche: Piton toglie un punto a Harry, e poi un altro, nella prima lezione di Pozioni. Se l'assegnazione fosse un'associazione, la coppia (Piton, Harry Potter) dovrebbe comparire due volte, una per ogni punto tolto. Un'associazione però è un insieme di coppie, e in un insieme ogni elemento c'è una volta sola: la coppia (Piton, Harry Potter) c'è oppure non c'è, e il suo attributo `punti` ha un valore solo.
+Nel file `punti.json`, che trovi nel pannello "Archivio", la quarta e la quinta assegnazione sono identiche: Piton toglie un punto a Harry per insolenza, e poi un altro per non aver aiutato Neville, nella prima lezione di Pozioni. Se l'assegnazione fosse un'associazione, la coppia (Piton, Harry Potter) dovrebbe comparire due volte, una per ogni punto tolto. Un'associazione però è un insieme di coppie, e in un insieme ogni elemento c'è una volta sola: la coppia (Piton, Harry Potter) c'è oppure non c'è, e il suo attributo `punti` ha un valore solo.
 
 Le due scorciatoie che vengono in mente non funzionano. Sommare i due punti in un solo valore, −2, fa perdere un'informazione: i punti tolti sono stati due volte uno, in due momenti diversi. Aggiungere la data come attributo non cambia niente, perché l'occorrenza resta la coppia, e la data sarebbe un attributo di quella coppia, uno solo.
 
@@ -235,7 +235,7 @@ Il criterio per scegliere fra associazione ed entità è una domanda sul dominio
 
 <Quiz>
   <QuizQuestion>
-    La biblioteca di Hogwarts registra quale studente prende in prestito quale libro, con la data del prestito. Lo stesso studente può prendere in prestito lo stesso libro più volte, in giorni diversi. Come si modella il prestito?
+    La biblioteca di Hogwarts registra quale studente prende in prestito quale libro, con la data del prestito. Lo stesso studente può prendere in prestito lo stesso libro più volte, in giorni diversi: Hermione, per dire, lo fa spesso. Come si modella il prestito?
   </QuizQuestion>
 
   <QuizOption>

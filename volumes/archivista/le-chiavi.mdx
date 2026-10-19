@@ -53,7 +53,7 @@ Il primo James Potter entra nella tabella; il secondo viene rifiutato con l'erro
 
 </Spoiler>
 
-Il DBMS fa rispettare la regola che ha ricevuto da chi ha creato la tabella: il nome distingue ogni studente. Per questo archivio la regola è falsa, e il risultato è che il database rifiuta uno studente vero. Questo è il primo modo in cui fallisce un identificatore sbagliato: con un errore, nel momento in cui qualcuno prova a scrivere.
+Il DBMS, ligio alle regole come Percy Weasley, fa rispettare quella che ha ricevuto da chi ha creato la tabella: il nome distingue ogni studente. Per questo archivio la regola è falsa, e il risultato è che il database rifiuta uno studente vero. Questo è il primo modo in cui fallisce un identificatore sbagliato: con un errore, nel momento in cui qualcuno prova a scrivere.
 
 ## Senza chiave
 
@@ -71,7 +71,7 @@ ORDER BY totale DESC;
 
 <Spoiler block>
 
-Grifondoro ha 23 punti, non 13. L'assegnazione a `James Potter` si unisce a tutte e due le righe della tabella `studente` con quel nome, e i suoi dieci punti entrano nella somma due volte.
+Grifondoro ha 23 punti, non 13. L'assegnazione a `James Potter` si unisce a tutte e due le righe della tabella `studente` con quel nome, e i suoi dieci punti entrano nella somma due volte: James Potter, che a scuola non brillava per modestia, non avrebbe protestato.
 
 </Spoiler>
 
@@ -89,7 +89,7 @@ Un identificatore formato da un solo attributo è **semplice**; uno formato da p
 
 :::
 
-La parola che conta nella definizione è "tutte". Il nome da solo distingueva gli studenti del registro finché l'archivio conteneva un anno solo. Nome e anno di corso non bastano, perché i due James Potter erano tutti e due al primo anno. Nome e data di nascita distinguono i due James, nati a più di quarant'anni di distanza, ma non due omonimi nati lo stesso giorno, che sono rari e non impossibili. Ogni attributo aggiunto rende il caso più raro, e nessuno lo rende impossibile.
+La parola che conta nella definizione è "tutte". Il nome da solo distingueva gli studenti del registro finché l'archivio conteneva un anno solo. Nome e anno di corso non bastano, perché i due James Potter erano tutti e due al primo anno. Nome e data di nascita distinguono i due James, nati a più di quarant'anni di distanza, ma non due omonimi nati lo stesso giorno, che sono rari e non impossibili. Anche la profezia su Voldemort aveva un problema di identificatore: indicava un bambino nato alla fine di luglio, e i bambini erano due, Harry e Neville. Ogni attributo aggiunto rende il caso più raro, e nessuno lo rende impossibile.
 
 :::info[Anche il codice fiscale ha i suoi doppioni]
 
@@ -97,9 +97,9 @@ Il codice fiscale italiano si calcola da cognome, nome, sesso, data e comune di 
 
 :::
 
-La strada che regge è un identificatore nato apposta per essere unico, come il numero di matricola che la segreteria assegna a ogni studente quando lo registra, senza mai riassegnarlo. Il numero di matricola non contiene nessuna informazione sullo studente, e proprio per questo non lo mettono in difficoltà né un omonimo né un cambio di cognome: a garantire che sia unico è chi lo assegna. Il DBMS può anche assegnarlo da solo: la colonna `id` della tabella `assegnazione`, il numero progressivo che il database dà a ogni riga, è un identificatore di questo tipo.
+La strada che regge è un identificatore nato apposta per essere unico, come il numero di matricola che la segreteria assegna a ogni studente quando lo registra, senza mai riassegnarlo. Il numero di matricola non contiene nessuna informazione sullo studente, e proprio per questo non lo mettono in difficoltà né un omonimo né un cambio di cognome, né due gemelli che si scambiano il nome per far confondere la madre: a garantire che sia unico è chi lo assegna. Il DBMS può anche assegnarlo da solo: la colonna `id` della tabella `assegnazione`, il numero progressivo che il database dà a ogni riga, è un identificatore di questo tipo.
 
-Un identificatore preso dal dominio non è sempre sbagliato. Il nome di una casa è un buon identificatore: le case sono quattro, i loro nomi sono diversi, e una regola del dominio dice che restano quelle. Vale lo stesso criterio delle associazioni derivate della lezione "Le associazioni": i dati di oggi non dimostrano niente, serve una regola del dominio che garantisca valori diversi anche domani. Per i nomi delle persone quella regola non esiste.
+Un identificatore preso dal dominio non è sempre sbagliato. Il nome di una casa è un buon identificatore: le case sono quattro, i loro nomi sono diversi, e una regola del dominio dice che restano quelle: in mille anni nessuno ne ha fondata una quinta. Vale lo stesso criterio delle associazioni derivate della lezione "Le associazioni": i dati di oggi non dimostrano niente, serve una regola del dominio che garantisca valori diversi anche domani. Per i nomi delle persone quella regola non esiste.
 
 :::warning[La matricola distingue le righe, non le persone]
 

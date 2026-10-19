@@ -37,7 +37,7 @@ Nella lezione precedente le linee dei diagrammi sono rimaste senza numeri, ma qu
 
 Prendiamo l'associazione `appartiene` e contiamo le sue coppie, partendo da uno studente. Harry appartiene a Grifondoro e a nessun'altra casa: compare in una coppia sola, e lo stesso vale per ogni altro studente. Partendo da una casa il conto cambia: nel registro dei punti Grifondoro compare in sei coppie, una per ogni suo studente, e Corvonero in una. Nella lezione "Entità e attributi", dopo la cancellazione di Padma, Corvonero è rimasta una casa con zero studenti, e il database l'ha conservata.
 
-Il modello registra questi conteggi con due numeri per ogni entità che partecipa all'associazione, scritti fra parentesi accanto all'entità: il minimo e il massimo delle coppie in cui ogni sua occorrenza può comparire. Per `appartiene`, accanto a `studente` c'è `(1,1)`: ogni studente compare in almeno una coppia e al massimo in una. Accanto a `casa` c'è `(0,N)`: una casa può non comparire in nessuna coppia, e non ha un massimo fissato. La lettera `N` vuol dire "quante se ne vuole". È la stessa notazione dell'attributo opzionale della lezione "Entità e attributi", dove `(0,1)` accanto al Patronus voleva dire nessun valore oppure uno.
+Il modello registra questi conteggi con due numeri per ogni entità che partecipa all'associazione, scritti fra parentesi accanto all'entità: il minimo e il massimo delle coppie in cui ogni sua occorrenza può comparire. Per `appartiene`, accanto a `studente` c'è `(1,1)`: ogni studente compare in almeno una coppia e al massimo in una, perché di case, come di Highlander, ce ne può essere una sola. Accanto a `casa` c'è `(0,N)`: una casa può non comparire in nessuna coppia, e non ha un massimo fissato. La lettera `N` vuol dire "quante se ne vuole". È la stessa notazione dell'attributo opzionale della lezione "Entità e attributi", dove `(0,1)` accanto al Patronus voleva dire nessun valore oppure uno.
 
 <DiagrammaER
   titolo="Lo studente appartiene a una casa, con le cardinalità"
@@ -98,7 +98,7 @@ VALUES ('Ginny Weasley', 1);
 
 <Spoiler block>
 
-Il DBMS rifiuta l'inserimento con l'errore `NOT NULL constraint failed: studente.casa`: la colonna `casa` della tabella `studente` non può restare vuota. Ginny non entra nel database finché il Cappello Parlante non ha deciso.
+Il DBMS rifiuta l'inserimento con l'errore `NOT NULL constraint failed: studente.casa`: la colonna `casa` della tabella `studente` non può restare vuota. Ginny non entra nel database finché il Cappello Parlante non ha deciso, il che per una Weasley è una formalità.
 
 </Spoiler>
 
@@ -110,7 +110,7 @@ Il minimo risponde a una domanda precisa: un'occorrenza di questa entità può e
 
 Il massimo decide un'altra cosa. Nella lezione "Entità e attributi" un quiz chiedeva che cosa fare della bacchetta: finché interessa solo il legno, è un attributo dello studente; se interessano anche il nucleo e la lunghezza, diventa un'entità. Supponiamo che interessino. La bacchetta è un'entità con gli attributi `legno`, `nucleo` e `lunghezza`, legata allo studente dall'associazione `possiede`.
 
-Se il database registra la bacchetta che ogni studente usa adesso, le cardinalità sono `(1,1)` dai due lati: ogni studente ha una bacchetta, e ogni bacchetta registrata è di uno studente. Ron Weasley però, a Hogwarts, ha avuto due bacchette. La prima era quella vecchia di suo fratello Charlie, e si è spezzata al secondo anno, quando Ron e Harry sono arrivati a scuola sulla Ford Anglia volante del padre di Ron. Al terzo anno Ron ne ha una nuova: salice, crine di unicorno, quattordici pollici.
+Se il database registra la bacchetta che ogni studente usa adesso, le cardinalità sono `(1,1)` dai due lati: ogni studente ha una bacchetta, e ogni bacchetta registrata è di uno studente. Ron Weasley però, a Hogwarts, ha avuto due bacchette. La prima era quella vecchia di suo fratello Charlie, e si è spezzata al secondo anno, quando Ron e Harry sono arrivati a scuola sulla Ford Anglia volante del padre di Ron, atterrando su un albero che non l'ha presa bene. Al terzo anno Ron ne ha una nuova: salice, crine di unicorno, quattordici pollici.
 
 Se il database deve conservare tutte le bacchette che ogni studente ha avuto, il massimo accanto a `studente` diventa N, e la cardinalità `(1,N)`.
 
@@ -288,7 +288,7 @@ Le associazioni molti a molti hanno problemi tutti loro, e li vedremo in una lez
 
 <Quiz>
   <QuizQuestion>
-    Il database conserva tutte le bacchette avute da ogni studente, e anche i loro proprietari precedenti: la prima bacchetta di Ron era stata di suo fratello Charlie, che a Hogwarts ha studiato anche lui. Che cardinalità ha `bacchetta` nell'associazione `possiede`?
+    Il database conserva tutte le bacchette avute da ogni studente, e anche i loro proprietari precedenti: la prima bacchetta di Ron era stata di suo fratello Charlie, come i vestiti di Bill e il topo di Percy. Che cardinalità ha `bacchetta` nell'associazione `possiede`?
   </QuizQuestion>
 
   <QuizOption>

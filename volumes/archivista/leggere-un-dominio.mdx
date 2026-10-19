@@ -48,7 +48,7 @@ Il primo passo lavora sui sostantivi del testo. Ogni sostantivo è un **candidat
 | Candidato                                 | Verdetto                 | Perché                                                                                  |
 | ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------- |
 | biblioteca                                | scartato                 | ce n'è una sola, e il testo non chiede niente di lei                                    |
-| database, bibliotecaria                   | scartati                 | il database è lo strumento; della bibliotecaria il testo non chiede niente              |
+| database, bibliotecaria                   | scartati                 | il database è lo strumento; della bibliotecaria il testo non chiede niente, ed è meglio non disturbarla              |
 | libro                                     | entità                   | ha titolo, anno e autori, ed esiste anche senza prestiti                                |
 | titolo, anno di pubblicazione             | attributi di `libro`     | interessa solo il valore                                                                |
 | autore                                    | entità                   | ha nome e cognome, e lo stesso autore può aver scritto più libri                        |
@@ -61,7 +61,7 @@ Il primo passo lavora sui sostantivi del testo. Ogni sostantivo è un **candidat
 | permesso                                  | da decidere              | il testo chiede solo chi l'ha firmato: lo decide il secondo passo                       |
 | libro riservato                           | attributo di `libro`     | un libro è riservato oppure no: `riservato` vale sì o no                                |
 
-La decisione più delicata del primo passo è la coppia libro e copia. Nell'italiano di tutti i giorni "libro" vuol dire due cose: l'opera, quando diciamo "ho letto quel libro", e l'oggetto, quando diciamo "ho perso il libro". Il testo le distingue con due parole diverse, e il modello deve fare lo stesso. Se `libro` e `copia` diventassero una sola entità, con il numero d'inventario fra gli attributi, il titolo e gli autori di un libro con tre copie sarebbero scritti tre volte: è la ridondanza del capitolo 1, travestita da comodità. Il prestito riguarda la copia, perché è la copia che esce dalla biblioteca e ci rientra; il titolo riguarda il libro.
+La decisione più delicata del primo passo è la coppia libro e copia. Nell'italiano di tutti i giorni "libro" vuol dire due cose: l'opera, quando diciamo "ho letto quel libro", e l'oggetto, quando diciamo "ho perso il libro" o, a Hogwarts, "il libro mi ha morso". Il testo le distingue con due parole diverse, e il modello deve fare lo stesso. Se `libro` e `copia` diventassero una sola entità, con il numero d'inventario fra gli attributi, il titolo e gli autori di un libro con tre copie sarebbero scritti tre volte: è la ridondanza del capitolo 1, travestita da comodità. Il prestito riguarda la copia, perché è la copia che esce dalla biblioteca e ci rientra; il titolo riguarda il libro.
 
 ## Secondo passo: i legami
 
@@ -69,7 +69,7 @@ Il secondo passo lavora sui verbi e sulle frasi che mettono in relazione due can
 
 Fra `autore` e `libro` c'è l'associazione `scrive`: un autore scrive più libri, un libro ha più autori, quindi è molti a molti, e non ha attributi. Fra `copia` e `libro` c'è un'associazione uno a molti, `esemplare`: ogni copia è un esemplare di un libro solo.
 
-Il prestito sembra un'associazione molti a molti fra `studente` e `copia`, con le due date come attributi. La domanda della lezione precedente decide: la stessa coppia può comparire più di una volta? Sì: Hermione può prendere in prestito la stessa copia a ottobre e di nuovo a maggio. Il prestito è quindi un'entità, legata alla copia dall'associazione `riguarda` e allo studente dall'associazione `richiede`.
+Il prestito sembra un'associazione molti a molti fra `studente` e `copia`, con le due date come attributi. La domanda della lezione precedente decide: la stessa coppia può comparire più di una volta? Sì: Hermione può prendere in prestito la stessa copia a ottobre e di nuovo a maggio, e conoscendola anche a novembre, gennaio e marzo. Il prestito è quindi un'entità, legata alla copia dall'associazione `riguarda` e allo studente dall'associazione `richiede`.
 
 Il permesso, invece, del testo ha una sola informazione: quale professore l'ha firmato. Un'entità `permesso` senza attributi propri sarebbe l'errore opposto della lezione "Entità e attributi". Il permesso è un legame fra un prestito e un professore, cioè l'associazione `firma`.
 
@@ -318,7 +318,7 @@ Applica i quattro passi a questo testo. Lavora su carta: per ogni passo scrivi i
 
 **Ipotesi.** Il database registra solo la squadra dell'anno in corso, come dice il testo: con le squadre degli anni passati, la stessa coppia studente–casa comparirebbe più volte in `gioca`, e servirebbe un'entità, come per le assegnazioni. Una casa può non aver ancora giocato nessuna partita.
 
-**Vincoli non esprimibili.** Un giocatore appartiene alla casa per cui gioca. Il capitano è uno dei sette giocatori della sua squadra. Le due case di una partita sono diverse.
+**Vincoli non esprimibili.** Un giocatore appartiene alla casa per cui gioca. Il capitano è uno dei sette giocatori della sua squadra. Le due case di una partita sono diverse: Grifondoro contro Grifondoro si vede solo agli allenamenti.
 
 Altre soluzioni sono accettabili, se motivate. Per esempio, visto che un giocatore gioca sempre per la sua casa, `gioca` si può sostituire con un attributo opzionale `ruolo` di `studente`, `(0,1)`: il vincolo "sette giocatori per casa" diventa allora un vincolo non esprimibile.
 
