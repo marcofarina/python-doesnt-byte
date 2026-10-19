@@ -64,9 +64,21 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
+    v: '0.20.0',
+    date: '19 ottobre 2026',
+    latest: true,
+    notes: {
+      content: [
+        'Volume 3, Manuale dell’Archivista: il capitolo 2, «Modellare il dominio», si completa con sei lezioni: «Le associazioni», «Le cardinalità», «Identificare senza ambiguità: le chiavi», «Le associazioni molti a molti», «Generalizzazioni» e «Leggere un dominio e ricavarne il modello».',
+      ],
+      improved: [
+        'Nei diagrammi E/R la cardinalità di una linea è facoltativa, così le lezioni che vengono prima delle cardinalità disegnano linee senza etichetta; sono ammesse anche cardinalità numeriche come (2,2).',
+      ],
+    },
+  },
+  {
     v: '0.19.0',
     date: '15 ottobre 2026',
-    latest: true,
     notes: {
       content: [
         'Volume 3, Manuale dell’Archivista: si apre il capitolo 2, «Modellare il dominio», con la lezione «Entità e attributi».',
