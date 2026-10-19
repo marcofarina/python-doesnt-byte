@@ -1,0 +1,310 @@
+---
+title: Le associazioni molti a molti
+sidebar_label: Le associazioni molti a molti
+sidebar_position: 9
+description: Un’associazione molti a molti non sta in un attributo, e i suoi attributi, come il voto, appartengono alla coppia e non a una delle due entità. Ogni coppia però compare una volta sola, e quando lo stesso fatto si ripete serve un’entità. Lo vediamo sui corsi di Hogwarts e sul registro dei punti.
+archivio: [punti.json, studenti.json]
+---
+
+# Le associazioni molti a molti
+
+<Epigraph author="Alexandre Dumas, I tre moschettieri (1844)">
+
+Tous pour un, un pour tous.
+
+</Epigraph>
+
+Nella lezione precedente i corsi di Hogwarts hanno avuto un identificatore, materia e anno, ma nessuno studente. Ora li colleghiamo agli studenti. Nella lezione "Le cardinalità" questa associazione era l'esempio del terzo tipo, molti a molti: ogni studente segue più corsi, e ogni corso ha più studenti. Un'associazione uno a molti, come `appartiene`, nelle tabelle finisce in una colonna, la casa nella riga dello studente. In questa lezione vediamo che con il massimo N da tutti e due i lati una colonna non basta, che un'associazione molti a molti ha spesso attributi suoi, e che a volte un'associazione non basta proprio.
+
+:::prereq
+
+- Le cardinalità e i tre tipi di associazione: uno a uno, uno a molti, molti a molti (lezione "Le cardinalità")
+- L'identificatore composto di `corso`, materia e anno, e l'identificatore assegnato apposta (lezione precedente)
+- Il registro dei punti `punti.json` e la sua tabella `assegnazione` (capitolo 1)
+
+:::
+
+:::learn
+
+- Riconoscere un'associazione molti a molti e spiegare perché non può stare in un attributo
+- Decidere se un attributo appartiene a una delle due entità o all'associazione
+- Spiegare perché un'associazione non contiene due volte la stessa coppia, e riconoscere quando al suo posto serve un'entità
+
+:::
+
+## I corsi in una colonna
+
+Il primo tentativo è quello che ha funzionato per la casa: una colonna nella tabella `studente`. La casa di uno studente stava in una cella, perché è una sola. I corsi sono più di uno, e in questa versione della tabella stanno tutti nella stessa cella, separati da virgole. Il blocco qui sotto mostra le prime righe della tabella `studente` fatta così; per semplicità, ogni studente segue le stesse quattro materie del suo anno.
+
+```sql live dataset=archivista/corsi-colonna hideQuery
+SELECT * FROM studente LIMIT 4;
+```
+
+Il blocco qui sotto chiede quali studenti seguono Pozioni, e si legge così: il nome dalla tabella `studente`, per le righe in cui (`WHERE`) la colonna `corsi` è uguale a `Pozioni`. Prima di eseguire il blocco, prova a prevedere quanti nomi elenca.
+
+```sql live dataset=archivista/corsi-colonna title="Chi segue Pozioni?"
+SELECT nome FROM studente WHERE corsi = 'Pozioni';
+```
+
+<Spoiler block>
+
+Nessun nome. La tabella `studente` contiene nove studenti, e tutti seguono Pozioni, ma in nessuna riga la colonna `corsi` è uguale a `Pozioni`: in ogni riga contiene `Erbologia, Incantesimi, Pozioni, Trasfigurazione`, un testo che contiene la parola Pozioni senza essere la parola Pozioni.
+
+</Spoiler>
+
+Il DBMS non ha sbagliato: ha confrontato due testi, e i due testi sono diversi. L'errore sta nella tabella, che contiene quattro coppie dell'associazione in una cella sola. Un'istruzione che cerca una parola dentro un testo esiste; con questa tabella, però, ogni domanda sui corsi diventa un lavoro sul testo, e la stessa istruzione troverebbe Pozioni anche in un corso chiamato "Pozioni avanzate". Perché in una tabella ogni cella debba contenere un valore solo lo spiega la prima lezione del capitolo 3; qui basta vedere che cosa succede quando una cella ne contiene quattro.
+
+C'è poi una domanda che con la tabella `studente` non ha risposta, qualunque istruzione si scriva: che voto ha preso Hermione in Pozioni.
+
+## Il voto è della coppia
+
+Il voto di Hermione in Pozioni non è un'informazione su Hermione, perché Hermione ha un voto per ogni corso che segue. Non è nemmeno un'informazione sul corso di Pozioni del primo anno, che ha un voto per ogni studente. Il voto è un'informazione sulla coppia (Hermione Granger, Pozioni del primo anno): esiste perché Hermione segue quel corso, e ce n'è uno per ogni coppia.
+
+:::definition[Attributo di un'associazione]
+
+Un **attributo di un'associazione** è una proprietà che ha un valore per ogni occorrenza dell'associazione, cioè per ogni coppia, e non per le occorrenze delle due entità prese una per una: il voto è un attributo dell'associazione fra `studente` e `corso`.
+
+:::
+
+Quando un'associazione ha attributi suoi, spesso il nome più naturale è un sostantivo, il nome del fatto registrato: l'**iscrizione** di uno studente a un corso. Nella lezione "Le associazioni" abbiamo detto che il nome di un'associazione è di solito un verbo; "di solito" lascia spazio a casi come questo. Nel diagramma l'attributo `voto` esce dal rombo, come gli attributi di un'entità escono dal rettangolo.
+
+<DiagrammaER
+  titolo="Lo studente si iscrive a un corso, con un voto"
+  descrizione="L'entità studente, identificata dalla matricola, è collegata all'entità corso, identificata da materia e anno, dall'associazione iscrizione, che ha l'attributo voto. Accanto a studente la cardinalità è (1,N), accanto a corso (0,N)."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: [{ nome: 'matricola', identificatore: true }, 'nome'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'corso',
+      col: 0,
+      riga: 2,
+      attributi: ['materia', 'anno'],
+      latoAttributi: 'sotto',
+      identificatore: ['materia', 'anno'],
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'iscrizione',
+      col: 0,
+      riga: 1,
+      attributi: ['voto'],
+      latoAttributi: 'destra',
+      tra: [
+        { entita: 'studente', card: '(1,N)' },
+        { entita: 'corso', card: '(0,N)' },
+      ],
+    },
+  ]}
+  cella={[280, 150]}
+/>
+
+Le cardinalità dicono che ogni studente è iscritto ad almeno un corso, senza un massimo, e che un corso può non avere ancora iscritti. Nelle tabelle un'associazione molti a molti diventa una tabella propria, con una riga per ogni coppia: come si costruisce lo vedremo nel capitolo 3. Il blocco qui sotto ne mostra il risultato, la tabella `iscrizione`, con una riga per ogni studente e per ogni corso che segue.
+
+```sql live dataset=archivista/iscrizione hideQuery
+SELECT * FROM iscrizione LIMIT 6;
+```
+
+Adesso i voti di uno studente si possono chiedere. Il blocco qui sotto elenca materia e voto dalla tabella `iscrizione`, per le righe in cui lo studente è Neville Longbottom. Chi conosce Neville può prevedere in quale materia ha il voto più alto: prova, prima di eseguire.
+
+```sql live dataset=archivista/iscrizione title="I voti di Neville"
+SELECT materia, voto FROM iscrizione
+WHERE studente = 'Neville Longbottom';
+```
+
+<Spoiler block>
+
+Il voto più alto di Neville è in Erbologia, 10; in Pozioni ha 4, e chi l'ha visto sciogliere un calderone alla prima lezione non se ne stupisce. Nella tabella `iscrizione` lo stesso Neville compare in quattro coppie, con quattro voti diversi: il voto sta nella coppia, non nello studente.
+
+</Spoiler>
+
+## La stessa coppia due volte
+
+Torniamo al registro dei punti. Ogni assegnazione lega un professore a uno studente e ha un valore, i punti. Ogni professore dà punti a molti studenti, e ogni studente ne riceve da molti professori: l'assegnazione sembra un'associazione molti a molti fra `professore` e `studente`, con l'attributo `punti`, costruita come l'iscrizione con il voto.
+
+Nel file `punti.json`, che trovi nel pannello "Archivio", la quarta e la quinta assegnazione sono identiche: Piton toglie un punto a Harry per insolenza, e poi un altro per non aver aiutato Neville, nella prima lezione di Pozioni. Se l'assegnazione fosse un'associazione, la coppia (Piton, Harry Potter) dovrebbe comparire due volte, una per ogni punto tolto. Un'associazione però è un insieme di coppie, e in un insieme ogni elemento c'è una volta sola: la coppia (Piton, Harry Potter) c'è oppure non c'è, e il suo attributo `punti` ha un valore solo.
+
+Le due scorciatoie che vengono in mente non funzionano. Sommare i due punti in un solo valore, −2, fa perdere un'informazione: i punti tolti sono stati due volte uno, in due momenti diversi. Aggiungere la data come attributo non cambia niente, perché l'occorrenza resta la coppia, e la data sarebbe un attributo di quella coppia, uno solo.
+
+Quando lo stesso fatto può ripetersi per la stessa coppia, il fatto non è un'associazione: è un'entità, con un'occorrenza per ogni volta che succede. L'assegnazione è un'entità con l'attributo `punti`, e le sue occorrenze si distinguono con un identificatore assegnato apposta, il numero progressivo `id` della tabella `assegnazione`. Allo studente e al professore la legano due associazioni uno a molti: ogni assegnazione è ricevuta da uno studente e data da un professore.
+
+<DiagrammaER
+  titolo="L'assegnazione come entità fra lo studente e il professore"
+  descrizione="Tre entità impilate: studente (matricola), assegnazione (id, identificatore, e punti) e professore (nome). L'associazione riceve collega studente, con cardinalità (0,N), e assegnazione, con (1,1). L'associazione dà collega professore, con (0,N), e assegnazione, con (1,1)."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: [{ nome: 'matricola', identificatore: true }, 'nome'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'assegnazione',
+      col: 0,
+      riga: 2,
+      attributi: [{ nome: 'id', identificatore: true }, 'punti'],
+      latoAttributi: 'destra',
+    },
+    {
+      id: 'professore',
+      col: 0,
+      riga: 4,
+      attributi: ['nome', 'materia'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'riceve',
+      col: 0,
+      riga: 1,
+      tra: [
+        { entita: 'studente', card: '(0,N)' },
+        { entita: 'assegnazione', card: '(1,1)' },
+      ],
+    },
+    {
+      id: 'dà',
+      col: 0,
+      riga: 3,
+      tra: [
+        { entita: 'professore', card: '(0,N)' },
+        { entita: 'assegnazione', card: '(1,1)' },
+      ],
+    },
+  ]}
+  cella={[280, 130]}
+/>
+
+Il diagramma si legge così: ogni assegnazione è ricevuta da esattamente uno studente e data da esattamente un professore; uno studente può ricevere da zero a N assegnazioni, e un professore può darne da zero a N. Le due assegnazioni di Piton a Harry sono due occorrenze di `assegnazione`, con due `id` diversi, e ognuna compare in una coppia di `riceve` e in una di `dà`.
+
+Il criterio per scegliere fra associazione ed entità è una domanda sul dominio: la stessa coppia può comparire più di una volta? Uno studente si iscrive a un corso una volta sola, quindi l'iscrizione è un'associazione. Un professore può dare punti allo stesso studente quante volte vuole, quindi l'assegnazione è un'entità.
+
+:::nutshell
+
+- Un'associazione molti a molti non sta in un attributo: più valori in una cella rendono ogni domanda un lavoro sul testo, e alcune domande, come il voto, senza risposta.
+- Un attributo di un'associazione ha un valore per ogni coppia, e non per le occorrenze delle due entità: il voto appartiene all'iscrizione, non allo studente né al corso.
+- Il nome di un'associazione con attributi è spesso un sostantivo, il nome del fatto: l'iscrizione.
+- Un'associazione è un insieme di coppie, e ogni coppia compare una volta sola.
+- Quando lo stesso fatto si ripete per la stessa coppia, come le due assegnazioni di Piton a Harry, il fatto è un'entità, legata alle altre due da associazioni uno a molti.
+- Per scegliere fra associazione ed entità chiediti se la stessa coppia può comparire più di una volta.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Quale di questi attributi appartiene all'associazione `iscrizione` fra `studente` e `corso`?
+  </QuizQuestion>
+
+  <QuizOption>
+    L'aula in cui si tiene il corso.
+    <QuizFeedback>
+      L'aula ha un valore per ogni corso, lo stesso per tutti i suoi iscritti: è un attributo di `corso`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    La data in cui lo studente si è iscritto al corso.
+    <QuizFeedback>
+      Esatto. La data d'iscrizione ha un valore per ogni coppia studente–corso: Hermione può iscriversi a due corsi in due giorni diversi, e due studenti allo stesso corso in giorni diversi.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    L'anno che lo studente frequenta.
+    <QuizFeedback>
+      L'anno frequentato ha un valore per ogni studente, lo stesso per tutti i corsi che segue: è un attributo di `studente`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il nome del professore che tiene il corso.
+    <QuizFeedback>
+      Il professore dipende solo dal corso, ed è un'altra entità: è un'associazione fra `corso` e `professore`, non un attributo dell'iscrizione.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    La biblioteca di Hogwarts registra quale studente prende in prestito quale libro, con la data del prestito. Lo stesso studente può prendere in prestito lo stesso libro più volte, in giorni diversi: Hermione, per dire, lo fa spesso. Come si modella il prestito?
+  </QuizQuestion>
+
+  <QuizOption>
+    Come un'associazione molti a molti fra `studente` e `libro`, con l'attributo `data`.
+    <QuizFeedback>
+      Con un'associazione, la coppia (studente, libro) può comparire una volta sola, con una data sola. Il secondo prestito dello stesso libro non avrebbe posto.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Come un'entità `prestito`, con l'attributo `data`, legata allo studente e al libro da due associazioni uno a molti.
+    <QuizFeedback>
+      Esatto. Lo stesso fatto si ripete per la stessa coppia, come le assegnazioni di Piton a Harry: ogni prestito è un'occorrenza a sé.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Come un attributo `libri_presi` dello studente, con i titoli separati da virgole.
+    <QuizFeedback>
+      È il tentativo dei corsi in una colonna: la domanda "chi ha preso questo libro?" diventa un lavoro sul testo, e la data non ha posto.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Come un'associazione molti a molti, con un attributo `numero_prestiti` che conta le volte.
+    <QuizFeedback>
+      Il conteggio fa perdere le date dei singoli prestiti, come la somma −2 farebbe perdere i due punti tolti da Piton.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Per sistemare la colonna `corsi`, un compagno la sostituisce con quattro colonne: `corso_1`, `corso_2`, `corso_3` e `corso_4`. Che cosa resta da risolvere?
+  </QuizQuestion>
+
+  <QuizOption>
+    Niente: adesso ogni cella contiene un valore solo.
+    <QuizFeedback>
+      Le celle contengono un valore solo, ma l'associazione è ancora dentro la tabella `studente`, e i problemi si sono solo spostati.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Solo i nomi delle colonne, che dovrebbero essere i nomi delle materie.
+    <QuizFeedback>
+      Con una colonna per materia, ogni materia nuova richiede una colonna nuova, e il voto resta senza posto.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Uno studente con cinque corsi non ci sta, chi segue Pozioni va cercato in quattro colonne, e il voto non ha ancora un posto.
+    <QuizFeedback>
+      Esatto. È lo stesso problema delle colonne `legno_2` e `nucleo_2` per le bacchette: il massimo N non entra in un numero fisso di colonne. Serve una riga per coppia.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    L'identificatore: con quattro colonne di corsi lo studente non si distingue più.
+    <QuizFeedback>
+      L'identificatore dello studente non cambia: è la matricola. Il problema sta nel modo di registrare l'associazione, non nello studente.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+Con questa lezione hai tutti gli elementi del modello E/R che servono per progettare un database: entità, attributi, associazioni, cardinalità e identificatori. Finora però il dominio lo abbiamo costruito un pezzo alla volta, una richiesta per lezione. Nella prossima lezione partiamo da un testo che descrive un dominio intero, la biblioteca di Hogwarts, e lo trasformiamo in un modello con un metodo che puoi ripetere su qualunque testo.
+
+:::

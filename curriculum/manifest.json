@@ -20,7 +20,13 @@
       "archivista/dati-fuori-dal-programma",
       "archivista/stessa-informazione-due-volte",
       "archivista/che-cosa-fa-un-dbms",
-      "archivista/entita-e-attributi"
+      "archivista/entita-e-attributi",
+      "archivista/le-associazioni",
+      "archivista/le-cardinalita",
+      "archivista/le-chiavi",
+      "archivista/associazioni-molti-a-molti",
+      "archivista/leggere-un-dominio",
+      "archivista/generalizzazioni"
     ]
   }
 }

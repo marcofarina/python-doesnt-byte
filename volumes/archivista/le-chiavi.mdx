@@ -1,0 +1,263 @@
+---
+title: 'Identificare senza ambiguità: le chiavi'
+sidebar_label: Le chiavi
+sidebar_position: 8
+description: Due persone possono avere lo stesso nome, e ogni identificatore preso dal dominio che sembra unico prima o poi non lo è. Con due James Potter nell’archivio di Hogwarts vediamo i due modi in cui il guasto si presenta, il rifiuto e il silenzio, e come si sceglie un identificatore che regge.
+archivio: [punti.json, studenti.json]
+database: archivista/registro-punti
+---
+
+# Identificare senza ambiguità: le chiavi
+
+<Epigraph author="William Shakespeare, Romeo e Giulietta (1597)">
+
+What's in a name? That which we call a rose by any other name would smell as sweet.
+
+</Epigraph>
+
+Nella lezione "Che cosa fa un DBMS al posto tuo" le tabelle del registro dei punti si collegavano attraverso i nomi, con un avviso: il collegamento per nome regge finché due studenti non hanno lo stesso nome. Anche le coppie delle associazioni di questo capitolo nominano gli studenti per nome, (Harry Potter, Grifondoro). In questa lezione due studenti con lo stesso nome arrivano davvero, e cerchiamo che cosa può distinguere un'occorrenza da tutte le altre. È il cerchio pieno che nei diagrammi della lezione "Entità e attributi" era rimasto in sospeso.
+
+:::prereq
+
+- La tabella `studente` del registro dei punti e il collegamento per nome con la tabella `assegnazione` (lezione "Che cosa fa un DBMS al posto tuo")
+- Il vincolo, una regola sui dati che il DBMS fa rispettare rifiutando una scrittura (stessa lezione)
+- Entità, attributi e associazioni con le loro cardinalità (lezioni precedenti di questo capitolo)
+
+:::
+
+:::learn
+
+- Riconoscere i due modi in cui fallisce un identificatore sbagliato: il rifiuto di un dato vero e la risposta sbagliata senza errori
+- Spiegare che cos'è un identificatore e quali condizioni deve rispettare
+- Scegliere fra un identificatore preso dal dominio e uno assegnato apposta, e motivare la scelta
+- Disegnare un identificatore semplice e uno composto
+
+:::
+
+## Due James Potter
+
+Finora il registro dei punti ha conservato gli studenti di un anno scolastico solo. Immaginiamo che Hogwarts voglia conservare nel database tutti gli studenti passati dalla scuola, anno dopo anno, senza cancellarne nessuno. In un archivio così due nomi uguali prima o poi arrivano, e nella famiglia di Harry sono già arrivati: James Potter, il padre di Harry, è stato studente di Grifondoro, e il figlio maggiore di Harry, che compare nell'epilogo dell'ultimo libro, si chiama James come il nonno.
+
+Nella tabella `studente` del registro la colonna `nome` è la **chiave** della tabella: la colonna con cui il DBMS distingue una riga da tutte le altre, e con cui la colonna `studente` della tabella `assegnazione` indica a quale studente vanno i punti. Il blocco qui sotto registra i due James Potter, tutti e due al primo anno, a più di quarant'anni di distanza. L'ultimo libro della saga non dice in quale casa il Cappello Parlante metta il figlio: nel blocco lo mettiamo in Grifondoro, come il padre e il nonno. Le due istruzioni sono uguali, e si leggono come quella di Ginny nella lezione precedente. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+
+```sql live dataset=archivista/registro-punti title="I due James Potter"
+INSERT INTO studente (nome, casa, anno)
+VALUES ('James Potter', 'Grifondoro', 1);
+INSERT INTO studente (nome, casa, anno)
+VALUES ('James Potter', 'Grifondoro', 1);
+```
+
+<Spoiler block>
+
+Il primo James Potter entra nella tabella; il secondo viene rifiutato con l'errore `UNIQUE constraint failed: studente.nome`: nella colonna `nome` della tabella `studente` lo stesso valore non può comparire due volte. Nel pannello "Database" della colonna di destra la tabella `studente` ha una riga nuova, una sola.
+
+</Spoiler>
+
+Il DBMS, ligio alle regole come Percy Weasley, fa rispettare quella che ha ricevuto da chi ha creato la tabella: il nome distingue ogni studente. Per questo archivio la regola è falsa, e il risultato è che il database rifiuta uno studente vero. Questo è il primo modo in cui fallisce un identificatore sbagliato: con un errore, nel momento in cui qualcuno prova a scrivere.
+
+## Senza chiave
+
+La correzione più rapida è togliere la regola: senza chiave, la tabella `studente` accetta due righe con lo stesso nome. Il blocco qui sotto usa una versione del registro dei punti fatta così. La tabella `studente` non ha una chiave e contiene già i due James Potter; la tabella `assegnazione` contiene un'assegnazione in più, che immaginiamo data dalla professoressa McGonagall al padre di Harry: dieci punti a `James Potter`.
+
+L'istruzione è la query del totale dei punti per casa della lezione sul DBMS, che adesso puoi leggere: la casa dello studente e la somma dei punti, dalle assegnazioni unite agli studenti con lo stesso nome, raggruppate per casa (`GROUP BY`), dalla casa con più punti a quella con meno. Nella lezione sul DBMS Grifondoro aveva tre punti, e l'assegnazione nuova ne aggiunge dieci. Prima di eseguire il blocco, prova a prevedere il totale di Grifondoro.
+
+```sql live dataset=archivista/omonimi title="Il totale per casa, con due James Potter"
+SELECT studente.casa, SUM(assegnazione.punti) AS totale
+FROM assegnazione
+JOIN studente ON studente.nome = assegnazione.studente
+GROUP BY studente.casa
+ORDER BY totale DESC;
+```
+
+<Spoiler block>
+
+Grifondoro ha 23 punti, non 13. L'assegnazione a `James Potter` si unisce a tutte e due le righe della tabella `studente` con quel nome, e i suoi dieci punti entrano nella somma due volte: James Potter, che a scuola non brillava per modestia, non avrebbe protestato.
+
+</Spoiler>
+
+Questa volta il DBMS non segnala niente. La query è corretta, il DBMS la esegue sui dati che ha, e il risultato è sbagliato. Questo è il secondo modo di fallire, ed è il più pericoloso dei due: nessuno se ne accorge finché qualcuno non rifà il conto a mano. Senza un identificatore, il nome scritto nell'assegnazione non indica uno studente ma due, e il database non ha modo di sapere quale dei due abbia ricevuto i punti.
+
+## Che cosa distingue uno studente
+
+Per uscire dai due guasti serve un attributo, o un gruppo di attributi, con un valore diverso per ogni studente. Nel modello E/R si chiama identificatore; nelle tabelle, a partire dal capitolo 3, diventerà la chiave primaria.
+
+:::definition[Identificatore]
+
+Un **identificatore** di un'entità è un attributo, o un insieme di attributi, che ha un valore diverso per ogni occorrenza dell'entità: per tutte le occorrenze che il database conterrà, non solo per quelle che contiene oggi. Un identificatore non contiene attributi superflui: se togliendone uno i valori restano tutti diversi, quell'attributo non serve.
+
+Un identificatore formato da un solo attributo è **semplice**; uno formato da più attributi è **composto**.
+
+:::
+
+La parola che conta nella definizione è "tutte". Il nome da solo distingueva gli studenti del registro finché l'archivio conteneva un anno solo. Nome e anno di corso non bastano, perché i due James Potter erano tutti e due al primo anno. Nome e data di nascita distinguono i due James, nati a più di quarant'anni di distanza, ma non due omonimi nati lo stesso giorno, che sono rari e non impossibili. Anche la profezia su Voldemort aveva un problema di identificatore: indicava un bambino nato alla fine di luglio, e i bambini erano due, Harry e Neville. Ogni attributo aggiunto rende il caso più raro, e nessuno lo rende impossibile.
+
+:::info[Anche il codice fiscale ha i suoi doppioni]
+
+Il codice fiscale italiano si calcola da cognome, nome, sesso, data e comune di nascita. Due persone con gli stessi dati ottengono lo stesso codice: si chiama **omocodia**, e l'Agenzia delle Entrate la risolve modificando il codice di una delle due persone, con alcune cifre sostituite da lettere. L'identificatore che lo Stato usa per tutti i cittadini è unico perché qualcuno corregge i doppioni, non perché i dati da cui si calcola siano sempre diversi.
+
+:::
+
+La strada che regge è un identificatore nato apposta per essere unico, come il numero di matricola che la segreteria assegna a ogni studente quando lo registra, senza mai riassegnarlo. Il numero di matricola non contiene nessuna informazione sullo studente, e proprio per questo non lo mettono in difficoltà né un omonimo né un cambio di cognome, né due gemelli che si scambiano il nome per far confondere la madre: a garantire che sia unico è chi lo assegna. Il DBMS può anche assegnarlo da solo: la colonna `id` della tabella `assegnazione`, il numero progressivo che il database dà a ogni riga, è un identificatore di questo tipo.
+
+Un identificatore preso dal dominio non è sempre sbagliato. Il nome di una casa è un buon identificatore: le case sono quattro, i loro nomi sono diversi, e una regola del dominio dice che restano quelle: in mille anni nessuno ne ha fondata una quinta. Vale lo stesso criterio delle associazioni derivate della lezione "Le associazioni": i dati di oggi non dimostrano niente, serve una regola del dominio che garantisca valori diversi anche domani. Per i nomi delle persone quella regola non esiste.
+
+:::warning[La matricola distingue le righe, non le persone]
+
+- <Esito ok={false} /> Harry Potter registrato due volte, con due matricole diverse → due righe valide per la stessa persona: i suoi punti si dividono fra due studenti, e nessun vincolo se ne accorge.
+- <Esito /> prima di assegnare una matricola nuova, la segreteria controlla che lo studente non sia già registrato → ogni persona ha una matricola sola.
+
+Un identificatore assegnato apposta garantisce che due righe non si confondano. Che la stessa persona non compaia in due righe lo garantisce soltanto chi registra i dati.
+
+:::
+
+## Identificatori composti
+
+A volte nessun attributo da solo distingue le occorrenze, e due attributi insieme sì. Immaginiamo di registrare i corsi di Hogwarts: Pozioni del primo anno, Pozioni del secondo anno, Incantesimi del primo anno, e così via, e supponiamo che per ogni materia e per ogni anno ci sia un corso solo. La materia da sola non distingue un corso, perché Pozioni si studia in più anni. L'anno da solo neppure, perché al primo anno si studiano molte materie. La coppia materia e anno invece è diversa per ogni corso, ed è un identificatore composto. Nessuno dei due attributi è superfluo: senza l'anno, i corsi di Pozioni avrebbero tutti lo stesso valore.
+
+<DiagrammaER
+  titolo="Lo studente identificato dalla matricola, il corso da materia e anno"
+  descrizione="L'entità studente ha gli attributi matricola, nome e anno: matricola è l'identificatore, con il cerchio pieno. L'entità corso ha gli attributi materia e anno, che formano insieme un identificatore composto: un segmento attraversa i loro due steli e finisce in un cerchio pieno. Le due entità non sono collegate."
+  entita={[
+    {
+      id: 'studente',
+      col: 0,
+      riga: 0,
+      attributi: [{ nome: 'matricola', identificatore: true }, 'nome', 'anno'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'corso',
+      col: 0,
+      riga: 1,
+      attributi: ['materia', 'anno'],
+      latoAttributi: 'sotto',
+      identificatore: ['materia', 'anno'],
+    },
+  ]}
+  cella={[280, 200]}
+/>
+
+Nel diagramma l'identificatore semplice è il cerchio pieno in fondo allo stelo di `matricola`. L'identificatore composto è un segmento che attraversa gli steli di `materia` e di `anno` e finisce in un cerchio pieno; i cerchi dei due attributi restano vuoti, perché nessuno dei due, da solo, identifica un corso. Ogni entità ha il suo identificatore: senza, una coppia di un'associazione non indicherebbe un'occorrenza precisa.
+
+:::nutshell
+
+- Un identificatore sbagliato fallisce in due modi: il database rifiuta un dato vero, come il secondo James Potter, oppure, senza identificatore, risponde in modo sbagliato senza segnalare niente, come i dieci punti contati due volte.
+- Un identificatore è un attributo, o un insieme di attributi, con un valore diverso per ogni occorrenza, anche per quelle che il database conterrà in futuro; non contiene attributi superflui.
+- Gli identificatori presi dal dominio, come nome e cognome, sono unici per fortuna finché un omonimo non li smentisce. Vanno bene solo quando una regola del dominio garantisce valori diversi, come il nome di una casa.
+- Un identificatore assegnato apposta, come la matricola, è unico perché chi lo assegna non lo ripete. Distingue le righe, non garantisce che la stessa persona non sia registrata due volte.
+- Un identificatore semplice è un cerchio pieno; un identificatore composto è un segmento che attraversa gli steli dei suoi attributi e finisce in un cerchio pieno.
+- Nel modello E/R si dice identificatore; nelle tabelle diventerà la chiave primaria.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Nel registro dei punti la tabella `professore` ha come chiave la colonna `nome`, che contiene il cognome del professore. Immaginiamo che a Hogwarts arrivi un secondo professore con un cognome già presente nella tabella. Che cosa succede quando la segreteria prova a registrarlo?
+  </QuizQuestion>
+
+  <QuizOption>
+    Il DBMS lo registra, e le assegnazioni dei due professori si sommano.
+    <QuizFeedback>
+      Questo succederebbe senza chiave, come con i due James Potter nella seconda versione del registro. Con il cognome come chiave il secondo professore non entra.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Il DBMS rifiuta il secondo professore, anche se è una persona diversa dal primo.
+    <QuizFeedback>
+      Esatto. È il primo modo di fallire: la chiave sbagliata fa rifiutare un dato vero, nel momento in cui qualcuno prova a scriverlo.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il DBMS sostituisce il primo professore con il secondo.
+    <QuizFeedback>
+      Un `INSERT` non sostituisce una riga esistente: quando la chiave è già presente, il DBMS rifiuta la riga nuova e lascia la vecchia com'è.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il DBMS aggiunge da solo un numero al cognome per distinguerli.
+    <QuizFeedback>
+      Il DBMS fa rispettare le regole che ha ricevuto, ma non cambia i dati di sua iniziativa. Il numero va previsto nel modello, come identificatore assegnato apposta.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Un compagno propone come identificatore dell'entità `corso` la terna materia, anno e professore. A Hogwarts c'è un corso solo per ogni materia e per ogni anno. Che cosa ne pensi?
+  </QuizQuestion>
+
+  <QuizOption>
+    Va bene: più attributi ci sono, più l'identificatore è sicuro.
+    <QuizFeedback>
+      Un identificatore non deve contenere attributi superflui. Se materia e anno distinguono già ogni corso, il professore non aggiunge niente.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Il professore è superfluo: materia e anno bastano già a distinguere ogni corso.
+    <QuizFeedback>
+      Esatto. In più, se il professore di un corso cambia, con la terna cambierebbe anche l'identificatore del corso, e ogni coppia che lo nomina andrebbe corretta.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Basta il professore, perché ogni professore insegna una materia sola.
+    <QuizFeedback>
+      Anche se insegnasse una materia sola, un professore tiene il corso di quella materia in più anni: Piton tiene Pozioni del primo anno e Pozioni del terzo.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Basta la materia, perché è il nome del corso.
+    <QuizFeedback>
+      Pozioni si studia in più anni: la materia da sola dà lo stesso valore a corsi diversi.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Per l'entità `casa` un compagno usa come identificatore un numero assegnato apposta, al posto del nome. Un altro dice che il nome va benissimo. Chi ha ragione?
+  </QuizQuestion>
+
+  <QuizOption>
+    Il primo: gli identificatori presi dal dominio prima o poi falliscono sempre.
+    <QuizFeedback>
+      Falliscono quando nessuna regola garantisce valori diversi, come per i nomi delle persone. Per le case una regola c'è.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il primo: un numero occupa meno spazio di un nome.
+    <QuizFeedback>
+      Lo spazio non è il criterio. Il criterio è se i valori resteranno diversi per tutte le occorrenze, oggi e domani.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Il secondo: le case sono quattro, con nomi diversi, e una regola del dominio dice che restano quelle.
+    <QuizFeedback>
+      Esatto. Un identificatore preso dal dominio regge quando una regola del dominio garantisce valori diversi. Il numero non sarebbe sbagliato, ma non serve.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Nessuno dei due: la casa va identificata da nome e colori insieme.
+    <QuizFeedback>
+      Se il nome distingue già ogni casa, i colori sono un attributo superfluo, e un identificatore non ne contiene.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+I corsi di questa lezione hanno un identificatore, ma ancora nessuno studente. Ogni studente segue più corsi, e ogni corso ha più studenti: nella prossima lezione disegniamo questa associazione molti a molti, e cerchiamo il posto giusto per il voto che uno studente prende in un corso.
+
+:::

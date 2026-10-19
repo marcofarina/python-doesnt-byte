@@ -254,3 +254,47 @@ A 375 px il diagramma non si rimpicciolisce sotto il corpo leggibile: scorre den
     },
   ]}
 />
+
+## 12 — Associazione senza cardinalità
+
+Le partecipazioni non hanno `card`: le linee restano senza etichetta (lezione «Le associazioni», che viene prima delle cardinalità).
+
+<DiagrammaER
+  titolo="Lo studente appartiene a una casa, senza cardinalità"
+  entita={[
+    { id: 'studente', col: 0, riga: 0, attributi: ['nome'] },
+    { id: 'casa', col: 2, riga: 0, attributi: ['nome'] },
+  ]}
+  associazioni={[
+    {
+      id: 'appartiene',
+      col: 1,
+      riga: 0,
+      tra: [{ entita: 'studente' }, { entita: 'casa' }],
+    },
+  ]}
+/>
+
+## 13 — Cardinalità numerica
+
+Una partita si gioca fra due case esattamente: `(2,2)`.
+
+<DiagrammaER
+  titolo="Una partita fra due case"
+  entita={[
+    { id: 'partita', col: 0, riga: 0, attributi: ['data'] },
+    { id: 'casa', col: 2, riga: 0, attributi: ['nome'] },
+  ]}
+  associazioni={[
+    {
+      id: 'gioca',
+      col: 1,
+      riga: 0,
+      attributi: ['punti'],
+      tra: [
+        { entita: 'partita', card: '(2,2)' },
+        { entita: 'casa', card: '(0,N)' },
+      ],
+    },
+  ]}
+/>
