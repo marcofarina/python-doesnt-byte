@@ -4,6 +4,7 @@ const {
   parseMarkdownFile,
   DEFAULT_PARSE_FRONT_MATTER,
 } = require('@docusaurus/utils');
+const { applyTrailingSlash } = require('@docusaurus/utils-common');
 
 const PLUGIN_NAME = 'copy-page-md';
 
@@ -129,8 +130,12 @@ async function toCleanMarkdown(absPath, doc, context, archivio) {
     removeContentTitle: true,
   });
 
-  const siteUrl = context.siteConfig.url.replace(/\/$/, '');
-  const pageUrl = siteUrl + doc.permalink;
+  const { url, baseUrl, trailingSlash } = context.siteConfig;
+  // doc.permalink non porta la barra finale: la aggiunge il router. La «Fonte»
+  // cita l'URL canonico, quello di sitemap e <link rel="canonical">.
+  const pageUrl =
+    url.replace(/\/$/, '') +
+    applyTrailingSlash(doc.permalink, { trailingSlash, baseUrl });
   const body = sanitize(content, context.siteDir, archivio);
 
   return (
@@ -142,7 +147,9 @@ async function toCleanMarkdown(absPath, doc, context, archivio) {
 
 // Percorso di output del .md, coerente col fetch lato client. Il permalink
 // include il baseUrl: lo si toglie perché outDir è già la radice servita a
-// baseUrl. Permalink con `/` finale (landing/category) → index.md.
+// baseUrl. Permalink con `/` finale (landing/category) → index.md. Con
+// trailingSlash: true la pagina è `lezione/index.html` e il .md resta accanto
+// alla cartella (`lezione.md`): il permalink dei dati non ha la barra finale.
 function outFile(outDir, permalink, baseUrl) {
   let rel = permalink.startsWith(baseUrl)
     ? permalink.slice(baseUrl.length)
@@ -199,8 +206,14 @@ module.exports = function copyPageMd(context) {
         const file = outFile(outDir, permalink, siteConfig.baseUrl);
         fs.mkdirSync(path.dirname(file), { recursive: true });
         fs.writeFileSync(file, md, 'utf-8');
+        // Copia .txt per gli assistenti AI: GitHub Pages serve i .md come
+        // text/markdown, che lo strumento di navigazione di ChatGPT rifiuta;
+        // i .txt escono come text/plain; charset=utf-8.
+        fs.writeFileSync(file.replace(/\.md$/, '.txt'), md, 'utf-8');
       }
-      console.log(`[${PLUGIN_NAME}] scritti ${manifest.length} file .md`);
+      console.log(
+        `[${PLUGIN_NAME}] scritti ${manifest.length} file .md (+ copia .txt)`,
+      );
     },
   };
 };

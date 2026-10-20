@@ -271,7 +271,7 @@ function StudentCard({
   const { code, setCode, clear } = useCurriculum();
   const [draft, setDraft] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const startUrl = useBaseUrl('/programmatore');
+  const startUrl = useBaseUrl('/programmatore/');
 
   const activate = () => {
     try {
@@ -363,7 +363,9 @@ export default function PercorsoPage(): ReactNode {
   const data = useCurriculumPluginData();
   const { code } = useCurriculum();
   const { siteConfig } = useDocusaurusContext();
-  const percorsoUrl = useBaseUrl('/percorso');
+  // Con la barra finale: è l'URL canonico, così il link condiviso e il QR non
+  // passano da un 301.
+  const percorsoUrl = useBaseUrl('/percorso/');
 
   const allKeys = useMemo(
     () => data.volumes.flatMap((v) => collectKeys(v.tree)),

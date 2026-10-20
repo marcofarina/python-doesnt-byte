@@ -42,14 +42,15 @@ export const AI_PROVIDERS: readonly AiProvider[] = [
 
 /**
  * Prompt italiano coerente col tono di `DEFAULT_EXPLAIN_PROMPT` del PyRunner.
- * Cita l'URL del `.md` e chiede una spiegazione adatta a uno studente.
+ * Cita l'URL del testo ripulito (la copia `.txt` del `.md`) e chiede una
+ * spiegazione adatta a uno studente.
  */
-export function buildAiPrompt(mdUrl: string): string {
+export function buildAiPrompt(pageUrl: string): string {
   return (
     'Sto studiando dal manuale scolastico «Python Doesn’t Byte». ' +
     'Leggi questa pagina e spiegamela in modo semplice, come a uno studente di ' +
     '15 anni alle prime armi: dammi un riassunto chiaro e nomina i concetti ' +
     'chiave. Rispondi in italiano.\n\n' +
-    mdUrl
+    pageUrl
   );
 }
