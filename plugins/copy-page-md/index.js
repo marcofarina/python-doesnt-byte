@@ -206,8 +206,14 @@ module.exports = function copyPageMd(context) {
         const file = outFile(outDir, permalink, siteConfig.baseUrl);
         fs.mkdirSync(path.dirname(file), { recursive: true });
         fs.writeFileSync(file, md, 'utf-8');
+        // Copia .txt per gli assistenti AI: GitHub Pages serve i .md come
+        // text/markdown, che lo strumento di navigazione di ChatGPT rifiuta;
+        // i .txt escono come text/plain; charset=utf-8.
+        fs.writeFileSync(file.replace(/\.md$/, '.txt'), md, 'utf-8');
       }
-      console.log(`[${PLUGIN_NAME}] scritti ${manifest.length} file .md`);
+      console.log(
+        `[${PLUGIN_NAME}] scritti ${manifest.length} file .md (+ copia .txt)`,
+      );
     },
   };
 };
