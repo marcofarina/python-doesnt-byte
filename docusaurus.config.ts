@@ -58,7 +58,12 @@ export default async function createConfig(): Promise<Config> {
     organizationName: 'marcofarina', // Usually your GitHub org/username.
     projectName: 'python-doesnt-byte', // Usually your repo name.
     deploymentBranch: 'gh-pages',
-    trailingSlash: false,
+    // true: ogni pagina esce come `<pagina>/index.html` e gli URL canonici
+    // finiscono con `/`. È la forma che GitHub Pages serve da sé: `/pagina/`
+    // risponde 200 e `/pagina` riceve un 301 verso `/pagina/` conservando la
+    // query. Con false la build scriveva `pagina.html` e `/pagina/` finiva in
+    // 404.html: un lampo di «pagina non trovata» prima del redirect client-side.
+    trailingSlash: true,
 
     onBrokenLinks: 'throw',
 
@@ -115,14 +120,30 @@ export default async function createConfig(): Promise<Config> {
     // Analytics privacy-first (GoatCounter): nessun cookie, niente dati personali.
     // Solo in produzione: in dev (`npm start`) NODE_ENV è 'development', così le
     // visite locali non gonfiano le statistiche.
-    scripts:
+    //
+    // Con trailingSlash: true i path arrivano come `/pagina/`; fino alla 0.20
+    // erano `/pagina`. `goatcounter.path` toglie la barra finale (non quella
+    // della home, che l'ha sempre avuta) così lo storico resta su una riga sola
+    // per pagina. count.js lo legge al caricamento: lo script inline deve
+    // precedere count.js, per questo stanno tutti e due qui, nell'ordine.
+    headTags:
       process.env.NODE_ENV === 'production'
         ? [
             {
-              src: 'https://gc.zgo.at/count.js',
-              async: true,
-              'data-goatcounter':
-                'https://pythondoesntbyte.goatcounter.com/count',
+              tagName: 'script',
+              attributes: {},
+              innerHTML:
+                'window.goatcounter={path:function(p){return p.replace(' +
+                '/^(\\/python-doesnt-byte\\/[^?#]*[^\\/?#])\\/(?=[?#]|$)/,"$1")}};',
+            },
+            {
+              tagName: 'script',
+              attributes: {
+                src: 'https://gc.zgo.at/count.js',
+                async: 'async',
+                'data-goatcounter':
+                  'https://pythondoesntbyte.goatcounter.com/count',
+              },
             },
           ]
         : [],

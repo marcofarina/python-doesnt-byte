@@ -132,7 +132,7 @@ function PyRunnerInner(props: PyRunnerProps) {
   const editorRef = useRef<EditorHandle | null>(null);
   const cleanupRef = useRef<(() => void) | null>(null);
   const toastTimerRef = useRef<number | undefined>(undefined);
-  const playgroundUrl = useBaseUrl('/playground');
+  const playgroundUrl = useBaseUrl('/playground/');
 
   const maxLines = coerceNumber(props.maxLines, 20);
   const readonly = coerceBool(props.readonly);
