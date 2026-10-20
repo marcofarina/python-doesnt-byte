@@ -64,9 +64,21 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
+    v: '0.20.1',
+    date: '20 ottobre 2026',
+    latest: true,
+    notes: {
+      fixed: [
+        'Gli indirizzi delle pagine con la barra finale, come quelli condivisi su Classroom, aprono subito la lezione invece di passare per un lampo di «pagina non trovata».',
+        'Nella pagina per sostenere il progetto la × della finestra con il QR code non copre più il codice.',
+        '«Spiegamelo facile» funziona anche con ChatGPT: l’assistente riceve una copia in testo semplice della lezione, che riesce a leggere.',
+        'L’indice del sito per gli assistenti AI (llms.txt) elenca tutte le lezioni pubblicate, comprese quelle del Volume 3, e non cita più pagine in bozza; da ora si aggiorna da solo a ogni pubblicazione.',
+      ],
+    },
+  },
+  {
     v: '0.20.0',
     date: '19 ottobre 2026',
-    latest: true,
     notes: {
       content: [
         'Volume 3, Manuale dell’Archivista: il capitolo 2, «Modellare il dominio», si completa con sei lezioni: «Le associazioni», «Le cardinalità», «Identificare senza ambiguità: le chiavi», «Le associazioni molti a molti», «Generalizzazioni» e «Leggere un dominio e ricavarne il modello».',
