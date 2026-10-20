@@ -5,7 +5,7 @@
  *
  * Note d'integrazione:
  * - I path degli asset Pagefind passano da `useBaseUrl`, così rispettano
- *   `baseUrl: /python-doesnt-byte/` sia in locale sia in produzione.
+ *   il `baseUrl` del sito sia in locale sia in produzione.
  * - La modale è montata via Portal su `document.body`: dentro la navbar un
  *   antenato con `transform` intrappolerebbe `position: fixed` (overlay che
  *   copre solo la fascia alta). Il Portal la tira fuori da quel contesto.

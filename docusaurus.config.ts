@@ -47,11 +47,13 @@ export default async function createConfig(): Promise<Config> {
     tagline: 'Il libro di testo, reinventato.',
     favicon: 'img/icons/favicon.ico',
 
-    // Set the production url of your site here
-    url: 'https://rainbowbits.cloud',
-    // Set the /<baseUrl>/ pathname under which your site is served
-    // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/python-doesnt-byte/',
+    // Sottodominio tutto del libro, impostato in Settings → Pages → Custom
+    // domain del repo (il deploy passa da GitHub Actions, quindi un file CNAME
+    // in static/ verrebbe ignorato). Fino alla 0.20 il libro stava sotto
+    // https://rainbowbits.cloud/python-doesnt-byte/: una Redirect Rule di
+    // Cloudflare porta quei vecchi URL qui con un 301, path e query compresi.
+    url: 'https://python.rainbowbits.cloud',
+    baseUrl: '/',
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
@@ -121,11 +123,12 @@ export default async function createConfig(): Promise<Config> {
     // Solo in produzione: in dev (`npm start`) NODE_ENV è 'development', così le
     // visite locali non gonfiano le statistiche.
     //
-    // Con trailingSlash: true i path arrivano come `/pagina/`; fino alla 0.20
-    // erano `/pagina`. `goatcounter.path` toglie la barra finale (non quella
-    // della home, che l'ha sempre avuta) così lo storico resta su una riga sola
-    // per pagina. count.js lo legge al caricamento: lo script inline deve
-    // precedere count.js, per questo stanno tutti e due qui, nell'ordine.
+    // Fino alla 0.20 GoatCounter registrava i path come
+    // `/python-doesnt-byte/pagina`. Ora arrivano come `/pagina/`: per tenere lo
+    // storico su una riga sola per pagina, `goatcounter.path` toglie la barra
+    // finale (non quella della home, che l'ha sempre avuta) e rimette davanti
+    // il vecchio prefisso. count.js lo legge al caricamento: lo script inline
+    // deve precedere count.js, per questo stanno tutti e due qui, nell'ordine.
     headTags:
       process.env.NODE_ENV === 'production'
         ? [
@@ -133,8 +136,8 @@ export default async function createConfig(): Promise<Config> {
               tagName: 'script',
               attributes: {},
               innerHTML:
-                'window.goatcounter={path:function(p){return p.replace(' +
-                '/^(\\/python-doesnt-byte\\/[^?#]*[^\\/?#])\\/(?=[?#]|$)/,"$1")}};',
+                'window.goatcounter={path:function(p){return "/python-doesnt-byte"+' +
+                'p.replace(/^(\\/[^?#]*[^\\/?#])\\/(?=[?#]|$)/,"$1")}};',
             },
             {
               tagName: 'script',
