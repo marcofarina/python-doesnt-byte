@@ -64,9 +64,22 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
+    v: '0.20.1',
+    date: '20 ottobre 2026',
+    latest: true,
+    notes: {
+      improved: [
+        'Il libro ha un indirizzo suo: https://python.rainbowbits.cloud. I vecchi indirizzi rainbowbits.cloud/python-doesnt-byte portano alla stessa pagina in quello nuovo, anche dai link già condivisi.',
+        'Il browser tiene i dati salvati separati per ogni indirizzo: chi aveva attivato un percorso lo ritrova riaprendo il link del percorso, oppure lo sceglie di nuovo dalla pagina Percorso.',
+      ],
+      fixed: [
+        'I link che finiscono con la barra, come quelli condivisi su Classroom, aprono subito la pagina giusta, senza il lampo di «pagina non trovata».',
+      ],
+    },
+  },
+  {
     v: '0.20.0',
     date: '19 ottobre 2026',
-    latest: true,
     notes: {
       content: [
         'Volume 3, Manuale dell’Archivista: il capitolo 2, «Modellare il dominio», si completa con sei lezioni: «Le associazioni», «Le cardinalità», «Identificare senza ambiguità: le chiavi», «Le associazioni molti a molti», «Generalizzazioni» e «Leggere un dominio e ricavarne il modello».',
