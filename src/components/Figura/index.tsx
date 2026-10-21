@@ -576,7 +576,7 @@ export default function Figura({
         <p
           className={
             statica
-              ? styles.didascalia
+              ? `${styles.didascalia} ${styles.sola}`
               : `${styles.didascalia} ${styles.sottotitolo}`
           }
           aria-live="polite"

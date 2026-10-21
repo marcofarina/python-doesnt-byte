@@ -128,6 +128,17 @@
   color: var(--fig-accento);
 }
 
+/* Le regole dei paragrafi della pagina (`.markdown p`) darebbero alla didascalia
+   un margine sotto: qui serve una specificità più alta del solo `.didascalia`. */
+.barra .didascalia {
+  margin: 0;
+}
+
+/* Figura statica: niente comandi, quindi niente altezza riservata per loro. */
+.sola {
+  min-height: 0;
+}
+
 /* Figura animata: la didascalia è un sottotitolo, come nei servizi di
    streaming, bianco su una banda nera in entrambi i temi. Occupa tutta la
    riga; i comandi vanno sotto. */
