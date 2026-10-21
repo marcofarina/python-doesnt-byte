@@ -5,6 +5,8 @@ sidebar_position: 7
 description: Le cardinalità non sono un’etichetta da aggiungere alla fine del diagramma. Il minimo decide se un’occorrenza può esistere senza l’altra, il massimo se il legame sta in una colonna. Lo vediamo con una studentessa non ancora smistata e con le due bacchette di Ron.
 ---
 
+import cardinalitaCoppie from '@site/src/figure/cardinalita-coppie';
+
 # Le cardinalità
 
 <Epigraph author="Highlander (1986)">
@@ -38,6 +40,8 @@ Nella lezione precedente le linee dei diagrammi sono rimaste senza numeri, ma qu
 Prendiamo l'associazione `appartiene` e contiamo le sue coppie, partendo da uno studente. Harry appartiene a Grifondoro e a nessun'altra casa: compare in una coppia sola, e lo stesso vale per ogni altro studente. Partendo da una casa il conto cambia: nel registro dei punti Grifondoro compare in sei coppie, una per ogni suo studente, e Corvonero in una. Nella lezione "Entità e attributi", dopo la cancellazione di Padma, Corvonero è rimasta una casa con zero studenti, e il database l'ha conservata.
 
 Il modello registra questi conteggi con due numeri per ogni entità che partecipa all'associazione, scritti fra parentesi accanto all'entità: il minimo e il massimo delle coppie in cui ogni sua occorrenza può comparire. Per `appartiene`, accanto a `studente` c'è `(1,1)`: ogni studente compare in almeno una coppia e al massimo in una, perché di case, come di Highlander, ce ne può essere una sola. Accanto a `casa` c'è `(0,N)`: una casa può non comparire in nessuna coppia, e non ha un massimo fissato. La lettera `N` vuol dire "quante se ne vuole". È la stessa notazione dell'attributo opzionale della lezione "Entità e attributi", dove `(0,1)` accanto al Patronus voleva dire nessun valore oppure uno.
+
+<Figura figura={cardinalitaCoppie} />
 
 <DiagrammaER
   titolo="Lo studente appartiene a una casa, con le cardinalità"
