@@ -4,8 +4,7 @@
  * Spec: sezione G2 di pm/piano-2026-10-figure-animate.md.
  */
 import React from 'react';
-import excalifont from '../../DiagrammaER/larghezze-excalifont.json';
-import larghezze from '../larghezze-testo.json';
+import { larghezzaTesto } from '../misure';
 import type { Geometria } from '../ruvido';
 import { ruvido, scoperto } from '../ruvido';
 import type { Corpo, Raggio, Tratto } from '../tipi';
@@ -24,27 +23,7 @@ export const corpoIn = (c: Corpo | undefined, base: number = CORPO.normale) =>
 export const r2 = (n: number) => Math.round(n * 100) / 100;
 
 export { styles };
-
-const GLIFI_MANO = excalifont.glifi as Record<string, number>;
-const GLIFI_NETTO = larghezze.netto as Record<string, number>;
-const GLIFI_GRASSETTO = larghezze.nettoGrassetto as Record<string, number>;
-
-/** Larghezza di un testo in unità del viewBox, dalle tabelle dei glifi. */
-export function larghezzaTesto(
-  testo: string,
-  corpo: number,
-  tratto: Tratto,
-  famiglia: 'testo' | 'codice' = 'testo',
-  grassetto = false,
-): number {
-  if (famiglia === 'codice')
-    return [...testo].length * larghezze.codice * corpo;
-  const glifi =
-    tratto === 'mano' ? GLIFI_MANO : grassetto ? GLIFI_GRASSETTO : GLIFI_NETTO;
-  let em = 0;
-  for (const c of testo) em += glifi[c] ?? 0.55;
-  return em * corpo;
-}
+export { larghezzaTesto };
 
 /** Divide un testo in righe non più larghe di `max`, alle parole. */
 export function aCapo(

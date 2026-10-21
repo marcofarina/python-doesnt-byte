@@ -5,6 +5,8 @@ sidebar_position: 11
 description: Studenti e professori hanno nome, cognome e una bacchetta, e il modello li può raccogliere sotto un’entità più generale, la persona. Una generalizzazione però non ha una traduzione unica in tabelle, e ognuno dei tre modi di farla perde qualcosa di diverso. Lo vediamo con Hagrid, Piton e Lupin.
 ---
 
+import coperturaPersone from '@site/src/figure/copertura-persone';
+
 # Generalizzazioni
 
 <Epigraph author="George Orwell, La fattoria degli animali (1945)">
@@ -121,6 +123,8 @@ La seconda domanda: una persona può essere studente e professore insieme? Fra g
 La **copertura** di una generalizzazione è **totale** se ogni occorrenza del padre appartiene ad almeno un'entità figlia, **parziale** se alcune occorrenze del padre non appartengono a nessuna. È **esclusiva** se ogni occorrenza appartiene al massimo a un'entità figlia, **sovrapposta** se può appartenere a più di una. Si scrive con due lettere accanto alla freccia: `(t,e)`, `(t,o)`, `(p,e)` o `(p,o)`. Alcuni libri scrivono `s` per sovrapposta, al posto di `o`.
 
 :::
+
+<Figura figura={coperturaPersone} />
 
 La copertura, come le cardinalità, non si ricava dai nomi delle entità. Le persone di Hogwarts sono le stesse, ma il database di un anno scolastico ha la copertura `(p,e)`, e l'archivio di tutti gli anni `(p,o)`. Nell'archivio anche Hagrid smette di essere un caso a parte: prima di diventare guardiacaccia è stato studente, fino all'espulsione al terzo anno, e dal terzo anno di Harry è anche professore, con un libro di testo che morde (al contrario di Python Doesn't Byte).
 

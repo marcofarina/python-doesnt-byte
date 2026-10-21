@@ -51,12 +51,14 @@ export default function Freccia({
         tratto={tratto}
         progresso={corpoP}
       />
-      <Forma
-        chiave={`${chiave}/punta`}
-        g={{ f: 'path', d: punta(dx, dy, Math.atan2(dy - cy, dx - cx)) }}
-        tratto={tratto}
-        progresso={punteP}
-      />
+      {punte !== 'nessuna' && (
+        <Forma
+          chiave={`${chiave}/punta`}
+          g={{ f: 'path', d: punta(dx, dy, Math.atan2(dy - cy, dx - cx)) }}
+          tratto={tratto}
+          progresso={punteP}
+        />
+      )}
       {punte === 'entrambe' && (
         <Forma
           chiave={`${chiave}/coda`}

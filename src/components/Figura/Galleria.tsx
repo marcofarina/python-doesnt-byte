@@ -209,6 +209,47 @@ const CAMPIONI: Campione[] = [
       a: 26,
     },
   },
+  {
+    titolo: 'Insieme',
+    a: 120,
+    o: {
+      ...base,
+      id: 'g-insieme',
+      tipo: 'insieme',
+      ruolo: 'persona',
+      y: 30,
+      l: 160,
+      a: 80,
+      etichetta: 'studente',
+    },
+  },
+  {
+    titolo: 'Rombo',
+    a: 80,
+    o: {
+      ...base,
+      id: 'g-rombo',
+      tipo: 'rombo',
+      y: 10,
+      l: 150,
+      a: 56,
+      nome: 'appartiene',
+    },
+  },
+  {
+    titolo: 'Freccia senza punte (collegamento)',
+    a: 70,
+    o: {
+      ...base,
+      id: 'g-linea',
+      tipo: 'freccia',
+      ruolo: 'dato',
+      y: 40,
+      dx: 150,
+      dy: -10,
+      punte: 'nessuna',
+    },
+  },
 ];
 
 function Campione({ c }: { c: Campione }): JSX.Element {

@@ -86,7 +86,8 @@ export interface PropsFreccia {
   /** Scarto del punto di controllo dalla corda; positivo a destra del verso. */
   curva?: number;
   etichetta?: string;
-  punte?: 'fine' | 'entrambe';
+  /** `nessuna`: una linea che collega, senza verso. */
+  punte?: 'fine' | 'entrambe' | 'nessuna';
 }
 
 export interface PropsFile {
@@ -148,6 +149,24 @@ export interface PropsGraffa {
   etichetta?: string;
 }
 
+export interface PropsInsieme {
+  /** Rettangolo in cui è inscritta l'ellisse. */
+  l: number;
+  a: number;
+  /** Nome dell'insieme, fuori dal bordo. */
+  etichetta?: string;
+  latoEtichetta?: 'sopra' | 'sotto';
+  fondo?: boolean;
+}
+
+export interface PropsRombo {
+  /** Rettangolo in cui è inscritto il rombo. */
+  l: number;
+  a: number;
+  nome: string;
+  fondo?: boolean;
+}
+
 export interface PropsEvidenziatore {
   l: number;
   a: number;
@@ -168,6 +187,8 @@ export interface PropsPrimitive {
   contatore: PropsContatore;
   graffa: PropsGraffa;
   evidenziatore: PropsEvidenziatore;
+  insieme: PropsInsieme;
+  rombo: PropsRombo;
 }
 
 export type TipoPrimitiva = keyof PropsPrimitive;

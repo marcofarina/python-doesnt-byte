@@ -6,6 +6,8 @@ description: Un’associazione molti a molti non sta in un attributo, e i suoi a
 archivio: [punti.json, studenti.json]
 ---
 
+import coppiaRipetuta from '@site/src/figure/coppia-ripetuta';
+
 # Le associazioni molti a molti
 
 <Epigraph author="Alexandre Dumas, I tre moschettieri (1844)">
@@ -128,6 +130,8 @@ Il voto più alto di Neville è in Erbologia, 10; in Pozioni ha 4, e chi l'ha vi
 Torniamo al registro dei punti. Ogni assegnazione lega un professore a uno studente e ha un valore, i punti. Ogni professore dà punti a molti studenti, e ogni studente ne riceve da molti professori: l'assegnazione sembra un'associazione molti a molti fra `professore` e `studente`, con l'attributo `punti`, costruita come l'iscrizione con il voto.
 
 Nel file `punti.json`, che trovi nel pannello "Archivio", la quarta e la quinta assegnazione sono identiche: Piton toglie un punto a Harry per insolenza, e poi un altro per non aver aiutato Neville, nella prima lezione di Pozioni. Se l'assegnazione fosse un'associazione, la coppia (Piton, Harry Potter) dovrebbe comparire due volte, una per ogni punto tolto. Un'associazione però è un insieme di coppie, e in un insieme ogni elemento c'è una volta sola: la coppia (Piton, Harry Potter) c'è oppure non c'è, e il suo attributo `punti` ha un valore solo.
+
+<Figura figura={coppiaRipetuta} />
 
 Le due scorciatoie che vengono in mente non funzionano. Sommare i due punti in un solo valore, −2, fa perdere un'informazione: i punti tolti sono stati due volte uno, in due momenti diversi. Aggiungere la data come attributo non cambia niente, perché l'occorrenza resta la coppia, e la data sarebbe un attributo di quella coppia, uno solo.
 

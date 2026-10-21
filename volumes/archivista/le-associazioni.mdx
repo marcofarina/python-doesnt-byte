@@ -6,6 +6,8 @@ description: Un’associazione non è una linea fra due entità che hanno qualco
 archivio: [punti.json, studenti.json]
 ---
 
+import occorrenzeAppartiene from '@site/src/figure/occorrenze-appartiene';
+
 # Le associazioni
 
 <Epigraph author="Albus Silente, Harry Potter e il Calice di Fuoco (2000)">
@@ -47,6 +49,8 @@ Un'**associazione** è un legame fra due entità che il database deve registrare
 Un'**occorrenza di associazione** è una coppia formata da un'occorrenza di ciascuna delle due entità, per cui il legame vale: la coppia (Harry Potter, Grifondoro) è un'occorrenza di `appartiene`. L'associazione è l'insieme delle sue occorrenze.
 
 :::
+
+<Figura figura={occorrenzeAppartiene} />
 
 Esistono anche associazioni fra tre o più entità, ma sono rare e in questo libro non servono: le nostre associazioni legano sempre due entità.
 
