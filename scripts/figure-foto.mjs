@@ -19,6 +19,12 @@
  *   npm run figure:foto -- docs/figure-test            tutte le figure
  *   npm run figure:foto -- docs/figure-test --meta     anche a metà passo
  *   npm run figure:foto -- docs/figure-test --figura perso-ibrido
+ *   npm run figure:foto -- docs/figure-test --freddo   foto per il lettore freddo
+ *
+ * Con --freddo il banco scatta solo la fine di ogni passo in chiaro su desktop,
+ * senza la barra della didascalia e dei comandi, in
+ * .figure-foto/<pagina>/freddo/<figura>/<passo>.png: sono le foto che riceve il
+ * lettore freddo della skill nuova-figura. I controlli girano lo stesso.
  *
  * Il browser è il Chrome installato (`channel: 'chrome'`); per usarne un altro,
  * FIGURE_CHROME=/percorso/chrome. Esce con codice 1 se c'è almeno un errore.
@@ -63,9 +69,10 @@ const VARIANTI = [
 ];
 
 function argomenti(argv) {
-  const a = { pagina: null, meta: false, figure: [] };
+  const a = { pagina: null, meta: false, freddo: false, figure: [] };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--meta') a.meta = true;
+    else if (argv[i] === '--freddo') a.freddo = true;
     else if (argv[i] === '--figura') a.figure.push(argv[++i]);
     else if (!a.pagina) a.pagina = argv[i];
   }
@@ -269,7 +276,12 @@ async function main() {
   const nomePagina = a.pagina.startsWith('/')
     ? a.pagina.replace(/^\/|\/$/g, '').replace(/\//g, '-')
     : a.pagina.replace(/\.mdx?$/, '');
-  const uscita = path.join(RADICE, '.figure-foto', nomePagina);
+  const uscita = path.join(
+    RADICE,
+    '.figure-foto',
+    nomePagina,
+    a.freddo ? 'freddo' : '',
+  );
   fs.rmSync(uscita, { recursive: true, force: true });
   fs.mkdirSync(uscita, { recursive: true });
 
@@ -287,7 +299,9 @@ async function main() {
   const perId = new Map();
   let foto = 0;
 
-  for (const v of VARIANTI) {
+  const varianti = a.freddo ? VARIANTI.slice(0, 1) : VARIANTI;
+  const fasiPasso = a.freddo || !a.meta ? [1] : [0.5, 1];
+  for (const v of varianti) {
     const variante = `${v.tema}-${v.larghezza}`;
     const ctx = await browser.newContext({
       ...v.ctx,
@@ -300,6 +314,10 @@ async function main() {
     });
     await page.evaluate(() => document.fonts.ready);
     await page.addStyleTag({ content: '.navbar{display:none!important}' });
+    if (a.freddo)
+      await page.addStyleTag({
+        content: '[data-figura] figcaption{display:none!important}',
+      });
     let elenco = await page.evaluate(() => window.__figure?.elenco() ?? []);
     if (a.figure.length) elenco = elenco.filter((f) => a.figure.includes(f.id));
 
@@ -329,8 +347,7 @@ async function main() {
       await page.waitForSelector(`[data-figura="${f.id}"][data-figura-pronta]`);
 
       for (let p = 1; p <= f.passi; p++) {
-        const fasi = a.meta ? [0.5, 1] : [1];
-        for (const fase of fasi) {
+        for (const fase of fasiPasso) {
           await page.evaluate(
             ([id, p, fase]) => window.__figure.vai(id, p, fase),
             [f.id, p, fase],
@@ -352,8 +369,11 @@ async function main() {
               ),
           );
           const n = String(p).padStart(2, '0');
-          const file =
-            fase < 1 ? `${n}-meta-${variante}.png` : `${n}-${variante}.png`;
+          const file = a.freddo
+            ? `${n}.png`
+            : fase < 1
+              ? `${n}-meta-${variante}.png`
+              : `${n}-${variante}.png`;
           await el.screenshot({ path: path.join(cartella, file) });
           foto++;
           if (fase < 1) continue;
