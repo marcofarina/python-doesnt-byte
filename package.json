@@ -20,7 +20,8 @@
     "archivio:sql": "node scripts/archivio-sql.mjs",
     "curriculum:new-epoch": "node scripts/curriculum-new-epoch.js",
     "curriculum:check": "node scripts/check-manifest-append-only.js",
-    "version": "node scripts/sync-pm-version.mjs"
+    "version": "node scripts/sync-pm-version.mjs",
+    "figure:foto": "node scripts/figure-foto.mjs"
   },
   "dependencies": {
     "@codemirror/commands": "^6.10.3",
@@ -69,6 +70,7 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "jiti": "^1.21.6",
     "pagefind": "^1.5.2",
+    "playwright-core": "^1.64.1",
     "prettier": "^3.7.1",
     "remark-smartypants": "^3.0.2",
     "typescript": "~5.5.2"

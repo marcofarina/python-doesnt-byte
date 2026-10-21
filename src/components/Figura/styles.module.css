@@ -10,14 +10,14 @@
 
 .figura {
   --fig-inchiostro: #27272a;
-  --fig-tenue: #6b6b73;
+  --fig-tenue: #64646c;
   --fig-carta: #ffffff;
-  --fig-accento: #b45309;
+  --fig-accento: #a64c08;
   --fig-dato: #0270ad;
   --fig-programma: #6d28d9;
   --fig-persona: #0f766e;
   --fig-errore: #b91c1c;
-  --fig-ok: #15803d;
+  --fig-ok: #127538;
   /* Spessori: tratto normale e tratto che segnala (barra, evidenziatore). */
   --fig-tratto: 1.7;
   --fig-tratto-spesso: 2.6;
@@ -32,7 +32,7 @@
 
 :global(html[data-theme='dark']) .figura {
   --fig-inchiostro: #e4e4e7;
-  --fig-tenue: #8b8b93;
+  --fig-tenue: #93939b;
   --fig-carta: #18181b;
   --fig-accento: #fbbf24;
   --fig-dato: #38bdf8;

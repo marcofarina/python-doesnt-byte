@@ -69,7 +69,7 @@ interface Posizione {
 /** Contratto per gli script (foto di verifica, export). */
 interface AccessoFigure {
   vai: (id: string, passo: number, fase?: number) => boolean;
-  elenco: () => { id: string; passi: number }[];
+  elenco: () => { id: string; passi: number; didascalie: string[] }[];
 }
 
 declare global {
@@ -80,7 +80,7 @@ declare global {
 
 const registro = new Map<
   string,
-  { passi: number; vai: (p: Posizione) => void }
+  { passi: number; didascalie: string[]; vai: (p: Posizione) => void }
 >();
 
 const installaAccesso = () => {
@@ -94,7 +94,11 @@ const installaAccesso = () => {
       return true;
     },
     elenco: () =>
-      [...registro.entries()].map(([id, f]) => ({ id, passi: f.passi })),
+      [...registro.entries()].map(([id, f]) => ({
+        id,
+        passi: f.passi,
+        didascalie: f.didascalie,
+      })),
   };
 };
 
@@ -417,6 +421,7 @@ export default function Figura({
     installaAccesso();
     registro.set(idFigura, {
       passi: totale,
+      didascalie: scena.passi.map((p) => p.didascalia),
       vai: (p) => {
         ferma();
         imposta({
@@ -431,7 +436,7 @@ export default function Figura({
       vivo = false;
       registro.delete(idFigura);
     };
-  }, [idFigura, totale, ferma, imposta]);
+  }, [idFigura, totale, scena, ferma, imposta]);
 
   useEffect(() => {
     const cambio = () =>
