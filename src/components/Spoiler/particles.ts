@@ -24,8 +24,9 @@ interface Particle {
   cell: number;
   /** Opacità del fotogramma fermo («riduci movimento»). */
   still: number;
-  /** Tempo di dissolvenza rimasto dopo l'onda d'urto, in secondi; -1 se non colpita. */
+  /** Tempo di dissolvenza rimasto dopo l'onda d'urto, in secondi. */
   fade: number;
+  /** Durata della dissolvenza; 0 finché l'onda non colpisce la particella. */
   fadeMax: number;
 }
 
@@ -243,7 +244,7 @@ export class ParticleField {
       maxLife,
       cell,
       still: rand(0.35, 0.9),
-      fade: -1,
+      fade: 0,
       fadeMax: 0,
     };
   }
@@ -309,7 +310,9 @@ export class ParticleField {
     ctx.clip();
     for (let i = 0; i < this.particles.length; i++) {
       let p = this.particles[i];
-      if (p.fade >= 0) continue;
+      // Una particella colpita non torna mai a riposo: se rinascesse, l'onda
+      // la colpirebbe di nuovo e il campo diventerebbe una fontana.
+      if (p.fadeMax > 0) continue;
       p.life += dt;
       if (p.life >= p.maxLife) {
         p = this.spawn(p.cell, false);
@@ -345,7 +348,7 @@ export class ParticleField {
     if (wave) {
       const drag = Math.exp(-DRAG * dt);
       for (const p of this.particles) {
-        if (p.fade < 0) continue;
+        if (p.fadeMax === 0 || p.fade <= 0) continue;
         p.fade -= dt;
         if (p.fade <= 0) continue;
         flying++;
