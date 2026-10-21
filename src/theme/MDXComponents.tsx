@@ -30,6 +30,7 @@ import FileArchivio from '@site/src/components/FileArchivio';
 import Esito from '@site/src/components/Esito';
 import AvanzamentoVolume from '@site/src/components/AvanzamentoVolume';
 import DiagrammaER from '@site/src/components/DiagrammaER';
+import Figura from '@site/src/components/Figura';
 
 export default {
   ...MDXComponents,
@@ -60,4 +61,5 @@ export default {
   Esito,
   AvanzamentoVolume,
   DiagrammaER,
+  Figura,
 };
