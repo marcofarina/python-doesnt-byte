@@ -26,7 +26,7 @@ import {
   RUNNER_DONE_EVENT,
   RUNNER_SELECTOR,
 } from '@site/src/theme/PyRunner/runnerSignal';
-import { ParticleField } from './particles';
+import { ParticleField, farthestCorner, revealDuration } from './particles';
 import styles from './styles.module.css';
 
 /**
@@ -41,9 +41,6 @@ interface SpoilerProps {
   /** Avvolge un blocco (paragrafi, liste, codice) invece di un pezzo di frase. */
   block?: boolean;
 }
-
-/** Durata della rivelazione: deve coincidere con quella in styles.module.css. */
-const REVEAL_MS = 560;
 
 /** Stessa clearance della navbar fissa usata dal Tooltip. */
 const PADDING = { top: 68, right: 8, bottom: 8, left: 8 };
@@ -141,11 +138,17 @@ export default function Spoiler({ children, block = false }: SpoilerProps) {
     const rect = surface.getBoundingClientRect();
     const px = x ?? rect.width / 2;
     const py = y ?? rect.height / 2;
+    // Il cerchio del testo (CSS) e l'onda d'urto delle particelle (canvas)
+    // condividono centro, raggio e durata: il testo compare dietro l'onda.
+    const radius = farthestCorner(px, py, rect.width, rect.height);
+    const duration = revealDuration(radius);
     surface.style.setProperty('--spoiler-x', `${px}px`);
     surface.style.setProperty('--spoiler-y', `${py}px`);
+    surface.style.setProperty('--spoiler-r', `${radius}px`);
+    surface.style.setProperty('--spoiler-dur', `${duration}ms`);
     setPopoverOpen(false);
     setState('revealed');
-    fieldRef.current?.dissolve(px, py, REVEAL_MS, () => {
+    fieldRef.current?.dissolve(px, py, radius, duration, () => {
       fieldRef.current?.destroy();
       fieldRef.current = null;
     });
@@ -206,6 +209,9 @@ export default function Spoiler({ children, block = false }: SpoilerProps) {
             state === 'locked' && popoverOpen ? popoverId : undefined,
           onClick: hidden ? onClick : undefined,
           onKeyDown,
+          // Il colore delle particelle cambia all'hover (CSS): va riletto.
+          onPointerEnter: () => fieldRef.current?.refresh(),
+          onPointerLeave: () => fieldRef.current?.refresh(),
         })}
       >
         <Tag className={styles.content} aria-hidden={hidden || undefined}>
