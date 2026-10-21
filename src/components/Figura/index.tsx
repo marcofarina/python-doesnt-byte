@@ -50,11 +50,22 @@ export type { FiguraDef, Scena } from './tipi';
 const CORPO_MINIMO = 12;
 const CORPO_PICCOLO = 15;
 
-/** Pausa di lettura dopo un passo, in autoplay: base + per parola. */
-const pausaLettura = (didascalia: string) =>
-  1200 + 90 * didascalia.split(/\s+/).length;
+/**
+ * Tempo di lettura di una didascalia, in autoplay: 2 s + 450 ms per parola,
+ * cioè circa 130 parole al minuto, il passo di chi legge lentamente (anche con
+ * un DSA). Si conta da quando la didascalia compare, cioè dall'inizio del passo:
+ * dopo l'animazione resta la differenza, e almeno `PAUSA_MINIMA`. Chi legge più
+ * in fretta salta l'attesa con «Avanti».
+ */
+const letturaMs = (didascalia: string) =>
+  2000 + 450 * didascalia.trim().split(/\s+/).length;
+const PAUSA_MINIMA = 1500;
 
-const SUGGERIMENTO_RIVELA = 'Prova a prevedere, poi premi →';
+/** ms di attesa dopo l'animazione del passo, prima del passo successivo. */
+const pausaLettura = (passo: Scena['passi'][number]) =>
+  Math.max(PAUSA_MINIMA, letturaMs(passo.didascalia) - durataPasso(passo));
+
+const SUGGERIMENTO_RIVELA = 'Prova a prevedere, poi premi «Avanti».';
 
 /** Passo di `progresso` e `barrato` sotto cui non si ridisegna. */
 const QUANTO = 1 / 240;
@@ -307,8 +318,9 @@ export default function Figura({
     corsa: false,
     /** Passo su cui l'autoplay si ferma. */
     fermaA: totale - 1,
-    /** ms di pausa ancora da attendere dopo la fine del passo. */
+    /** ms di pausa ancora da attendere dopo la fine del passo, e in tutto. */
     pausa: 0,
+    pausaTotale: 0,
     ultimo: 0,
     pos: poster as Posizione,
     raf: 0,
@@ -332,12 +344,26 @@ export default function Figura({
     );
   }, []);
 
+  /**
+   * Riempimento del pulsante «Avanti» mentre la figura aspetta il passo
+   * successivo (0…1): via ref, senza ridisegnare con React.
+   */
+  const pulsanteAvanti = useRef<HTMLButtonElement>(null);
+  const segnaAttesa = useCallback((v: number) => {
+    pulsanteAvanti.current?.style.setProperty(
+      '--attesa',
+      String(Math.round(v * 1000) / 1000),
+    );
+  }, []);
+
   const ferma = useCallback(() => {
     const o = orologio.current;
     o.corsa = false;
+    o.pausaTotale = 0;
     cancelAnimationFrame(o.raf);
+    segnaAttesa(0);
     setInCorsa(false);
-  }, []);
+  }, [segnaAttesa]);
 
   // Il fotogramma successivo passa da una funzione stabile che chiama l'ultimo
   // `tick`: un useCallback non può richiamare sé stesso.
@@ -354,7 +380,10 @@ export default function Figura({
       if (fase < 1) {
         const d = durataPasso(scena.passi[passo]) || 1;
         fase = Math.min(1, fase + dt / d);
-        if (fase >= 1) o.pausa = pausaLettura(scena.passi[passo].didascalia);
+        if (fase >= 1 && passo < o.fermaA) {
+          o.pausa = pausaLettura(scena.passi[passo]);
+          o.pausaTotale = o.pausa;
+        }
       } else if (passo >= o.fermaA) {
         ferma();
         return;
@@ -363,12 +392,14 @@ export default function Figura({
         if (o.pausa <= 0) {
           passo += 1;
           fase = 0;
+          o.pausaTotale = 0;
         }
       }
+      segnaAttesa(o.pausaTotale > 0 ? 1 - o.pausa / o.pausaTotale : 0);
       imposta({ passo, fase });
       o.raf = requestAnimationFrame(prossimo);
     },
-    [scena, imposta, ferma, prossimo],
+    [scena, imposta, ferma, prossimo, segnaAttesa],
   );
 
   useEffect(() => {
@@ -389,11 +420,13 @@ export default function Figura({
       o.fermaA = fermaA;
       o.ultimo = 0;
       o.pausa = 0;
+      o.pausaTotale = 0;
+      segnaAttesa(0);
       imposta(da);
       setInCorsa(true);
       o.raf = requestAnimationFrame(prossimo);
     },
-    [imposta, ferma, prossimo],
+    [imposta, ferma, prossimo, segnaAttesa],
   );
 
   const fermataAutoplay = rivela > 0 ? rivela - 1 : totale - 1;
@@ -459,8 +492,12 @@ export default function Figura({
   };
   const riavvia = () => avvia({ passo: 0, fase: 0 }, fermataAutoplay);
   const avanti = () => {
-    const { passo, fase } = orologio.current.pos;
-    if (fase < 1) {
+    const o = orologio.current;
+    const { passo, fase } = o.pos;
+    // In corsa, durante l'attesa: salta l'attesa e prosegue fin dove andava.
+    if (o.corsa && fase >= 1 && passo < o.fermaA) {
+      avvia({ passo: passo + 1, fase: 0 }, o.fermaA);
+    } else if (fase < 1) {
       ferma();
       imposta({ passo, fase: 1 });
     } else if (passo < totale - 1) {
@@ -536,7 +573,14 @@ export default function Figura({
       )}
 
       <figcaption className={styles.barra}>
-        <p className={styles.didascalia} aria-live="polite">
+        <p
+          className={
+            statica
+              ? styles.didascalia
+              : `${styles.didascalia} ${styles.sottotitolo}`
+          }
+          aria-live="polite"
+        >
           {fermoPrimaDiRivela ? (
             <>
               {didascalia} <em>{SUGGERIMENTO_RIVELA}</em>
@@ -569,11 +613,14 @@ export default function Figura({
               {ui.passo + 1} / {totale}
             </span>
             <button
+              ref={pulsanteAvanti}
               type="button"
               onClick={avanti}
               aria-label="Passo successivo"
               disabled={ui.passo === totale - 1 && ui.completo}
+              className={styles.avanti}
             >
+              <span aria-hidden>Avanti</span>
               <FontAwesomeIcon icon={faForwardStep} />
             </button>
             <button

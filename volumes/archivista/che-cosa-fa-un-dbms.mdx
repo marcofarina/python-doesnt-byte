@@ -253,13 +253,15 @@ for assegnazione in registro[-2:]:
     print(assegnazione["studente"], assegnazione["punti"], assegnazione["professore"])
 ```
 
-<Figura figura={aggiornamentoPerso} />
-
 <Spoiler block>
 
 Le assegnazioni sono 19, non 20, e l'ultima è quella di Piton: l'assegnazione di McGonagall non c'è, perché Piton ha salvato sopra una copia letta prima che McGonagall salvasse la sua.
 
 </Spoiler>
+
+La figura qui sotto ricostruisce i due salvataggi.
+
+<Figura figura={aggiornamentoPerso} />
 
 Nessuna istruzione ha dato errore, e ognuna ha fatto esattamente quello che diceva. McGonagall crede di aver tolto cinque punti a Ron, e nel file quei punti non ci sono. Ron non se ne lamenterà. Un errore come questo si chiama **aggiornamento perso** (in inglese _lost update_): due programmi leggono lo stesso dato, lo modificano ciascuno per conto suo, e l'ultimo che scrive cancella il lavoro dell'altro. Il blocco ha fissato l'ordine delle operazioni. Nella realtà l'ordine dipende da chi salva per ultimo e da quanto tempo passa fra lettura e scrittura: a volte l'errore succede e a volte no, e un errore che succede solo a volte è il più difficile da trovare.
 
