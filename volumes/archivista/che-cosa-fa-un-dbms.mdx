@@ -9,6 +9,9 @@ database: archivista/registro-punti
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import aggiornamentoPerso from '@site/src/figure/aggiornamento-perso';
+import insertCoordinati from '@site/src/figure/insert-coordinati';
+import tabelleCollegate from '@site/src/figure/tabelle-collegate';
 
 # Che cosa fa un DBMS al posto tuo
 
@@ -60,6 +63,8 @@ SELECT * FROM assegnazione LIMIT 5;
 ```
 
 In una tabella ogni riga descrive un elemento e ogni colonna un'informazione, la stessa per tutte le righe: nella tabella `assegnazione` ogni riga è un'assegnazione. La colonna `id` è un numero progressivo che il database dà a ogni riga. Le tabelle si collegano attraverso i nomi, come i file della lezione precedente: il valore nella colonna `studente` indica una riga della tabella `studente`, quello nella colonna `professore` una riga della tabella `professore`. Il collegamento per nome regge finché due studenti non hanno lo stesso nome; il problema, e il modo di risolverlo, arrivano nel prossimo capitolo.
+
+<Figura figura={tabelleCollegate} />
 
 :::note[Il DBMS di questa pagina]
 
@@ -250,13 +255,19 @@ for assegnazione in registro[-2:]:
 
 <Spoiler block>
 
-Le assegnazioni sono 19, non 20, e l'ultima è quella di Piton: l'assegnazione di McGonagall non c'è. McGonagall ha salvato la sua copia, 19 assegnazioni compresa la sua. Un attimo dopo Piton ha salvato la sua copia, 19 assegnazioni compresa la sua, ma senza quella di McGonagall, che non c'era ancora quando Piton ha letto il file.
+Le assegnazioni sono 19, non 20, e l'ultima è quella di Piton: l'assegnazione di McGonagall non c'è, perché Piton ha salvato sopra una copia letta prima che McGonagall salvasse la sua.
 
 </Spoiler>
+
+La figura qui sotto ricostruisce i due salvataggi.
+
+<Figura figura={aggiornamentoPerso} />
 
 Nessuna istruzione ha dato errore, e ognuna ha fatto esattamente quello che diceva. McGonagall crede di aver tolto cinque punti a Ron, e nel file quei punti non ci sono. Ron non se ne lamenterà. Un errore come questo si chiama **aggiornamento perso** (in inglese _lost update_): due programmi leggono lo stesso dato, lo modificano ciascuno per conto suo, e l'ultimo che scrive cancella il lavoro dell'altro. Il blocco ha fissato l'ordine delle operazioni. Nella realtà l'ordine dipende da chi salva per ultimo e da quanto tempo passa fra lettura e scrittura: a volte l'errore succede e a volte no, e un errore che succede solo a volte è il più difficile da trovare.
 
 Con un database nessun professore riscrive il registro. Il programma di McGonagall manda al DBMS un `INSERT` con la riga di Ron, quello di Piton un altro `INSERT` con la riga di Draco. Le richieste arrivano tutte al DBMS, che coordina chi scrive: ogni `INSERT` aggiunge la propria riga e non riscrive le altre, quindi alla fine le righe sono 20. Per lo stesso motivo, aggiungere un'assegnazione non richiede più di riscrivere tutto il registro, come succedeva con `json.dump`.
+
+<Figura figura={insertCoordinati} />
 
 Il coordinamento fra due utenti non si può mostrare in questa pagina, perché il database del browser ha un solo utente, cioè tu. Torneremo sul problema nel capitolo sulla modifica dei dati, dove il caso si fa più difficile, con due professori che non aggiungono righe nuove ma correggono la stessa.
 

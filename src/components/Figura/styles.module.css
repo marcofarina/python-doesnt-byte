@@ -128,10 +128,40 @@
   color: var(--fig-accento);
 }
 
+/* Le regole dei paragrafi della pagina (`.markdown p`) darebbero alla didascalia
+   un margine sotto: qui serve una specificità più alta del solo `.didascalia`. */
+.barra .didascalia {
+  margin: 0;
+}
+
+/* Figura statica: niente comandi, quindi niente altezza riservata per loro. */
+.sola {
+  min-height: 0;
+}
+
+/* Figura animata: la didascalia è un sottotitolo, come nei servizi di
+   streaming, bianco su una banda nera in entrambi i temi. Occupa tutta la
+   riga; i comandi vanno sotto. */
+.sottotitolo {
+  flex-basis: 100%;
+  min-height: 0;
+  padding: 0.55rem 1rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: #000;
+  color: #fff;
+  text-align: center;
+  font-weight: 500;
+}
+
+.sottotitolo em {
+  color: #fbbf24;
+}
+
 .comandi {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  margin-left: auto;
 }
 
 .comandi button {
@@ -176,6 +206,24 @@
   margin-left: 0.35rem;
 }
 
+/* «Avanti» più largo, con la scritta. In autoplay, mentre la figura aspetta il
+   passo successivo, si riempie da sinistra (`--attesa`, 0…1, dal player): la
+   figura non è ferma, sta per andare avanti. */
+.comandi button.avanti {
+  display: inline-flex;
+  gap: 0.45rem;
+  width: auto;
+  padding: 0 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--at-accent) 32%, var(--at-bg-chip))
+      calc(var(--attesa, 0) * 100%),
+    var(--at-bg-chip) 0
+  );
+}
+
 /* I passi come testo: fuori dallo schermo, dentro l'albero accessibile. */
 .passiTesto {
   position: absolute;
@@ -208,6 +256,10 @@
 
 .figura[data-schermo-intero] .didascalia {
   font-size: clamp(1.1rem, 2.2vw, 2rem);
+}
+
+.figura[data-schermo-intero] .comandi button.avanti {
+  width: auto;
 }
 
 @media print {
