@@ -1,10 +1,9 @@
 ---
 unlisted: true
 title: Figure — pagina di test
-description: "Sandbox delle figure animate (fase G0): tavola di stile, prototipo di <Figura> e figura «aggiornamento perso» nei due tratti."
+description: "Sandbox delle figure (<Figura>): tavola di stile, figura statica, figura animata con passo «rivela» nei due tratti, prova di carico."
 ---
 
-import Figura from '@site/src/components/Figura';
 import {
   TavolaColori,
   TavolaMisure,
@@ -12,17 +11,16 @@ import {
   TavolaDisegna,
   TavolaRitmi,
 } from '@site/src/components/Figura/TavolaStile';
-import {
-  aggiornamentoPerso,
-  aggiornamentoPersoStretta,
-} from '@site/src/components/Figura/scene/aggiornamento-perso';
-import { carico } from '@site/src/components/Figura/scene/carico';
+import perso from '@site/src/figure/aggiornamento-perso';
+import fileECopia from '@site/src/figure/file-e-copia';
+import carico from '@site/src/figure/prova-carico';
 
 # Figure — pagina di test
 
-Sandbox della fase G0 di `pm/piano-2026-10-figure-animate.md`: la tavola di stile da
-approvare, il prototipo del player `<Figura>` e la figura «aggiornamento perso» nei due
-tratti. I nomi sono provvisori finché la grammatica non è approvata.
+Sandbox di `<Figura>` (piano `pm/piano-2026-10-figure-animate.md`): la tavola di stile
+approvata in G0, una figura statica, la figura «aggiornamento perso» con un passo
+`rivela` e una prova di carico. `<Figura>` è registrata in `MDXComponents`; la scena si
+importa da `src/figure/`.
 
 ## Tavola di stile
 
@@ -46,27 +44,33 @@ tratti. I nomi sono provvisori finché la grammatica non è approvata.
 
 <TavolaRitmi />
 
+## Figura statica
+
+Un passo solo: niente comandi, niente autoplay.
+
+<Figura figura={fileECopia} />
+
 ## L'aggiornamento perso
 
-Ogni figura ha due disposizioni con gli stessi passi: larga, tre colonne, e stretta,
-le due memorie sopra e il disco sotto. Sotto i 600 px di larghezza della figura si vede
-la stretta.
+Il passo 5 è `rivela`: l'autoplay si ferma al passo 4 e chiede di prevedere. Ogni figura
+ha due disposizioni con gli stessi passi: larga, tre colonne, e stretta, le due memorie
+sopra e il disco sotto. Sotto i 600 px di larghezza della figura si vede la stretta.
 
 ### Ibrido: a mano persone e contenitori, netto le righe
 
-<Figura scena={aggiornamentoPerso} stretta={aggiornamentoPersoStretta} tratto="ibrido" id="perso-ibrido" />
+<Figura figura={perso} id="perso-ibrido" />
 
 ### Tutto a mano
 
-<Figura scena={aggiornamentoPerso} stretta={aggiornamentoPersoStretta} tratto="mano" id="perso-mano" />
+<Figura figura={perso} tratto="mano" id="perso-mano" />
 
 ### Tutto netto
 
-<Figura scena={aggiornamentoPerso} stretta={aggiornamentoPersoStretta} tratto="netto" id="perso-netto" />
+<Figura figura={perso} tratto="netto" id="perso-netto" />
 
 ## Prova di carico
 
 Trenta oggetti a mano che si disegnano e si spostano insieme: serve a misurare i
 fotogrammi al secondo con la CPU rallentata.
 
-<Figura scena={carico} tratto="mano" id="carico" />
+<Figura figura={carico} tratto="mano" id="carico" />

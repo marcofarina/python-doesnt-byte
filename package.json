@@ -67,6 +67,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "jiti": "^1.21.6",
     "pagefind": "^1.5.2",
     "prettier": "^3.7.1",
     "remark-smartypants": "^3.0.2",

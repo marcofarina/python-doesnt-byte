@@ -195,8 +195,8 @@
 }
 
 .figura[data-schermo-intero] .scorri {
+  /* Niente `display` qui: lo decide la container query (larga o stretta). */
   flex: 1;
-  display: flex;
   min-height: 0;
   padding: 2vh 3vw;
 }
@@ -268,4 +268,11 @@
   .stretta {
     display: block;
   }
+}
+
+/* LIM: comandi più grandi, da toccare sulla lavagna. */
+.figura[data-schermo-intero] .comandi button {
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.25rem;
 }

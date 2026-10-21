@@ -156,3 +156,10 @@ export interface Scena {
   oggetti: Oggetto[];
   passi: Passo[];
 }
+
+/** Il modulo di una figura: `src/figure/<id>.ts` lo esporta di default. */
+export interface FiguraDef {
+  scena: Scena;
+  /** Stessi oggetti e passi in altre posizioni, per le figure strette. */
+  stretta?: Scena;
+}

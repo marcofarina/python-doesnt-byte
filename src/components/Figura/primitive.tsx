@@ -6,7 +6,7 @@
 import React from 'react';
 import type { Geometria } from './ruvido';
 import { ruvido, scoperto } from './ruvido';
-import type { Oggetto, Ruolo, Stato, Tratto } from './tipi';
+import type { Oggetto, Ruolo, Tratto } from './tipi';
 import styles from './styles.module.css';
 
 /** Corpi del testo, in unità del viewBox. */
@@ -155,36 +155,36 @@ export function Testo({
   );
 }
 
-const coloreRuolo = (ruolo: Ruolo, enfasi: number): React.CSSProperties => ({
-  color:
-    enfasi > 0.001
-      ? `color-mix(in srgb, var(--fig-accento) ${Math.round(enfasi * 100)}%, var(--fig-${ruolo}))`
-      : `var(--fig-${ruolo})`,
-});
+/** Colore del ruolo, mescolato all'accento secondo l'enfasi. */
+export const coloreRuolo = (ruolo: Ruolo, enfasi: number): string =>
+  enfasi > 0.001
+    ? `color-mix(in srgb, var(--fig-accento) ${Math.round(enfasi * 100)}%, var(--fig-${ruolo}))`
+    : `var(--fig-${ruolo})`;
 
-interface DisegnoProps {
+/** Le parti dello stato che cambiano il disegno di una primitiva. */
+export interface Interno {
+  progresso: number;
+  barrato: number;
+  valore: number;
+}
+
+interface ContenutoProps {
   o: Oggetto;
-  s: Stato;
+  s: Interno;
   tratto: Tratto;
 }
 
-/** Disegna un oggetto della scena nel suo stato. */
-export function Disegno({ o, s, tratto }: DisegnoProps): JSX.Element | null {
-  if (s.opacita <= 0.001) return null;
-  const ruolo = o.ruolo ?? 'inchiostro';
+/**
+ * Il disegno di un oggetto in coordinate locali. Posizione, opacità e colore
+ * del ruolo li mette il player sul gruppo che lo contiene.
+ */
+function ContenutoPuro({ o, s, tratto }: ContenutoProps): JSX.Element | null {
   const fondo = styles.fondo;
-  const trasf = `translate(${r2(o.x + s.dx)} ${r2(o.y + s.dy)})`;
-  const comune = {
-    transform: trasf,
-    opacity: s.opacita < 1 ? r2(s.opacita) : undefined,
-    style: coloreRuolo(ruolo, s.enfasi),
-    'data-oggetto': o.id,
-  };
 
   switch (o.tipo) {
     case 'riquadro':
       return (
-        <g {...comune}>
+        <g>
           <Forma
             chiave={o.id}
             g={{ f: 'rett', x: 0, y: 0, l: o.l, a: o.a, pieno: o.fondo }}
@@ -207,7 +207,7 @@ export function Disegno({ o, s, tratto }: DisegnoProps): JSX.Element | null {
       );
     case 'testo':
       return (
-        <g {...comune}>
+        <g>
           <Testo
             x={0}
             y={0}
@@ -223,7 +223,7 @@ export function Disegno({ o, s, tratto }: DisegnoProps): JSX.Element | null {
     case 'file': {
       const piega = 18;
       return (
-        <g {...comune}>
+        <g>
           <Forma
             chiave={o.id}
             g={{
@@ -269,7 +269,7 @@ export function Disegno({ o, s, tratto }: DisegnoProps): JSX.Element | null {
     case 'riga': {
       const a = 28;
       return (
-        <g {...comune}>
+        <g>
           <Forma
             chiave={o.id}
             g={{ f: 'rett', x: 0, y: 0, l: o.l, a, pieno: true }}
@@ -303,7 +303,7 @@ export function Disegno({ o, s, tratto }: DisegnoProps): JSX.Element | null {
     }
     case 'persona':
       return (
-        <g {...comune}>
+        <g>
           <Forma
             chiave={`${o.id}/testa`}
             g={{ f: 'cerchio', x: 0, y: -34, d: 26, pieno: true }}
@@ -360,7 +360,7 @@ export function Disegno({ o, s, tratto }: DisegnoProps): JSX.Element | null {
       const corpoP = Math.min(1, s.progresso / 0.85);
       const punta = Math.max(0, (s.progresso - 0.85) / 0.15);
       return (
-        <g {...comune}>
+        <g>
           <Forma
             chiave={o.id}
             g={{ f: 'path', d: `M0 0Q${r2(cx)} ${r2(cy)} ${lx} ${ly}` }}
@@ -392,7 +392,7 @@ export function Disegno({ o, s, tratto }: DisegnoProps): JSX.Element | null {
     }
     case 'contatore':
       return (
-        <g {...comune}>
+        <g>
           <Testo
             x={0}
             y={0}
@@ -407,3 +407,13 @@ export function Disegno({ o, s, tratto }: DisegnoProps): JSX.Element | null {
       );
   }
 }
+
+export const Contenuto = React.memo(
+  ContenutoPuro,
+  (a, b) =>
+    a.o === b.o &&
+    a.tratto === b.tratto &&
+    a.s.progresso === b.s.progresso &&
+    a.s.barrato === b.s.barrato &&
+    a.s.valore === b.s.valore,
+);

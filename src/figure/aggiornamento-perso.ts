@@ -1,13 +1,17 @@
 /**
  * L'aggiornamento perso: McGonagall e Piton salvano due copie dello stesso
  * file. Sezione «Due professori nello stesso momento» di
- * volumes/archivista/che-cosa-fa-un-dbms.mdx. Prototipo G0.
+ * volumes/archivista/che-cosa-fa-un-dbms.mdx. Nata come prototipo in G0.
  *
  * Due disposizioni con gli stessi oggetti e gli stessi passi: `larga`, tre
  * colonne affiancate, e `stretta`, le due memorie sopra e il disco sotto, per
  * gli schermi dove la larga scenderebbe sotto il corpo minimo.
  */
-import type { Oggetto, Scena } from '../tipi';
+import type {
+  FiguraDef,
+  Oggetto,
+  Scena,
+} from '@site/src/components/Figura/tipi';
 
 interface Colonna {
   x: number;
@@ -281,5 +285,5 @@ function crea(d: Disposizione): Scena {
   };
 }
 
-export const aggiornamentoPerso = crea(LARGA);
-export const aggiornamentoPersoStretta = crea(STRETTA);
+const figura: FiguraDef = { scena: crea(LARGA), stretta: crea(STRETTA) };
+export default figura;

@@ -2,7 +2,11 @@
  * Prova di carico (G0): 30 oggetti a mano che si disegnano e si spostano
  * insieme, per misurare i fotogrammi al secondo con la CPU rallentata.
  */
-import type { Animazione, Oggetto, Scena } from '../tipi';
+import type {
+  Animazione,
+  FiguraDef,
+  Oggetto,
+} from '@site/src/components/Figura/tipi';
 
 const N = 30;
 const oggetti: Oggetto[] = Array.from({ length: N }, (_, i) => ({
@@ -25,21 +29,25 @@ const anima = (dy: number): Animazione[] =>
     { fai: 'Indicate' as const, id: o.id, durata: 2600 },
   ]);
 
-export const carico: Scena = {
-  id: 'carico',
-  titolo: 'Prova di carico: 30 oggetti',
-  descrizione: 'Trenta riquadri a mano che si disegnano e si spostano insieme.',
-  larghezza: 666,
-  altezza: 240,
-  oggetti,
-  passi: [
-    {
-      didascalia: 'Trenta riquadri si disegnano e scendono.',
-      animazioni: anima(20),
-    },
-    {
-      didascalia: 'Trenta riquadri risalgono.',
-      animazioni: anima(0).filter((a) => a.fai !== 'Create'),
-    },
-  ],
+const figura: FiguraDef = {
+  scena: {
+    id: 'prova-carico',
+    titolo: 'Prova di carico: 30 oggetti',
+    descrizione:
+      'Trenta riquadri a mano che si disegnano e si spostano insieme.',
+    larghezza: 666,
+    altezza: 240,
+    oggetti,
+    passi: [
+      {
+        didascalia: 'Trenta riquadri si disegnano e scendono.',
+        animazioni: anima(20),
+      },
+      {
+        didascalia: 'Trenta riquadri risalgono.',
+        animazioni: anima(0).filter((a) => a.fai !== 'Create'),
+      },
+    ],
+  },
 };
+export default figura;
