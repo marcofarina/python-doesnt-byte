@@ -1,8 +1,9 @@
 /**
  * Banco di verifica delle figure (<Figura>, fase G3 del piano
  * pm/piano-2026-10-figure-animate.md): per ogni figura di una pagina e per ogni
- * passo scatta una foto alla fine del passo (e a metà, con --meta) in chiaro,
- * in scuro e a 375 px con l'emulazione mobile, e misura nel browser:
+ * passo scatta una foto alla fine del passo (e a metà, con --meta) in chiaro e
+ * in scuro a 1100 e a 1440 px, e a 375 px con l'emulazione mobile, e misura nel
+ * browser:
  *
  *   - testo fuori dal viewBox;
  *   - testi che si sovrappongono;
@@ -65,6 +66,19 @@ const VARIANTI = [
       hasTouch: true,
       deviceScaleFactor: 2,
     },
+  },
+  // Nelle lezioni la colonna «Archivio» stringe il testo: a 1100 px la figura
+  // è larga 568 px e mostra la disposizione stretta. La larga compare da circa
+  // 1280 px in su, e a 1440 la si fotografa nei due temi.
+  {
+    tema: 'chiaro',
+    larghezza: 1440,
+    ctx: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1.5 },
+  },
+  {
+    tema: 'scuro',
+    larghezza: 1440,
+    ctx: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1.5 },
   },
 ];
 
