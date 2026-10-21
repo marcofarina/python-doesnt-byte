@@ -152,8 +152,8 @@ function crea(d: Disposizione): Scena {
     ruolo: 'persona',
     x,
     y,
-    x2,
-    y2,
+    dx: x2 - x,
+    dy: y2 - y,
     etichetta: 'salva',
   });
 

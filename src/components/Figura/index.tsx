@@ -33,7 +33,7 @@ import {
   statoAl,
   valida,
 } from './motore';
-import { coloreRuolo, Contenuto, type Interno } from './primitive';
+import { coloreRuolo, Contenuto, type Interno } from './contenuto';
 import type {
   FiguraDef,
   Oggetto,

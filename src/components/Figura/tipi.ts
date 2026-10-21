@@ -1,7 +1,6 @@
 /**
- * Tipi di <Figura> — prototipo della fase G0 di
- * pm/piano-2026-10-figure-animate.md. I nomi sono provvisori finché Marco non
- * approva la grammatica e G0 non scrive la spec di G1 e G2.
+ * Tipi di <Figura>: spec nelle sezioni G1 e G2 di
+ * pm/piano-2026-10-figure-animate.md.
  */
 
 /** Tratto con cui si disegna un oggetto. */
@@ -44,6 +43,7 @@ export interface Stato {
   valore: number;
 }
 
+/** Posizione di un oggetto: origine locale della primitiva. */
 interface Base {
   id: string;
   /** `concetto` → a mano nel tratto ibrido; `dato` → netto. */
@@ -55,67 +55,139 @@ interface Base {
   iniziale?: Partial<Stato>;
 }
 
-export interface OggRiquadro extends Base {
-  tipo: 'riquadro';
+/** Corpo del testo: un nome della scala o un numero di unità del viewBox. */
+export type Corpo = 'piccolo' | 'normale' | 'grande' | number;
+export type Raggio = 'xs' | 'sm' | 'md' | 'lg';
+export type Verso = 'sopra' | 'sotto' | 'sinistra' | 'destra';
+
+export interface PropsRiquadro {
   l: number;
   a: number;
   etichetta?: string;
-  /** Fondo colorato del ruolo, tenue. */
+  /** Fondo tenue nel colore del ruolo. */
   fondo?: boolean;
+  raggio?: Raggio;
 }
 
-export interface OggTesto extends Base {
-  tipo: 'testo';
+export interface PropsTesto {
   testo: string;
-  corpo?: number;
+  corpo?: Corpo;
   ancora?: 'start' | 'middle' | 'end';
   /** `codice` usa Monaspace in entrambi i tratti. */
   famiglia?: 'testo' | 'codice';
+  /** Larghezza oltre cui il testo va a capo. */
+  larghezzaMax?: number;
 }
 
-export interface OggFile extends Base {
-  tipo: 'file';
+export interface PropsFreccia {
+  /** Punto d'arrivo, rispetto alla partenza. */
+  dx: number;
+  dy: number;
+  /** Scarto del punto di controllo dalla corda; positivo a destra del verso. */
+  curva?: number;
+  etichetta?: string;
+  punte?: 'fine' | 'entrambe';
+}
+
+export interface PropsFile {
   l: number;
   a: number;
   nome: string;
 }
 
-export interface OggRiga extends Base {
-  tipo: 'riga';
+export interface PropsDatabase {
   l: number;
-  testo: string;
-}
-
-export interface OggPersona extends Base {
-  tipo: 'persona';
+  a: number;
   nome: string;
 }
 
-export interface OggFreccia extends Base {
-  tipo: 'freccia';
-  /** Punto d'arrivo, assoluto. */
-  x2: number;
-  y2: number;
-  /** Curvatura: scarto del punto di controllo dalla corda, in px. */
-  curva?: number;
+export interface PropsTabella {
+  colonne: string[];
+  righe: string[][];
+  /** Larghezze delle colonne; di default dal testo più lungo. */
+  larghezze?: number[];
+}
+
+export interface PropsRiga {
+  l: number;
+  /** Una cella sola (`testo`) o più celle (`celle`, con `larghezze`). */
+  testo?: string;
+  celle?: string[];
+  larghezze?: number[];
+  segno?: 'normale' | 'nuova' | 'evidenziata';
+}
+
+export interface PropsMemoria {
+  l: number;
+  a: number;
+  variabili: { nome: string; valore: string }[];
+}
+
+export interface PropsProgramma {
+  l: number;
+  righe: string[];
+  /** Indice (da 0) della riga in esecuzione. */
+  attiva?: number;
+  titolo?: string;
+}
+
+export interface PropsPersona {
+  nome: string;
+}
+
+export interface PropsContatore {
+  /** Testo dopo il numero, es. «assegnazioni». */
+  unita: string;
+  corpo?: Corpo;
+}
+
+export interface PropsGraffa {
+  lunghezza: number;
+  /** Da che parte sta la punta della graffa (e l'etichetta). */
+  verso: Verso;
   etichetta?: string;
 }
 
-export interface OggContatore extends Base {
-  tipo: 'contatore';
-  /** Testo dopo il numero, es. «assegnazioni». */
-  unita: string;
-  corpo?: number;
+export interface PropsEvidenziatore {
+  l: number;
+  a: number;
 }
 
-export type Oggetto =
-  | OggRiquadro
-  | OggTesto
-  | OggFile
-  | OggRiga
-  | OggPersona
-  | OggFreccia
-  | OggContatore;
+/** Le primitive di G2 e le loro props. */
+export interface PropsPrimitive {
+  riquadro: PropsRiquadro;
+  testo: PropsTesto;
+  freccia: PropsFreccia;
+  file: PropsFile;
+  database: PropsDatabase;
+  tabella: PropsTabella;
+  riga: PropsRiga;
+  memoria: PropsMemoria;
+  programma: PropsProgramma;
+  persona: PropsPersona;
+  contatore: PropsContatore;
+  graffa: PropsGraffa;
+  evidenziatore: PropsEvidenziatore;
+}
+
+export type TipoPrimitiva = keyof PropsPrimitive;
+
+/** Props che il motore passa a ogni primitiva, oltre alle sue. */
+export interface PropsComuni {
+  /** Seme di rough.js e chiave della cache: l'id dell'oggetto. */
+  chiave: string;
+  tratto: Tratto;
+  /** 0…1: «si disegna»; di default 1. */
+  progresso?: number;
+  /** 0…1: riga barrata. */
+  barrato?: number;
+  /** Valore di un contatore. */
+  valore?: number;
+}
+
+export type Oggetto = {
+  [K in TipoPrimitiva]: Base & { tipo: K } & PropsPrimitive[K];
+}[TipoPrimitiva];
 
 /** Curve di velocità: le stesse dei token `--ease-*` di custom.css. */
 export type Curva = 'smooth' | 'out' | 'spring' | 'lineare';

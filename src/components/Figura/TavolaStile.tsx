@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { curva, DUR } from './motore';
-import { CORPO, Forma, Testo } from './primitive';
+import { CORPO, Forma, Testo } from './primitive/comune';
 import { ruvido } from './ruvido';
 import type { Ruolo, Tratto } from './tipi';
 import styles from './styles.module.css';
@@ -21,7 +21,7 @@ const RUOLI: { r: Ruolo; uso: string }[] = [
   { r: 'ok', uso: 'corretto' },
 ];
 
-function Tavola({
+export function Tavola({
   titolo,
   l,
   a,

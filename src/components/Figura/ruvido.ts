@@ -56,6 +56,14 @@ const opz = (chiave: string, extra: Options = {}): Options => ({
 export type Geometria =
   | { f: 'rett'; x: number; y: number; l: number; a: number; pieno?: boolean }
   | { f: 'cerchio'; x: number; y: number; d: number; pieno?: boolean }
+  | {
+      f: 'ellisse';
+      x: number;
+      y: number;
+      l: number;
+      a: number;
+      pieno?: boolean;
+    }
   | { f: 'linea'; x0: number; y0: number; x1: number; y1: number }
   | { f: 'poligono'; punti: [number, number][]; pieno?: boolean }
   | { f: 'path'; d: string; pieno?: boolean };
@@ -73,6 +81,14 @@ const disegna = (chiave: string, g: Geometria) => {
       );
     case 'cerchio':
       return gen.circle(g.x, g.y, g.d, opz(chiave, g.pieno ? riempi : {}));
+    case 'ellisse':
+      return gen.ellipse(
+        g.x,
+        g.y,
+        g.l,
+        g.a,
+        opz(chiave, g.pieno ? riempi : {}),
+      );
     case 'linea':
       return gen.line(g.x0, g.y0, g.x1, g.y1, opz(chiave));
     case 'poligono':

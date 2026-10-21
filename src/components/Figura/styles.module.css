@@ -276,3 +276,14 @@
   height: 3rem;
   font-size: 1.25rem;
 }
+
+/* Fondo d'accento traslucido: riga attiva del programma, evidenziatore. */
+.evidenza {
+  fill: color-mix(in srgb, var(--fig-accento) 24%, transparent);
+  stroke: none;
+}
+
+/* Codice: gli spazi di indentazione restano. */
+.spazi {
+  white-space: pre;
+}
