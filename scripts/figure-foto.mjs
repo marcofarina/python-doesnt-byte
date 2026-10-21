@@ -28,7 +28,8 @@
  * lettore freddo della skill nuova-figura. I controlli girano lo stesso.
  *
  * Il browser è il Chrome installato (`channel: 'chrome'`); per usarne un altro,
- * FIGURE_CHROME=/percorso/chrome. Esce con codice 1 se c'è almeno un errore.
+ * FIGURE_CHROME=/percorso/chrome. Per un dev server su un'altra porta,
+ * FIGURE_SERVER=http://localhost:3001. Esce con codice 1 se c'è almeno un errore.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -38,7 +39,7 @@ const RADICE = path.resolve(
   path.dirname(new URL(import.meta.url).pathname),
   '..',
 );
-const SERVER = 'http://localhost:3000';
+const SERVER = process.env.FIGURE_SERVER ?? 'http://localhost:3000';
 const BASE = '/python-doesnt-byte/';
 
 const MAX_PASSI = 8;

@@ -11,11 +11,13 @@ import Evidenziatore from './Evidenziatore';
 import File from './File';
 import Freccia from './Freccia';
 import Graffa from './Graffa';
+import Insieme from './Insieme';
 import Memoria from './Memoria';
 import Persona from './Persona';
 import Programma from './Programma';
 import Riga from './Riga';
 import Riquadro from './Riquadro';
+import Rombo from './Rombo';
 import Tabella from './Tabella';
 import Testo from './Testo';
 
@@ -26,11 +28,13 @@ export {
   File,
   Freccia,
   Graffa,
+  Insieme,
   Memoria,
   Persona,
   Programma,
   Riga,
   Riquadro,
+  Rombo,
   Tabella,
   Testo,
 };
@@ -54,4 +58,6 @@ export const PRIMITIVE: {
   contatore: Contatore,
   graffa: Graffa,
   evidenziatore: Evidenziatore,
+  insieme: Insieme,
+  rombo: Rombo,
 };
