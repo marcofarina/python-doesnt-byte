@@ -1,0 +1,72 @@
+---
+unlisted: true
+title: Figure — pagina di test
+description: "Sandbox delle figure animate (fase G0): tavola di stile, prototipo di <Figura> e figura «aggiornamento perso» nei due tratti."
+---
+
+import Figura from '@site/src/components/Figura';
+import {
+  TavolaColori,
+  TavolaMisure,
+  TavolaTratti,
+  TavolaDisegna,
+  TavolaRitmi,
+} from '@site/src/components/Figura/TavolaStile';
+import {
+  aggiornamentoPerso,
+  aggiornamentoPersoStretta,
+} from '@site/src/components/Figura/scene/aggiornamento-perso';
+import { carico } from '@site/src/components/Figura/scene/carico';
+
+# Figure — pagina di test
+
+Sandbox della fase G0 di `pm/piano-2026-10-figure-animate.md`: la tavola di stile da
+approvare, il prototipo del player `<Figura>` e la figura «aggiornamento perso» nei due
+tratti. I nomi sono provvisori finché la grammatica non è approvata.
+
+## Tavola di stile
+
+### Ruoli di colore
+
+<TavolaColori />
+
+### Spessori, corpi, raggi e punte
+
+<TavolaMisure />
+
+### I due tratti
+
+<TavolaTratti />
+
+### «Si disegna»
+
+<TavolaDisegna />
+
+### Ritmi
+
+<TavolaRitmi />
+
+## L'aggiornamento perso
+
+Ogni figura ha due disposizioni con gli stessi passi: larga, tre colonne, e stretta,
+le due memorie sopra e il disco sotto. Sotto i 600 px di larghezza della figura si vede
+la stretta.
+
+### Ibrido: a mano persone e contenitori, netto le righe
+
+<Figura scena={aggiornamentoPerso} stretta={aggiornamentoPersoStretta} tratto="ibrido" id="perso-ibrido" />
+
+### Tutto a mano
+
+<Figura scena={aggiornamentoPerso} stretta={aggiornamentoPersoStretta} tratto="mano" id="perso-mano" />
+
+### Tutto netto
+
+<Figura scena={aggiornamentoPerso} stretta={aggiornamentoPersoStretta} tratto="netto" id="perso-netto" />
+
+## Prova di carico
+
+Trenta oggetti a mano che si disegnano e si spostano insieme: serve a misurare i
+fotogrammi al secondo con la CPU rallentata.
+
+<Figura scena={carico} tratto="mano" id="carico" />

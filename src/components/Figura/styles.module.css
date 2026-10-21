@@ -1,0 +1,271 @@
+/* <Figura> — prototipo G0. Tavola di stile: ruoli di colore come variabili
+   CSS, override scuro su html[data-theme='dark'] (niente oklch: gotcha P3). */
+
+/* Excalifont: lo stesso file di DiagrammaER, webpack non lo duplica. */
+@font-face {
+  font-family: 'Excalifont';
+  src: url('../DiagrammaER/Excalifont-Regular-latin.woff2') format('woff2');
+  font-display: swap;
+}
+
+.figura {
+  --fig-inchiostro: #27272a;
+  --fig-tenue: #6b6b73;
+  --fig-carta: #ffffff;
+  --fig-accento: #b45309;
+  --fig-dato: #0270ad;
+  --fig-programma: #6d28d9;
+  --fig-persona: #0f766e;
+  --fig-errore: #b91c1c;
+  --fig-ok: #15803d;
+  /* Spessori: tratto normale e tratto che segnala (barra, evidenziatore). */
+  --fig-tratto: 1.7;
+  --fig-tratto-spesso: 2.6;
+
+  margin: 1.75rem 0;
+  border: 1px solid var(--at-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--fig-carta);
+  color: var(--fig-inchiostro);
+  overflow: hidden;
+}
+
+:global(html[data-theme='dark']) .figura {
+  --fig-inchiostro: #e4e4e7;
+  --fig-tenue: #8b8b93;
+  --fig-carta: #18181b;
+  --fig-accento: #fbbf24;
+  --fig-dato: #38bdf8;
+  --fig-programma: #c4b5fd;
+  --fig-persona: #5eead4;
+  --fig-errore: #f87171;
+  --fig-ok: #4ade80;
+}
+
+.figura:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+/* Sotto la larghezza minima leggibile la figura scorre dentro di sé. */
+.scorri {
+  overflow-x: auto;
+  padding: 1rem 1rem 0.25rem;
+}
+
+.scena {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  height: auto;
+}
+
+.tratto {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--fig-tratto);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.spesso .tratto {
+  stroke-width: var(--fig-tratto-spesso);
+}
+
+.fondo {
+  fill: color-mix(in srgb, currentColor 12%, var(--fig-carta));
+}
+
+.fondoCarta {
+  fill: var(--fig-carta);
+}
+
+.testo {
+  fill: currentColor;
+}
+
+.fontMano {
+  font-family: 'Excalifont', 'Virgil', 'Comic Sans MS', cursive;
+}
+
+.fontNetto {
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+.fontCodice {
+  font-family: var(--font-mono);
+}
+
+.cifre {
+  font-variant-numeric: tabular-nums;
+}
+
+.nonScritto {
+  fill-opacity: 0;
+}
+
+/* Barra: didascalia e comandi. */
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 1rem 0.75rem;
+  border-top: 1px solid var(--at-border);
+}
+
+.didascalia {
+  flex: 1 1 18rem;
+  margin: 0;
+  min-height: 2.9em;
+  font-size: 1.02rem;
+  line-height: 1.45;
+  color: var(--at-fg-body);
+}
+
+.didascalia em {
+  color: var(--fig-accento);
+}
+
+.comandi {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.comandi button {
+  display: inline-grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border: 1px solid var(--at-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--at-bg-chip);
+  color: var(--at-fg);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-smooth),
+    color var(--dur-fast) var(--ease-smooth);
+}
+
+.comandi button:hover:not(:disabled) {
+  color: var(--at-accent);
+}
+
+.comandi button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.comandi button:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 1px;
+}
+
+.contatore {
+  min-width: 3.4rem;
+  text-align: center;
+  font-family: var(--font-mono-ui);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--at-muted);
+}
+
+.lim {
+  margin-left: 0.35rem;
+}
+
+/* I passi come testo: fuori dallo schermo, dentro l'albero accessibile. */
+.passiTesto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* LIM: la figura riempie lo schermo. */
+.figura[data-schermo-intero] {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  border: 0;
+}
+
+.figura[data-schermo-intero] .scorri {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  padding: 2vh 3vw;
+}
+
+.figura[data-schermo-intero] .scena {
+  height: 100%;
+  min-width: 0 !important;
+}
+
+.figura[data-schermo-intero] .didascalia {
+  font-size: clamp(1.1rem, 2.2vw, 2rem);
+}
+
+@media print {
+  .figura,
+  :global(html[data-theme='dark']) .figura {
+    --fig-inchiostro: #000;
+    --fig-tenue: #444;
+    --fig-carta: #fff;
+    --fig-accento: #000;
+    --fig-dato: #000;
+    --fig-programma: #000;
+    --fig-persona: #000;
+    --fig-errore: #000;
+    --fig-ok: #000;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .scorri {
+    overflow: visible;
+  }
+
+  .scena {
+    min-width: 0 !important;
+  }
+
+  .comandi,
+  .didascalia {
+    display: none;
+  }
+
+  .passiTesto {
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+    white-space: normal;
+    margin: 0;
+  }
+}
+
+/* Disposizione larga o stretta: sceglie la larghezza della figura. Sotto i
+   600 px una scena larga fino a 750 scenderebbe sotto il corpo minimo. */
+.figura {
+  container: figura / inline-size;
+}
+
+.stretta {
+  display: none;
+}
+
+@container figura (max-width: 600px) {
+  .larga {
+    display: none;
+  }
+
+  .stretta {
+    display: block;
+  }
+}
