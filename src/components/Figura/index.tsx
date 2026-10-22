@@ -146,12 +146,9 @@ function OggettoFigura({ o, iniziale, tratto, registra }: OggettoProps) {
     registra(o.id, (st) => {
       const g = ref.current;
       if (!g) return;
-      const visibile = st.opacita > 0.001;
-      g.style.display = visibile ? '' : 'none';
-      if (!visibile) return;
-      g.setAttribute('transform', trasformazione(o, st));
-      g.style.opacity = st.opacita < 1 ? String(r2(st.opacita)) : '';
-      g.style.color = coloreRuolo(ruolo, st.enfasi);
+      // Il contenuto si aggiorna anche da nascosto: React ridisegna dopo il
+      // fotogramma, e un oggetto che ricompare mostrerebbe per un istante il
+      // disegno di prima (il poster, cioè la riga già completa).
       const n = interno(st);
       const u = ultimo.current;
       if (
@@ -162,6 +159,12 @@ function OggettoFigura({ o, iniziale, tratto, registra }: OggettoProps) {
         ultimo.current = n;
         setS(n);
       }
+      const visibile = st.opacita > 0.001;
+      g.style.display = visibile ? '' : 'none';
+      if (!visibile) return;
+      g.setAttribute('transform', trasformazione(o, st));
+      g.style.opacity = st.opacita < 1 ? String(r2(st.opacita)) : '';
+      g.style.color = coloreRuolo(ruolo, st.enfasi);
     });
     return () => registra(o.id, null);
   }, [o, ruolo, registra]);
