@@ -1,0 +1,297 @@
+---
+title: Il modello relazionale
+sidebar_label: Il modello relazionale
+sidebar_position: 12
+description: Una tabella del modello relazionale non è la griglia di un foglio di calcolo. È un insieme di righe, quindi senza una prima riga e senza doppioni, con un dominio per ogni colonna e un valore solo in ogni cella. Lo vediamo smontando il registro dei punti di McGonagall tenuto in un foglio di calcolo.
+---
+
+import foglioDiCalcolo from '@site/src/figure/foglio-di-calcolo';
+
+# Il modello relazionale
+
+<Epigraph author="Georg Cantor, Beiträge zur Begründung der transfiniten Mengenlehre (1895)">
+
+Unter einer „Menge“ verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objekten m unserer Anschauung oder unseres Denkens (welche die „Elemente“ von M genannt werden) zu einem Ganzen.
+
+</Epigraph>
+
+Dalla lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)" usiamo le tabelle del registro dei punti senza averle mai definite: righe, colonne, una chiave. Il capitolo 2 ha lasciato in sospeso due domande che le riguardano: perché una cella di una tabella contiene un valore solo, e che cosa diventa l'identificatore del modello E/R quando il modello si trasforma in tabelle. Questo capitolo trasforma in tabelle il modello di Hogwarts, e la prima lezione stabilisce che cosa è una tabella per il modello relazionale. L'immagine più naturale, la griglia di un foglio di calcolo, è sbagliata in più di un punto, e la lezione li cerca uno per uno.
+
+:::prereq
+
+- Le tabelle del registro dei punti e il collegamento per nome fra `assegnazione` e `studente` (lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)")
+- L'attributo composto e l'attributo derivato (lezione "[Entità e attributi](./entita-e-attributi.mdx)")
+- L'identificatore, i due James Potter e la matricola (lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)")
+- La tabella con i corsi di uno studente in una cella sola (lezione "[Le associazioni molti a molti](./associazioni-molti-a-molti.mdx)")
+
+:::
+
+:::learn
+
+- Spiegare perché una tabella del modello relazionale non ha una prima riga né due righe uguali
+- Riconoscere le chiavi candidate di una relazione e dire quale diventa la chiave primaria
+- Dire che cos'è il dominio di un attributo e che cosa vuol dire che ogni cella contiene un valore atomico
+- Leggere e scrivere lo schema di una relazione, con la chiave primaria sottolineata
+- Trovare in un foglio di calcolo le caratteristiche che una relazione non ammette
+
+:::
+
+## Il registro in un foglio di calcolo
+
+Immaginiamo che la professoressa McGonagall, prima di avere un database, tenga il registro dei punti in un foglio di calcolo, come quelli di Excel o di Fogli Google. Una parte del foglio è questa:
+
+<Figura figura={foglioDiCalcolo} />
+
+Nella colonna A la parola Grifondoro è scritta una volta sola, in una cella unita che copre le righe da 2 a 5. I corsi di ogni studente stanno tutti nella stessa cella della colonna D. Una riga vuota separa le due case, e l'ultima riga contiene la somma dei punti, calcolata dal foglio con una formula.
+
+Il foglio funziona: McGonagall lo legge a colpo d'occhio, e quando corregge un punteggio il totale si aggiorna da solo. Per un foglio di calcolo, le celle unite, le righe vuote e la riga del totale sono comodità. Una tabella del modello relazionale non ne ammette nessuna, e ogni divieto ha un motivo, che troviamo partendo dai numeri delle righe.
+
+## La riga numero uno
+
+Nel foglio Harry Potter sta nella riga 2, e "la riga 2" è un modo valido di indicarlo. Anche la lista `registro` del capitolo 1 aveva le sue posizioni: `registro[9]` era la decima assegnazione, quella di Padma, e `del registro[9]` la cancellava.
+
+Proviamo a cercare la prima riga in una tabella del database. Il primo blocco qui sotto si legge: seleziona tutte le colonne (l'asterisco) dalla tabella `studente`. Il secondo blocco si legge: seleziona la colonna `nome` dalla tabella `studente`. I due blocchi leggono la stessa tabella del registro dei punti e nessuno dei due la modifica. Prima di eseguire i due blocchi, prova a prevedere quale nome compare per primo nel risultato di ciascuno.
+
+```sql live dataset=archivista/registro-punti title="Tutte le colonne"
+SELECT * FROM studente;
+```
+
+```sql live dataset=archivista/registro-punti title="Solo i nomi"
+SELECT nome FROM studente;
+```
+
+<Spoiler block>
+
+Il primo risultato comincia con Harry Potter, il secondo con Cedric Diggory. Il primo blocco elenca gli studenti nell'ordine in cui sono stati inseriti nella tabella, il secondo in ordine alfabetico, e nessuno dei due blocchi ha chiesto un ordine.
+
+</Spoiler>
+
+Fra un blocco e l'altro i dati non sono cambiati: è cambiato il modo in cui il DBMS li ha letti. Per il primo blocco il DBMS ha scorso la tabella così come è memorizzata. Al secondo blocco servivano soltanto i nomi, e il DBMS li ha presi da un indice, la struttura ordinata che costruisce da solo sulla colonna `nome` perché è la chiave della tabella (dell'indice abbiamo parlato nella lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)"). In tutti e due i casi il DBMS restituisce le righe nell'ordine in cui le incontra.
+
+Per il modello relazionale una tabella è un **insieme** di righe, nel senso che la parola ha in matematica e nella definizione di Cantor in cima alla pagina: una raccolta in un tutto di oggetti ben distinti fra loro. Un insieme ha degli elementi, e nessuno di loro occupa una posizione: l'insieme di Harry e Hermione e l'insieme di Hermione e Harry sono lo stesso insieme. Per questo una tabella non ha una prima riga, e il DBMS può restituire le righe nell'ordine che gli costa meno lavoro: oggi questo, domani un altro, se cambia un indice o la versione del DBMS. Chi vuole un ordine lo chiede nella query, con `ORDER BY`, che vedremo nel capitolo 6, quello sulle interrogazioni di una tabella.
+
+Nel foglio di calcolo, invece, la posizione contiene informazioni. Hermione, Ron e Neville sono di Grifondoro solo perché le loro righe stanno sotto quella di Harry, nella cella unita; la riga vuota indica dove finisce una casa e comincia l'altra. In una tabella senza ordine non esiste "la riga sotto", e un'informazione affidata alla posizione si perde. Ogni riga deve quindi contenere tutti i suoi valori: la casa va scritta nella riga di ogni studente. Il valore `Grifondoro` ripetuto quattro volte non è una ridondanza, perché ogni riga registra la casa di uno studente diverso: come nella lezione "[La stessa informazione scritta due volte](./stessa-informazione-due-volte.mdx)", un valore ripetuto non è sempre un'informazione ripetuta.
+
+## Due righe uguali
+
+In un insieme ogni elemento c'è una volta sola: un insieme che contiene Harry due volte è l'insieme che contiene Harry. Vale anche per una tabella del modello relazionale. Due righe con gli stessi valori in tutte le colonne sono la stessa riga, e la tabella la contiene una volta. Nel capitolo 2 abbiamo usato la stessa regola per le associazioni: un'associazione è un insieme di coppie, e la stessa coppia non può comparire due volte.
+
+Nel foglio di calcolo niente impedisce di incollare due volte la riga di Neville, e nel totale i suoi −40 punti conterebbero il doppio. Nella lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)" è successo qualcosa di simile in un database: la versione del registro senza chiave conteneva due righe `James Potter`, `Grifondoro`, `1`, identiche, una per il padre di Harry e una per suo figlio, e i dieci punti dati a James entravano nel totale due volte. SQL accetta due righe uguali in una tabella a cui nessuno ha dato una chiave, ma una tabella così non è più una relazione. Per il modello relazionale le due righe di James Potter sono una riga sola, e una delle due persone non c'è: per registrarle tutte e due serve un attributo con un valore diverso per ciascuna, come la matricola.
+
+Lo stesso problema tocca fatti che si ripetono davvero. Nella tabella `assegnazione` le assegnazioni con `id` 4 e 5 registrano due punti tolti da Piton a Harry nella stessa lezione di Pozioni:
+
+| id  | studente     | punti | professore |
+| --- | ------------ | ----- | ---------- |
+| 4   | Harry Potter | −1    | Piton      |
+| 5   | Harry Potter | −1    | Piton      |
+
+Senza la colonna `id` le due righe sarebbero uguali, e in un insieme una delle due sparirebbe, insieme a uno dei due punti. La colonna `id` sta nella tabella proprio per questo: è l'identificatore assegnato apposta della lezione sulle chiavi, e rende diverse due righe che registrano due fatti con lo stesso contenuto.
+
+Ogni relazione, quindi, ha almeno un attributo, o un gruppo di attributi, che distingue ogni riga da tutte le altre. Nel modello E/R lo abbiamo chiamato identificatore; nelle relazioni si chiama chiave.
+
+:::definition[Chiave candidata e chiave primaria]
+
+Una **chiave candidata** di una relazione è un attributo, o un insieme di attributi, che ha un valore diverso in ogni riga, in tutte le righe che la relazione potrà contenere, e che non contiene attributi superflui. Sono le stesse due condizioni dell'identificatore del modello E/R.
+
+La **chiave primaria** è la chiave candidata scelta da chi progetta il database per identificare le righe della relazione. I suoi valori sono quelli che le altre tabelle usano per indicare una riga, come la colonna `studente` della tabella `assegnazione` indica uno studente con il suo nome. Ogni relazione ha una chiave primaria.
+
+:::
+
+Una relazione può avere più di una chiave candidata. Prendiamo una tabella delle case con il nome e il fondatore di ogni casa: il nome distingue le quattro case, e anche il fondatore, perché ognuno dei quattro fondatori ha fondato una casa sola. Sono due chiavi candidate, e la chiave primaria è il nome, perché è il valore che le altre tabelle già contengono: nella tabella `studente` la colonna `casa` contiene `Grifondoro`, non il nome di chi l'ha fondata. L'identificatore del modello E/R diventa così la chiave primaria della relazione, come promesso dalla lezione sulle chiavi.
+
+## Una colonna, un dominio; una cella, un valore
+
+Nel foglio di calcolo una cella accetta qualunque cosa. Nella colonna C, quella dell'anno, si può scrivere `3`, `terzo` oppure `Pozioni`; nella colonna A dell'ultima riga c'è scritto `Totale`, che non è il nome di una casa. In una relazione, invece, ogni attributo ha un insieme di valori ammessi, stabilito prima di inserire i dati.
+
+:::definition[Dominio di un attributo]
+
+Il **dominio** di un attributo è l'insieme dei valori che l'attributo può assumere. Il dominio di `anno` è l'insieme dei numeri interi da 1 a 7; il dominio di `casa` è l'insieme dei quattro nomi Grifondoro, Serpeverde, Corvonero e Tassofrasso.
+
+:::
+
+La parola è la stessa della lezione "[Entità e attributi](./entita-e-attributi.mdx)", con un altro significato: là il dominio era la parte di mondo di cui il database conserva i dati, qui è l'insieme dei valori di un attributo. Sono tutti e due termini della disciplina, e si riconoscono dal complemento: il dominio di Hogwarts, il dominio dell'attributo `anno`. Come si dichiara il dominio di una colonna, con un tipo e con dei vincoli, lo vedremo nel capitolo 5, quello sulla costruzione del database.
+
+La riga del totale non rispetta il dominio di `casa`, ma il suo difetto è più profondo: non è uno studente. In una relazione ogni riga è un elemento dello stesso insieme, e ogni riga della tabella `studente` registra uno studente. La riga 9 registra invece un calcolo sulle altre righe: è un attributo derivato, quello della lezione "[Entità e attributi](./entita-e-attributi.mdx)", scritto in forma di riga. Come ogni dato derivato va ricalcolato a ogni modifica, e confonde chi non sa che c'è: una somma della colonna E dalla riga 2 alla riga 9 dà 26, il doppio del totale vero, perché conta anche il totale. La riga vuota ha lo stesso difetto in forma più semplice: non registra niente, e in una relazione una riga che non è un elemento non ha posto.
+
+Resta la colonna D, con i quattro corsi di ogni studente in una cella sola. È la tabella della lezione "[Le associazioni molti a molti](./associazioni-molti-a-molti.mdx)", in cui la domanda "chi segue Pozioni?" non trovava nessuno: in ogni riga la colonna `corsi` conteneva il testo `Erbologia, Incantesimi, Pozioni, Trasfigurazione`, e il DBMS lo confrontava con `Pozioni` come un valore unico. Il DBMS confronta, ordina e controlla i valori delle celle sempre interi: un vincolo di chiave confronta il nome intero, un collegamento fra tabelle cerca il nome intero. Una cella con quattro corsi è per lui un testo solo, e le domande sul singolo corso non hanno un valore a cui agganciarsi. Per lo stesso motivo, nella lezione "[Le cardinalità](./le-cardinalita.mdx)", i due legni delle bacchette di Ron non potevano stare nella stessa cella.
+
+:::definition[Valore atomico]
+
+Un valore è **atomico** quando il database non ha bisogno di scomporlo per rispondere alle domande del dominio. Nel modello relazionale ogni cella contiene un solo valore atomico, preso dal dominio del suo attributo.
+
+:::
+
+Atomico non vuol dire indivisibile in assoluto: `Harry Potter` si scompone in nome e cognome, e un nome in lettere. Dipende dalle domande. Se il database deve ordinare gli studenti per cognome, il nome completo in una cella sola non basta più, e nome e cognome diventano due attributi: è l'attributo composto della lezione "[Entità e attributi](./entita-e-attributi.mdx)", e nella [prossima lezione](./tradurre-in-tabelle.mdx) vedremo come diventa colonne.
+
+## Perché si chiama relazionale
+
+Le regole delle sezioni precedenti (nessun ordine fra le righe, nessuna riga doppia, un dominio per attributo, un valore atomico per cella) descrivono un oggetto che la matematica aveva già. In matematica una **relazione** fra alcuni insiemi è un insieme di tuple, sequenze di valori in cui il primo valore è preso dal primo insieme, il secondo dal secondo, e così via. La tabella `studente` è una relazione di questo tipo: i tre insiemi sono i domini di `nome`, `casa` e `anno`, e le tuple sono le terne (nome, casa, anno) che corrispondono a uno studente di Hogwarts.
+
+:::definition[Relazione, attributo, tupla]
+
+Una **relazione** è un insieme di tuple che hanno tutte gli stessi attributi, ciascuno con il suo dominio. È il nome che il modello relazionale dà a una tabella, e da qui in poi in questo libro "relazione" vuol dire proprio questo: la parola che nel capitolo 2 abbiamo tenuto libera, chiamando "associazione" il legame fra due entità.
+
+Un **attributo** è una colonna della relazione, con un nome e un dominio. Il nome è lo stesso degli attributi del modello E/R, e nella prossima lezione vedremo che gli attributi di un'entità diventano gli attributi della sua relazione.
+
+Una **tupla** è una riga della relazione: una sequenza di valori, uno per ogni attributo. Se in Python hai già usato le tuple, l'idea è la stessa: `('Harry Potter', 'Grifondoro', 1)`.
+
+:::
+
+Di una relazione si distinguono due cose. Lo **schema** è il nome della relazione con l'elenco dei suoi attributi: descrive com'è fatta la relazione, e cambia di rado. L'**istanza** è l'insieme delle tuple che la relazione contiene in un certo momento, e cambia a ogni inserimento o cancellazione. I due blocchi della sezione "La riga numero uno" hanno mostrato l'istanza di oggi della tabella `studente`, nove tuple, in due ordini diversi. Attenzione al falso amico: in Python un'istanza è un oggetto solo, mentre l'istanza di una relazione è tutto il suo contenuto, e una riga sola è una tupla. Nel foglio di calcolo lo schema non esiste come cosa separata: i nomi delle colonne stanno nella riga 1, una riga come le altre, che si può cancellare o sovrascrivere per sbaglio. In una relazione lo schema non è una riga.
+
+Nei libri e nelle prove scritte lo schema si scrive con il nome della relazione seguito dagli attributi fra parentesi, e la chiave primaria sottolineata:
+
+studente(<u>nome</u>, casa, anno)
+
+Sotto lo schema si scrivono, in frasi, i vincoli che i nomi degli attributi non dicono:
+
+- il dominio di `anno` è l'insieme degli interi da 1 a 7;
+- il dominio di `casa` è l'insieme dei nomi delle quattro case.
+
+Una chiave primaria composta da più attributi li ha sottolineati tutti, come il corso identificato da materia e anno nella lezione sulle chiavi:
+
+corso(<u>materia</u>, <u>anno</u>)
+
+Con l'archivio di tutti gli studenti passati da Hogwarts il nome non distingue più gli studenti, e lo schema cambia chiave: studente(<u>matricola</u>, nome, casa, anno). Lo schema della tabella `assegnazione` è assegnazione(<u>id</u>, studente, punti, professore). Le colonne `studente` e `professore` contengono la chiave primaria di un'altra relazione, e lo schema le segna in un modo che vedremo nella [prossima lezione](./tradurre-in-tabelle.mdx).
+
+:::warning["Relazionale" non vuol dire "collegato"]
+
+- <Esito ok={false} /> Il modello si chiama relazionale perché le tabelle sono collegate fra loro → un database con una tabella sola è già relazionale, e il collegamento fra due tabelle ha un altro nome, chiave esterna, che arriva nella prossima lezione.
+- <Esito /> Il modello si chiama relazionale perché ogni tabella è una relazione nel senso matematico: un insieme di tuple.
+
+L'errore è comune anche perché il modello E/R si chiama in inglese _Entity-Relationship_, e la _relationship_ è proprio il legame fra entità, che in questo libro chiamiamo associazione.
+
+:::
+
+Il modello e il DBMS non coincidono del tutto. SQL accetta due righe uguali in una tabella senza chiave, come nella versione del registro con i due James Potter, e accetta una cella con quattro corsi, perché per lui è un testo come un altro. Le regole del modello relazionale, in questi due casi, le fa rispettare chi progetta le tabelle: dando una chiave primaria a ogni tabella e un valore atomico a ogni cella.
+
+:::history[Una parola presa dalla matematica]
+
+Il modello relazionale nasce con l'articolo "A Relational Model of Data for Large Shared Data Banks" di Edgar F. Codd, del laboratorio di ricerca IBM di San Jose, pubblicato nel giugno 1970 sulla rivista _Communications of the ACM_ (volume 13, numero 6): è lo stesso articolo citato in cima alla lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)". Codd scrive di usare la parola _relation_ nel suo senso matematico corrente, e quando rappresenta una relazione come una tabella ne elenca le proprietà: ogni riga è una tupla, l'ordine delle righe non ha importanza, tutte le righe sono distinte. Nello stesso articolo compaiono la chiave primaria e i valori atomici, che Codd spiega con "non scomponibili".
+
+:::
+
+:::nutshell
+
+- Per il modello relazionale una tabella è una relazione: un insieme di tuple con gli stessi attributi.
+- Una relazione non ha una prima riga. Il DBMS restituisce le righe nell'ordine che sceglie, e chi vuole un ordine lo chiede con `ORDER BY`.
+- Un'informazione affidata alla posizione, come una cella unita o una riga vuota di separazione, in una relazione si perde: ogni riga contiene tutti i suoi valori.
+- Due righe uguali sono la stessa riga. Per registrare due fatti con lo stesso contenuto serve un attributo che li distingua, come `id`.
+- Una chiave candidata ha un valore diverso in ogni riga possibile e nessun attributo superfluo; la chiave primaria è quella scelta per identificare le righe. L'identificatore del modello E/R diventa la chiave primaria.
+- Ogni attributo ha un dominio, l'insieme dei valori che può assumere, e ogni cella contiene un solo valore atomico del suo dominio.
+- Una riga di totale non è un elemento della relazione: è un attributo derivato in forma di riga.
+- Lo schema è il nome della relazione con i suoi attributi, l'istanza è l'insieme delle tuple di un momento. Lo schema si scrive con la chiave primaria sottolineata: studente(<u>nome</u>, casa, anno).
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Un compagno vuole sapere quale studente è stato inserito per primo nella tabella `studente` del registro. Esegue `SELECT nome FROM studente` e prende il primo nome del risultato. Che cosa ha trovato?
+  </QuizQuestion>
+
+  <QuizOption>
+    Harry Potter, il primo studente inserito.
+    <QuizFeedback>
+      Con questa istruzione il primo nome è Cedric Diggory: il DBMS legge i nomi dall'indice, in ordine alfabetico. L'ordine di inserimento non è un'informazione della tabella.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Il primo nome che il DBMS ha incontrato leggendo la tabella, che non dice niente su chi è stato inserito per primo.
+    <QuizFeedback>
+      Esatto. Una relazione non ha una prima riga. Se l'ordine di inserimento serve, deve diventare un dato, una colonna come `id` nella tabella `assegnazione`, e l'ordine si chiede con `ORDER BY`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Niente: il DBMS dà un errore, perché una relazione non ha una prima riga.
+    <QuizFeedback>
+      Il DBMS restituisce comunque le righe, una dopo l'altra, e il risultato ha una prima riga sullo schermo. Quello che manca è il significato di quell'ordine.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il primo studente in ordine alfabetico, perché il DBMS ordina sempre i risultati.
+    <QuizFeedback>
+      Il primo blocco della lezione, sulla stessa tabella, elencava gli studenti in un altro ordine. Il DBMS ordina solo quando glielo chiedi.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Togliamo la colonna `id` dalla tabella `assegnazione`. Piton toglie a Harry un punto, e poco dopo un altro, nella stessa lezione. Secondo il modello relazionale, quante righe registrano i due punti tolti?
+  </QuizQuestion>
+
+  <QuizOption>
+    Due, una per ogni punto tolto.
+    <QuizFeedback>
+      Senza `id` le due righe hanno gli stessi valori in tutte le colonne, e in un insieme sono la stessa riga. Una tabella SQL senza chiave le accetterebbe tutte e due, ma non sarebbe più una relazione.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Una sola, e uno dei due punti tolti non risulta più.
+    <QuizFeedback>
+      Esatto. Due fatti con lo stesso contenuto si registrano solo se un attributo li distingue: è il compito della colonna `id`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Una sola, con −2 punti.
+    <QuizFeedback>
+      Il modello non somma le righe uguali: le considera la stessa riga. E sommare farebbe perdere comunque un'informazione, perché i punti sono stati tolti due volte, in due momenti diversi.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Nessuna: senza chiave il DBMS rifiuta tutte e due le righe.
+    <QuizFeedback>
+      Senza chiave non c'è nessun vincolo che possa rifiutare una riga: il problema è l'opposto, cioè che una tabella senza chiave non distingue più le sue righe.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Il professor Flitwick tiene i voti di Incantesimi in un foglio di calcolo, con una riga per ogni studente di Corvonero. Quale di queste caratteristiche del foglio una relazione ammette?
+  </QuizQuestion>
+
+  <QuizOption>
+    Tutti i voti di uno studente nella stessa cella, separati da virgole.
+    <QuizFeedback>
+      Una cella con più voti contiene un testo solo, e una domanda come "chi ha preso un voto sotto la sufficienza" non ha un valore a cui agganciarsi. È la cella dei corsi della lezione.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Un'ultima riga con la media della classe.
+    <QuizFeedback>
+      La media non è uno studente: è un attributo derivato scritto in forma di riga, come il totale del foglio di McGonagall.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    La colonna `Casa`, con `Corvonero` scritto in ogni riga.
+    <QuizFeedback>
+      Esatto. Ogni riga registra la casa di uno studente diverso: il valore è ripetuto, l'informazione no. In una relazione ogni riga contiene tutti i suoi valori.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Il nome della casa scritto una volta sola, in una cella unita che copre tutte le righe.
+    <QuizFeedback>
+      La cella unita affida l'informazione alla posizione: uno studente è di Corvonero perché la sua riga sta sotto la cella. In una relazione le righe non hanno posizione.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+Adesso sappiamo che cos'è una relazione e come si scrive il suo schema. La [prossima lezione](./tradurre-in-tabelle.mdx) prende il diagramma di Hogwarts del capitolo 2 e lo traduce in relazioni, una regola per ogni forma di associazione, e per ogni regola prova l'alternativa per vedere che cosa perderebbe.
+
+:::

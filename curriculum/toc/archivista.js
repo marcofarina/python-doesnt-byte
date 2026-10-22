@@ -32,4 +32,15 @@ module.exports = [
       'generalizzazioni',
     ],
   },
+  {
+    type: 'category',
+    label: '3 · Dal modello allo schema',
+    customProps: { capitolo: 3 },
+    items: [
+      'il-modello-relazionale',
+      'tradurre-in-tabelle',
+      'le-chiavi-esterne',
+      'il-valore-null',
+    ],
+  },
 ];

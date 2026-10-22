@@ -1,0 +1,263 @@
+---
+title: Le chiavi esterne e l’integrità referenziale
+sidebar_label: Le chiavi esterne
+sidebar_position: 14
+description: Una chiave esterna non è un promemoria per chi scrive i programmi. Il DBMS la fa rispettare in tutti e due i versi, e rifiuta anche di cancellare una riga a cui altre righe si riferiscono. Lo vediamo con Fred e George Weasley che lasciano Hogwarts, mentre i loro punti sono ancora nel registro.
+database: archivista/registro-punti
+---
+
+# Le chiavi esterne e l’integrità referenziale
+
+<Epigraph author="John Donne, Devotions upon Emergent Occasions, Meditazione XVII (1624)">
+
+No man is an island, entire of itself.
+
+</Epigraph>
+
+Nella [lezione precedente](./tradurre-in-tabelle.mdx) ogni associazione uno a molti è diventata una chiave esterna, e sotto ogni schema abbiamo scritto una riga che indica a quale chiave primaria si riferisce. Scritta così, quella riga sembra un promemoria per chi scrive i programmi: ricordati di mettere nella colonna `studente` di un'assegnazione il nome di uno studente che esiste. Nel capitolo 1, però, il DBMS ha controllato da solo: ha rifiutato un'assegnazione a `Neville Logbottom`, uno studente che nella tabella `studente` non c'era, e la lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)" ha chiamato quella regola vincolo di chiave esterna, rimandandone lo studio all'integrità referenziale. In questa lezione guardiamo il vincolo dall'altro verso: che cosa succede quando a sparire è la riga a cui la chiave esterna si riferisce.
+
+:::prereq
+
+- Chiave primaria e chiave esterna, e lo schema con la chiave esterna in corsivo ([lezione precedente](./tradurre-in-tabelle.mdx))
+- Il vincolo di chiave esterna che rifiuta `Neville Logbottom`, e la prima assegnazione di Lupin (lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)")
+- I due James Potter e l'unione con una tabella senza chiave (lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)")
+- Il minimo di una cardinalità, e come passa nella traduzione (lezione "[Le cardinalità](./le-cardinalita.mdx)" e lezione precedente)
+
+:::
+
+:::learn
+
+- Riconoscere una riga orfana e spiegare che cosa vuol dire integrità referenziale
+- Prevedere quali scritture il vincolo di chiave esterna rifiuta, in tutti e due i versi
+- Scegliere che cosa fare delle righe che si riferiscono a una riga cancellata (rifiutare, cancellare a cascata, lasciare vuoto) e motivare la scelta con il dominio
+- Spiegare perché una chiave esterna deve riferirsi a una chiave
+
+:::
+
+## Il verso che non abbiamo visto
+
+I blocchi di questa pagina usano il registro dei punti della lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)". Nella tabella `studente` la chiave primaria è ancora il nome, come nel database dei voti della lezione precedente, e lo schema delle due tabelle che ci interessano è questo:
+
+studente(<u>nome</u>, casa, anno)
+
+assegnazione(<u>id</u>, _studente_, punti, _professore_)
+
+- `assegnazione.studente` si riferisce a `studente.nome`;
+- `assegnazione.professore` si riferisce a `professore.nome`.
+
+Nel quinto libro, _Harry Potter e l'Ordine della Fenice_, Fred e George Weasley lasciano Hogwarts prima della fine del loro ultimo anno: se ne vanno in volo sulle loro scope, uscendo dalle porte d'ingresso del castello sotto gli occhi degli studenti. Immaginiamo che il registro dei punti resti in uso anno dopo anno, e che dopo la loro partenza qualcuno voglia toglierli dalla tabella `studente`, perché non sono più studenti della scuola. Le tabelle di questa pagina contengono soltanto le assegnazioni del primo anno di Harry, quando Fred e George erano al terzo, e bastano per vedere che cosa fa il DBMS quando qualcuno prova a cancellarli.
+
+Il blocco qui sotto si legge: cancella dalla tabella `studente` le righe in cui il nome è `Fred Weasley`. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+
+```sql live dataset=archivista/registro-punti title="Fred lascia la scuola"
+DELETE FROM studente WHERE nome = 'Fred Weasley';
+```
+
+<Spoiler block>
+
+Il DBMS rifiuta la cancellazione con lo stesso errore che ha fermato `Neville Logbottom`, `FOREIGN KEY constraint failed`, e la riga di Fred resta nella tabella `studente`. Il motivo sta nella tabella `assegnazione`: l'assegnazione con `id` 7 registra dieci punti tolti a Fred da Piton, e la sua colonna `studente` contiene `Fred Weasley`, il valore che il blocco voleva togliere dalla tabella `studente`.
+
+</Spoiler>
+
+Se il DBMS avesse eseguito la cancellazione, l'assegnazione 7 sarebbe rimasta nel registro con un nome che nella tabella `studente` non c'è più. È la situazione dell'assegnazione a `Neville Logbottom`, raggiunta dall'altra parte: là entrava un nome che non esisteva, qui sparirebbe lo studente a cui il nome si riferisce. Per la tabella `assegnazione` il risultato sarebbe lo stesso, una riga che indica uno studente che non esiste.
+
+:::definition[Riga orfana e integrità referenziale]
+
+Una **riga orfana** è una riga in cui la chiave esterna contiene un valore che non compare nella chiave primaria della relazione a cui si riferisce: un'assegnazione a uno studente che nella tabella `studente` non c'è.
+
+Un database rispetta l'**integrità referenziale** quando non contiene righe orfane, cioè quando ogni valore di ogni chiave esterna compare fra i valori della chiave primaria a cui la chiave esterna si riferisce. Il vincolo di chiave esterna è la regola con cui il DBMS la fa rispettare.
+
+:::
+
+Una riga orfana può nascere in due modi, e il vincolo li controlla tutti e due. Nella tabella che contiene la chiave esterna nasce quando qualcuno scrive un valore che non c'è: l'inserimento di `Neville Logbottom`, oppure la modifica di un'assegnazione che sostituisce il nome dello studente con uno inesistente. Nella tabella a cui la chiave esterna si riferisce nasce quando sparisce un valore che qualche riga usa: la cancellazione di Fred, oppure la modifica del suo nome nella tabella `studente`, che il DBMS rifiuta con lo stesso errore. La riga scritta sotto lo schema, `assegnazione.studente` si riferisce a `studente.nome`, vincola quindi tutte e due le tabelle: la tabella `assegnazione` non può indicare uno studente che non c'è, e la tabella `studente` non può perdere uno studente che qualche assegnazione indica.
+
+## Che cosa fare dei punti di Fred
+
+Il rifiuto ha salvato l'assegnazione 7, ma il problema da cui siamo partiti resta: Fred e George hanno lasciato la scuola. Davanti alla cancellazione di una riga a cui altre righe si riferiscono, un DBMS può comportarsi in tre modi principali, e chi progetta il database sceglie quale, per ogni chiave esterna.
+
+**Rifiutare.** È il comportamento del blocco precedente. La riga di Fred resta nella tabella `studente`, e chi vuole davvero toglierla deve prima occuparsi delle righe che si riferiscono a lei.
+
+**Cancellare a cascata.** Il DBMS cancella la riga di Fred e, insieme, tutte le righe che si riferiscono a lei: l'assegnazione 7 se ne va con lo studente. Le tabelle di questa pagina non prevedono la cascata, ma possiamo eseguirla a mano, cancellando prima le assegnazioni e poi gli studenti. Il blocco qui sotto esegue la cascata per Fred e per George, che ha un'assegnazione uguale, la numero 8: altri dieci punti tolti da Piton. Le prime due istruzioni si leggono: cancella dalla tabella `assegnazione` le righe in cui lo studente è `Fred Weasley`, e poi quelle in cui è `George Weasley`. Le due istruzioni seguenti cancellano i due studenti, come il blocco precedente.
+
+L'ultima istruzione del blocco calcola il totale dei punti di ogni casa dopo le cancellazioni. È la query del totale per casa che hai letto nella lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)"; come si scrive una query che somma molte righe lo vedremo nel capitolo 8, dedicato all'aggregazione. Il totale sta nello stesso blocco delle cancellazioni perché ogni blocco di questa pagina riparte dalle tabelle iniziali: calcolato in un blocco separato, non vedrebbe le cancellazioni.
+
+Prima delle cancellazioni Grifondoro ha tre punti, come nel conteggio di McGonagall del capitolo 1, ed è terza, dietro Corvonero e Tassofrasso con dieci punti ciascuna. Prima di eseguire il blocco, prova a prevedere il totale di Grifondoro dopo le cancellazioni e il suo posto fra le case.
+
+```sql live dataset=archivista/registro-punti title="La cascata, a mano"
+DELETE FROM assegnazione WHERE studente = 'Fred Weasley';
+DELETE FROM assegnazione WHERE studente = 'George Weasley';
+DELETE FROM studente WHERE nome = 'Fred Weasley';
+DELETE FROM studente WHERE nome = 'George Weasley';
+
+SELECT studente.casa, SUM(assegnazione.punti) AS totale
+FROM assegnazione
+JOIN studente ON studente.nome = assegnazione.studente
+GROUP BY studente.casa
+ORDER BY totale DESC;
+```
+
+<Spoiler block>
+
+Grifondoro passa da tre a 23 punti, e dal terzo posto al primo; le altre tre case non cambiano. Con Fred e George se ne sono andati anche i venti punti che Piton aveva tolto loro.
+
+</Spoiler>
+
+Sotto il risultato il blocco segnala quattro righe modificate. Nel pannello "Database" della colonna di destra le tabelle sono come le ha lasciate il blocco, e le quattro righe compaiono barrate: le due assegnazioni nella tabella `assegnazione` e i due studenti nella tabella `studente`.
+
+La cascata ha tolto Fred e George, come chiedevamo, ma ha cambiato anche un fatto che con la loro partenza non c'entra: la classifica di un anno scolastico finito da tempo. Quei venti punti Piton li ha tolti davvero, quattro anni prima della partenza dei gemelli, e hanno contato nella Coppa delle Case di quell'anno. Dopo la cascata il registro racconta un altro anno, in cui Grifondoro è prima.
+
+:::warning[L'ordine delle cancellazioni]
+
+- <Esito ok={false} /> prima gli studenti, poi le assegnazioni → `FOREIGN KEY constraint failed` alla prima istruzione: quando il DBMS la controlla, l'assegnazione di Fred è ancora nella tabella.
+- <Esito /> prima le assegnazioni, poi gli studenti → quando tocca agli studenti, nessuna riga si riferisce più a loro.
+
+È l'ordine della prima assegnazione di Lupin, rovesciato: per inserire si comincia dalla riga a cui le altre si riferiscono, per cancellare dalle righe che si riferiscono a lei. Prova a spostare le due cancellazioni degli studenti in cima al blocco e a rieseguirlo.
+
+:::
+
+**Lasciare vuoto.** Il DBMS cancella la riga di Fred e svuota la colonna `studente` delle assegnazioni che si riferivano a lei. L'assegnazione 7 resta, con i suoi dieci punti tolti, ma non indica più nessuno studente. Una colonna vuota non rende la riga orfana: non indica uno studente che non c'è, non indica nessuno. Il guaio riguarda la casa. Nel registro la casa sta nella riga dello studente, quindi un'assegnazione senza studente non ha più una casa: nel totale per casa i venti punti tolti ai gemelli non conterebbero per nessuna, e Grifondoro salirebbe a 23 punti come con la cascata. Nel nostro schema, poi, questa risposta non è nemmeno disponibile. Accanto ad `assegnazione`, nell'associazione `riceve`, c'è `(1,1)`, e il minimo 1 vuol dire che la colonna `studente` non può restare vuota, come la colonna `casa` che nella lezione "[Le cardinalità](./le-cardinalita.mdx)" ha rifiutato Ginny prima dello smistamento.
+
+Quale delle tre risposte sia giusta non lo può decidere il DBMS: dipende da che cosa registrano le righe che si riferiscono. Le assegnazioni del registro sono fatti accaduti. Piton ha tolto quei punti, e la partenza di Fred non cambia il passato. Per il registro di Hogwarts i punti tolti restano tolti: il DBMS deve rifiutare la cancellazione di uno studente che ha delle assegnazioni, e Fred e George restano nella tabella `studente` anche dopo la partenza, come gli studenti di tutte le generazioni nell'archivio della lezione sulle chiavi. Se il database deve sapere chi frequenta ancora la scuola, quello è un dato in più da registrare nella riga di ogni studente, non una riga da cancellare.
+
+In altri domini la scelta è diversa. La cascata è la scelta giusta quando le righe che si riferiscono descrivono soltanto la riga a cui si riferiscono: se un libro esce dal catalogo della biblioteca, le coppie della relazione `scrive` che lo riguardano contengono soltanto gli autori di un libro che il database non registra più, e cancellarle insieme al libro non toglie al database nessun fatto. Lasciare vuoto va bene quando il riferimento può mancare senza che la riga perda il suo significato, e il minimo 0 della cardinalità lo permette.
+
+La scelta si dichiara insieme alla chiave esterna, quando si crea la tabella, con la clausola `ON DELETE` ("alla cancellazione"): la vedremo nel capitolo 5, quello sulla costruzione del database. Le tabelle del registro non dichiarano nessuna scelta, e senza una dichiarazione il DBMS rifiuta: per questo il primo blocco della lezione ha dato errore.
+
+## Una chiave esterna si riferisce a una chiave
+
+Resta una domanda sulla riga scritta sotto lo schema: perché la colonna `studente` dell'assegnazione deve riferirsi proprio alla chiave primaria della tabella `studente`, e non a una colonna qualunque? Torniamo ai due James Potter della lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)". Nella versione del registro senza chiave la tabella `studente` conteneva due righe con il nome `James Potter`, il padre di Harry e il suo figlio maggiore, e l'assegnazione dei dieci punti dati a `James Potter` si univa a tutte e due, come mostrava la figura di quella lezione. Il valore `James Potter` non indicava uno studente, ne indicava due.
+
+Supponiamo che il DBMS accettasse una chiave esterna verso quella colonna `nome`, che non è una chiave. Il controllo "il valore compare nella tabella `studente`" passerebbe, ma non garantirebbe niente. Se qualcuno cancellasse per errore la riga del padre, il nome `James Potter` resterebbe nella tabella con la riga del figlio: nessuna assegnazione risulterebbe orfana, e i dieci punti del padre passerebbero al figlio senza che nessuno lo abbia deciso e senza nessun errore. Una chiave esterna serve a indicare una riga, e un valore indica una riga sola soltanto se la colonna a cui si riferisce è una chiave: per questo la definizione della lezione precedente chiede che i valori della chiave esterna compaiano fra quelli di una chiave primaria.
+
+:::note[Quando lo schema è sbagliato]
+
+SQLite non accetta una chiave esterna che si riferisce a una colonna che non è una chiave. Non rifiuta i dati uno per uno: non esegue nessuna scrittura che il vincolo dovrebbe controllare, né gli inserimenti nella tabella con la chiave esterna né le cancellazioni nella tabella a cui si riferisce, e risponde con un errore diverso da quello di questa lezione, `foreign key mismatch`, seguito dai nomi delle due tabelle. L'errore non riguarda i dati ma lo schema, e la tabella resta bloccata finché qualcuno non lo corregge. Non lo proviamo in un blocco: servirebbe un database creato apposta con lo schema sbagliato, e come si crea una tabella lo vedremo nel capitolo 5.
+
+:::
+
+La regola vale anche per le chiavi composte. Nella relazione `iscrizione` della lezione precedente la chiave esterna verso `corso` è la coppia `materia`, `anno`, perché la chiave primaria di `corso` è quella coppia. Una chiave esterna sulla sola `materia` avrebbe il problema dei due James Potter: nel database dei voti della lezione precedente il valore `Pozioni` compare in due corsi, quello del primo anno e quello del terzo, e un valore che indica due righe non indica un corso. Con la chiave esterna composta il DBMS cerca nella relazione `corso` una riga che abbia tutti e due i valori dell'iscrizione, la materia e l'anno.
+
+:::nutshell
+
+- Una riga orfana è una riga la cui chiave esterna indica una riga che non esiste. Un database rispetta l'integrità referenziale quando non contiene righe orfane.
+- Il vincolo di chiave esterna lavora in tutti e due i versi: rifiuta un valore che non corrisponde a nessuna riga, e rifiuta di cancellare o modificare la chiave di una riga a cui altre righe si riferiscono.
+- Davanti alla cancellazione di una riga a cui altre si riferiscono le risposte principali sono tre: rifiutare, cancellare a cascata le righe che si riferiscono, lasciare vuota la loro chiave esterna.
+- La scelta è del dominio. Nel registro di Hogwarts le assegnazioni sono fatti accaduti: la cascata cambierebbe i totali di un anno passato, e la cancellazione si rifiuta.
+- Una cascata fatta a mano cancella prima le righe che si riferiscono a un'altra, poi la riga a cui si riferiscono: l'ordine opposto a quello degli inserimenti.
+- Lasciare vuoto è possibile solo se la chiave esterna ammette una cella vuota, cioè se nel modello il minimo è 0.
+- La scelta si dichiara con `ON DELETE`, nel capitolo 5. Senza dichiarazione, il DBMS rifiuta.
+- Una chiave esterna si riferisce a una chiave, semplice o composta: un valore deve indicare una riga sola.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Nel registro dei punti di questa pagina, quale di queste scritture il DBMS rifiuta?
+  </QuizQuestion>
+
+  <QuizOption>
+    Cancellare dalla tabella `assegnazione` l'assegnazione con `id` 7.
+    <QuizFeedback>
+      Nessuna chiave esterna si riferisce alle assegnazioni: cancellarne una non lascia nessuna riga orfana, e il DBMS la cancella.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Aggiungere Lupin alla tabella `professore`.
+    <QuizFeedback>
+      Una riga nuova nella tabella a cui le assegnazioni si riferiscono non lascia nessuna riga orfana: è la scrittura che ha permesso la prima assegnazione di Lupin.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Cancellare dalla tabella `professore` la riga di Piton.
+    <QuizFeedback>
+      Esatto. Anche `assegnazione.professore` è una chiave esterna, e cinque assegnazioni indicano Piton: senza la sua riga resterebbero orfane.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Aggiungere un'assegnazione di dieci punti a Cedric Diggory da parte della professoressa Sprout.
+    <QuizFeedback>
+      Cedric è nella tabella `studente` e Sprout nella tabella `professore`: i due valori della nuova assegnazione indicano righe che esistono.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Nella biblioteca di Hogwarts ogni prestito si riferisce a una copia, con `prestito.copia` che si riferisce a `copia.inventario`, e nell'associazione `riguarda` accanto a `prestito` c'è `(1,1)`. Una copia di un libro torna rovinata e non verrà più prestata. Che cosa deve fare il DBMS se qualcuno prova a cancellare la sua riga dalla relazione `copia`?
+  </QuizQuestion>
+
+  <QuizOption>
+    Cancellare a cascata anche i prestiti di quella copia.
+    <QuizFeedback>
+      I prestiti sono fatti accaduti: la cascata cancellerebbe anche l'ultimo, quello che dice chi aveva la copia quando si è rovinata.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Lasciare vuota la colonna `copia` dei suoi prestiti.
+    <QuizFeedback>
+      Con il minimo 1 accanto a `prestito` la colonna non può restare vuota. E anche se potesse, ogni prestito perderebbe la copia che riguarda.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Rifiutare la cancellazione: la copia resta nella relazione, e il suo stato registra che è fuori uso.
+    <QuizFeedback>
+      Esatto. Come le assegnazioni di Fred, i prestiti registrano il passato, e la copia a cui si riferiscono deve restare. Che non si presti più è un dato della copia: l'attributo `stato`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Cancellare la copia e lasciare i prestiti come sono.
+    <QuizFeedback>
+      I prestiti diventerebbero righe orfane, con un numero di inventario che non indica più nessuna copia: è proprio ciò che il vincolo di chiave esterna impedisce.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Un compagno scrive lo schema voto(<u>id</u>, _materia_, valore), con `voto.materia` che si riferisce a `corso.materia`. La chiave primaria di `corso` è la coppia materia e anno. Che cosa non va?
+  </QuizQuestion>
+
+  <QuizOption>
+    Niente: ogni materia dei voti compare nella relazione `corso`.
+    <QuizFeedback>
+      Compare, ma in più righe: `Pozioni` è il corso del primo anno e quello del terzo. Un valore che compare in due righe non indica a quale corso si riferisce il voto.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    `materia` da sola non è una chiave di `corso`: la chiave esterna deve essere la coppia materia e anno.
+    <QuizFeedback>
+      Esatto. Una chiave esterna si riferisce a una chiave, perché ogni suo valore deve indicare una riga sola. Qui la chiave è composta, e la chiave esterna anche.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    La colonna dovrebbe chiamarsi come la chiave primaria a cui si riferisce.
+    <QuizFeedback>
+      Il nome di una chiave esterna può essere diverso da quello della colonna a cui si riferisce, come `assegnazione.studente` che contiene nomi di studenti. Il problema è a che cosa si riferisce, non come si chiama.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    SQLite accetta lo schema e rifiuta soltanto i voti con una materia che non esiste.
+    <QuizFeedback>
+      SQLite non accetta una chiave esterna verso una colonna che non è una chiave: risponde con `foreign key mismatch` e non esegue le scritture che il vincolo dovrebbe controllare.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+Nella risposta "lasciare vuoto" un'assegnazione restava senza studente, e la sua chiave esterna vuota non la rendeva orfana. Che cosa contiene davvero una cella vuota lo vediamo nella [prossima lezione](./il-valore-null.mdx), "Il valore che non c'è": si chiama `NULL`, e nelle interrogazioni si comporta in modo diverso da qualunque altro valore.
+
+:::

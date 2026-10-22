@@ -26,7 +26,11 @@
       "archivista/le-chiavi",
       "archivista/associazioni-molti-a-molti",
       "archivista/leggere-un-dominio",
-      "archivista/generalizzazioni"
+      "archivista/generalizzazioni",
+      "archivista/il-modello-relazionale",
+      "archivista/tradurre-in-tabelle",
+      "archivista/le-chiavi-esterne",
+      "archivista/il-valore-null"
     ]
   }
 }
