@@ -21,12 +21,12 @@ Future users of large data banks must be protected from having to know how the d
 
 </Epigraph>
 
-La lezione precedente si è chiusa con una scelta fra due difetti. Con le copie dei dati, i file finiscono per contraddirsi. Senza queste copie, ogni domanda che poniamo ai dati richiede un incrocio con del codice scritto a mano, e nessun file controlla che il nome scritto in un'assegnazione compaia realmente fra gli studenti. La prima lezione del capitolo aveva lasciato in sospeso anche un'altra domanda: che cosa succede se due professori aggiungono un'assegnazione al registro nello stesso momento? In questa lezione mettiamo il registro in un database e guardiamo, un problema alla volta, che cosa fa il DBMS al posto del tuo programma.
+La [lezione precedente](./stessa-informazione-due-volte.mdx) si è chiusa con una scelta fra due difetti. Con le copie dei dati, i file finiscono per contraddirsi. Senza queste copie, ogni domanda che poniamo ai dati richiede un incrocio con del codice scritto a mano, e nessun file controlla che il nome scritto in un'assegnazione compaia realmente fra gli studenti. La [prima lezione del capitolo](./dati-fuori-dal-programma.mdx) aveva lasciato in sospeso anche un'altra domanda: che cosa succede se due professori aggiungono un'assegnazione al registro nello stesso momento? In questa lezione mettiamo il registro in un database e guardiamo, un problema alla volta, che cosa fa il DBMS al posto del tuo programma.
 
 :::prereq
 
-- Il registro `punti.json`, l'elenco `studenti.json` e l'incrocio fra i due con un dizionario (prima lezione del capitolo)
-- La ridondanza e la regola "un fatto, un posto" (lezione precedente)
+- Il registro `punti.json`, l'elenco `studenti.json` e l'incrocio fra i due con un dizionario ([prima lezione del capitolo](./dati-fuori-dal-programma.mdx))
+- La ridondanza e la regola "un fatto, un posto" ([lezione precedente](./stessa-informazione-due-volte.mdx))
 - Leggere e riscrivere un file JSON con il modulo `json`
 
 :::
@@ -56,13 +56,13 @@ Le due parole non sono sinonimi: il database è l'insieme dei dati, il DBMS è i
 
 Con un DBMS il tuo programma non apre più un file e non lo scorre: manda una richiesta al DBMS e riceve la risposta.
 
-Ripartiamo dalla regola con cui si è chiusa la lezione precedente: ogni informazione scritta una volta sola, nel posto che le appartiene. In un database quei posti sono le **tabelle**, e il registro dei punti ne occupa tre. La tabella `studente` contiene nome, casa e anno, come `studenti.json`. La tabella `professore` è l'elenco dei professori, che nell'archivio JSON non c'era. La tabella `assegnazione` registra chi ha ricevuto i punti, quanti e da chi, e non contiene più la casa. Il blocco qui sotto mostra le prime cinque righe della tabella `assegnazione`:
+Ripartiamo dalla regola con cui si è chiusa la [lezione precedente](./stessa-informazione-due-volte.mdx): ogni informazione scritta una volta sola, nel posto che le appartiene. In un database quei posti sono le **tabelle**, e il registro dei punti ne occupa tre. La tabella `studente` contiene nome, casa e anno, come `studenti.json`. La tabella `professore` è l'elenco dei professori, che nell'archivio JSON non c'era. La tabella `assegnazione` registra chi ha ricevuto i punti, quanti e da chi, e non contiene più la casa. Il blocco qui sotto mostra le prime cinque righe della tabella `assegnazione`:
 
 ```sql live dataset=archivista/registro-punti hideQuery
 SELECT * FROM assegnazione LIMIT 5;
 ```
 
-In una tabella ogni riga descrive un elemento e ogni colonna un'informazione, la stessa per tutte le righe: nella tabella `assegnazione` ogni riga è un'assegnazione. La colonna `id` è un numero progressivo che il database dà a ogni riga. Le tabelle si collegano attraverso i nomi, come i file della lezione precedente: il valore nella colonna `studente` indica una riga della tabella `studente`, quello nella colonna `professore` una riga della tabella `professore`. Il collegamento per nome regge finché due studenti non hanno lo stesso nome; il problema, e il modo di risolverlo, arrivano nel prossimo capitolo.
+In una tabella ogni riga descrive un elemento e ogni colonna un'informazione, la stessa per tutte le righe: nella tabella `assegnazione` ogni riga è un'assegnazione. La colonna `id` è un numero progressivo che il database dà a ogni riga. Le tabelle si collegano attraverso i nomi, come i file della lezione precedente: il valore nella colonna `studente` indica una riga della tabella `studente`, quello nella colonna `professore` una riga della tabella `professore`. Il collegamento per nome regge finché due studenti non hanno lo stesso nome; il problema, e il modo di risolverlo, arrivano nel [prossimo capitolo](./le-chiavi.mdx).
 
 <Figura figura={tabelleCollegate} />
 
@@ -74,7 +74,7 @@ I blocchi di istruzioni di questa pagina usano SQLite, un DBMS che gira dentro i
 
 ## Domande senza programma
 
-Nella prima lezione ogni domanda era un programma da scrivere. Al DBMS invece si fa una richiesta, e lui risponde con una tabella. La richiesta è scritta in un linguaggio ben strutturato apposito, e si chiama **query**. Il blocco qui sotto chiede il totale dei punti di ogni casa; la query per ora è nascosta perché apprenderemo la sintassi nei prossimi capitoli, ma se sei curioso con il pulsante "Mostra la query" puoi leggerla.
+Nella [prima lezione](./dati-fuori-dal-programma.mdx) ogni domanda era un programma da scrivere. Al DBMS invece si fa una richiesta, e lui risponde con una tabella. La richiesta è scritta in un linguaggio ben strutturato apposito, e si chiama **query**. Il blocco qui sotto chiede il totale dei punti di ogni casa; la query per ora è nascosta perché apprenderemo la sintassi nei prossimi capitoli, ma se sei curioso con il pulsante "Mostra la query" puoi leggerla.
 
 ```sql live dataset=archivista/registro-punti hideQuery
 SELECT studente.casa, SUM(assegnazione.punti) AS totale
@@ -84,7 +84,7 @@ GROUP BY studente.casa
 ORDER BY totale DESC;
 ```
 
-Grifondoro ha tre punti, come nel conteggio di McGonagall della prima lezione. Questa volta però la casa non sta nella tabella `assegnazione`: per sommare i punti di ogni casa il DBMS ha incrociato ogni assegnazione con la riga dello studente. È lo stesso tipo di incrocio che nella prima lezione richiedeva il dizionario `anno_di`, e che nella lezione precedente era il prezzo della regola "un fatto, un posto". Adesso quel prezzo lo paga il DBMS.
+Grifondoro ha tre punti, come nel conteggio di McGonagall della prima lezione. Questa volta però la casa non sta nella tabella `assegnazione`: per sommare i punti di ogni casa il DBMS ha incrociato ogni assegnazione con la riga dello studente. È lo stesso tipo di incrocio che nella prima lezione richiedeva il dizionario `anno_di`, e che nella [lezione precedente](./stessa-informazione-due-volte.mdx) era il prezzo della regola "un fatto, un posto". Adesso quel prezzo lo paga il DBMS.
 
 Per vedere che cosa cambia nel codice, mettiamo a confronto la domanda di Silente della prima lezione, i punti raccolti dagli studenti di ogni anno, scritta nei due modi.
 
@@ -140,7 +140,7 @@ Nella prima lezione, per trovare le due assegnazioni di Neville fra 20.018, il p
 
 ## Il nome che non esiste
 
-Nella prima lezione abbiamo aggiunto al registro un'assegnazione di `Neville Logbottom`, con il nome scritto male (manca una "n"). Nel file JSON l'assegnazione è entrata senza nessuna segnalazione, e l'errore è arrivato dopo, come `KeyError`, al programma che calcolava i punti per anno. Il blocco qui sotto ripete l'errore nel database: aggiunge alla tabella `assegnazione` una riga con lo stesso nome sbagliato. È un'istruzione di scrittura, e si legge come la query di prima: inserisci nella tabella `assegnazione`, nelle colonne `studente`, `punti` e `professore`, questi valori. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+Nella [prima lezione](./dati-fuori-dal-programma.mdx) abbiamo aggiunto al registro un'assegnazione di `Neville Logbottom`, con il nome scritto male (manca una "n"). Nel file JSON l'assegnazione è entrata senza nessuna segnalazione, e l'errore è arrivato dopo, come `KeyError`, al programma che calcolava i punti per anno. Il blocco qui sotto ripete l'errore nel database: aggiunge alla tabella `assegnazione` una riga con lo stesso nome sbagliato. È un'istruzione di scrittura, e si legge come la query di prima: inserisci nella tabella `assegnazione`, nelle colonne `studente`, `punti` e `professore`, questi valori. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
 
 ```sql live dataset=archivista/registro-punti title="Un'assegnazione con il nome sbagliato"
 INSERT INTO assegnazione (studente, punti, professore)
@@ -171,7 +171,7 @@ Il DBMS ferma i dati impossibili, non quelli sbagliati ma possibili. A chi andas
 
 :::
 
-Il vincolo ha anche un effetto sull'ordine delle scritture. Nella lezione precedente Lupin non poteva entrare nell'archivio finché non assegnava punti a qualcuno. Nel database la sua prima assegnazione, i dieci punti a Neville, viene rifiutata: anche la colonna `professore` della tabella `assegnazione` ha un vincolo verso la tabella `professore`, e Lupin non c'è. Esegui il blocco qui sotto e otterrai lo stesso errore di prima. Poi fai in modo che il database accetti l'assegnazione, senza cambiarla: l'`INSERT` di Neville Longbottom ti fa da modello.
+Il vincolo ha anche un effetto sull'ordine delle scritture. Nella [lezione precedente](./stessa-informazione-due-volte.mdx) Lupin non poteva entrare nell'archivio finché non assegnava punti a qualcuno. Nel database la sua prima assegnazione, i dieci punti a Neville, viene rifiutata: anche la colonna `professore` della tabella `assegnazione` ha un vincolo verso la tabella `professore`, e Lupin non c'è. Esegui il blocco qui sotto e otterrai lo stesso errore di prima. Poi fai in modo che il database accetti l'assegnazione, senza cambiarla: l'`INSERT` di Neville Longbottom ti fa da modello.
 
 <Challenge>
 
@@ -227,7 +227,7 @@ La prima istruzione aggiunge Lupin alla tabella `professore`, la seconda è l'as
 
 ## Due professori nello stesso momento
 
-Resta la domanda della prima lezione. Per aggiungere un'assegnazione a `punti.json` un programma rilegge il file, aggiunge la riga alla lista e riscrive tutto. Supponiamo che McGonagall e Piton aggiungano un'assegnazione quasi nello stesso momento, ognuno dal proprio computer, sullo stesso file condiviso. Il blocco qui sotto ricostruisce la sequenza in un ordine fissato: la variabile `disco` fa la parte del file, e ogni professore ha in memoria la propria copia del registro. Il file parte da 18 assegnazioni. Prima di eseguire il blocco, prova a prevedere quante assegnazioni contiene il file alla fine.
+Resta la domanda della [prima lezione](./dati-fuori-dal-programma.mdx). Per aggiungere un'assegnazione a `punti.json` un programma rilegge il file, aggiunge la riga alla lista e riscrive tutto. Supponiamo che McGonagall e Piton aggiungano un'assegnazione quasi nello stesso momento, ognuno dal proprio computer, sullo stesso file condiviso. Il blocco qui sotto ricostruisce la sequenza in un ordine fissato: la variabile `disco` fa la parte del file, e ogni professore ha in memoria la propria copia del registro. Il file parte da 18 assegnazioni. Prima di eseguire il blocco, prova a prevedere quante assegnazioni contiene il file alla fine.
 
 ```py live
 from archivio_hogwarts import leggi_file
@@ -391,6 +391,6 @@ Il coordinamento fra due utenti non si può mostrare in questa pagina, perché i
 
 :::tip[Il prossimo capitolo]
 
-Le tre tabelle di questa lezione sono arrivate già pronte. Il prossimo capitolo comincia dal problema che viene prima: dato un dominio, come si decide quali tabelle servono e quali informazioni stanno in ciascuna. Si parte dalle entità e dai loro attributi.
+Le tre tabelle di questa lezione sono arrivate già pronte. Il [prossimo capitolo](./entita-e-attributi.mdx) comincia dal problema che viene prima: dato un dominio, come si decide quali tabelle servono e quali informazioni stanno in ciascuna. Si parte dalle entità e dai loro attributi.
 
 :::

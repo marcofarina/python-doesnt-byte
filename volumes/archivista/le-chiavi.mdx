@@ -17,11 +17,11 @@ What's in a name? That which we call a rose by any other name would smell as swe
 
 </Epigraph>
 
-Nella lezione "Che cosa fa un DBMS al posto tuo" le tabelle del registro dei punti si collegavano attraverso i nomi, con un avviso: il collegamento per nome regge finché due studenti non hanno lo stesso nome. Anche le coppie delle associazioni di questo capitolo nominano gli studenti per nome, (Harry Potter, Grifondoro). In questa lezione due studenti con lo stesso nome arrivano davvero, e cerchiamo che cosa può distinguere un'occorrenza da tutte le altre. È il cerchio pieno che nei diagrammi della lezione "Entità e attributi" era rimasto in sospeso.
+Nella lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)" le tabelle del registro dei punti si collegavano attraverso i nomi, con un avviso: il collegamento per nome regge finché due studenti non hanno lo stesso nome. Anche le coppie delle associazioni di questo capitolo nominano gli studenti per nome, (Harry Potter, Grifondoro). In questa lezione due studenti con lo stesso nome arrivano davvero, e cerchiamo che cosa può distinguere un'occorrenza da tutte le altre. È il cerchio pieno che nei diagrammi della lezione "[Entità e attributi](./entita-e-attributi.mdx)" era rimasto in sospeso.
 
 :::prereq
 
-- La tabella `studente` del registro dei punti e il collegamento per nome con la tabella `assegnazione` (lezione "Che cosa fa un DBMS al posto tuo")
+- La tabella `studente` del registro dei punti e il collegamento per nome con la tabella `assegnazione` (lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)")
 - Il vincolo, una regola sui dati che il DBMS fa rispettare rifiutando una scrittura (stessa lezione)
 - Entità, attributi e associazioni con le loro cardinalità (lezioni precedenti di questo capitolo)
 
@@ -40,7 +40,7 @@ Nella lezione "Che cosa fa un DBMS al posto tuo" le tabelle del registro dei pun
 
 Finora il registro dei punti ha conservato gli studenti di un anno scolastico solo. Immaginiamo che Hogwarts voglia conservare nel database tutti gli studenti passati dalla scuola, anno dopo anno, senza cancellarne nessuno. In un archivio così due nomi uguali prima o poi arrivano, e nella famiglia di Harry sono già arrivati: James Potter, il padre di Harry, è stato studente di Grifondoro, e il figlio maggiore di Harry, che compare nell'epilogo dell'ultimo libro, si chiama James come il nonno.
 
-Nella tabella `studente` del registro la colonna `nome` è la **chiave** della tabella: la colonna con cui il DBMS distingue una riga da tutte le altre, e con cui la colonna `studente` della tabella `assegnazione` indica a quale studente vanno i punti. Il blocco qui sotto registra i due James Potter, tutti e due al primo anno, a più di quarant'anni di distanza. L'ultimo libro della saga non dice in quale casa il Cappello Parlante metta il figlio: nel blocco lo mettiamo in Grifondoro, come il padre e il nonno. Le due istruzioni sono uguali, e si leggono come quella di Ginny nella lezione precedente. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+Nella tabella `studente` del registro la colonna `nome` è la **chiave** della tabella: la colonna con cui il DBMS distingue una riga da tutte le altre, e con cui la colonna `studente` della tabella `assegnazione` indica a quale studente vanno i punti. Il blocco qui sotto registra i due James Potter, tutti e due al primo anno, a più di quarant'anni di distanza. L'ultimo libro della saga non dice in quale casa il Cappello Parlante metta il figlio: nel blocco lo mettiamo in Grifondoro, come il padre e il nonno. Le due istruzioni sono uguali, e si leggono come quella di Ginny nella [lezione precedente](./le-cardinalita.mdx). Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
 
 ```sql live dataset=archivista/registro-punti title="I due James Potter"
 INSERT INTO studente (nome, casa, anno)
@@ -61,7 +61,7 @@ Il DBMS, ligio alle regole come Percy Weasley, fa rispettare quella che ha ricev
 
 La correzione più rapida è togliere la regola: senza chiave, la tabella `studente` accetta due righe con lo stesso nome. Il blocco qui sotto usa una versione del registro dei punti fatta così. La tabella `studente` non ha una chiave e contiene già i due James Potter; la tabella `assegnazione` contiene un'assegnazione in più, che immaginiamo data dalla professoressa McGonagall al padre di Harry: dieci punti a `James Potter`.
 
-L'istruzione è la query del totale dei punti per casa della lezione sul DBMS, che adesso puoi leggere: la casa dello studente e la somma dei punti, dalle assegnazioni unite agli studenti con lo stesso nome, raggruppate per casa (`GROUP BY`), dalla casa con più punti a quella con meno. Nella lezione sul DBMS Grifondoro aveva tre punti, e l'assegnazione nuova ne aggiunge dieci. Prima di eseguire il blocco, prova a prevedere il totale di Grifondoro.
+L'istruzione è la query del totale dei punti per casa della [lezione sul DBMS](./che-cosa-fa-un-dbms.mdx), che adesso puoi leggere: la casa dello studente e la somma dei punti, dalle assegnazioni unite agli studenti con lo stesso nome, raggruppate per casa (`GROUP BY`), dalla casa con più punti a quella con meno. Nella lezione sul DBMS Grifondoro aveva tre punti, e l'assegnazione nuova ne aggiunge dieci. Prima di eseguire il blocco, prova a prevedere il totale di Grifondoro.
 
 ```sql live dataset=archivista/omonimi title="Il totale per casa, con due James Potter"
 SELECT studente.casa, SUM(assegnazione.punti) AS totale
@@ -105,7 +105,7 @@ Il codice fiscale italiano si calcola da cognome, nome, sesso, data e comune di 
 
 La strada che regge è un identificatore nato apposta per essere unico, come il numero di matricola che la segreteria assegna a ogni studente quando lo registra, senza mai riassegnarlo. Il numero di matricola non contiene nessuna informazione sullo studente, e proprio per questo non lo mettono in difficoltà né un omonimo né un cambio di cognome, né due gemelli che si scambiano il nome per far confondere la madre: a garantire che sia unico è chi lo assegna. Il DBMS può anche assegnarlo da solo: la colonna `id` della tabella `assegnazione`, il numero progressivo che il database dà a ogni riga, è un identificatore di questo tipo.
 
-Un identificatore preso dal dominio non è sempre sbagliato. Il nome di una casa è un buon identificatore: le case sono quattro, i loro nomi sono diversi, e una regola del dominio dice che restano quelle: in mille anni nessuno ne ha fondata una quinta. Vale lo stesso criterio delle associazioni derivate della lezione "Le associazioni": i dati di oggi non dimostrano niente, serve una regola del dominio che garantisca valori diversi anche domani. Per i nomi delle persone quella regola non esiste.
+Un identificatore preso dal dominio non è sempre sbagliato. Il nome di una casa è un buon identificatore: le case sono quattro, i loro nomi sono diversi, e una regola del dominio dice che restano quelle: in mille anni nessuno ne ha fondata una quinta. Vale lo stesso criterio delle associazioni derivate della lezione "[Le associazioni](./le-associazioni.mdx)": i dati di oggi non dimostrano niente, serve una regola del dominio che garantisca valori diversi anche domani. Per i nomi delle persone quella regola non esiste.
 
 :::warning[La matricola distingue le righe, non le persone]
 
@@ -264,6 +264,6 @@ Nel diagramma l'identificatore semplice è il cerchio pieno in fondo allo stelo 
 
 :::tip[La prossima lezione]
 
-I corsi di questa lezione hanno un identificatore, ma ancora nessuno studente. Ogni studente segue più corsi, e ogni corso ha più studenti: nella prossima lezione disegniamo questa associazione molti a molti, e cerchiamo il posto giusto per il voto che uno studente prende in un corso.
+I corsi di questa lezione hanno un identificatore, ma ancora nessuno studente. Ogni studente segue più corsi, e ogni corso ha più studenti: nella [prossima lezione](./associazioni-molti-a-molti.mdx) disegniamo questa associazione molti a molti, e cerchiamo il posto giusto per il voto che uno studente prende in un corso.
 
 :::

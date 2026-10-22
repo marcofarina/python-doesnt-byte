@@ -243,7 +243,7 @@ registro.append({"studente": "Neville Logbottom", "casa": "Grifondoro",
 
 Il programma si ferma con un `KeyError` su `"Neville Logbottom"`: il nome è scritto male e in `anno_di` non c'è. È il caso fortunato: un programma che per prudenza saltasse i nomi che non trova in `anno_di` perderebbe quei cinque punti senza segnalare niente, e il totale del primo anno risulterebbe sbagliato.
 
-C'è poi una scorciatoia ovvia: copiare l'anno dal file `studenti.json` dentro ogni assegnazione del file `punti.json`, come il registro fa già con la casa. L'incrocio sparisce, ma si crea un altro grave problema: la stessa informazione resta scritta in due posti, e quando Neville passa al secondo anno bisogna ricordarsi di correggerla ovunque. È un problema noto dell'informatica e lo affronteremo nel dettaglio nella prossima lezione.
+C'è poi una scorciatoia ovvia: copiare l'anno dal file `studenti.json` dentro ogni assegnazione del file `punti.json`, come il registro fa già con la casa. L'incrocio sparisce, ma si crea un altro grave problema: la stessa informazione resta scritta in due posti, e quando Neville passa al secondo anno bisogna ricordarsi di correggerla ovunque. È un problema noto dell'informatica e lo affronteremo nel dettaglio nella [prossima lezione](./stessa-informazione-due-volte.mdx).
 
 ## Quando il registro cresce
 
@@ -287,7 +287,7 @@ with open("punti.json", "w", encoding="utf-8") as file_punti:
     json.dump(registro, file_punti, ensure_ascii=False, indent=2)
 ```
 
-Con il registro di tutta la scuola, per un'assegnazione nuova se ne riscrivono più di 20.000. E cosa succede se due professori fanno questa operazione nello stesso momento? È una delle domande che affronteremo nella terza lezione di questo capitolo.
+Con il registro di tutta la scuola, per un'assegnazione nuova se ne riscrivono più di 20.000. E cosa succede se due professori fanno questa operazione nello stesso momento? È una delle domande che affronteremo nella [terza lezione di questo capitolo](./che-cosa-fa-un-dbms.mdx).
 
 :::danger[Aprire in scrittura svuota il file]
 
@@ -433,6 +433,6 @@ Uno dei primi DBMS, IMS, nasce nel 1966 per il programma Apollo, da un gruppo di
 
 :::tip[La prossima lezione]
 
-Nel registro la casa di ogni studente è scritta due volte: una in `punti.json`, ripetuta a ogni assegnazione, e una in `studenti.json`. Finché le due copie dicono la stessa cosa non te ne accorgi. La prossima lezione mostra cosa succede quando smettono di farlo, e perché a quel punto nessuno sa più quale delle due è vera.
+Nel registro la casa di ogni studente è scritta due volte: una in `punti.json`, ripetuta a ogni assegnazione, e una in `studenti.json`. Finché le due copie dicono la stessa cosa non te ne accorgi. La [prossima lezione](./stessa-informazione-due-volte.mdx) mostra cosa succede quando smettono di farlo, e perché a quel punto nessuno sa più quale delle due è vera.
 
 :::
