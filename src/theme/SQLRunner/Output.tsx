@@ -1,7 +1,8 @@
 import clsx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay, faDatabase } from '@fortawesome/free-solid-svg-icons';
+import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import pyStyles from '../PyRunner/styles.module.css';
+import { RunChip } from '../PyRunner/Output';
 import styles from './styles.module.css';
 import { ResultTable } from './ResultTable';
 import type { RunStatus, SqlRunOutcome } from './types';
@@ -17,6 +18,8 @@ export interface SqlOutputProps {
    * «Esegui» (blocchi `hideQuery`, che partono da soli).
    */
   bare?: boolean;
+  /** Lancia la query dalla chip «Esegui» dell'invito iniziale. */
+  onRun?: () => void;
 }
 
 function formatDuration(ms: number): string {
@@ -30,6 +33,7 @@ export function Output({
   error,
   restoredNotice,
   bare = false,
+  onRun,
 }: SqlOutputProps) {
   const statusLabel = (() => {
     switch (status) {
@@ -78,12 +82,7 @@ export function Output({
         )}
         {!bare && status === 'idle' && (
           <span className={pyStyles.outputPlaceholder}>
-            Premi{' '}
-            <span className={pyStyles.placeholderChip}>
-              <FontAwesomeIcon icon={faPlay} />
-              Esegui
-            </span>{' '}
-            per interrogare il database.
+            Premi <RunChip onRun={onRun} /> per interrogare il database.
           </span>
         )}
         {restoredNotice && (

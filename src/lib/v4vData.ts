@@ -29,13 +29,13 @@ export const V4V_GOALS = {
     'Il sito è ospitato gratis su GitHub Pages: restano il dominio e gli strumenti con cui sviluppo e aggiorno il libro (sì, anche l’assistente AI che mi dà una mano). Ogni traguardo sblocca qualcosa di concreto.',
   milestones: [
     {
-      amount: 100,
+      amount: 30,
       title: 'Dominio coperto',
       desc: 'Il rinnovo annuale del dominio è ripagato: il libro resta online.',
       icon: 'check',
     },
     {
-      amount: 250,
+      amount: 300,
       title: 'Strumenti di sviluppo',
       desc: 'Coperti gli abbonamenti agli strumenti con cui scrivo e aggiorno tutto.',
       icon: 'code',

@@ -6,6 +6,10 @@ description: Un registro salvato in JSON conserva i dati ma non risponde a nessu
 archivio: [punti.json, studenti.json]
 ---
 
+import annoDiPonte from '@site/src/figure/anno-di-ponte';
+import fileECopia from '@site/src/figure/file-e-copia';
+import leggeTutto from '@site/src/figure/legge-tutto';
+
 # I dati che non stanno più nel programma
 
 <Epigraph author="Albus Silente, Harry Potter e il Calice di Fuoco">
@@ -52,6 +56,8 @@ import json
 with open("punti.json", encoding="utf-8") as file_punti:
     registro = json.load(file_punti)
 ```
+
+<Figura figura={fileECopia} />
 
 :::note[In questa pagina non c'è un disco]
 
@@ -226,6 +232,8 @@ for anno in sorted(per_anno):
 
 Il programma lavora in due passi. Prima costruisce il dizionario `anno_di`, che dal nome di uno studente porta al suo anno: questo dato non sta in nessuno dei due file, è stato creato solo per fare questo incrocio. Poi scorre il registro e chiede ad `anno_di` l'anno di ogni studente. Senza quel dizionario, per ogni riga del registro dovresti scorrere tutto `studenti.json` alla ricerca del nome, con un ciclo dentro l'altro.
 
+<Figura figura={annoDiPonte} />
+
 Il legame fra i due file, quindi, esiste solo nel codice: né `punti.json` né `studenti.json` sanno che ogni nome del registro deve comparire anche nell'elenco degli studenti. Per vedere che cosa succede quando un nome manca, aggiungi questa riga subito dopo la lettura dei file e rilancia:
 
 ```python
@@ -235,7 +243,7 @@ registro.append({"studente": "Neville Logbottom", "casa": "Grifondoro",
 
 Il programma si ferma con un `KeyError` su `"Neville Logbottom"`: il nome è scritto male e in `anno_di` non c'è. È il caso fortunato: un programma che per prudenza saltasse i nomi che non trova in `anno_di` perderebbe quei cinque punti senza segnalare niente, e il totale del primo anno risulterebbe sbagliato.
 
-C'è poi una scorciatoia ovvia: copiare l'anno dal file `studenti.json` dentro ogni assegnazione del file `punti.json`, come il registro fa già con la casa. L'incrocio sparisce, ma si crea un altro grave problema: la stessa informazione resta scritta in due posti, e quando Neville passa al secondo anno bisogna ricordarsi di correggerla ovunque. È un problema noto dell'informatica e lo affronteremo nel dettaglio nella prossima lezione.
+C'è poi una scorciatoia ovvia: copiare l'anno dal file `studenti.json` dentro ogni assegnazione del file `punti.json`, come il registro fa già con la casa. L'incrocio sparisce, ma si crea un altro grave problema: la stessa informazione resta scritta in due posti, e quando Neville passa al secondo anno bisogna ricordarsi di correggerla ovunque. È un problema noto dell'informatica e lo affronteremo nel dettaglio nella [prossima lezione](./stessa-informazione-due-volte.mdx).
 
 ## Quando il registro cresce
 
@@ -262,6 +270,8 @@ punti_di("Neville Longbottom", leggi_file("punti_tutta_la_scuola.json"))
 
 Le legge tutte e <Spoiler>20.018</Spoiler>. Il programma non sa dove stanno le righe di Neville, né quante sono, quindi non può saltarne nessuna; ma prima ancora deve caricare in memoria quasi due megabyte di testo, per estrarre solo due numeri. È importante notare che il lavoro cresce con l'aumentare della dimensione del file, non con la lunghezza della risposta: se il registro raddoppia, raddoppia anche il lavoro per trovare le stesse due righe. Con 20.000 assegnazioni il computer se la cava in un attimo (osserva i tempi di esecuzione del codice). Con i registri di dieci anni di tutta la scuola, o con i movimenti di tutte le camere blindate della Gringott, leggere l'intero archivio per ogni domanda diventa un vero e proprio collo di bottiglia dell'intero programma.
 
+<Figura figura={leggeTutto} />
+
 Una via d'uscita la conosciamo già. Come `anno_di` porta dal nome di uno studente al suo anno, un altro dizionario può portare dal nome di uno studente alla lista delle sue assegnazioni: con quel dizionario le due assegnazioni di Neville si trovano subito, senza leggere le altre 20.016. Un dizionario usato così si chiama indice. Però lo scrivi tu, ne serve uno per ogni campo su cui vuoi cercare in fretta, e va ricostruito ogni volta che il file cambia.
 
 Anche aggiungere un'assegnazione costa caro. In un file JSON che contiene una sola lista, chiusa da una parentesi quadra, non si può aggiungere un'assegnazione in fondo: bisogna rileggere tutto e riscrivere tutto.
@@ -277,7 +287,7 @@ with open("punti.json", "w", encoding="utf-8") as file_punti:
     json.dump(registro, file_punti, ensure_ascii=False, indent=2)
 ```
 
-Con il registro di tutta la scuola, per un'assegnazione nuova se ne riscrivono più di 20.000. E cosa succede se due professori fanno questa operazione nello stesso momento? È una delle domande che affronteremo nella terza lezione di questo capitolo.
+Con il registro di tutta la scuola, per un'assegnazione nuova se ne riscrivono più di 20.000. E cosa succede se due professori fanno questa operazione nello stesso momento? È una delle domande che affronteremo nella [terza lezione di questo capitolo](./che-cosa-fa-un-dbms.mdx).
 
 :::danger[Aprire in scrittura svuota il file]
 
@@ -423,6 +433,6 @@ Uno dei primi DBMS, IMS, nasce nel 1966 per il programma Apollo, da un gruppo di
 
 :::tip[La prossima lezione]
 
-Nel registro la casa di ogni studente è scritta due volte: una in `punti.json`, ripetuta a ogni assegnazione, e una in `studenti.json`. Finché le due copie dicono la stessa cosa non te ne accorgi. La prossima lezione mostra cosa succede quando smettono di farlo, e perché a quel punto nessuno sa più quale delle due è vera.
+Nel registro la casa di ogni studente è scritta due volte: una in `punti.json`, ripetuta a ogni assegnazione, e una in `studenti.json`. Finché le due copie dicono la stessa cosa non te ne accorgi. La [prossima lezione](./stessa-informazione-due-volte.mdx) mostra cosa succede quando smettono di farlo, e perché a quel punto nessuno sa più quale delle due è vera.
 
 :::

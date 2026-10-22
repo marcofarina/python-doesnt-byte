@@ -6,6 +6,8 @@ description: Un’associazione molti a molti non sta in un attributo, e i suoi a
 archivio: [punti.json, studenti.json]
 ---
 
+import coppiaRipetuta from '@site/src/figure/coppia-ripetuta';
+
 # Le associazioni molti a molti
 
 <Epigraph author="Alexandre Dumas, I tre moschettieri (1844)">
@@ -14,12 +16,12 @@ Tous pour un, un pour tous.
 
 </Epigraph>
 
-Nella lezione precedente i corsi di Hogwarts hanno avuto un identificatore, materia e anno, ma nessuno studente. Ora li colleghiamo agli studenti. Nella lezione "Le cardinalità" questa associazione era l'esempio del terzo tipo, molti a molti: ogni studente segue più corsi, e ogni corso ha più studenti. Un'associazione uno a molti, come `appartiene`, nelle tabelle finisce in una colonna, la casa nella riga dello studente. In questa lezione vediamo che con il massimo N da tutti e due i lati una colonna non basta, che un'associazione molti a molti ha spesso attributi suoi, e che a volte un'associazione non basta proprio.
+Nella [lezione precedente](./le-chiavi.mdx) i corsi di Hogwarts hanno avuto un identificatore, materia e anno, ma nessuno studente. Ora li colleghiamo agli studenti. Nella lezione "[Le cardinalità](./le-cardinalita.mdx)" questa associazione era l'esempio del terzo tipo, molti a molti: ogni studente segue più corsi, e ogni corso ha più studenti. Un'associazione uno a molti, come `appartiene`, nelle tabelle finisce in una colonna, la casa nella riga dello studente. In questa lezione vediamo che con il massimo N da tutti e due i lati una colonna non basta, che un'associazione molti a molti ha spesso attributi suoi, e che a volte un'associazione non basta proprio.
 
 :::prereq
 
-- Le cardinalità e i tre tipi di associazione: uno a uno, uno a molti, molti a molti (lezione "Le cardinalità")
-- L'identificatore composto di `corso`, materia e anno, e l'identificatore assegnato apposta (lezione precedente)
+- Le cardinalità e i tre tipi di associazione: uno a uno, uno a molti, molti a molti (lezione "[Le cardinalità](./le-cardinalita.mdx)")
+- L'identificatore composto di `corso`, materia e anno, e l'identificatore assegnato apposta ([lezione precedente](./le-chiavi.mdx))
 - Il registro dei punti `punti.json` e la sua tabella `assegnazione` (capitolo 1)
 
 :::
@@ -66,7 +68,7 @@ Un **attributo di un'associazione** è una proprietà che ha un valore per ogni 
 
 :::
 
-Quando un'associazione ha attributi suoi, spesso il nome più naturale è un sostantivo, il nome del fatto registrato: l'**iscrizione** di uno studente a un corso. Nella lezione "Le associazioni" abbiamo detto che il nome di un'associazione è di solito un verbo; "di solito" lascia spazio a casi come questo. Nel diagramma l'attributo `voto` esce dal rombo, come gli attributi di un'entità escono dal rettangolo.
+Quando un'associazione ha attributi suoi, spesso il nome più naturale è un sostantivo, il nome del fatto registrato: l'**iscrizione** di uno studente a un corso. Nella lezione "[Le associazioni](./le-associazioni.mdx)" abbiamo detto che il nome di un'associazione è di solito un verbo; "di solito" lascia spazio a casi come questo. Nel diagramma l'attributo `voto` esce dal rombo, come gli attributi di un'entità escono dal rettangolo.
 
 <DiagrammaER
   titolo="Lo studente si iscrive a un corso, con un voto"
@@ -128,6 +130,8 @@ Il voto più alto di Neville è in Erbologia, 10; in Pozioni ha 4, e chi l'ha vi
 Torniamo al registro dei punti. Ogni assegnazione lega un professore a uno studente e ha un valore, i punti. Ogni professore dà punti a molti studenti, e ogni studente ne riceve da molti professori: l'assegnazione sembra un'associazione molti a molti fra `professore` e `studente`, con l'attributo `punti`, costruita come l'iscrizione con il voto.
 
 Nel file `punti.json`, che trovi nel pannello "Archivio", la quarta e la quinta assegnazione sono identiche: Piton toglie un punto a Harry per insolenza, e poi un altro per non aver aiutato Neville, nella prima lezione di Pozioni. Se l'assegnazione fosse un'associazione, la coppia (Piton, Harry Potter) dovrebbe comparire due volte, una per ogni punto tolto. Un'associazione però è un insieme di coppie, e in un insieme ogni elemento c'è una volta sola: la coppia (Piton, Harry Potter) c'è oppure non c'è, e il suo attributo `punti` ha un valore solo.
+
+<Figura figura={coppiaRipetuta} />
 
 Le due scorciatoie che vengono in mente non funzionano. Sommare i due punti in un solo valore, −2, fa perdere un'informazione: i punti tolti sono stati due volte uno, in due momenti diversi. Aggiungere la data come attributo non cambia niente, perché l'occorrenza resta la coppia, e la data sarebbe un attributo di quella coppia, uno solo.
 
@@ -305,6 +309,6 @@ Il criterio per scegliere fra associazione ed entità è una domanda sul dominio
 
 :::tip[La prossima lezione]
 
-Con questa lezione hai tutti gli elementi del modello E/R che servono per progettare un database: entità, attributi, associazioni, cardinalità e identificatori. Finora però il dominio lo abbiamo costruito un pezzo alla volta, una richiesta per lezione. Nella prossima lezione partiamo da un testo che descrive un dominio intero, la biblioteca di Hogwarts, e lo trasformiamo in un modello con un metodo che puoi ripetere su qualunque testo.
+Con questa lezione hai tutti gli elementi del modello E/R che servono per progettare un database: entità, attributi, associazioni, cardinalità e identificatori. Finora però il dominio lo abbiamo costruito un pezzo alla volta, una richiesta per lezione. Nella [prossima lezione](./leggere-un-dominio.mdx) partiamo da un testo che descrive un dominio intero, la biblioteca di Hogwarts, e lo trasformiamo in un modello con un metodo che puoi ripetere su qualunque testo.
 
 :::

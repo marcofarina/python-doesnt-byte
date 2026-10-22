@@ -77,7 +77,7 @@ ufficialmente il progetto in spazi pubblici.
 I casi di comportamento abusivo, molesto o altrimenti inaccettabile possono
 essere segnalati al responsabile dell'applicazione di questo Codice di condotta:
 
-> **Prof. Marco Farina** — [marco@rainbowbits.cloud](mailto:marco@rainbowbits.cloud)
+> **Prof. Marco Farina** — [python@rainbowbits.cloud](mailto:python@rainbowbits.cloud)
 
 Tutte le segnalazioni saranno esaminate e investigate prontamente ed equamente.
 Il maintainer è tenuto a rispettare la riservatezza di chi effettua una

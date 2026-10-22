@@ -36,6 +36,26 @@ function inlineFileArchivio(nome, archivio) {
   return `\`\`\`json title="${nome}"\n${testo.trimEnd()}\n\`\`\``;
 }
 
+// Figure di `<Figura figura={X} />`: titolo, descrizione e didascalie dei passi,
+// lette dal modulo `src/figure/<id>.ts` (TypeScript, caricato con jiti).
+let caricaTs;
+function figuraInTesto(modulo, siteDir) {
+  try {
+    caricaTs ??= require('jiti')(__filename, {
+      interopDefault: true,
+      alias: { '@site': siteDir },
+    });
+    const { scena } = caricaTs(modulo.replace(/^@site/, siteDir));
+    const passi = scena.passi.map((p, i) => `${i + 1}. ${p.didascalia}`);
+    return (
+      `**Figura: ${scena.titolo}.** ${scena.descrizione}` +
+      (passi.length > 1 ? `\n\n${passi.join('\n')}` : '')
+    );
+  } catch {
+    return OMITTED;
+  }
+}
+
 // Componenti interattivi che non hanno una resa testuale utile → placeholder.
 const INTERACTIVE = [
   'Quiz',
@@ -49,6 +69,18 @@ const INTERACTIVE = [
 // Trasforma il JSX della PROSA (i blocchi/inline di codice sono già protetti dal
 // chiamante, così esempi che mostrano `<Tag>` non vengono toccati).
 function transformJsx(s, siteDir, archivio) {
+  // Le figure si risolvono prima di togliere gli import che le nominano.
+  const figure = {};
+  for (const [, nome, modulo] of s.matchAll(
+    /^\s*import\s+(\w+)\s+from\s+['"](@site\/src\/figure\/[^'"]+)['"]/gm,
+  ))
+    figure[nome] = modulo;
+  s = s.replace(
+    /<Figura\b[^>]*\bfigura=\{(\w+)\}[^>]*\/>/g,
+    (_m, nome) =>
+      figure[nome] ? `\n${figuraInTesto(figure[nome], siteDir)}\n` : OMITTED,
+  );
+
   // Righe di import/export MDX e commenti JSX `{/* … */}`.
   s = s.replace(/^\s*(?:import|export)\s.+$/gm, '');
   s = s.replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
@@ -206,8 +238,14 @@ module.exports = function copyPageMd(context) {
         const file = outFile(outDir, permalink, siteConfig.baseUrl);
         fs.mkdirSync(path.dirname(file), { recursive: true });
         fs.writeFileSync(file, md, 'utf-8');
+        // Copia .txt per gli assistenti AI: GitHub Pages serve i .md come
+        // text/markdown, che lo strumento di navigazione di ChatGPT rifiuta;
+        // i .txt escono come text/plain; charset=utf-8.
+        fs.writeFileSync(file.replace(/\.md$/, '.txt'), md, 'utf-8');
       }
-      console.log(`[${PLUGIN_NAME}] scritti ${manifest.length} file .md`);
+      console.log(
+        `[${PLUGIN_NAME}] scritti ${manifest.length} file .md (+ copia .txt)`,
+      );
     },
   };
 };

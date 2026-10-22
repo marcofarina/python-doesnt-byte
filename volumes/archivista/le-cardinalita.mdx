@@ -5,6 +5,8 @@ sidebar_position: 7
 description: Le cardinalità non sono un’etichetta da aggiungere alla fine del diagramma. Il minimo decide se un’occorrenza può esistere senza l’altra, il massimo se il legame sta in una colonna. Lo vediamo con una studentessa non ancora smistata e con le due bacchette di Ron.
 ---
 
+import cardinalitaCoppie from '@site/src/figure/cardinalita-coppie';
+
 # Le cardinalità
 
 <Epigraph author="Highlander (1986)">
@@ -13,14 +15,14 @@ There can be only one.
 
 </Epigraph>
 
-Nella lezione precedente le linee dei diagrammi sono rimaste senza numeri, ma qualche conteggio l'abbiamo già fatto a voce: ogni studente appartiene a una casa sola, e Silente non dirige nessuna casa. In questa lezione quei conteggi entrano nel modello, e si chiamano cardinalità. Chi comincia a modellare le scrive per ultime, come un'etichetta da attaccare alla linea quando il diagramma è finito. Vedremo invece che le cardinalità decidono quali dati il database accetta e quale forma avranno le sue tabelle.
+Nella [lezione precedente](./le-associazioni.mdx) le linee dei diagrammi sono rimaste senza numeri, ma qualche conteggio l'abbiamo già fatto a voce: ogni studente appartiene a una casa sola, e Silente non dirige nessuna casa. In questa lezione quei conteggi entrano nel modello, e si chiamano cardinalità. Chi comincia a modellare le scrive per ultime, come un'etichetta da attaccare alla linea quando il diagramma è finito. Vedremo invece che le cardinalità decidono quali dati il database accetta e quale forma avranno le sue tabelle.
 
 :::prereq
 
-- Associazioni e occorrenze di associazione; `appartiene` e `dirige` (lezione precedente)
-- L'attributo opzionale e il segno `(0,1)` (lezione "Entità e attributi")
-- La bacchetta, che diventa un'entità quando interessano anche il nucleo e la lunghezza (quiz della lezione "Entità e attributi")
-- Un vincolo che il DBMS fa rispettare rifiutando una scrittura (lezione "Che cosa fa un DBMS al posto tuo")
+- Associazioni e occorrenze di associazione; `appartiene` e `dirige` ([lezione precedente](./le-associazioni.mdx))
+- L'attributo opzionale e il segno `(0,1)` (lezione "[Entità e attributi](./entita-e-attributi.mdx)")
+- La bacchetta, che diventa un'entità quando interessano anche il nucleo e la lunghezza (quiz della lezione "[Entità e attributi](./entita-e-attributi.mdx)")
+- Un vincolo che il DBMS fa rispettare rifiutando una scrittura (lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)")
 
 :::
 
@@ -35,9 +37,11 @@ Nella lezione precedente le linee dei diagrammi sono rimaste senza numeri, ma qu
 
 ## Quante case per uno studente
 
-Prendiamo l'associazione `appartiene` e contiamo le sue coppie, partendo da uno studente. Harry appartiene a Grifondoro e a nessun'altra casa: compare in una coppia sola, e lo stesso vale per ogni altro studente. Partendo da una casa il conto cambia: nel registro dei punti Grifondoro compare in sei coppie, una per ogni suo studente, e Corvonero in una. Nella lezione "Entità e attributi", dopo la cancellazione di Padma, Corvonero è rimasta una casa con zero studenti, e il database l'ha conservata.
+Prendiamo l'associazione `appartiene` e contiamo le sue coppie, partendo da uno studente. Harry appartiene a Grifondoro e a nessun'altra casa: compare in una coppia sola, e lo stesso vale per ogni altro studente. Partendo da una casa il conto cambia: nel registro dei punti Grifondoro compare in sei coppie, una per ogni suo studente, e Corvonero in una. Nella lezione "[Entità e attributi](./entita-e-attributi.mdx)", dopo la cancellazione di Padma, Corvonero è rimasta una casa con zero studenti, e il database l'ha conservata.
 
 Il modello registra questi conteggi con due numeri per ogni entità che partecipa all'associazione, scritti fra parentesi accanto all'entità: il minimo e il massimo delle coppie in cui ogni sua occorrenza può comparire. Per `appartiene`, accanto a `studente` c'è `(1,1)`: ogni studente compare in almeno una coppia e al massimo in una, perché di case, come di Highlander, ce ne può essere una sola. Accanto a `casa` c'è `(0,N)`: una casa può non comparire in nessuna coppia, e non ha un massimo fissato. La lettera `N` vuol dire "quante se ne vuole". È la stessa notazione dell'attributo opzionale della lezione "Entità e attributi", dove `(0,1)` accanto al Patronus voleva dire nessun valore oppure uno.
+
+<Figura figura={cardinalitaCoppie} />
 
 <DiagrammaER
   titolo="Lo studente appartiene a una casa, con le cardinalità"
@@ -72,7 +76,7 @@ Il modello registra questi conteggi con due numeri per ogni entità che partecip
   cella={[280, 130]}
 />
 
-Le cardinalità si leggono partendo dall'entità che hanno accanto: "ogni studente appartiene ad almeno una casa e al massimo a una", "ogni casa accoglie da zero a N studenti". Sono le due letture della stessa associazione della lezione precedente, una per verso, e ognuna ha i suoi numeri.
+Le cardinalità si leggono partendo dall'entità che hanno accanto: "ogni studente appartiene ad almeno una casa e al massimo a una", "ogni casa accoglie da zero a N studenti". Sono le due letture della stessa associazione della [lezione precedente](./le-associazioni.mdx), una per verso, e ognuna ha i suoi numeri.
 
 :::warning[I numeri stanno accanto all'entità che descrivono]
 
@@ -87,7 +91,7 @@ Per controllare, leggi la frase partendo dall'entità accanto ai numeri: se la f
 
 ## Prima dello smistamento
 
-Il minimo 1 accanto a `studente` dice che uno studente senza casa non esiste. Nella seconda versione delle tabelle della lezione "Entità e attributi" questo minimo è già diventato una regola che il DBMS fa rispettare: la colonna `casa` della tabella `studente` è obbligatoria, e una riga senza la casa viene rifiutata. Come si dichiara una colonna obbligatoria lo vedremo nel capitolo 5.
+Il minimo 1 accanto a `studente` dice che uno studente senza casa non esiste. Nella seconda versione delle tabelle della lezione "[Entità e attributi](./entita-e-attributi.mdx)" questo minimo è già diventato una regola che il DBMS fa rispettare: la colonna `casa` della tabella `studente` è obbligatoria, e una riga senza la casa viene rifiutata. Come si dichiara una colonna obbligatoria lo vedremo nel capitolo 5.
 
 Immaginiamo che la segreteria di Hogwarts voglia registrare ogni studente nuovo appena parte la sua lettera di ammissione, durante l'estate. Ginny Weasley arriva a Hogwarts l'anno dopo Harry: riceve la lettera in estate, e il Cappello Parlante la smista solo la sera del 1° settembre, al banchetto di inizio anno. Il blocco qui sotto prova a registrarla in agosto, e si legge così: inserisci nella tabella `studente`, nelle colonne `nome` e `anno`, i valori `Ginny Weasley` e 1. La casa manca, perché ancora nessuno la conosce. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
 
@@ -108,7 +112,7 @@ Il minimo risponde a una domanda precisa: un'occorrenza di questa entità può e
 
 ## La seconda bacchetta di Ron
 
-Il massimo decide un'altra cosa. Nella lezione "Entità e attributi" un quiz chiedeva che cosa fare della bacchetta: finché interessa solo il legno, è un attributo dello studente; se interessano anche il nucleo e la lunghezza, diventa un'entità. Supponiamo che interessino. La bacchetta è un'entità con gli attributi `legno`, `nucleo` e `lunghezza`, legata allo studente dall'associazione `possiede`.
+Il massimo decide un'altra cosa. Nella lezione "[Entità e attributi](./entita-e-attributi.mdx)" un quiz chiedeva che cosa fare della bacchetta: finché interessa solo il legno, è un attributo dello studente; se interessano anche il nucleo e la lunghezza, diventa un'entità. Supponiamo che interessino. La bacchetta è un'entità con gli attributi `legno`, `nucleo` e `lunghezza`, legata allo studente dall'associazione `possiede`.
 
 Se il database registra la bacchetta che ogni studente usa adesso, le cardinalità sono `(1,1)` dai due lati: ogni studente ha una bacchetta, e ogni bacchetta registrata è di uno studente. Ron Weasley però, a Hogwarts, ha avuto due bacchette. La prima era quella vecchia di suo fratello Charlie, e si è spezzata al secondo anno, quando Ron e Harry sono arrivati a scuola sulla Ford Anglia volante del padre di Ron, atterrando su un albero che non l'ha presa bene. Al terzo anno Ron ne ha una nuova: salice, crine di unicorno, quattordici pollici.
 
@@ -202,7 +206,7 @@ I minimi non entrano nel nome. L'associazione `dirige` è uno a uno: ogni casa h
   cella={[280, 130]}
 />
 
-Le associazioni molti a molti hanno problemi tutti loro, e li vedremo in una lezione dedicata, più avanti in questo capitolo. Prima serve un modo per distinguere senza ambiguità le occorrenze che le coppie nominano.
+Le associazioni molti a molti hanno problemi tutti loro, e li vedremo in una [lezione dedicata](./associazioni-molti-a-molti.mdx), più avanti in questo capitolo. Prima serve un modo per distinguere senza ambiguità le occorrenze che le coppie nominano.
 
 :::nutshell
 
@@ -324,6 +328,6 @@ Le associazioni molti a molti hanno problemi tutti loro, e li vedremo in una lez
 
 :::tip[La prossima lezione]
 
-Le coppie di un'associazione nominano le occorrenze, e finora le abbiamo nominate per nome: (Harry Potter, Grifondoro), (Ron Weasley, la sua seconda bacchetta). Il nome funziona finché due studenti non si chiamano allo stesso modo. Nella prossima lezione succede, e cerchiamo un modo di distinguere ogni occorrenza che non si affidi alla fortuna.
+Le coppie di un'associazione nominano le occorrenze, e finora le abbiamo nominate per nome: (Harry Potter, Grifondoro), (Ron Weasley, la sua seconda bacchetta). Il nome funziona finché due studenti non si chiamano allo stesso modo. Nella [prossima lezione](./le-chiavi.mdx) succede, e cerchiamo un modo di distinguere ogni occorrenza che non si affidi alla fortuna.
 
 :::

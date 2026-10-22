@@ -1,0 +1,83 @@
+---
+unlisted: true
+title: Figure — pagina di test
+description: "Sandbox delle figure (<Figura>): tavola di stile, primitive, figura statica, figura animata con passo «rivela» nei due tratti, prova di carico."
+---
+
+import {
+  TavolaColori,
+  TavolaMisure,
+  TavolaTratti,
+  TavolaDisegna,
+  TavolaRitmi,
+} from '@site/src/components/Figura/TavolaStile';
+import Galleria from '@site/src/components/Figura/Galleria';
+import perso from '@site/src/figure/aggiornamento-perso';
+import fileECopia from '@site/src/figure/file-e-copia';
+import carico from '@site/src/figure/prova-carico';
+
+# Figure — pagina di test
+
+Sandbox di `<Figura>` (piano `pm/piano-2026-10-figure-animate.md`): la tavola di stile
+approvata in G0, una figura statica, la figura «aggiornamento perso» con un passo
+`rivela` e una prova di carico. `<Figura>` è registrata in `MDXComponents`; la scena si
+importa da `src/figure/`.
+
+## Tavola di stile
+
+### Ruoli di colore
+
+<TavolaColori />
+
+### Spessori, corpi, raggi e punte
+
+<TavolaMisure />
+
+### I due tratti
+
+<TavolaTratti />
+
+### «Si disegna»
+
+<TavolaDisegna />
+
+### Ritmi
+
+<TavolaRitmi />
+
+## Primitive
+
+Le tredici primitive di G2, ognuna nei due tratti, a metà del «si disegna» e intera.
+
+<Galleria />
+
+## Figura statica
+
+Un passo solo: niente comandi, niente autoplay.
+
+<Figura figura={fileECopia} />
+
+## L'aggiornamento perso
+
+Il passo 5 è `rivela`: l'autoplay si ferma al passo 4 e chiede di prevedere. Ogni figura
+ha due disposizioni con gli stessi passi: larga, tre colonne, e stretta, le due memorie
+sopra e il disco sotto. Sotto i 600 px di larghezza della figura si vede la stretta.
+
+### Ibrido: a mano persone e contenitori, netto le righe
+
+<Figura figura={perso} id="perso-ibrido" />
+
+### Tutto a mano
+
+<Figura figura={perso} tratto="mano" id="perso-mano" />
+
+### Tutto netto
+
+<Figura figura={perso} tratto="netto" id="perso-netto" />
+
+## Prova di carico
+
+Trenta oggetti a mano che si disegnano e si spostano insieme: serve a misurare i
+fotogrammi al secondo con la CPU rallentata.
+
+<Figura figura={carico} tratto="mano" id="carico" />

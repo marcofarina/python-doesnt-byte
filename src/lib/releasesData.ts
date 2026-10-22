@@ -64,16 +64,41 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
-    v: '0.20.1',
-    date: '20 ottobre 2026',
+    v: '0.21.1',
+    date: '22 ottobre 2026',
     latest: true,
     notes: {
       improved: [
         'Il libro ha un indirizzo suo: https://python.rainbowbits.cloud. I vecchi indirizzi rainbowbits.cloud/python-doesnt-byte portano alla stessa pagina in quello nuovo, anche dai link già condivisi.',
         'Il browser tiene i dati salvati separati per ogni indirizzo: chi aveva attivato un percorso lo ritrova riaprendo il link del percorso, oppure lo sceglie di nuovo dalla pagina Percorso.',
+        'L’indirizzo email per scrivere al progetto è python@rainbowbits.cloud.',
+      ],
+    },
+  },
+  {
+    v: '0.21.0',
+    date: '22 ottobre 2026',
+    notes: {
+      new: [
+        'Figure nelle lezioni: schemi che si costruiscono un passo alla volta, da guardare con «Avanti» o in riproduzione automatica. Le didascalie compaiono come sottotitoli e ogni passo resta sullo schermo abbastanza a lungo anche per chi legge lentamente; con «Riduci movimento» le figure non si animano.',
+      ],
+      content: [
+        'Volume 3, Manuale dell’Archivista: 12 figure in otto lezioni, da «I dati che non stanno più nel programma» alle «Generalizzazioni».',
+        'Nel Manuale dell’Archivista i rimandi ad altre lezioni sono diventati link, e l’introduzione elenca anche le lezioni del capitolo 2.',
+      ],
+      improved: [
+        'Gli spoiler sono una nuvola di particelle che esplode dal punto in cui clicchi; con «Riduci movimento» il testo compare in dissolvenza.',
+        'Quando uno spoiler chiede di eseguire prima il codice, il riquadro che lo spiega è più chiaro, con «Ok, eseguo» in evidenza e «Mostra comunque» a parte.',
+        'Nei PyRunner e negli SQLRunner il pulsante «Esegui» citato nell’invito iniziale funziona davvero.',
+        'Nella pagina per sostenere il progetto i traguardi sono a 30 €, 300 € e 500 €.',
       ],
       fixed: [
-        'I link che finiscono con la barra, come quelli condivisi su Classroom, aprono subito la pagina giusta, senza il lampo di «pagina non trovata».',
+        'Gli indirizzi delle pagine con la barra finale, come quelli condivisi su Classroom, aprono subito la lezione invece di passare per un lampo di «pagina non trovata».',
+        '«Modifica questa pagina» porta al file giusto su GitHub invece che a una pagina «Not found».',
+        'Nella pagina per sostenere il progetto la × della finestra con il QR code non copre più il codice.',
+        '«Spiegamelo facile» funziona anche con ChatGPT: l’assistente riceve una copia in testo semplice della lezione, che riesce a leggere.',
+        'L’indice del sito per gli assistenti AI (llms.txt) elenca tutte le lezioni pubblicate, comprese quelle del Volume 3, e non cita più pagine in bozza; da ora si aggiorna da solo a ogni pubblicazione.',
+        'Nel diagramma E/R della Coppa di Quidditch («Leggere un dominio») le linee in diagonale non si sovrappongono più e le cardinalità non finiscono sulle linee.',
       ],
     },
   },

@@ -51,3 +51,6 @@ pm/
 # Agenti (locali)
 AGENTS.md
 .agents/
+
+# Foto e rapporti di verifica delle figure (npm run figure:foto)
+.figure-foto/

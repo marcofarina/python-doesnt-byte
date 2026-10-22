@@ -128,8 +128,10 @@ function CopyPageMenu({ permalink }: { permalink: string }): ReactNode {
       // siteConfig.url): così punta sempre all'host da cui la pagina è
       // realmente servita — dominio custom, fallback GitHub Pages o deploy di
       // preview — invece di una sola URL canonica fissata a build-time.
-      const mdUrl = window.location.origin + relMdUrl;
-      const target = url + encodeURIComponent(buildAiPrompt(mdUrl));
+      // Si cita la copia .txt (stesso contenuto del .md): GitHub Pages serve i
+      // .md come text/markdown, che il browsing di ChatGPT rifiuta.
+      const txtUrl = window.location.origin + relMdUrl.replace(/\.md$/, '.txt');
+      const target = url + encodeURIComponent(buildAiPrompt(txtUrl));
       window.open(target, '_blank', 'noopener,noreferrer');
       setOpen(false);
     },
