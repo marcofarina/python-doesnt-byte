@@ -9,6 +9,8 @@ export interface OutputProps {
   logs: LogEntry[];
   status: RunStatus;
   durationMs?: number | null;
+  /** Lancia il codice dalla chip «Esegui» dell'invito iniziale. */
+  onRun?: () => void;
 }
 
 function formatDuration(ms: number): string {
@@ -16,7 +18,31 @@ function formatDuration(ms: number): string {
   return `${(ms / 1000).toFixed(2)} s`;
 }
 
-export function Output({ logs, status, durationMs }: OutputProps) {
+/**
+ * La chip «Esegui» dentro l'invito «Premi Esegui per…»: se il runner passa
+ * `onRun` è un pulsante vero, che fa la stessa cosa di quello in toolbar.
+ */
+export function RunChip({ onRun }: { onRun?: () => void }) {
+  const content = (
+    <>
+      <FontAwesomeIcon icon={faPlay} aria-hidden="true" />
+      Esegui
+    </>
+  );
+  if (!onRun) return <span className={styles.placeholderChip}>{content}</span>;
+  return (
+    <button
+      type="button"
+      className={clsx(styles.placeholderChip, styles.placeholderChipBtn)}
+      onClick={onRun}
+      title="Esegui (⌘/Ctrl+Invio)"
+    >
+      {content}
+    </button>
+  );
+}
+
+export function Output({ logs, status, durationMs, onRun }: OutputProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,12 +78,7 @@ export function Output({ logs, status, durationMs }: OutputProps) {
       <div ref={scrollRef} className={styles.outputBody}>
         {logs.length === 0 && status === 'idle' && (
           <span className={styles.outputPlaceholder}>
-            Premi{' '}
-            <span className={styles.placeholderChip}>
-              <FontAwesomeIcon icon={faPlay} />
-              Esegui
-            </span>{' '}
-            per vedere il risultato.
+            Premi <RunChip onRun={onRun} /> per vedere il risultato.
           </span>
         )}
         {logs.map((log, i) => (
