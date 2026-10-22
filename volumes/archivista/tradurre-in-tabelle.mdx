@@ -141,19 +141,19 @@ Il diagramma qui sotto raccoglie il modello di Hogwarts che il capitolo 2 ha cos
 
 La traduzione comincia dalle entità, perché nello schema ogni associazione è registrata con le chiavi primarie delle entità che collega. Ogni entità diventa una relazione con lo stesso nome, ogni attributo semplice diventa un attributo della relazione, e l'identificatore diventa la chiave primaria, come abbiamo visto nella lezione precedente. Nel diagramma il professore ha un codice come identificatore, come nella biblioteca della lezione "[Leggere un dominio e ricavarne il modello](./leggere-un-dominio.mdx)". Per quattro delle cinque entità la traduzione non richiede nessuna scelta:
 
-casa(<u>nome</u>, colori, animale)
+<Schema def="casa([nome], colori, animale)" />
 
-corso(<u>materia</u>, <u>anno</u>)
+<Schema def="corso([materia], [anno])" />
 
-professore(<u>codice</u>, nome)
+<Schema def="professore([codice], nome)" />
 
-assegnazione(<u>id</u>, punti)
+<Schema def="assegnazione([id], punti)" />
 
 L'entità `studente` ha invece due attributi che non sono semplici. Il nominativo è un attributo composto, formato da nome e cognome. Se restasse un attributo solo, con valori come `Fred Weasley`, la domanda della lezione "Entità e attributi", quanti Weasley ci sono a Hogwarts, richiederebbe di tagliare ogni nominativo dopo lo spazio: il cognome starebbe dentro un valore che il DBMS confronta sempre intero. Per il dominio di Hogwarts il nominativo non è un valore atomico. Un attributo composto si scioglie quindi nelle sue parti, e ogni parte diventa un attributo della relazione: `nome` e `cognome`. Il nominativo nello schema non compare più, perché era il nome del gruppo e non un dato.
 
 Il Patronus è un attributo opzionale: quasi nessuno studente del primo anno ne ha uno. Diventa un attributo come gli altri, e nelle righe degli studenti senza Patronus la sua cella resta vuota. Che cosa contiene davvero una cella vuota, e come si comporta nelle interrogazioni, lo vedremo nella lezione "[Il valore che non c'è](./il-valore-null.mdx)", l'ultima di questo capitolo.
 
-studente(<u>matricola</u>, nome, cognome, anno, patronus)
+<Schema def="studente([matricola], nome, cognome, anno, patronus)" />
 
 Nessuna di queste cinque relazioni contiene ancora un'associazione: lo studente non ha una casa, e l'assegnazione non ha né uno studente né un professore. Le associazioni si traducono nelle prossime tre sezioni, una sezione per ogni tipo. Il modello non ha generalizzazioni. Se ne avesse, andrebbero tolte prima di cominciare, con uno dei tre modi della lezione "[Generalizzazioni](./generalizzazioni.mdx)", perché una relazione non ha figlie.
 
@@ -178,7 +178,7 @@ Proviamo l'altro verso: la colonna nella relazione `casa`, con il valore della c
 
 Nello schema la nuova colonna `casa` è in corsivo, e sotto lo schema una riga indica a quale chiave primaria si riferisce, nella stessa forma dei vincoli sui domini della lezione precedente:
 
-studente(<u>matricola</u>, nome, cognome, anno, patronus, _casa_)
+<Schema def="studente([matricola], nome, cognome, anno, patronus, {casa})" />
 
 - `studente.casa` si riferisce a `casa.nome`.
 
@@ -192,7 +192,7 @@ Il nome non è nuovo: la lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-
 
 Nella traduzione passa anche il minimo della cardinalità. Il minimo 1 accanto a `studente` vuol dire che la colonna `casa` non può restare vuota: è il vincolo che nella lezione "Le cardinalità" ha rifiutato Ginny prima dello smistamento. Con il minimo 0, la colonna `casa` di uno studente non ancora smistato resterebbe vuota.
 
-:::warning[Il "lato molti" non è il lato della N]
+:::warning[Il “lato molti” non è il lato della N]
 
 Molti manuali riassumono la regola così: la chiave esterna va dal lato molti. Nella notazione di questo libro le cardinalità stanno accanto all'entità che descrivono, e la N di `appartiene` sta accanto a `casa`.
 
@@ -205,7 +205,7 @@ Il "lato molti" dei manuali è quello degli studenti, che sono molti per ogni ca
 
 La stessa regola traduce `riceve` e `dà`. Accanto ad `assegnazione` le due associazioni hanno `(1,1)`: ogni assegnazione è ricevuta da uno studente solo e data da un professore solo. Le due chiavi esterne vanno quindi nella relazione `assegnazione`, ed è lo schema della lezione precedente, con le due colonne segnate:
 
-assegnazione(<u>id</u>, _studente_, punti, _professore_)
+<Schema def="assegnazione([id], {studente}, punti, {professore})" />
 
 - `assegnazione.studente` si riferisce a `studente.matricola`;
 - `assegnazione.professore` si riferisce a `professore.codice`.
@@ -229,7 +229,7 @@ Ogni cella ha un valore solo, ma nome, cognome e casa di Harry sono scritti quat
 
 La regola giusta è un'altra. Un'associazione molti a molti diventa una relazione propria, con una riga per ogni coppia. Gli attributi della relazione sono le chiavi primarie delle due entità, ognuna come chiave esterna, più gli attributi dell'associazione:
 
-iscrizione(<u>_studente_</u>, <u>_materia_</u>, <u>_anno_</u>, voto)
+<Schema def="iscrizione([{studente}], [{materia}], [{anno}], voto)" />
 
 - `iscrizione.studente` si riferisce a `studente.matricola`;
 - la coppia `iscrizione.materia`, `iscrizione.anno` si riferisce alla coppia `corso.materia`, `corso.anno`.
@@ -259,13 +259,13 @@ Il rifiuto del DBMS è giusto finché il database registra un voto solo per ogni
 
 Resta da mantenere una promessa della lezione "[Le cardinalità](./le-cardinalita.mdx)": decidere se la bacchetta, quando `possiede` ha `(1,1)` da tutti e due i lati, convenga metterla nella riga dello studente. Con la sola bacchetta di adesso, ogni studente ne ha una e ogni bacchetta registrata è di uno studente. Legno, nucleo e lunghezza hanno quindi un valore solo per ogni studente, e possono diventare attributi della relazione `studente`:
 
-studente(<u>matricola</u>, nome, cognome, anno, patronus, _casa_, legno, nucleo, lunghezza)
+<Schema def="studente([matricola], nome, cognome, anno, patronus, {casa}, legno, nucleo, lunghezza)" />
 
 Accorpare `studente` e `bacchetta` in una relazione sola non perde niente e non scrive niente due volte. Anche due relazioni, con una chiave esterna da `bacchetta` a `studente`, registrerebbero gli stessi fatti, ma per ogni domanda su uno studente e sulla sua bacchetta servirebbe unire due tabelle. Con lo storico delle bacchette di Ron, invece, accanto a `studente` c'è `(1,N)`, l'associazione è uno a molti, e la regola è quella della casa: una relazione `bacchetta` con una chiave esterna verso lo studente che la possiede. Per questo chi progetta accorpa due entità solo quando il massimo 1 è una regola del dominio e non un caso dei dati di oggi: se il dominio cambia, tre colonne della relazione `studente` diventano una relazione nuova.
 
 Anche l'associazione `dirige` del diagramma è uno a uno, con minimi diversi: `(1,1)` accanto a `casa`, `(0,1)` accanto a `professore`. Accorpare `casa` e `professore` non ha senso, perché ognuna delle due entità partecipa ad altre associazioni per conto suo: la casa accoglie gli studenti, il professore dà i punti. Resta da scegliere in quale delle due relazioni mettere la chiave esterna. Nella relazione `professore` una colonna `casa_diretta` avrebbe un valore solo per i quattro direttori, e resterebbe vuota per Silente e per ogni altro professore. Nella relazione `casa` una colonna `direttore` ha un valore in ogni riga, perché ogni casa ha il suo direttore:
 
-casa(<u>nome</u>, colori, animale, _direttore_)
+<Schema def="casa([nome], colori, animale, {direttore})" />
 
 - `casa.direttore` si riferisce a `professore.codice`.
 
@@ -280,19 +280,19 @@ Traduci in uno schema relazionale il modello della biblioteca di Hogwarts, il di
 
 **Le entità.** Ogni entità diventa una relazione, e ogni identificatore una chiave primaria.
 
-autore(<u>codice</u>, nome, cognome)
+<Schema def="autore([codice], nome, cognome)" />
 
-libro(<u>codice</u>, titolo, anno, riservato)
+<Schema def="libro([codice], titolo, anno, riservato)" />
 
-studente(<u>matricola</u>, nome)
+<Schema def="studente([matricola], nome)" />
 
-professore(<u>codice</u>, nome)
+<Schema def="professore([codice], nome)" />
 
 **Uno a molti.** Le associazioni `esemplare`, `riguarda`, `richiede` e `firma` hanno il massimo 1 da un lato, accanto a `copia` o a `prestito`, e diventano chiavi esterne in quelle due relazioni:
 
-copia(<u>inventario</u>, stato, _libro_)
+<Schema def="copia([inventario], stato, {libro})" />
 
-prestito(<u>id</u>, uscita, rientro, _copia_, _studente_, _professore_)
+<Schema def="prestito([id], uscita, rientro, {copia}, {studente}, {professore})" />
 
 - `copia.libro` si riferisce a `libro.codice`: ogni copia è un esemplare di un libro solo, mentre un libro ha più copie.
 - `prestito.copia` si riferisce a `copia.inventario`: ogni prestito riguarda una copia sola, mentre una copia esce molte volte.
@@ -301,7 +301,7 @@ prestito(<u>id</u>, uscita, rientro, _copia_, _studente_, _professore_)
 
 **Molti a molti.** L'associazione `scrive` diventa una relazione propria, con la coppia come chiave primaria:
 
-scrive(<u>_autore_</u>, <u>_libro_</u>)
+<Schema def="scrive([{autore}], [{libro}])" />
 
 - `scrive.autore` si riferisce a `autore.codice`;
 - `scrive.libro` si riferisce a `libro.codice`.

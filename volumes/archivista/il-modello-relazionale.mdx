@@ -9,9 +9,9 @@ import foglioDiCalcolo from '@site/src/figure/foglio-di-calcolo';
 
 # Il modello relazionale
 
-<Epigraph author="Georg Cantor, Beiträge zur Begründung der transfiniten Mengenlehre (1895)">
+<Epigraph author="Georg Cantor, Beiträge zur Begründung der transfiniten Mengenlehre (1895), traduzione italiana">
 
-Unter einer „Menge“ verstehen wir jede Zusammenfassung M von bestimmten wohlunterschiedenen Objekten m unserer Anschauung oder unseres Denkens (welche die „Elemente“ von M genannt werden) zu einem Ganzen.
+Per "insieme" intendiamo qualunque riunione in un tutto M di determinati oggetti m, ben distinti fra loro, della nostra intuizione o del nostro pensiero (che vengono detti gli "elementi" di M).
 
 </Epigraph>
 
@@ -141,7 +141,7 @@ Di una relazione si distinguono due cose. Lo **schema** è il nome della relazio
 
 Nei libri e nelle prove scritte lo schema si scrive con il nome della relazione seguito dagli attributi fra parentesi, e la chiave primaria sottolineata:
 
-studente(<u>nome</u>, casa, anno)
+<Schema def="studente([nome], casa, anno)" />
 
 Sotto lo schema si scrivono, in frasi, i vincoli che i nomi degli attributi non dicono:
 
@@ -150,11 +150,11 @@ Sotto lo schema si scrivono, in frasi, i vincoli che i nomi degli attributi non 
 
 Una chiave primaria composta da più attributi li ha sottolineati tutti, come il corso identificato da materia e anno nella lezione sulle chiavi:
 
-corso(<u>materia</u>, <u>anno</u>)
+<Schema def="corso([materia], [anno])" />
 
 Con l'archivio di tutti gli studenti passati da Hogwarts il nome non distingue più gli studenti, e lo schema cambia chiave: studente(<u>matricola</u>, nome, casa, anno). Lo schema della tabella `assegnazione` è assegnazione(<u>id</u>, studente, punti, professore). Le colonne `studente` e `professore` contengono la chiave primaria di un'altra relazione, e lo schema le segna in un modo che vedremo nella [prossima lezione](./tradurre-in-tabelle.mdx).
 
-:::warning["Relazionale" non vuol dire "collegato"]
+:::warning[“Relazionale” non vuol dire “collegato”]
 
 - <Esito ok={false} /> Il modello si chiama relazionale perché le tabelle sono collegate fra loro → un database con una tabella sola è già relazionale, e il collegamento fra due tabelle ha un altro nome, chiave esterna, che arriva nella prossima lezione.
 - <Esito /> Il modello si chiama relazionale perché ogni tabella è una relazione nel senso matematico: un insieme di tuple.

@@ -38,9 +38,9 @@ Nella [lezione precedente](./tradurre-in-tabelle.mdx) ogni associazione uno a mo
 
 I blocchi di questa pagina usano il registro dei punti della lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)". Nella tabella `studente` la chiave primaria è ancora il nome, come nel database dei voti della lezione precedente, e lo schema delle due tabelle che ci interessano è questo:
 
-studente(<u>nome</u>, casa, anno)
+<Schema def="studente([nome], casa, anno)" />
 
-assegnazione(<u>id</u>, _studente_, punti, _professore_)
+<Schema def="assegnazione([id], {studente}, punti, {professore})" />
 
 - `assegnazione.studente` si riferisce a `studente.nome`;
 - `assegnazione.professore` si riferisce a `professore.nome`.
@@ -106,7 +106,7 @@ Sotto il risultato il blocco segnala quattro righe modificate. Nel pannello "Dat
 
 La cascata ha tolto Fred e George, come chiedevamo, ma ha cambiato anche un fatto che con la loro partenza non c'entra: la classifica di un anno scolastico finito da tempo. Quei venti punti Piton li ha tolti davvero, quattro anni prima della partenza dei gemelli, e hanno contato nella Coppa delle Case di quell'anno. Dopo la cascata il registro racconta un altro anno, in cui Grifondoro è prima.
 
-:::warning[L'ordine delle cancellazioni]
+:::warning[L’ordine delle cancellazioni]
 
 - <Esito ok={false} /> prima gli studenti, poi le assegnazioni → `FOREIGN KEY constraint failed` alla prima istruzione: quando il DBMS la controlla, l'assegnazione di Fred è ancora nella tabella.
 - <Esito /> prima le assegnazioni, poi gli studenti → quando tocca agli studenti, nessuna riga si riferisce più a loro.
