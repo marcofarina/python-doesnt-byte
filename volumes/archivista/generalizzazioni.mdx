@@ -15,13 +15,13 @@ All animals are equal, but some animals are more equal than others.
 
 </Epigraph>
 
-Nella lezione precedente studenti e professori erano due entità separate, ognuna con il suo nome e il suo identificatore. Le due entità hanno però molto in comune: nome e cognome, una bacchetta, un Patronus. Ogni volta che il dominio chiede qualcosa di nuovo su tutte le persone di Hogwarts, il modello deve scriverlo due volte, una per entità. In questa lezione raccogliamo ciò che studenti e professori hanno in comune in un'entità più generale, e vediamo che questa raccolta, comoda nel diagramma, si può trasformare in tabelle in tre modi, nessuno dei quali conserva tutto.
+Nella [lezione precedente](./leggere-un-dominio.mdx) studenti e professori erano due entità separate, ognuna con il suo nome e il suo identificatore. Le due entità hanno però molto in comune: nome e cognome, una bacchetta, un Patronus. Ogni volta che il dominio chiede qualcosa di nuovo su tutte le persone di Hogwarts, il modello deve scriverlo due volte, una per entità. In questa lezione raccogliamo ciò che studenti e professori hanno in comune in un'entità più generale, e vediamo che questa raccolta, comoda nel diagramma, si può trasformare in tabelle in tre modi, nessuno dei quali conserva tutto.
 
 :::prereq
 
-- Entità, attributi, identificatori assegnati apposta (lezioni "Entità e attributi" e "Identificare senza ambiguità: le chiavi")
-- L'entità `bacchetta` e l'associazione `possiede`, con le sue cardinalità (lezione "Le cardinalità")
-- L'archivio di tutti gli studenti passati da Hogwarts (lezione "Identificare senza ambiguità: le chiavi")
+- Entità, attributi, identificatori assegnati apposta (lezioni "[Entità e attributi](./entita-e-attributi.mdx)" e "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)")
+- L'entità `bacchetta` e l'associazione `possiede`, con le sue cardinalità (lezione "[Le cardinalità](./le-cardinalita.mdx)")
+- L'archivio di tutti gli studenti passati da Hogwarts (lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)")
 - La ridondanza e le tabelle unite con `JOIN` (capitolo 1)
 
 :::
@@ -37,7 +37,7 @@ Nella lezione precedente studenti e professori erano due entità separate, ognun
 
 ## Due entità con le stesse proprietà
 
-Immaginiamo che il database di Hogwarts debba registrare le bacchette di tutti, studenti e professori: anche Piton ha una bacchetta, come Harry. Con il modello che abbiamo servono due associazioni `possiede`, una fra `studente` e `bacchetta` e una fra `professore` e `bacchetta`, con le stesse cardinalità. Lo stesso vale per nome e cognome, che compaiono fra gli attributi di tutte e due le entità, e per il Patronus della lezione "Entità e attributi", che hanno anche i professori: quello di Piton è una cerva.
+Immaginiamo che il database di Hogwarts debba registrare le bacchette di tutti, studenti e professori: anche Piton ha una bacchetta, come Harry. Con il modello che abbiamo servono due associazioni `possiede`, una fra `studente` e `bacchetta` e una fra `professore` e `bacchetta`, con le stesse cardinalità. Lo stesso vale per nome e cognome, che compaiono fra gli attributi di tutte e due le entità, e per il Patronus della lezione "[Entità e attributi](./entita-e-attributi.mdx)", che hanno anche i professori: quello di Piton è una cerva.
 
 Studenti e professori sono due casi particolari della stessa cosa, una persona che vive a Hogwarts. Il modello E/R lo esprime con una generalizzazione: un'entità `persona`, con gli attributi e le associazioni che tutte le persone hanno, e sotto di lei le entità `studente` e `professore`, ognuna con ciò che riguarda solo lei: l'anno per lo studente, la materia per il professore.
 
@@ -116,7 +116,7 @@ Accanto alla freccia il diagramma porta due lettere, `(p,e)`. Sono la **copertur
 
 La prima domanda: ogni persona registrata è per forza uno studente o un professore? Hagrid no. Nei primi due anni di Harry a Hogwarts è il guardiacaccia della scuola, e non è né uno studente né un professore. Se il database registra anche Hagrid, alcune persone non appartengono a nessuna entità figlia, e la generalizzazione è parziale, `p`. Se ogni persona registrata è per forza uno studente o un professore, è totale, `t`.
 
-La seconda domanda: una persona può essere studente e professore insieme? Fra gli studenti e i professori di un anno scolastico, no: la generalizzazione è esclusiva, `e`. Immaginiamo però l'archivio della lezione sulle chiavi, con tutti gli studenti passati da Hogwarts. Piton e Lupin a Hogwarts hanno studiato, e anni dopo insegnato, senza essersi mai resi simpatici né agli studenti né ai professori: nell'archivio Piton è un'occorrenza di `studente` e anche di `professore`, e la generalizzazione è sovrapposta, `o`, dall'inglese _overlapping_.
+La seconda domanda: una persona può essere studente e professore insieme? Fra gli studenti e i professori di un anno scolastico, no: la generalizzazione è esclusiva, `e`. Immaginiamo però l'archivio della [lezione sulle chiavi](./le-chiavi.mdx), con tutti gli studenti passati da Hogwarts. Piton e Lupin a Hogwarts hanno studiato, e anni dopo insegnato, senza essersi mai resi simpatici né agli studenti né ai professori: nell'archivio Piton è un'occorrenza di `studente` e anche di `professore`, e la generalizzazione è sovrapposta, `o`, dall'inglese _overlapping_.
 
 :::definition[Copertura]
 
@@ -156,7 +156,7 @@ Il padre sparisce, e ogni figlia riceve i suoi attributi: la tabella `studente` 
 | ------ | ------- | ------- | ------- |
 | 2      | Severus | Piton   | Pozioni |
 
-Le regole delle figlie restano: uno studente ha un anno e non ha una materia. Si perde invece la persona. Hagrid, che non è né studente né professore, non ha una tabella in cui stare: una copertura parziale con questo modo non si può registrare. Nell'archivio, Piton compare in tutte e due le tabelle, con nome e cognome scritti due volte, ed è la ridondanza del capitolo 1. E l'associazione `possiede` va raddoppiata, una per tabella.
+Le regole delle figlie restano: uno studente ha un anno e non ha una materia. Si perde invece la persona. Hagrid, che non è né studente né professore, non ha una tabella in cui stare: una copertura parziale con questo modo non si può registrare. Nell'archivio, Piton compare in tutte e due le tabelle, con nome e cognome scritti due volte, ed è la ridondanza del [capitolo 1](./stessa-informazione-due-volte.mdx). E l'associazione `possiede` va raddoppiata, una per tabella.
 
 ### Padre e figlie, collegati
 
