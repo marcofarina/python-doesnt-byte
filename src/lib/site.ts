@@ -3,7 +3,7 @@
 // Importa da '@site/src/lib/site' dove servono.
 
 /** Email di contatto pubblica. */
-export const CONTACT_EMAIL = 'marco@rainbowbits.cloud';
+export const CONTACT_EMAIL = 'python@rainbowbits.cloud';
 
 /** Pronta per `href={...}` di un link mail. */
 export const CONTACT_MAILTO = `mailto:${CONTACT_EMAIL}`;

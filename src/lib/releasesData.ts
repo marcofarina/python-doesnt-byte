@@ -64,9 +64,20 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
-    v: '0.21.0',
+    v: '0.21.1',
     date: '22 ottobre 2026',
     latest: true,
+    notes: {
+      improved: [
+        'Il libro ha un indirizzo suo: https://python.rainbowbits.cloud. I vecchi indirizzi rainbowbits.cloud/python-doesnt-byte portano alla stessa pagina in quello nuovo, anche dai link già condivisi.',
+        'Il browser tiene i dati salvati separati per ogni indirizzo: chi aveva attivato un percorso lo ritrova riaprendo il link del percorso, oppure lo sceglie di nuovo dalla pagina Percorso.',
+        'L’indirizzo email per scrivere al progetto è python@rainbowbits.cloud.',
+      ],
+    },
+  },
+  {
+    v: '0.21.0',
+    date: '22 ottobre 2026',
     notes: {
       new: [
         'Figure nelle lezioni: schemi che si costruiscono un passo alla volta, da guardare con «Avanti» o in riproduzione automatica. Le didascalie compaiono come sottotitoli e ogni passo resta sullo schermo abbastanza a lungo anche per chi legge lentamente; con «Riduci movimento» le figure non si animano.',
