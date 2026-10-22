@@ -357,7 +357,15 @@ export function calcola(props: DiagrammaERProps): Disegno {
       const dy = ent.cy - rombo.cy;
       let latoEntita: Lato;
       let latoRombo: Lato;
-      if (Math.abs(dx) >= Math.abs(dy)) {
+      const e = entitaPerId.get(p.entita)!;
+      if (e.col !== r.col && e.riga !== r.riga) {
+        // In diagonale: linea spezzata, che esce in verticale dall'entità ed
+        // entra in orizzontale nello spigolo laterale del rombo. Così due
+        // associazioni fra le stesse entità, una sopra e una sotto, non si
+        // contendono lo stesso spigolo e non passano sulle cardinalità.
+        latoEntita = dy < 0 ? 'sotto' : 'sopra';
+        latoRombo = dx < 0 ? 'sinistra' : 'destra';
+      } else if (Math.abs(dx) >= Math.abs(dy)) {
         latoEntita = dx < 0 ? 'destra' : 'sinistra';
         latoRombo = dx < 0 ? 'sinistra' : 'destra';
       } else {
@@ -756,7 +764,13 @@ export function calcola(props: DiagrammaERProps): Disegno {
         aDestra ? 'start' : 'end',
       );
     }
-    linea(chiave, da[0], da[1], a[0], a[1]);
+    if (orizzontale(c.latoEntita) === orizzontale(c.latoRombo)) {
+      linea(chiave, da[0], da[1], a[0], a[1]);
+    } else {
+      const gomito: [number, number] = [da[0], a[1]];
+      aggiungi(gen.linearPath([da, gomito, a], opz(chiave)), 'linea');
+      copri(da[0], da[1], a[0], a[1]);
+    }
   }
 
   /* ── Generalizzazioni ────────────────────────────────────────────────── */
