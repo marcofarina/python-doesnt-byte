@@ -15,13 +15,16 @@ import {
   offset,
   flip,
   shift,
+  arrow,
+  FloatingArrow,
   useDismiss,
   useInteractions,
   FloatingPortal,
   FloatingFocusManager,
 } from '@floating-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import Icon from '@site/src/components/Icon';
 import {
   RUNNER_DONE_EVENT,
   RUNNER_SELECTOR,
@@ -78,16 +81,21 @@ export default function Spoiler({ children, block = false }: SpoilerProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fieldRef = useRef<ParticleField | null>(null);
   const okRef = useRef<HTMLButtonElement | null>(null);
+  const arrowRef = useRef<SVGSVGElement | null>(null);
 
-  const { refs, floatingStyles, context } = useFloating({
+  const { refs, floatingStyles, context, placement } = useFloating({
     open: popoverOpen,
     onOpenChange: setPopoverOpen,
     placement: 'top',
     whileElementsMounted: autoUpdate,
     middleware: [
-      offset(8),
+      offset(12),
       flip({ padding: PADDING }),
       shift({ padding: PADDING }),
+      // Il middleware legge `arrowRef.current` solo quando calcola la
+      // posizione, dopo il render: falso positivo della regola.
+      // eslint-disable-next-line react-hooks/refs
+      arrow({ element: arrowRef, padding: 14 }),
     ],
   });
   const dismiss = useDismiss(context);
@@ -235,39 +243,66 @@ export default function Spoiler({ children, block = false }: SpoilerProps) {
               ref={refs.setFloating}
               id={popoverId}
               role="dialog"
-              aria-labelledby={`${popoverId}-text`}
+              aria-labelledby={`${popoverId}-title`}
+              aria-describedby={`${popoverId}-text`}
               className={styles.popover}
+              // L'entrata parte dal lato della freccia, sopra o sotto.
+              data-side={placement.split('-')[0]}
               style={floatingStyles}
               {...getFloatingProps()}
             >
-              <button
-                type="button"
-                className={styles.close}
-                aria-label="Chiudi"
-                onClick={() => setPopoverOpen(false)}
-              >
-                <FontAwesomeIcon icon={faXmark} />
-              </button>
-              <p id={`${popoverId}-text`} className={styles.popoverText}>
-                <FontAwesomeIcon icon={faLock} className={styles.popoverIcon} />
-                Esegui prima il codice qui sopra.
-              </p>
-              <div className={styles.popoverActions}>
+              <div className={styles.panel}>
+                <FloatingArrow
+                  ref={arrowRef}
+                  context={context}
+                  className={styles.arrow}
+                  width={16}
+                  height={8}
+                  tipRadius={2}
+                  strokeWidth={1}
+                />
                 <button
                   type="button"
-                  className={styles.showAnyway}
-                  onClick={() => reveal()}
-                >
-                  Mostra comunque
-                </button>
-                <button
-                  ref={okRef}
-                  type="button"
-                  className={styles.ok}
+                  className={styles.close}
+                  aria-label="Chiudi"
                   onClick={() => setPopoverOpen(false)}
                 >
-                  Ok
+                  <FontAwesomeIcon icon={faXmark} />
                 </button>
+                <div className={styles.popoverHead}>
+                  <span className={styles.popoverBadge}>
+                    <Icon name="lock" size={18} secondaryOpacity={0.5} />
+                  </span>
+                  <div>
+                    <p
+                      id={`${popoverId}-title`}
+                      className={styles.popoverTitle}
+                    >
+                      Prima esegui il codice
+                    </p>
+                    <p id={`${popoverId}-text`} className={styles.popoverText}>
+                      La risposta si sblocca quando il programma qui sopra ha
+                      finito.
+                    </p>
+                  </div>
+                </div>
+                <div className={styles.popoverActions}>
+                  <button
+                    type="button"
+                    className={styles.showAnyway}
+                    onClick={() => reveal()}
+                  >
+                    Mostra comunque
+                  </button>
+                  <button
+                    ref={okRef}
+                    type="button"
+                    className={styles.ok}
+                    onClick={() => setPopoverOpen(false)}
+                  >
+                    Ok, eseguo
+                  </button>
+                </div>
               </div>
             </div>
           </FloatingFocusManager>
