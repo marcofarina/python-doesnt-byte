@@ -366,7 +366,12 @@ function PyRunnerInner(props: PyRunnerProps) {
           onRun={handleRun}
         />
       </div>
-      <Output logs={logs} status={status} durationMs={duration} />
+      <Output
+        logs={logs}
+        status={status}
+        durationMs={duration}
+        onRun={handleRun}
+      />
       {toast && (
         <div className={styles.toast} role="status" aria-live="polite">
           {toast}
