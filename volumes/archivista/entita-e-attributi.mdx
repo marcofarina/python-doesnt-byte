@@ -15,7 +15,7 @@ All models are wrong, but some are useful.
 
 </Epigraph>
 
-Le tre tabelle della lezione precedente le avete trovate già pronte, con le colonne decise. Prima che esistessero però, qualcuno ha dovuto stabilire che il registro dei punti avesse bisogno di tre tabelle e non di due o di cinque, che la casa fosse una colonna della tabella `studente`, eccetera. Questo capitolo si occupa di quelle decisioni, che vanno effettuate prima delle tabelle: quali cose il database deve conservare, e che cosa deve conservare di ciascuna.
+Le tre tabelle della [lezione precedente](./che-cosa-fa-un-dbms.mdx) le avete trovate già pronte, con le colonne decise. Prima che esistessero però, qualcuno ha dovuto stabilire che il registro dei punti avesse bisogno di tre tabelle e non di due o di cinque, che la casa fosse una colonna della tabella `studente`, eccetera. Questo capitolo si occupa di quelle decisioni, che vanno effettuate prima delle tabelle: quali cose il database deve conservare, e che cosa deve conservare di ciascuna.
 
 La parte di mondo di cui un database conserva i dati si chiama **dominio**: per il registro dei punti, il dominio è Hogwarts, con i suoi studenti, le sue case e i suoi professori. Un **modello concettuale** è la descrizione di un dominio che stabilisce quali cose vanno registrate, quali informazioni conservare su ciascuna e come le cose sono legate fra loro, senza ancora dire come i dati saranno memorizzati.
 
@@ -23,9 +23,9 @@ Il modello concettuale più usato è il **modello Entità-Associazione** (in ing
 
 :::prereq
 
-- La tabella `studente` del registro dei punti, con nome, casa e anno (lezione precedente)
-- La ridondanza e le anomalie di inserimento, aggiornamento e cancellazione (seconda lezione del capitolo 1)
-- Leggere un'istruzione al DBMS come una frase, senza conoscerne ancora la sintassi (lezione precedente)
+- La tabella `studente` del registro dei punti, con nome, casa e anno ([lezione precedente](./che-cosa-fa-un-dbms.mdx))
+- La ridondanza e le anomalie di inserimento, aggiornamento e cancellazione ([seconda lezione del capitolo 1](./stessa-informazione-due-volte.mdx))
+- Leggere un'istruzione al DBMS come una frase, senza conoscerne ancora la sintassi ([lezione precedente](./che-cosa-fa-un-dbms.mdx))
 
 :::
 
@@ -40,7 +40,7 @@ Il modello concettuale più usato è il **modello Entità-Associazione** (in ing
 
 ## Una casa che è solo un nome
 
-Nella tabella `studente` della lezione precedente la casa è una colonna di testo: per il database Grifondoro è la parola `Grifondoro`, scritta accanto al nome di ogni studente della casa. Finché le domande riguardano gli studenti, una parola basta. Ora, però, immaginiamo che la professoressa McGonagall chieda di registrare anche i colori e l'animale dello stemma di ogni casa, che servono per gli stendardi del banchetto di fine anno.
+Nella tabella `studente` della [lezione precedente](./che-cosa-fa-un-dbms.mdx) la casa è una colonna di testo: per il database Grifondoro è la parola `Grifondoro`, scritta accanto al nome di ogni studente della casa. Finché le domande riguardano gli studenti, una parola basta. Ora, però, immaginiamo che la professoressa McGonagall chieda di registrare anche i colori e l'animale dello stemma di ogni casa, che servono per gli stendardi del banchetto di fine anno.
 
 Con le tabelle che abbiamo, l'unico posto in cui scrivere colori e animale è la tabella `studente`, con due colonne nuove: `colori_casa` e `animale_casa`. Chiamiamo questa la prima versione delle tabelle. Il blocco qui sotto mostra la tabella `studente` con le due colonne aggiunte.
 
@@ -48,7 +48,7 @@ Con le tabelle che abbiamo, l'unico posto in cui scrivere colori e animale è la
 SELECT * FROM studente;
 ```
 
-I colori di Grifondoro, `rosso e oro`, sono scritti sei volte, una per ogni studente della casa, e il leone altrettante. Riconoscerai sicuramente la ridondanza della seconda lezione del capitolo 1: ad esempio, per cambiare i colori di Grifondoro bisogna correggere sei righe! Una riga dimenticata basta a dare alla casa due coppie di colori.
+I colori di Grifondoro, `rosso e oro`, sono scritti sei volte, una per ogni studente della casa, e il leone altrettante. Riconoscerai sicuramente la ridondanza della [seconda lezione del capitolo 1](./stessa-informazione-due-volte.mdx): ad esempio, per cambiare i colori di Grifondoro bisogna correggere sei righe! Una riga dimenticata basta a dare alla casa due coppie di colori.
 
 C'è anche un difetto meno visibile. Padma Patil è l'unica studentessa di Corvonero nella tabella. Il blocco qui sotto contiene due istruzioni, che si leggono come frasi: cancella (`DELETE`) dalla tabella `studente` la riga in cui il nome è `Padma Patil`; poi elenca casa, colori e animale che compaiono nella tabella `studente`, ogni combinazione una volta sola (`DISTINCT`). Prima di eseguire il blocco, prova a prevedere quante case elenca la seconda istruzione.
 
@@ -98,7 +98,7 @@ Se hai già scritto classi in Python, la coppia entità e occorrenza ti ricorda 
 
 La casa è diventata un'entità per due motivi, e sono anche il criterio per decidere. Chi usa il database vuole sapere della casa qualcosa oltre al nome: i colori e l'animale. Inoltre una casa esiste anche senza studenti: Corvonero resta una casa di Hogwarts anche quando Padma non c'è più. Una cosa che soddisfa queste due condizioni è un'entità; una cosa di cui interessa soltanto il valore è un attributo. Il criterio quindi dipende dalle domande a cui il database deve rispondere, e non dalla cosa in sé. Nel registro dei punti del capitolo 1 nessuno chiedeva i colori delle case, e la casa come colonna di testo andava bene: è diventata una scelta sbagliata quando McGonagall ha fatto una domanda nuova.
 
-Resta la colonna `casa` della tabella `studente`, che collega ogni studente alla sua casa. Nel modello E/R quel collegamento non è un attributo dello studente: è un'associazione fra due entità, e la vedremo nella prossima lezione.
+Resta la colonna `casa` della tabella `studente`, che collega ogni studente alla sua casa. Nel modello E/R quel collegamento non è un attributo dello studente: è un'associazione fra due entità, e la vedremo nella [prossima lezione](./le-associazioni.mdx).
 
 :::history[Peter Chen, 1976]
 
@@ -122,7 +122,7 @@ In un altro dominio la stessa cosa può diventare un'entità. Nel registro di un
 
 Sono segnali, non regole: un'entità con un solo attributo può servire, se esiste per conto proprio e se chi usa il database ne vorrà sapere altro.
 
-Il direttore di una casa, per esempio McGonagall per Grifondoro, non ricade in nessuno dei due segnali. Il direttore non è un attributo della casa, perché è un professore, e di un professore interessano il nome, la materia e i punti che assegna. Non serve nemmeno un'entità nuova, perché nel registro dei punti la tabella `professore` c'è già. Il direttore è un legame fra due entità che esistono già, la casa e il professore: è un'associazione, ed è l'argomento della prossima lezione.
+Il direttore di una casa, per esempio McGonagall per Grifondoro, non ricade in nessuno dei due segnali. Il direttore non è un attributo della casa, perché è un professore, e di un professore interessano il nome, la materia e i punti che assegna. Non serve nemmeno un'entità nuova, perché nel registro dei punti la tabella `professore` c'è già. Il direttore è un legame fra due entità che esistono già, la casa e il professore: è un'associazione, ed è l'argomento della [prossima lezione](./le-associazioni.mdx).
 
 ## Disegnare entità e attributi
 
@@ -161,7 +161,7 @@ Il diagramma qui sotto mostra le due entità di questa lezione, con l'attributo 
   cella={[280, 200]}
 />
 
-Nel diagramma mancano due cose. La colonna `casa` non compare fra gli attributi di `studente`, e le due entità non sono collegate: il legame fra uno studente e la sua casa è un'associazione, e il rombo che la disegna arriva nella prossima lezione. Inoltre tutti i cerchi sono vuoti. Un cerchio pieno segna l'attributo che distingue un'occorrenza da tutte le altre, e quale attributo distingua davvero uno studente è il problema lasciato aperto nella lezione precedente: lo risolveremo più avanti in questo capitolo, nella lezione "Identificare senza ambiguità: le chiavi".
+Nel diagramma mancano due cose. La colonna `casa` non compare fra gli attributi di `studente`, e le due entità non sono collegate: il legame fra uno studente e la sua casa è un'associazione, e il rombo che la disegna arriva nella [prossima lezione](./le-associazioni.mdx). Inoltre tutti i cerchi sono vuoti. Un cerchio pieno segna l'attributo che distingue un'occorrenza da tutte le altre, e quale attributo distingua davvero uno studente è il problema lasciato aperto nella [lezione precedente](./che-cosa-fa-un-dbms.mdx): lo risolveremo più avanti in questo capitolo, nella lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)".
 
 :::warning[Il totale dei punti non è un attributo della casa]
 
@@ -294,6 +294,6 @@ Un attributo derivato è ridondanza con un'altra forma. Per questo nei diagrammi
 
 :::tip[La prossima lezione]
 
-La colonna `casa` della tabella `studente` e il direttore di ogni casa hanno una cosa in comune: non sono proprietà di un'entità, ma legami fra due entità. Nella prossima lezione li disegniamo con il rombo del modello E/R, e vediamo che cosa deve esprimere un'associazione.
+La colonna `casa` della tabella `studente` e il direttore di ogni casa hanno una cosa in comune: non sono proprietà di un'entità, ma legami fra due entità. Nella [prossima lezione](./le-associazioni.mdx) li disegniamo con il rombo del modello E/R, e vediamo che cosa deve esprimere un'associazione.
 
 :::

@@ -17,10 +17,10 @@ Nelle lezioni di questo capitolo il modello di Hogwarts è cresciuto una richies
 
 :::prereq
 
-- Entità e attributi, e il criterio per decidere fra le due (lezione "Entità e attributi")
-- Associazioni, associazioni derivate e cardinalità (lezioni "Le associazioni" e "Le cardinalità")
-- Identificatori semplici, composti e assegnati apposta (lezione "Identificare senza ambiguità: le chiavi")
-- Associazioni molti a molti e il caso in cui serve un'entità al posto di un'associazione (lezione precedente)
+- Entità e attributi, e il criterio per decidere fra le due (lezione "[Entità e attributi](./entita-e-attributi.mdx)")
+- Associazioni, associazioni derivate e cardinalità (lezioni "[Le associazioni](./le-associazioni.mdx)" e "[Le cardinalità](./le-cardinalita.mdx)")
+- Identificatori semplici, composti e assegnati apposta (lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)")
+- Associazioni molti a molti e il caso in cui serve un'entità al posto di un'associazione ([lezione precedente](./associazioni-molti-a-molti.mdx))
 
 :::
 
@@ -43,7 +43,7 @@ Il testo è breve, ma contiene tutto quello che il capitolo ha messo in campo: e
 
 ## Primo passo: i candidati
 
-Il primo passo lavora sui sostantivi del testo. Ogni sostantivo è un **candidato**: una cosa che il modello potrebbe registrare. Un candidato non è ancora un'entità; per ognuno facciamo la domanda della lezione "Entità e attributi": interessa sapere qualcosa di lui oltre al nome, ed esiste anche senza le altre cose? La tabella qui sotto raccoglie i sostantivi del testo, il verdetto e il motivo.
+Il primo passo lavora sui sostantivi del testo. Ogni sostantivo è un **candidato**: una cosa che il modello potrebbe registrare. Un candidato non è ancora un'entità; per ognuno facciamo la domanda della lezione "[Entità e attributi](./entita-e-attributi.mdx)": interessa sapere qualcosa di lui oltre al nome, ed esiste anche senza le altre cose? La tabella qui sotto raccoglie i sostantivi del testo, il verdetto e il motivo.
 
 | Candidato                                 | Verdetto                 | Perché                                                                                  |
 | ----------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------- |
@@ -61,7 +61,7 @@ Il primo passo lavora sui sostantivi del testo. Ogni sostantivo è un **candidat
 | permesso                                  | da decidere              | il testo chiede solo chi l'ha firmato: lo decide il secondo passo                       |
 | libro riservato                           | attributo di `libro`     | un libro è riservato oppure no: `riservato` vale sì o no                                |
 
-La decisione più delicata del primo passo è la coppia libro e copia. Nell'italiano di tutti i giorni "libro" vuol dire due cose: l'opera, quando diciamo "ho letto quel libro", e l'oggetto, quando diciamo "ho perso il libro" o, a Hogwarts, "il libro mi ha morso". Il testo le distingue con due parole diverse, e il modello deve fare lo stesso. Se `libro` e `copia` diventassero una sola entità, con il numero d'inventario fra gli attributi, il titolo e gli autori di un libro con tre copie sarebbero scritti tre volte: è la ridondanza del capitolo 1, travestita da comodità. Il prestito riguarda la copia, perché è la copia che esce dalla biblioteca e ci rientra; il titolo riguarda il libro.
+La decisione più delicata del primo passo è la coppia libro e copia. Nell'italiano di tutti i giorni "libro" vuol dire due cose: l'opera, quando diciamo "ho letto quel libro", e l'oggetto, quando diciamo "ho perso il libro" o, a Hogwarts, "il libro mi ha morso". Il testo le distingue con due parole diverse, e il modello deve fare lo stesso. Se `libro` e `copia` diventassero una sola entità, con il numero d'inventario fra gli attributi, il titolo e gli autori di un libro con tre copie sarebbero scritti tre volte: è la ridondanza del [capitolo 1](./stessa-informazione-due-volte.mdx), travestita da comodità. Il prestito riguarda la copia, perché è la copia che esce dalla biblioteca e ci rientra; il titolo riguarda il libro.
 
 ## Secondo passo: i legami
 
@@ -69,9 +69,9 @@ Il secondo passo lavora sui verbi e sulle frasi che mettono in relazione due can
 
 Fra `autore` e `libro` c'è l'associazione `scrive`: un autore scrive più libri, un libro ha più autori, quindi è molti a molti, e non ha attributi. Fra `copia` e `libro` c'è un'associazione uno a molti, `esemplare`: ogni copia è un esemplare di un libro solo.
 
-Il prestito sembra un'associazione molti a molti fra `studente` e `copia`, con le due date come attributi. La domanda della lezione precedente decide: la stessa coppia può comparire più di una volta? Sì: Hermione può prendere in prestito la stessa copia a ottobre e di nuovo a maggio, e conoscendola anche a novembre, gennaio e marzo. Il prestito è quindi un'entità, legata alla copia dall'associazione `riguarda` e allo studente dall'associazione `richiede`.
+Il prestito sembra un'associazione molti a molti fra `studente` e `copia`, con le due date come attributi. La domanda della [lezione precedente](./associazioni-molti-a-molti.mdx) decide: la stessa coppia può comparire più di una volta? Sì: Hermione può prendere in prestito la stessa copia a ottobre e di nuovo a maggio, e conoscendola anche a novembre, gennaio e marzo. Il prestito è quindi un'entità, legata alla copia dall'associazione `riguarda` e allo studente dall'associazione `richiede`.
 
-Il permesso, invece, del testo ha una sola informazione: quale professore l'ha firmato. Un'entità `permesso` senza attributi propri sarebbe l'errore opposto della lezione "Entità e attributi". Il permesso è un legame fra un prestito e un professore, cioè l'associazione `firma`.
+Il permesso, invece, del testo ha una sola informazione: quale professore l'ha firmato. Un'entità `permesso` senza attributi propri sarebbe l'errore opposto della lezione "[Entità e attributi](./entita-e-attributi.mdx)". Il permesso è un legame fra un prestito e un professore, cioè l'associazione `firma`.
 
 Resta un legame che il testo suggerisce ma il modello non deve disegnare: il libro di un prestito. Dal prestito si arriva alla copia, e dalla copia al suo libro, sempre: un'associazione fra `prestito` e `libro` sarebbe un'associazione derivata, cioè una copia.
 
@@ -101,7 +101,7 @@ Nel capitolo 5 vedremo che alcuni di questi vincoli si possono far rispettare al
 
 ## Quarto passo: gli identificatori
 
-L'ultimo passo dà a ogni entità il suo identificatore, con il criterio della lezione sulle chiavi: serve una regola che garantisca valori diversi, oggi e domani. La copia ha già un identificatore assegnato apposta, il numero d'inventario: lo scrive la biblioteca sul dorso, e non lo ripete. Il titolo non identifica un libro, perché due libri diversi possono avere lo stesso titolo, e nome e cognome non identificano un autore: a entrambi diamo un codice. Il prestito ha il suo numero progressivo, come l'assegnazione del registro dei punti; lo studente ha la matricola, e il professore un codice come l'autore.
+L'ultimo passo dà a ogni entità il suo identificatore, con il criterio della [lezione sulle chiavi](./le-chiavi.mdx): serve una regola che garantisca valori diversi, oggi e domani. La copia ha già un identificatore assegnato apposta, il numero d'inventario: lo scrive la biblioteca sul dorso, e non lo ripete. Il titolo non identifica un libro, perché due libri diversi possono avere lo stesso titolo, e nome e cognome non identificano un autore: a entrambi diamo un codice. Il prestito ha il suo numero progressivo, come l'assegnazione del registro dei punti; lo studente ha la matricola, e il professore un codice come l'autore.
 
 Il diagramma qui sotto mette insieme i quattro passi. È più largo della colonna: su uno schermo stretto scorre di lato dentro la figura.
 
@@ -232,7 +232,7 @@ Applica i quattro passi a questo testo. Lavora su carta: per ogni passo scrivi i
 
 **Primo passo.** Le entità sono `casa`, `studente`, `partita` e `professore`. La squadra non è un'entità a parte: ogni casa ne ha una, e il testo non chiede niente della squadra che non sia già della casa. La Coppa è una sola, e del Quidditch il testo non chiede niente: entrambi scartati. Il ruolo e i punti sono attributi, e il secondo passo decide di che cosa.
 
-**Secondo passo.** I giocatori sono studenti che fanno parte della squadra di una casa: è l'associazione `gioca` fra `studente` e `casa`, con l'attributo `ruolo`, che è un'informazione sul giocatore in squadra. Il capitano è un'altra associazione fra le stesse due entità, `capitano`, con coppie diverse da `gioca`: è il caso dei due rombi legittimi della lezione "Le associazioni". I punti di una partita sono un attributo della coppia partita–casa, come il voto della lezione precedente: l'associazione `sfida` fra `partita` e `casa` ha l'attributo `punti`. Ogni partita è arbitrata da un professore: l'associazione `arbitra`.
+**Secondo passo.** I giocatori sono studenti che fanno parte della squadra di una casa: è l'associazione `gioca` fra `studente` e `casa`, con l'attributo `ruolo`, che è un'informazione sul giocatore in squadra. Il capitano è un'altra associazione fra le stesse due entità, `capitano`, con coppie diverse da `gioca`: è il caso dei due rombi legittimi della lezione "[Le associazioni](./le-associazioni.mdx)". I punti di una partita sono un attributo della coppia partita–casa, come il voto della [lezione precedente](./associazioni-molti-a-molti.mdx): l'associazione `sfida` fra `partita` e `casa` ha l'attributo `punti`. Ogni partita è arbitrata da un professore: l'associazione `arbitra`.
 
 **Terzo passo.** Accanto a `casa` in `gioca` c'è `(7,7)`: ogni squadra ha esattamente sette giocatori. Accanto a `studente`, `(0,1)`: la maggior parte degli studenti non gioca. In `capitano`, `(1,1)` accanto a `casa` e `(0,1)` accanto a `studente`. In `sfida`, `(2,2)` accanto a `partita`, perché ogni partita si gioca fra esattamente due case, e `(0,N)` accanto a `casa`. In `arbitra`, `(1,1)` accanto a `partita` e `(0,N)` accanto a `professore`.
 
@@ -338,6 +338,6 @@ Altre soluzioni sono accettabili, se motivate. Per esempio, visto che un giocato
 
 :::tip[La prossima lezione]
 
-Nel modello della biblioteca e in quello del Quidditch, studenti e professori sono due entità separate, ognuna con nome e identificatore, e tutte e due si possono legare alla stessa cosa, come una bacchetta. Nella prossima lezione, l'ultima del capitolo, vediamo come il modello E/R raccoglie in un'entità sola ciò che più entità hanno in comune: le generalizzazioni.
+Nel modello della biblioteca e in quello del Quidditch, studenti e professori sono due entità separate, ognuna con nome e identificatore, e tutte e due si possono legare alla stessa cosa, come una bacchetta. Nella [prossima lezione](./generalizzazioni.mdx), l'ultima del capitolo, vediamo come il modello E/R raccoglie in un'entità sola ciò che più entità hanno in comune: le generalizzazioni.
 
 :::

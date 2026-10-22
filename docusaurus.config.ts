@@ -31,6 +31,12 @@ const admonitions = {
 // riaccenderlo online basta rendere questa costante true.
 const PYQUEST_PUBLIC = process.env.NODE_ENV !== 'production';
 
+// Base dei link «Modifica questa pagina». Docusaurus le appende il percorso del
+// file relativo alla root del sito (es. `volumes/archivista/le-chiavi.md`), quindi
+// serve il prefisso `edit/<branch>/`: senza, GitHub risponde «Not found». Il
+// branch è main perché il sito pubblicato viene da lì.
+const EDIT_URL = 'https://github.com/marcofarina/python-doesnt-byte/edit/main/';
+
 // Il config è una funzione async perché remark-smartypants è ESM-only e va
 // caricato con import() dinamico (il config viene valutato in contesto CJS,
 // vedi il require() qui sopra). smartypants converte gli apici dritti della
@@ -88,9 +94,7 @@ export default async function createConfig(): Promise<Config> {
         {
           docs: {
             sidebarPath: './sidebars.ts',
-            // Please change this to your repo.
-            // Remove this to remove the "edit this page" links.
-            editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+            editUrl: EDIT_URL,
             beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
             remarkPlugins: [protectCode, smartypants, restoreCode],
             admonitions,
@@ -155,6 +159,7 @@ export default async function createConfig(): Promise<Config> {
       './plugins/pyquest/index.js',
       './plugins/exercise-graph/index.js',
       './plugins/copy-page-md/index.js',
+      './plugins/llms-txt/index.js',
       './plugins/curriculum/index.js',
       './plugins/archivio/index.js',
       [
@@ -164,7 +169,7 @@ export default async function createConfig(): Promise<Config> {
           path: 'volumes/programmatore',
           routeBasePath: 'programmatore',
           sidebarPath: './sidebars/programmatore.ts',
-          editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+          editUrl: EDIT_URL,
           beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
           remarkPlugins: [protectCode, smartypants, restoreCode],
           admonitions,
@@ -177,7 +182,7 @@ export default async function createConfig(): Promise<Config> {
           path: 'volumes/artefice',
           routeBasePath: 'artefice',
           sidebarPath: './sidebars/artefice.ts',
-          editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+          editUrl: EDIT_URL,
           beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
           remarkPlugins: [protectCode, smartypants, restoreCode],
           admonitions,
@@ -190,7 +195,7 @@ export default async function createConfig(): Promise<Config> {
           path: 'volumes/archivista',
           routeBasePath: 'archivista',
           sidebarPath: './sidebars/archivista.ts',
-          editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+          editUrl: EDIT_URL,
           beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
           remarkPlugins: [protectCode, smartypants, restoreCode],
           admonitions,
@@ -203,7 +208,7 @@ export default async function createConfig(): Promise<Config> {
           path: 'volumes/apprendista',
           routeBasePath: 'apprendista',
           sidebarPath: './sidebars/apprendista.ts',
-          editUrl: 'https://github.com/marcofarina/python-doesnt-byte',
+          editUrl: EDIT_URL,
           beforeDefaultRemarkPlugins: [remarkPyRunner, remarkSqlRunner],
           remarkPlugins: [protectCode, smartypants, restoreCode],
           admonitions,

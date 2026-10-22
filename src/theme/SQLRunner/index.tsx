@@ -424,6 +424,7 @@ function SQLRunnerInner(props: SQLRunnerProps) {
         outcome={outcome}
         error={error}
         restoredNotice={restoredNotice}
+        onRun={handleRun}
       />
       {toast && (
         <div className={pyStyles.toast} role="status" aria-live="polite">
