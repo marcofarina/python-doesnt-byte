@@ -14,13 +14,13 @@ Namespaces are one honking great idea — let's do more of those!
 
 </Epigraph>
 
-Alla fine della scorsa lezione ti ho lasciato con una domanda apparentemente innocua: *quanti brani ho creato in totale?* Non quanti ne contiene una certa playlist — quelli li sai già contare — ma quanti oggetti `Brano` sono nati da quando il programma è partito. È una domanda strana, perché la risposta non appartiene a **nessun** brano in particolare: *Bohemian Rhapsody* non sa nulla di *Blinding Lights*, e non deve saperlo.
+Alla fine della [scorsa lezione](./classi-e-istanze.mdx) ti ho lasciato con una domanda apparentemente innocua: *quanti brani ho creato in totale?* Non quanti ne contiene una certa playlist — quelli li sai già contare — ma quanti oggetti `Brano` sono nati da quando il programma è partito. È una domanda strana, perché la risposta non appartiene a **nessun** brano in particolare: *Bohemian Rhapsody* non sa nulla di *Blinding Lights*, e non deve saperlo.
 
 Finora ogni cosa che abbiamo scritto viveva dentro un oggetto, raggiunta tramite `self`. Oggi scopriamo che esiste un altro piano: ci sono dati e comportamenti che appartengono allo **stampo** — alla classe stessa — e non al singolo biscotto sfornato. È un piano che userai meno spesso di `self`, ma quando serve non c'è alternativa pulita.
 
 :::prereq
 
-- La lezione precedente, *Classi, istanze e metodi* — in particolare `__init__`, `self`, la differenza tra attributi e metodi e la dot notation
+- La lezione precedente, *[Classi, istanze e metodi](./classi-e-istanze.mdx)* — in particolare `__init__`, `self`, la differenza tra attributi e metodi e la dot notation
 - Funzioni: definizione, parametri, valori di ritorno
 - Liste e dizionari: `append`, accesso per chiave
 - Lo *split* di una stringa (`"a;b;c".split(";")`) — ci servirà per un costruttore alternativo
@@ -63,7 +63,7 @@ Brano("Bury a Friend", "Billie Eilish", 193)
 print(f"Brani creati: {contatore_brani}")
 ```
 
-Funziona, ma puzza. Quel `contatore_brani` è un'informazione **su** `Brano` che vive lontana da `Brano`, in una variabile globale che chiunque, da qualunque punto del file, può azzerare o falsare. È esattamente la malattia procedurale della prima lezione — stato scollegato dall'entità a cui appartiene — e quella parola chiave <InlineCode kind="keyword">global</InlineCode> è la spia rossa che ce lo conferma.
+Funziona, ma puzza. Quel `contatore_brani` è un'informazione **su** `Brano` che vive lontana da `Brano`, in una variabile globale che chiunque, da qualunque punto del file, può azzerare o falsare. È esattamente la malattia procedurale della [prima lezione](./perche-gli-oggetti.mdx) — stato scollegato dall'entità a cui appartiene — e quella parola chiave <InlineCode kind="keyword">global</InlineCode> è la spia rossa che ce lo conferma.
 
 Il numero di brani creati è un fatto che riguarda lo stampo `Brano`. Quindi dovrebbe vivere **sullo** stampo.
 
@@ -267,7 +267,7 @@ La tentazione opposta sarebbe un solo `__init__` pieno di parametri facoltativi 
 
 Resta un terzo caso, il più umile. A volte hai una funzione che è **logicamente legata** a una classe — parla del suo tema — ma non ha bisogno né di un oggetto specifico (`self`) né della classe (`cls`). È solo una funzione di supporto che ha senso tenere *lì*, vicino a chi la usa. Si dichiara con <InlineCode>@staticmethod</InlineCode> e non riceve né `self` né `cls`.
 
-Ricordi `durata_minuti` della scorsa lezione? Era un metodo d'istanza, perché pescava da `self.durata`. Ma l'operazione "trasforma un numero di secondi in `minuti:secondi`" non ha bisogno di un brano specifico: dato un numero qualsiasi, restituisce la stringa. È un candidato perfetto a metodo statico — e così lo posso riusare ovunque, anche per la durata totale di una playlist, senza avere per forza un `Brano` sotto mano.
+Ricordi `durata_minuti` della [scorsa lezione](./classi-e-istanze.mdx)? Era un metodo d'istanza, perché pescava da `self.durata`. Ma l'operazione "trasforma un numero di secondi in `minuti:secondi`" non ha bisogno di un brano specifico: dato un numero qualsiasi, restituisce la stringa. È un candidato perfetto a metodo statico — e così lo posso riusare ovunque, anche per la durata totale di una playlist, senza avere per forza un `Brano` sotto mano.
 
 ```py live
 class Brano:
@@ -456,7 +456,7 @@ I tre membri sottolineati (il rendering aggiunge una linea sotto `creati`, `da_r
 
 :::tip[Per andare oltre]
 
-Hai notato che, per mostrare un brano, continuiamo a scrivere a mano `print(f"{bohemian.titolo} — {bohemian.artista}")`? È scomodo e si ripete. La prossima lezione insegna all'oggetto a **raccontarsi da solo**: con i metodi speciali `__str__` e `__repr__`, scrivere `print(bohemian)` produrrà direttamente una descrizione sensata. È il primo, vero assaggio dei metodi "dunder" che danno superpoteri ai tuoi oggetti.
+Hai notato che, per mostrare un brano, continuiamo a scrivere a mano `print(f"{bohemian.titolo} — {bohemian.artista}")`? È scomodo e si ripete. La [prossima lezione](./mostrare-un-oggetto.mdx) insegna all'oggetto a **raccontarsi da solo**: con i metodi speciali `__str__` e `__repr__`, scrivere `print(bohemian)` produrrà direttamente una descrizione sensata. È il primo, vero assaggio dei metodi "dunder" che danno superpoteri ai tuoi oggetti.
 
 Nel frattempo, un allenamento senza codice: pensa a una classe `Utente` di un'app qualsiasi. Quali informazioni apparterrebbero al **singolo utente** (l'istanza) e quali alla classe intera (per esempio *quanti account esistono*, o il *dominio email di default*)? E quali **costruttori alternativi** potrebbe volere — `da_email`, `da_json`, `ospite()`? È lo stesso ragionamento di oggi, su un'entità nuova.
 
