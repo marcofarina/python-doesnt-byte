@@ -14,13 +14,13 @@ Conosci te stesso.
 
 </Epigraph>
 
-Nella lezione precedente ti avevo chiesto di notare **una cosa sola**: i dati di un brano e ciò che sai farci vivono nello stesso blocco. Avevamo scritto una classe `Brano` e l'avevamo guardata da lontano, come si guarda un motore acceso senza aprire il cofano.
+Nella [lezione precedente](./perche-gli-oggetti.mdx) ti avevo chiesto di notare **una cosa sola**: i dati di un brano e ciò che sai farci vivono nello stesso blocco. Avevamo scritto una classe `Brano` e l'avevamo guardata da lontano, come si guarda un motore acceso senza aprire il cofano.
 
 Oggi apriamo il cofano. Quella parola <InlineCode kind="keyword">class</InlineCode>, quel `self` che spuntava ovunque, quel `__init__` dall'aria criptica: smettono di essere magia e diventano tre meccanismi precisi che, una volta capiti, userai per il resto del volume. E lo facciamo continuando proprio da `Brano`, dandogli più comportamenti e affiancandogli la sua compagna naturale: la `Playlist` di **Risonanza**.
 
 :::prereq
 
-- La lezione precedente, *Perché gli oggetti?* — in particolare l'idea che un oggetto tiene insieme **dati** e **comportamento**
+- La lezione precedente, *[Perché gli oggetti?](./perche-gli-oggetti.mdx)* — in particolare l'idea che un oggetto tiene insieme **dati** e **comportamento**
 - Sintassi Python di base: variabili, tipi primitivi, condizionali, cicli
 - Funzioni: definizione, parametri, valori di ritorno
 - Liste: creazione, `append`, scorrerle con un ciclo `for`
@@ -42,7 +42,7 @@ Oggi apriamo il cofano. Quella parola <InlineCode kind="keyword">class</InlineCo
 
 ## Si riparte da Brano
 
-Eccola di nuovo, la classe della scorsa lezione. Premi **Run**: non è cambiato niente, è il nostro punto di partenza.
+Eccola di nuovo, la classe della [scorsa lezione](./perche-gli-oggetti.mdx). Premi **Run**: non è cambiato niente, è il nostro punto di partenza.
 
 ```py live
 class Brano:
@@ -197,7 +197,7 @@ bohemian.durata = 355         # scrivo un attributo dall'esterno
 print(f"Durata aggiornata: {bohemian.durata}s")
 ```
 
-Modificare un attributo direttamente dall'esterno (`bohemian.durata = 355`) Python lo permette, ma è una libertà di cui più avanti impareremo a diffidare: significa che chiunque, da qualunque punto del programma, può alterare lo stato di un oggetto scavalcando ogni controllo. Per ora ci basta sapere che la sintassi esiste; il modo di mettere dei paletti si chiama **incapsulamento**, e ha una lezione tutta sua.
+Modificare un attributo direttamente dall'esterno (`bohemian.durata = 355`) Python lo permette, ma è una libertà di cui più avanti impareremo a diffidare: significa che chiunque, da qualunque punto del programma, può alterare lo stato di un oggetto scavalcando ogni controllo. Per ora ci basta sapere che la sintassi esiste; il modo di mettere dei paletti si chiama **incapsulamento**, e ha una [lezione tutta sua](./incapsulamento.mdx).
 
 ### Un metodo che lavora lo stato
 
@@ -312,7 +312,7 @@ print(f"Playlist: {preferiti.nome}")
 preferiti.riproduci_tutti()
 ```
 
-Guarda `riproduci_tutti`: scorre `self.brani` e su ciascun elemento chiama `brano.riproduci()`. Un oggetto `Playlist` che fa lavorare i suoi oggetti `Brano` — esattamente la collaborazione tra entità di cui parlavamo nella prima lezione.
+Guarda `riproduci_tutti`: scorre `self.brani` e su ciascun elemento chiama `brano.riproduci()`. Un oggetto `Playlist` che fa lavorare i suoi oggetti `Brano` — esattamente la collaborazione tra entità di cui parlavamo nella [prima lezione](./perche-gli-oggetti.mdx).
 
 ### Predici l'output: l'attributo che si scollega
 
@@ -508,7 +508,7 @@ Qui teniamo `Brano` e `Playlist` nella stessa cella perché devono girare insiem
 
 :::tip[Per andare oltre]
 
-Hai visto come un singolo oggetto nasce (`__init__`), conosce sé stesso (`self`) e agisce (i metodi). La prossima lezione fa un passo di lato: e se un'informazione riguardasse **tutti** i brani insieme, non un brano in particolare — per esempio *quanti brani sono stati creati in totale*? Lì entrano in scena gli **attributi di classe** e i **metodi di classe e statici**: roba che appartiene allo stampo, non al singolo biscotto.
+Hai visto come un singolo oggetto nasce (`__init__`), conosce sé stesso (`self`) e agisce (i metodi). La [prossima lezione](./metodi-di-classe-e-statici.mdx) fa un passo di lato: e se un'informazione riguardasse **tutti** i brani insieme, non un brano in particolare — per esempio *quanti brani sono stati creati in totale*? Lì entrano in scena gli **attributi di classe** e i **metodi di classe e statici**: roba che appartiene allo stampo, non al singolo biscotto.
 
 Nel frattempo, un allenamento senza codice: pensa alla `Playlist` e prova a immaginare altri tre comportamenti che dovrebbe sapere fare (rimuovere un brano? trovare il più ascoltato? mescolarsi?). Per ciascuno, chiediti: *di quali attributi ha bisogno per funzionare?* È esattamente il ragionamento con cui si progetta una classe prima ancora di scriverla.
 

@@ -14,13 +14,13 @@ Keep it secret. Keep it safe.
 
 </Epigraph>
 
-Alla fine della scorsa lezione ti ho lasciato con una falla. I nostri brani ora si raccontano bene con `__str__` e `__repr__`, ma sono indifesi: chiunque, da qualunque punto del programma, può scrivere `bohemian.durata = -50` e darci un brano che dura meno di zero secondi. L'oggetto incassa il colpo senza fiatare.
+Alla fine della [scorsa lezione](./mostrare-un-oggetto.mdx) ti ho lasciato con una falla. I nostri brani ora si raccontano bene con `__str__` e `__repr__`, ma sono indifesi: chiunque, da qualunque punto del programma, può scrivere `bohemian.durata = -50` e darci un brano che dura meno di zero secondi. L'oggetto incassa il colpo senza fiatare.
 
 Questa è esattamente la situazione che Gandalf vorrebbe evitare. Lo stato di un oggetto — i suoi dati interni — è come l'Anello: alcune cose è meglio tenerle nascoste e protette, non lasciarle in mano al primo che passa. Oggi insegniamo ai nostri oggetti a **difendere il proprio stato**: cosa lasciar vedere, cosa lasciar toccare, e cosa chiudere a chiave.
 
 :::prereq
 
-- La lezione precedente, _Mostrare un oggetto_ — in particolare `self`, gli attributi d'istanza e i metodi speciali `__str__` / `__repr__`
+- La lezione precedente, _[Mostrare un oggetto](./mostrare-un-oggetto.mdx)_ — in particolare `self`, gli attributi d'istanza e i metodi speciali `__str__` / `__repr__`
 - Sapere scrivere un `__init__` e creare istanze di una classe
 - La differenza tra **leggere** un attributo (`brano.durata`) e **scriverci** sopra (`brano.durata = ...`)
 

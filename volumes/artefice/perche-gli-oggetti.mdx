@@ -142,7 +142,7 @@ Una **classe** è la descrizione di un tipo di oggetto: stabilisce quali dati av
 
 Una classe funziona come uno stampo: esiste una volta sola nel codice, e da lì escono quanti oggetti vuoi, ciascuno con i propri valori. Lo stampo però non contiene i biscotti e non ne conserva copie — descrive la forma, e la forma viene applicata nel momento in cui crei l'oggetto.
 
-Non serve capire ora `class`, `self` e `__init__`: sono il cuore della prossima lezione. Nella classe `Brano` qui sotto conta una cosa sola, cioè dove stanno le informazioni del brano e dove sta ciò che sai farci.
+Non serve capire ora `class`, `self` e `__init__`: sono il cuore della [prossima lezione](./classi-e-istanze.mdx). Nella classe `Brano` qui sotto conta una cosa sola, cioè dove stanno le informazioni del brano e dove sta ciò che sai farci.
 
 ```py live
 class Brano:
@@ -199,7 +199,7 @@ for brano in brani:
 
 Rimescola la lista come preferisci: qualunque cosa tu faccia all'ordine, sposti oggetti interi, e ogni titolo si porta dietro la sua durata.
 
-Sparisce quel bug, non la possibilità di sbagliare in generale. Puoi ancora costruire un `Brano` passando la durata di un altro, o scrivere `bohemian.durata = -5` senza che nessuno protesti: la classe che hai appena visto non controlla niente. Darle il potere di rifiutare valori assurdi è possibile ed è l'argomento della lezione sull'_incapsulamento_. Per adesso hai ottenuto qualcosa di più modesto e più utile: un posto preciso in cui quelle regole potranno stare.
+Sparisce quel bug, non la possibilità di sbagliare in generale. Puoi ancora costruire un `Brano` passando la durata di un altro, o scrivere `bohemian.durata = -5` senza che nessuno protesti: la classe che hai appena visto non controlla niente. Darle il potere di rifiutare valori assurdi è possibile ed è l'argomento della [lezione sull'_incapsulamento_](./incapsulamento.mdx). Per adesso hai ottenuto qualcosa di più modesto e più utile: un posto preciso in cui quelle regole potranno stare.
 
 ### La classe disegnata
 
@@ -418,7 +418,7 @@ Kay ha poi passato decenni a ripetere che "la OOP, come la intendevo io, non è 
 
 :::tip[La prossima lezione]
 
-Qui hai visto cosa fa una classe e quando conviene. La prossima smonta il come: cosa succede quando scrivi `Brano(...)`, che ruolo ha `__init__`, perché `self` compare come primo parametro di ogni metodo e non lo passi mai tu. Ripartiamo da `Brano`, gli aggiungiamo comportamenti e gli affianchiamo la `Playlist` di Risonanza.
+Qui hai visto cosa fa una classe e quando conviene. La [prossima](./classi-e-istanze.mdx) smonta il come: cosa succede quando scrivi `Brano(...)`, che ruolo ha `__init__`, perché `self` compare come primo parametro di ogni metodo e non lo passi mai tu. Ripartiamo da `Brano`, gli aggiungiamo comportamenti e gli affianchiamo la `Playlist` di Risonanza.
 
 Nel frattempo, prendi un'app che usi ogni giorno e prova a elencarne le entità: per ciascuna, quali informazioni si porta dietro e quali operazioni hanno senso solo su di lei. Se ti accorgi che un'operazione riguarda due entità diverse, hai già incontrato il problema di cui parla mezzo volume.
 
