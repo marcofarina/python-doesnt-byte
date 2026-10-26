@@ -360,6 +360,18 @@ async function verifica(lezioni) {
           .locator('.pdb-run__esiti')
           .evaluate((el) => el.scrollHeight - el.clientHeight)
           .catch(() => 0);
+        // E il resto della slide, con il risultato aperto, resta al suo
+        // posto: niente spinto oltre il piede.
+        const spinta = await pagina
+          .locator(`.slidev-page-${n} .pdb-corpo`)
+          .evaluate((el) => el.scrollHeight - el.clientHeight)
+          .catch(() => 0);
+        if (spinta > 2 && eccesso <= 2) {
+          esiti.push({
+            slide: n,
+            esecuzione: `${nome}: con il risultato aperto la slide straborda di ${spinta}px: aggiungi \`seguito\` al blocco`,
+          });
+        }
         if (eccesso > 2) {
           esiti.push({
             slide: n,

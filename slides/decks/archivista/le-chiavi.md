@@ -59,7 +59,7 @@ layout: domanda
 
 # Registriamo i due James Potter
 
-<SqlRun dataset="archivista/registro-punti" database="studente" uscita="destra" errore>
+<SqlRun dataset="archivista/registro-punti" database="studente" errore seguito>
 
 ```sql
 INSERT INTO studente (nome, casa, anno)
