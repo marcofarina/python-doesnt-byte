@@ -1,0 +1,486 @@
+/* ─────────────── Cornice e layout ───────────────
+   Griglia unica: testata 26px, corpo, piede 22px; margini laterali --pad-x.
+   Ogni layout di contenuto passa da <Cornice>, quindi titolo, testo e piede
+   cadono sempre sulle stesse linee. */
+
+.pdb-cornice {
+  display: grid;
+  /* minmax(0, 1fr): il corpo non cresce oltre lo spazio. Un contenuto troppo
+     lungo straborda (e `slides:verifica` lo trova) invece di spingere il piede
+     fuori dalla slide. */
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  padding: var(--pad-alto) var(--pad-x) var(--pad-basso);
+}
+
+.pdb-testata {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+}
+
+.pdb-testata__sezione {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--at-accent);
+}
+
+.pdb-quadretto {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--at-accent);
+}
+
+.pdb-corpo {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 8px;
+}
+
+.pdb-piede {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--at-border);
+  font-family: var(--font-mono-ui);
+  font-size: var(--corpo-etichetta);
+  color: var(--at-muted);
+}
+
+.pdb-piede__titolo {
+  max-width: 75%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdb-piede__pagina {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Corpo centrato verticalmente (definizione, enunciato, quiz) ── */
+.pdb-corpo--centro {
+  justify-content: center;
+}
+
+/* ── Due colonne ── */
+.pdb-colonne {
+  display: grid;
+  grid-template-columns: var(--colonne, 1fr 1fr);
+  gap: 32px;
+  align-items: start;
+  margin-top: var(--spazio);
+  min-height: 0;
+}
+
+.pdb-colonne--centro {
+  align-items: center;
+}
+
+.pdb-colonna {
+  min-width: 0;
+}
+
+.pdb-colonna__etichetta {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* ─────────────── Copertina ─────────────── */
+.pdb-copertina {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 34px var(--pad-x) 30px;
+  overflow: hidden;
+}
+
+.pdb-copertina__marchio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono-ui);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--at-fg);
+}
+
+.pdb-copertina__marchio img {
+  width: 30px;
+  height: 30px;
+}
+
+.pdb-copertina__centro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 700px;
+  position: relative;
+  z-index: 1;
+}
+
+.pdb-copertina__kicker {
+  color: var(--at-accent);
+  margin-bottom: 18px;
+}
+
+.slidev-layout.pdb .pdb-copertina__titolo {
+  font-size: 58px;
+  line-height: 1.02;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--at-titolo);
+}
+
+.pdb-copertina__sottotitolo {
+  margin-top: 20px;
+  font-size: 23px;
+  line-height: 1.38;
+  color: var(--at-muted);
+  max-width: 620px;
+}
+
+.pdb-copertina__piede {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.pdb-copertina__piede .pdb-raggio {
+  flex: 1;
+}
+
+/* Il numero della lezione, grande e a filo, sul lato destro. */
+.pdb-copertina__numero {
+  position: absolute;
+  right: -18px;
+  bottom: 36px;
+  font-family: var(--font-display);
+  font-size: 340px;
+  line-height: 0.8;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--at-accent-border);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ─────────────── Sezione ─────────────── */
+.pdb-sezione {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  padding: 0 var(--pad-x) 30px;
+}
+
+.pdb-sezione__centro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 760px;
+}
+
+.pdb-sezione__numero {
+  font-family: var(--font-mono-ui);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--at-accent);
+  margin-bottom: 14px;
+}
+
+.slidev-layout.pdb.pdb-sezione h1 {
+  font-size: 52px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.slidev-layout.pdb.pdb-sezione h1 + p {
+  margin-top: 18px;
+  font-size: 23px;
+  color: var(--at-muted);
+}
+
+/* ─────────────── Epigrafe ─────────────── */
+.pdb-epigrafe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 calc(var(--pad-x) + 40px);
+}
+
+.pdb-epigrafe__carta {
+  position: relative;
+  padding: 44px 52px 36px;
+  border-radius: var(--radius-lg);
+  background: var(--at-bg-panel);
+  box-shadow: var(--shadow-card);
+}
+
+.pdb-epigrafe__carta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    120deg,
+    var(--raggio-1),
+    var(--raggio-2) 50%,
+    var(--raggio-3)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.pdb-epigrafe__segno {
+  position: absolute;
+  top: -8px;
+  left: 26px;
+  font-family: var(--font-display);
+  font-size: 150px;
+  line-height: 1;
+  color: var(--at-accent-chip);
+  user-select: none;
+}
+
+.pdb-epigrafe__testo {
+  position: relative;
+  font-size: 29px;
+  line-height: 1.35;
+  font-style: italic;
+  color: var(--at-fg);
+}
+
+.pdb-epigrafe__autore {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--at-accent-chip);
+  border: 1px solid var(--at-accent-border);
+  font-family: var(--font-mono-ui);
+  font-size: 12.5px;
+  color: var(--at-accent);
+}
+
+/* ─────────────── Obiettivi ─────────────── */
+.pdb-obiettivi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: var(--spazio);
+  align-items: stretch;
+}
+
+.pdb-obiettivi .pdb-callout {
+  margin: 0;
+  height: 100%;
+}
+
+/* ─────────────── Definizione ─────────────── */
+.pdb-definizione {
+  max-width: 780px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.pdb-definizione .pdb-callout__corpo {
+  font-size: 24px;
+  line-height: 1.42;
+}
+
+/* ─────────────── Figura ─────────────── */
+.pdb-figura__riga {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.pdb-figura__riga--lato {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.pdb-figura__riga--destra .pdb-figura__lato {
+  order: 2;
+}
+
+.pdb-figura__lato {
+  align-self: center;
+  margin-top: 12px;
+}
+
+.pdb-figura {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.pdb-figura__adatta {
+  flex: none;
+  width: 100%;
+  transform-origin: center center;
+}
+
+.pdb-figura__didascalia {
+  margin-top: 8px;
+  font-size: var(--corpo-piccolo);
+  color: var(--at-muted);
+  text-align: center;
+}
+
+/* ─────────────── Domanda e risposta ─────────────── */
+.pdb-domanda--affiancata {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  /* Niente spazio fra le righe: la colonna destra ne attraversa dieci
+     implicite, e ognuna aggiungerebbe il suo. Lo spazio sotto il titolo lo
+     dà il margine del titolo. */
+  gap: 0 28px;
+  align-items: start;
+}
+
+.slidev-layout.pdb .pdb-domanda--affiancata h1 {
+  margin-bottom: 12px;
+}
+
+/* Il titolo resta a tutta larghezza, sopra le due colonne. */
+.pdb-domanda--affiancata .pdb-domanda__domanda {
+  display: contents;
+}
+
+.pdb-domanda--affiancata .pdb-domanda__domanda > h1 {
+  grid-column: 1 / -1;
+}
+
+.pdb-domanda--affiancata .pdb-domanda__domanda > :not(h1) {
+  grid-column: 1;
+}
+
+.pdb-domanda--affiancata .pdb-domanda__lato {
+  grid-column: 2;
+  grid-row: 2 / span 10;
+  padding-top: 12px;
+}
+
+.pdb-domanda--affiancata .pdb-domanda__invito {
+  display: flex;
+  align-items: flex-start;
+  line-height: 1.45;
+}
+
+.pdb-domanda__invito {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-family: var(--font-mono-ui);
+  font-size: 12.5px;
+  color: var(--at-accent);
+}
+
+.pdb-domanda__risposta {
+  margin-top: 14px;
+}
+
+/* ─────────────── Quiz ─────────────── */
+.pdb-quiz {
+  counter-reset: opzione;
+}
+
+.slidev-layout.pdb .pdb-quiz > h1 {
+  font-size: 27px;
+  line-height: 1.28;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.pdb-quiz .pdb-opzione + .pdb-opzione {
+  margin-top: 10px;
+}
+
+/* ─────────────── Sintesi ─────────────── */
+.pdb-sintesi .pdb-callout {
+  margin-top: var(--spazio);
+}
+
+.pdb-sintesi li {
+  font-size: 19.5px;
+}
+
+/* ─────────────── Fine ─────────────── */
+.pdb-fine {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr auto;
+  gap: 0 48px;
+  padding: 40px var(--pad-x) 30px;
+}
+
+.pdb-fine__testo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pdb-fine__testo h1 {
+  margin-bottom: 18px;
+}
+
+.pdb-fine__qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.pdb-fine__qr-carta {
+  padding: 14px;
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.pdb-fine__qr-carta svg {
+  display: block;
+  width: 168px;
+  height: 168px;
+}
+
+.pdb-fine__url {
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  color: var(--at-muted);
+  text-align: center;
+  max-width: 220px;
+  word-break: break-all;
+}
+
+.pdb-fine__piede {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-top: 24px;
+}
+
+.pdb-fine__piede .pdb-raggio {
+  flex: 1;
+}

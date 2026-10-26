@@ -32,6 +32,12 @@
 
 .action {
   flex-shrink: 0;
+  /* «Presenta» sopra «Spiegamelo facile»: impilati occupano la larghezza di
+     un pulsante solo, e le briciole restano leggibili. */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 }
 
 /* Mobile: niente affiancamento. Tenere il chip in riga obbligherebbe le
@@ -47,5 +53,11 @@
   .breadcrumbsContainer > :global(.breadcrumbs) {
     flex: 0 1 auto;
     width: 100%;
+  }
+
+  .action {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 }

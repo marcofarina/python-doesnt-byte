@@ -1,7 +1,7 @@
 /**
  * Swizzle di @theme/DocBreadcrumbs (eject).
  *
- * Due differenze rispetto all'originale:
+ * Tre differenze rispetto all'originale:
  *  1. dopo la casetta (che punta alla home del sito) inseriamo una briciola col
  *     NOME DEL VOLUME corrente, linkata all'indice del volume. Senza, in
  *     Biblioteca dell'Apprendista la prima briciola è il volume-sorgente (es.
@@ -10,6 +10,8 @@
  *  2. nella sola Biblioteca dell'Apprendista la prima briciola della sidebar (il
  *     volume-sorgente) è accorciata a «Vol. N»: affianco a «Biblioteca
  *     dell'Apprendista» due titoli di libro interi confondono.
+ *  3. a destra, i pulsanti della lezione: «Presenta» (se la lezione ha le
+ *     slide) e «Spiegamelo facile».
  *
  * Il resto è copia fedele dell'originale: ricontrollare a ogni upgrade di
  * Docusaurus (vedi memoria upgrade_risks).
@@ -30,6 +32,7 @@ import DocBreadcrumbsStructuredData from '@theme/DocBreadcrumbs/StructuredData';
 
 import { VOLUME_LABELS, volumeShortByLabel } from '@site/src/lib/docResolve';
 import CopyPageButton from '@site/src/components/CopyPageButton';
+import PresentaButton from '@site/src/components/PresentaButton';
 
 import styles from './styles.module.css';
 
@@ -137,8 +140,10 @@ export default function DocBreadcrumbs(): ReactNode {
             );
           })}
         </ul>
-        {/* Self-gate: null fuori da una lezione (pagine category). */}
+        {/* Self-gate: null fuori da una lezione (pagine category) e, per
+            «Presenta», nelle lezioni senza slide (slides/decks/). */}
         <div className={styles.action}>
+          <PresentaButton />
           <CopyPageButton />
         </div>
       </nav>

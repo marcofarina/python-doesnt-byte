@@ -1,0 +1,39 @@
+/* ─────────────── PDF ───────────────
+   `slidev export` (pagina /print, html.print) e l'esportazione dal browser
+   (@media print): niente pulsanti né output degli esecutori, perché nel PDF
+   conta il codice, e niente comandi del player delle figure. */
+
+html.print .pdb-run__barra,
+html.print .pdb-run__esiti,
+html.print .pdb-run__uscita,
+html.print .pdb-figura-libro button {
+  display: none !important;
+}
+
+html.print .pdb-run--destra {
+  display: block;
+}
+
+@media print {
+  .pdb-run__barra,
+  .pdb-run__esiti,
+  .pdb-run__uscita,
+  .pdb-figura-libro button {
+    display: none !important;
+  }
+
+  .pdb-run--destra {
+    display: block;
+  }
+}
+
+/* Nella slide «risultato» l'esito è il contenuto: nel PDF resta. */
+html.print .pdb-run--risultato .pdb-run__esiti {
+  display: grid !important;
+}
+
+@media print {
+  .pdb-run--risultato .pdb-run__esiti {
+    display: grid !important;
+  }
+}

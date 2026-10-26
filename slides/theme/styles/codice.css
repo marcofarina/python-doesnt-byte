@@ -1,0 +1,253 @@
+/* ─────────────── Codice ───────────────
+   Blocchi come nel libro: carta bianca, filo sottile, Monaspace Neon. Il
+   corpo è fisso (14px, che proiettato resta grande) così due slide di codice
+   affiancate hanno la stessa grana; per blocchi lunghi si usa `{maxHeight:'…'}` di Slidev, non un
+   corpo più piccolo. */
+
+.slidev-layout.pdb .slidev-code-wrapper {
+  margin: 12px 0 0;
+}
+
+.slidev-layout.pdb .slidev-code {
+  --slidev-code-font-size: 14px;
+  --slidev-code-line-height: 1.5;
+  font-family: var(--font-mono) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  padding: 12px 18px !important;
+  border-radius: var(--radius-md) !important;
+  background: var(--at-bg-panel) !important;
+  box-shadow: var(--shadow-card);
+}
+
+.slidev-layout.pdb .slidev-code code {
+  font-family: var(--font-mono);
+}
+
+/* Le righe evidenziate ({2,4}) restano leggibili, le altre si attenuano. */
+.slidev-layout.pdb .slidev-code .line.dishonored {
+  opacity: 0.32;
+}
+
+.slidev-layout.pdb .slidev-code .line.highlighted {
+  background: var(--at-accent-bg);
+  box-shadow: -18px 0 0 var(--at-accent-bg), 18px 0 0 var(--at-accent-bg);
+}
+
+/* ── Esecutori in presentazione (<PyRun>, <SqlRun>) ── */
+.pdb-run {
+  margin-top: 12px;
+}
+
+.pdb-run--destra.pdb-run--aperto {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.pdb-run__codice {
+  position: relative;
+  min-width: 0;
+}
+
+.pdb-run__codice > .slidev-code-wrapper:first-child {
+  margin-top: 0;
+}
+
+.pdb-run__barra {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 5px;
+}
+
+.pdb-run__esegui,
+.pdb-run__azzera {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--at-accent-border);
+  background: var(--at-accent-chip);
+  color: var(--at-accent);
+  transition: background var(--dur-fast) var(--ease-smooth);
+}
+
+.pdb-run__esegui:hover {
+  background: var(--at-accent-bg);
+}
+
+.pdb-run__esegui:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.pdb-run__azzera {
+  border-color: var(--at-border-strong);
+  background: var(--at-bg-panel);
+  color: var(--at-muted);
+}
+
+.pdb-run__uscita {
+  margin-top: 10px;
+  padding: 10px 16px 12px;
+  border-radius: var(--radius-md);
+  background: #18181b;
+  color: #e4e4e7;
+}
+
+.pdb-run--destra .pdb-run__uscita {
+  margin-top: 0;
+}
+
+.pdb-run__titolo {
+  color: #a1a1aa;
+  margin-bottom: 6px;
+}
+
+.pdb-run__testo {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.pdb-run__stderr {
+  color: #fca5a5;
+}
+
+.pdb-run__uscita--errore {
+  box-shadow: 0 0 0 1.5px #f87171 inset;
+}
+
+.pdb-run__tabella + .pdb-run__tabella {
+  margin-top: 10px;
+}
+
+.slidev-layout.pdb .pdb-run__tabella table {
+  background: transparent;
+  box-shadow: none;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  color: #e4e4e7;
+}
+
+.slidev-layout.pdb .pdb-run__tabella th {
+  background: rgba(255, 255, 255, 0.05);
+  color: #a1a1aa;
+  border-bottom-color: rgba(255, 255, 255, 0.14);
+  padding: 5px 12px;
+}
+
+.slidev-layout.pdb .pdb-run__tabella td {
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+  padding: 4px 12px;
+}
+
+/* ── Componenti del libro montati nelle slide ── */
+.slidev-layout.pdb .pdb-figura-libro figure,
+.slidev-layout.pdb .pdb-diagramma-libro figure {
+  margin: 0;
+}
+
+.pdb-figura-libro,
+.pdb-diagramma-libro {
+  width: 100%;
+}
+
+/* La figura del libro ha i controlli in un bordo suo: nelle slide basta la
+   carta, senza margini verticali. */
+.slidev-layout.pdb .pdb-figura-libro > figure {
+  box-shadow: var(--shadow-card);
+  border-color: transparent;
+}
+
+.slidev-layout.pdb .pdb-figura-libro button {
+  cursor: pointer;
+}
+
+.pdb-errore {
+  color: var(--ko);
+  font-family: var(--font-mono-ui);
+  font-size: 13px;
+}
+
+/* Mermaid (diagrammi UML): centrato, inchiostro del libro. */
+.slidev-layout.pdb .mermaid {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* ── Pannello «Database» di <SqlRun database> ── */
+.pdb-run__esiti {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  min-width: 0;
+  /* L'altezza massima la calcola composables/uscita.ts sullo spazio rimasto:
+     quello che non ci sta scorre qui dentro, non fuori dalla slide. */
+  overflow: auto;
+  border-radius: var(--radius-md);
+}
+
+.pdb-run__database {
+  padding: 10px 14px 12px;
+  border-radius: var(--radius-md);
+  background: var(--at-bg-panel);
+  box-shadow: var(--shadow-card);
+}
+
+.pdb-run__titolo-db {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.pdb-run__cambi {
+  color: var(--at-accent);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.pdb-run__esiti .pdb-run__uscita {
+  margin-top: 0;
+}
+
+.pdb-run:not(.pdb-run--destra) .pdb-run__esiti {
+  margin-top: 10px;
+}
+
+/* ── Slide «risultato»: niente codice, solo l'esito, eseguito da solo ── */
+.pdb-run--risultato .pdb-run__codice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.pdb-run--risultato .pdb-run__codice > :not(.pdb-run__barra):not(.pdb-run__anteprima) {
+  display: none;
+}
+
+.pdb-run--risultato .pdb-run__barra {
+  margin-top: 0;
+}
+
+.pdb-run--risultato .pdb-run__esiti {
+  margin-top: 0;
+}
+
+.pdb-run--risultato.pdb-run--destra.pdb-run--aperto {
+  display: block;
+}

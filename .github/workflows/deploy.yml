@@ -19,9 +19,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            slides/package-lock.json
 
       - name: Install dependencies
         run: npm ci
+      - name: Install slides dependencies
+        run: npm ci --prefix slides
+      - name: Build slides
+        run: npm run slides:build
       - name: Build website
         run: npm run build
 

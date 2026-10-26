@@ -33,6 +33,10 @@ Una pull request verso `main` che non arriva da `dev` viene bloccata da un contr
 - Una descrizione che dica che cosa cambia e perché.
 - Per le lezioni, il contenuto in italiano e le regole di tono del progetto. Se hai dubbi, apri prima una issue.
 
+## Lezioni e presentazioni
+
+Ogni lezione ha la sua presentazione in `slides/decks/` (vedi `slides/README.md`), e le due cambiano insieme: chi modifica o crea una lezione, persona o assistente IA, aggiorna o crea nello stesso commit anche il suo mazzo, poi lancia `npm run slides:check`, `npm run slides:build`, `npm run slides:verifica` e `npm run slides:provino` e corregge finché passano. `slides:check` segnala una lezione cambiata dopo il suo mazzo, e la CI si ferma.
+
 ## Sostenitori
 
 Il nome di un sostenitore compare nell’elenco (`src/lib/v4vData.ts`) solo dopo che il maintainer ha verificato la donazione. Non modificare quel file in una pull request: scrivi a marco.farina@jcmaxwell.it.

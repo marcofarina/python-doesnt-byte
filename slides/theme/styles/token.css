@@ -1,0 +1,129 @@
+/* ─────────────── Token del tema ───────────────
+   Gli stessi valori di src/css/custom.css (tema Atmospheric, modalità chiara)
+   e delle figure: una slide e la pagina del libro devono sembrare lo stesso
+   oggetto. Se cambia un colore nel libro, va cambiato anche qui.
+
+   I nomi --at-*, --radius-*, --font-* sono quelli del sito di proposito: i
+   componenti React del libro montati nelle slide (Figura, DiagrammaER) li
+   leggono così come sono. */
+
+:root {
+  --font-display:
+    'Crimson Pro Variable', 'Crimson Pro', 'Iowan Old Style', Georgia, serif;
+  --font-body:
+    'Crimson Pro Variable', 'Crimson Pro', 'Iowan Old Style', Georgia, serif;
+  --font-mono: 'Monaspace Neon', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono-comment:
+    'Monaspace Radon', 'Monaspace Neon', ui-monospace, monospace;
+  --font-mono-ui:
+    'Monaspace Argon', 'Monaspace Neon', ui-monospace, SFMono-Regular, monospace;
+
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms;
+  --dur-normal: 200ms;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  --at-bg: #fafaf9;
+  --at-bg-panel: #ffffff;
+  --at-bg-subtle: rgba(0, 0, 0, 0.025);
+  --at-bg-chip: rgba(0, 0, 0, 0.04);
+  --at-fg: #27272a;
+  --at-fg-strong: #09090b;
+  --at-fg-body: #3f3f46;
+  --at-muted: #6b6b73;
+  --at-faint: #a1a1aa;
+  --at-border: rgba(0, 0, 0, 0.08);
+  --at-border-strong: rgba(0, 0, 0, 0.12);
+  --at-titolo: #011d4a;
+
+  --ifm-background-color: var(--at-bg);
+
+  --shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02),
+    0 0 0 0.5px rgba(0, 0, 0, 0.08);
+
+  /* Callout: palette di src/css/custom.css (modalità chiara). */
+  --callout-prereq-bg: oklch(96% 0.025 240);
+  --callout-prereq-fg: oklch(48% 0.16 240);
+  --callout-learn-bg: oklch(96% 0.025 350);
+  --callout-learn-fg: oklch(52% 0.18 350);
+  --callout-exercise-bg: oklch(95% 0.03 320);
+  --callout-exercise-fg: oklch(52% 0.2 320);
+  --callout-definition-bg: oklch(95% 0.04 70);
+  --callout-definition-fg: oklch(48% 0.13 70);
+  --callout-history-bg: oklch(94% 0.045 35);
+  --callout-history-fg: oklch(48% 0.16 35);
+  --callout-code-bg: oklch(95% 0 0);
+  --callout-code-fg: oklch(40% 0 0);
+  --callout-cleancode-bg: oklch(95% 0.025 270);
+  --callout-cleancode-fg: oklch(48% 0.18 270);
+  --callout-nutshell-bg: oklch(95% 0.03 55);
+  --callout-nutshell-fg: oklch(46% 0.09 55);
+  --callout-mindmap-bg: oklch(95% 0.04 175);
+  --callout-mindmap-fg: oklch(46% 0.13 175);
+  --callout-info-bg: oklch(95% 0.04 145);
+  --callout-info-fg: oklch(46% 0.14 145);
+  --callout-tip-bg: oklch(96% 0.05 90);
+  --callout-tip-fg: oklch(52% 0.15 85);
+  --callout-warning-bg: oklch(94% 0.05 55);
+  --callout-warning-fg: oklch(56% 0.17 50);
+  --callout-danger-bg: oklch(93% 0.04 15);
+  --callout-danger-fg: oklch(48% 0.22 18);
+  --callout-note-bg: oklch(95% 0 0);
+  --callout-note-fg: oklch(45% 0 0);
+
+  --ok: #127538;
+  --ok-bg: rgba(18, 117, 56, 0.08);
+  --ko: #b91c1c;
+  --ko-bg: rgba(185, 28, 28, 0.07);
+}
+
+/* ─────────────── Accento del volume ───────────────
+   Le quattro palette delle card dei volumi in home (src/components/VolumeCard):
+   blu, rosa, ambra, verde. Ogni slide prende quella del volume dichiarato nel
+   frontmatter iniziale del mazzo (`volume:`). */
+
+.pdb {
+  --at-accent: #0270ad;
+  --at-accent-bg: rgba(2, 132, 199, 0.06);
+  --at-accent-chip: rgba(2, 132, 199, 0.08);
+  --at-accent-border: rgba(2, 132, 199, 0.22);
+  --raggio-1: #0891b2;
+  --raggio-2: #2563eb;
+  --raggio-3: #7c3aed;
+}
+
+.pdb.vol-artefice {
+  --at-accent: #a21caf;
+  --at-accent-bg: rgba(236, 72, 153, 0.06);
+  --at-accent-chip: rgba(236, 72, 153, 0.08);
+  --at-accent-border: rgba(236, 72, 153, 0.24);
+  --raggio-1: #db2777;
+  --raggio-2: #7c3aed;
+  --raggio-3: #4f46e5;
+}
+
+.pdb.vol-archivista {
+  --at-accent: #b45309;
+  --at-accent-bg: rgba(245, 158, 11, 0.07);
+  --at-accent-chip: rgba(245, 158, 11, 0.1);
+  --at-accent-border: rgba(245, 158, 11, 0.3);
+  --raggio-1: #f59e0b;
+  --raggio-2: #fb923c;
+  --raggio-3: #ef4444;
+}
+
+.pdb.vol-apprendista {
+  --at-accent: #15803d;
+  --at-accent-bg: rgba(34, 197, 94, 0.07);
+  --at-accent-chip: rgba(34, 197, 94, 0.1);
+  --at-accent-border: rgba(34, 197, 94, 0.28);
+  --raggio-1: #10b981;
+  --raggio-2: #14b8a6;
+  --raggio-3: #06b6d4;
+}

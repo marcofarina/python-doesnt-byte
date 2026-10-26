@@ -9,3 +9,4 @@
 - [ ] La base è `dev`
 - [ ] `npm run lint` passa
 - [ ] `npm run build` passa
+- [ ] Se aggiungi o cambi una lezione: il suo mazzo in `slides/decks/` è aggiornato e `npm run slides:check` e `npm run slides:verifica` passano (vedi `slides/README.md`)

@@ -1,0 +1,44 @@
+/* Pulsante «Presenta»: la stessa pillola di «Spiegamelo facile»
+   (src/components/CopyPageButton). */
+.presenta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  font-family: var(--font-mono-ui);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--at-fg-body);
+  background: var(--at-bg-subtle);
+  border: 1px solid var(--at-border);
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  transition:
+    color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.presenta:hover {
+  color: var(--at-accent);
+  border-color: var(--at-accent);
+  background: var(--at-accent-bg);
+  text-decoration: none;
+}
+
+.presenta:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+.icona {
+  width: 14px;
+  height: 14px;
+  color: var(--at-muted);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.presenta:hover .icona {
+  color: var(--at-accent);
+}
