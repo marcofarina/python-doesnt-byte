@@ -1,0 +1,244 @@
+/* ─────────────── Tipografia di base ───────────────
+   Una sola scala per tutte le slide (canvas 980 × 552). I layout non
+   ridefiniscono i corpi: scelgono solo dove mettere le cose. */
+
+:root {
+  --pad-x: 56px;
+  --pad-alto: 26px;
+  --pad-basso: 22px;
+  --spazio: 18px;
+  --corpo: 22px;
+  --corpo-piccolo: 18px;
+  --corpo-etichetta: 11.5px;
+}
+
+html,
+body,
+#app {
+  background: var(--at-bg);
+}
+
+.slidev-layout.pdb {
+  position: relative;
+  height: 100%;
+  background: var(--at-bg);
+  color: var(--at-fg-body);
+  font-family: var(--font-body);
+  font-size: var(--corpo);
+  line-height: 1.42;
+  font-feature-settings: 'kern', 'liga', 'onum';
+  -webkit-font-smoothing: antialiased;
+}
+
+.slidev-layout.pdb h1,
+.slidev-layout.pdb h2,
+.slidev-layout.pdb h3 {
+  font-family: var(--font-display);
+  color: var(--at-titolo);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.slidev-layout.pdb h1 {
+  font-size: 38px;
+  line-height: 1.1;
+  font-weight: 600;
+}
+
+.slidev-layout.pdb h1 + p,
+.slidev-layout.pdb h1 + ul,
+.slidev-layout.pdb h1 + ol,
+.slidev-layout.pdb h1 + div,
+.slidev-layout.pdb h1 + pre {
+  margin-top: var(--spazio);
+}
+
+.slidev-layout.pdb h2 {
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 600;
+}
+
+.slidev-layout.pdb h3 {
+  font-size: 23px;
+  line-height: 1.2;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.slidev-layout.pdb p {
+  margin: 0 0 12px;
+}
+
+.slidev-layout.pdb p:last-child {
+  margin-bottom: 0;
+}
+
+.slidev-layout.pdb strong {
+  color: var(--at-fg-strong);
+  font-weight: 650;
+}
+
+.slidev-layout.pdb em {
+  font-style: italic;
+}
+
+.slidev-layout.pdb a {
+  color: var(--at-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  border: 0;
+}
+
+/* Elenchi: puntino nel colore del volume, rientro fisso. */
+.slidev-layout.pdb ul,
+.slidev-layout.pdb ol {
+  margin: 0 0 12px;
+  padding-left: 1.15em;
+}
+
+/* Il reset di UnoCSS toglie lo stile delle liste: lo rimettiamo. */
+.slidev-layout.pdb ul {
+  list-style: disc;
+}
+
+.slidev-layout.pdb ol {
+  list-style: decimal;
+  padding-left: 1.4em;
+}
+
+.slidev-layout.pdb li {
+  margin: 0 0 8px;
+  padding-left: 0.2em;
+}
+
+.slidev-layout.pdb li:last-child {
+  margin-bottom: 0;
+}
+
+.slidev-layout.pdb ul > li::marker {
+  color: var(--at-accent);
+  content: '●  ';
+  font-size: 0.6em;
+}
+
+.slidev-layout.pdb ol > li::marker {
+  color: var(--at-accent);
+  font-family: var(--font-mono-ui);
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+.slidev-layout.pdb li > ul,
+.slidev-layout.pdb li > ol {
+  margin-top: 6px;
+  font-size: var(--corpo-piccolo);
+}
+
+/* Codice in linea: come nel libro, chip grigio in Neon. */
+.slidev-layout.pdb :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  padding: 0.12em 0.38em;
+  border-radius: var(--radius-xs);
+  background: var(--at-bg-chip);
+  color: var(--at-fg);
+  border: 1px solid var(--at-border);
+  /* Il codice in linea va a capo come il testo: un'espressione lunga dentro
+     una colonna o un callout non deve uscire dal riquadro. Il riquadro si
+     ripete su ogni riga. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.slidev-layout.pdb blockquote {
+  margin: 0;
+  padding: 4px 0 4px 18px;
+  border-left: 3px solid var(--at-accent-border);
+  color: var(--at-fg);
+  font-style: italic;
+}
+
+/* Tabelle (risultati di query, confronti): righe sottili, intestazione mono. */
+.slidev-layout.pdb table {
+  border-collapse: collapse;
+  font-size: var(--corpo-piccolo);
+  background: var(--at-bg-panel);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.slidev-layout.pdb th {
+  font-family: var(--font-mono-ui);
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  color: var(--at-muted);
+  background: var(--at-bg-subtle);
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--at-border-strong);
+}
+
+.slidev-layout.pdb td {
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--at-border);
+}
+
+.slidev-layout.pdb tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Utilità condivise dai layout e utilizzabili nel markdown. */
+.pdb-etichetta {
+  font-family: var(--font-mono-ui);
+  font-size: var(--corpo-etichetta);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--at-muted);
+}
+
+.pdb-accento {
+  color: var(--at-accent);
+}
+
+.pdb-tenue {
+  color: var(--at-muted);
+}
+
+.pdb-piccolo {
+  font-size: var(--corpo-piccolo);
+}
+
+/* Fascio di luce: la linea a tre colori delle card del libro. */
+.pdb-raggio {
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--raggio-1),
+    var(--raggio-2) 55%,
+    var(--raggio-3)
+  );
+}
+
+/* Gli elementi v-click nascosti non devono occupare un'ombra di spazio
+   diverso fra presentazione e PDF: Slidev li nasconde con opacità. */
+.slidev-vclick-hidden {
+  pointer-events: none;
+}
+
+/* Tabelle una sotto l'altra: staccate; in una colonna, larghe quanto lei. */
+.slidev-layout.pdb table + table,
+.slidev-layout.pdb .pdb-colonna table + p,
+.slidev-layout.pdb .pdb-colonna p + table {
+  margin-top: 14px;
+}
+
+.slidev-layout.pdb .pdb-colonna > table {
+  width: 100%;
+}

@@ -54,3 +54,8 @@ AGENTS.md
 
 # Foto e rapporti di verifica delle figure (npm run figure:foto)
 .figure-foto/
+
+# Presentazioni costruite (npm run slides:build): le genera la CI
+static/slides/
+slides/.slidev/
+slides/.provino/

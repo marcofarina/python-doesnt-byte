@@ -165,6 +165,7 @@ export default async function createConfig(): Promise<Config> {
       './plugins/llms-txt/index.js',
       './plugins/curriculum/index.js',
       './plugins/archivio/index.js',
+      './plugins/presentazioni/index.js',
       [
         '@docusaurus/plugin-content-docs',
         {

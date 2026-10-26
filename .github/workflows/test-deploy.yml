@@ -22,9 +22,20 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            slides/package-lock.json
 
       - name: Install dependencies
         run: npm ci
+      - name: Install slides dependencies
+        run: npm ci --prefix slides
+      - name: Install Chromium for the slide verification
+        run: npx --prefix slides playwright install --with-deps chromium
+      - name: Build slides
+        run: npm run slides:build
+      - name: Verify slides (nessuna slide che straborda)
+        run: npm run slides:verifica
       - name: Guardia manifest percorsi (append-only)
         run: npm run curriculum:check
       - name: Lint

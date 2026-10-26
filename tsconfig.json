@@ -3,5 +3,7 @@
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
     "baseUrl": "."
-  }
+  },
+  // Le presentazioni hanno un progetto e dipendenze loro (slides/).
+  "exclude": ["slides", "build", "node_modules"]
 }

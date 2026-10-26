@@ -1,0 +1,36 @@
+{
+  "name": "slidev-theme-python-doesnt-byte",
+  "private": true,
+  "type": "module",
+  "description": "Tema Slidev delle presentazioni di Python Doesn’t Byte: stessa carta, stessi font e stessi colori del libro.",
+  "keywords": [
+    "slidev-theme"
+  ],
+  "engines": {
+    "slidev": ">=53.0.0"
+  },
+  "slidev": {
+    "colorSchema": "light",
+    "highlighter": "shiki",
+    "defaults": {
+      "aspectRatio": "16/9",
+      "canvasWidth": 980,
+      "colorSchema": "light",
+      "fonts": {
+        "provider": "none",
+        "sans": "Crimson Pro Variable",
+        "serif": "Crimson Pro Variable",
+        "mono": "Monaspace Neon"
+      },
+      "lineNumbers": false,
+      "transition": "fade",
+      "mdc": true,
+      "drawings": {
+        "persist": false
+      },
+      "exportFilename": "presentazione",
+      "contextMenu": false,
+      "routerMode": "hash"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "python-doesnt-byte-slides",
+  "private": true,
+  "type": "module",
+  "description": "Presentazioni Slidev delle lezioni di Python Doesn’t Byte",
+  "scripts": {
+    "dev": "node scripts/slides.mjs dev",
+    "build": "node scripts/slides.mjs build",
+    "pdf": "node scripts/slides.mjs pdf",
+    "check": "node scripts/slides.mjs check"
+  },
+  "engines": {
+    "node": ">=20.0"
+  },
+  "devDependencies": {
+    "@slidev/cli": "^53.0.0",
+    "@slidev/parser": "^53.0.0",
+    "playwright-chromium": "^1.64.1"
+  }
+}
