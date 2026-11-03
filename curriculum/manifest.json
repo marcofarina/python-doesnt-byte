@@ -26,7 +26,8 @@
       "archivista/le-chiavi",
       "archivista/associazioni-molti-a-molti",
       "archivista/leggere-un-dominio",
-      "archivista/generalizzazioni"
+      "archivista/generalizzazioni",
+      "apprendista/archivista/modellare-il-dominio/generalizzazioni/esercizio-onda"
     ]
   }
 }
