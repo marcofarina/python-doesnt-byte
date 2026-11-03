@@ -43,4 +43,26 @@ module.exports = [
       },
     ],
   },
+  {
+    type: 'category',
+    label: 'Manuale dell’Archivista',
+    collapsed: false, // volume-sorgente: aperto
+    items: [
+      {
+        type: 'category',
+        label: 'Modellare il dominio',
+        collapsed: true, // capitolo: chiuso
+        items: [
+          {
+            type: 'category',
+            label: 'Generalizzazioni',
+            collapsed: true, // lezione: chiusa
+            items: [
+              'archivista/modellare-il-dominio/generalizzazioni/esercizio-onda',
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];

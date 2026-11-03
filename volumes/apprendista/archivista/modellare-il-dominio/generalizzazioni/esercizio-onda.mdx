@@ -1,0 +1,70 @@
+---
+title: 'Esercizio: Onda, le dirette in streaming'
+sidebar_label: 'Esercizio: le dirette di Onda'
+sidebar_position: 1
+description: Un modello E/R completo per una piattaforma di dirette video, con account, canali, abbonamenti, clip e sospensioni, fino alle generalizzazioni.
+exercise_kind: esercizio
+assigned_in: archivista/generalizzazioni
+theory:
+  [
+    archivista/leggere-un-dominio,
+    archivista/associazioni-molti-a-molti,
+    archivista/generalizzazioni,
+  ]
+difficulty: difficile
+time: '90 min'
+hide_chapter_kicker: true
+---
+
+:::exercise
+
+- Ricavare da un testo un modello E/R completo, con i quattro passi di "[Leggere un dominio](/archivista/leggere-un-dominio)"
+- Riconoscere quando lo stesso fatto si ripete per la stessa coppia e deve diventare un'entità
+- Decidere se una parte delle occorrenze di un'entità merita una generalizzazione, e con quale copertura
+- Scrivere accanto al diagramma le ipotesi e i vincoli che il diagramma non può esprimere
+
+:::
+
+Questa volta il dominio non è Hogwarts. Immaginiamo che tre ex studenti di un istituto tecnico abbiano fondato Onda, una piattaforma italiana di dirette video, e che chiedano a te il modello concettuale del database. La loro richiesta arriva scritta così:
+
+> Onda vuole un database per gestire i suoi account e le sue dirette. Chi si iscrive sceglie un nickname, che può cambiare quando vuole, e lascia un indirizzo email e la data di nascita: Onda non accetta iscritti con meno di 14 anni. Ogni account può seguire tutti i canali che vuole, e Onda vuole sapere da quale giorno li segue.
+>
+> Alcuni account sono creator: aprono un canale, e uno soltanto, con un nome e una categoria (giochi, musica, chiacchiere, studio). Di ogni creator Onda registra anche l'IBAN su cui versare i guadagni. Su un canale vanno in onda le dirette: di ogni diretta interessano il titolo, il momento in cui comincia, quello in cui finisce e il picco di spettatori, cioè il numero più alto di persone collegate nello stesso momento. Il creator può invitare in diretta fino a tre ospiti, che devono essere a loro volta creator, e Onda vuole sapere chi è stato ospite di quale diretta.
+>
+> Chi vuole sostenere un canale si abbona: un abbonamento dura un mese, ha un livello da 1 a 3 e alla scadenza si può rinnovare. Onda conserva anche gli abbonamenti scaduti, perché sul profilo mostra da quanti mesi in tutto una persona sostiene un canale. Dalle dirette gli spettatori ritagliano clip lunghe al massimo 60 secondi: di ogni clip si registrano il titolo, il punto della diretta da cui parte, la durata e l'account che l'ha creata.
+>
+> La moderazione è affidata a dipendenti di Onda, che non hanno un account sulla piattaforma: di ognuno interessano nome, cognome e turno di lavoro. Quando un moderatore sospende un account, si registrano la data, il motivo e la durata della sospensione in giorni. Finita la sospensione l'account torna attivo, e niente impedisce che venga sospeso di nuovo.
+
+## Che cosa devi consegnare
+
+Lavora su carta e segui i quattro passi della lezione "[Leggere un dominio](/archivista/leggere-un-dominio)". Consegna:
+
+1. **I candidati.** I sostantivi del testo, ognuno con il verdetto (entità, attributo di qualcosa, scartato) e il motivo in una riga.
+2. **Le associazioni.** Per ognuna il nome, le entità che lega e gli eventuali attributi. Se lo stesso fatto può ripetersi per la stessa coppia, spiega come l'hai rappresentato.
+3. **Le cardinalità.** La coppia `(min,max)` di ogni entità in ogni associazione, e la copertura di ogni generalizzazione.
+4. **Gli identificatori** di ogni entità, con il motivo della scelta quando il testo ne suggerisce più d'uno.
+5. **Il diagramma E/R completo**, con accanto le ipotesi su ciò che il testo non dice e i vincoli che il diagramma non riesce a esprimere.
+
+:::tip
+
+- Non tutti i numeri del testo diventano cardinalità: alcuni sono regole sui valori di un attributo.
+- Prima di disegnare un attributo, chiediti se si può calcolare da altri dati del modello.
+- Rileggi le frasi che parlano di persone: non tutte le persone del testo hanno un account.
+
+:::
+
+## Prima di consegnare
+
+Controlla che il tuo modello rispetti queste regole:
+
+- ogni entità ha un identificatore che resta lo stesso per tutta la vita di un'occorrenza;
+- ogni associazione ha un nome e una cardinalità da tutti e due i lati;
+- nessun attributo si può calcolare da altri dati del modello, a meno che tu non l'abbia tenuto apposta e lo abbia scritto fra le ipotesi;
+- ogni regola del testo compare nel diagramma oppure nell'elenco dei vincoli.
+
+## Per chi finisce prima
+
+Onda cresce e cambia due regole. Prova a modificare il tuo modello per ciascuna, separatamente:
+
+- alcuni creator diventano partner di Onda, e di ogni partner si registrano la percentuale sui guadagni e la data in cui è stato firmato l'accordo;
+- un canale può essere gestito da una squadra di creator, fino a cinque, e ogni creator può far parte di più squadre.
