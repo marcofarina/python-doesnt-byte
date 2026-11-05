@@ -1,0 +1,45 @@
+---
+title: 'Ribalta, le dirette in streaming'
+sidebar_label: 'Le dirette di Ribalta'
+sidebar_position: 1
+description: Un modello E/R completo per una piattaforma di dirette video, con account, canali, abbonamenti, clip e sospensioni, fino alle generalizzazioni.
+exercise_kind: esercizio
+assigned_in: archivista/generalizzazioni
+theory:
+  [
+    archivista/leggere-un-dominio,
+    archivista/associazioni-molti-a-molti,
+    archivista/generalizzazioni,
+  ]
+difficulty: difficile
+time: '90 min'
+hide_chapter_kicker: true
+---
+
+:::exercise
+
+- Decidere se una parte delle occorrenze di un'entità merita una generalizzazione, e con quale copertura
+
+:::
+
+Ribalta è una piattaforma italiana di dirette video, fondata da tre ex studenti di un istituto tecnico. Progetta il database che conserva i suoi account, i canali e le dirette.
+
+Chi si iscrive a Ribalta sceglie un nickname, che può cambiare quando vuole, e lascia un indirizzo email e la data di nascita. Ribalta non accetta iscritti con meno di 14 anni. Ogni account può seguire tutti i canali che vuole, e Ribalta vuole sapere da quale giorno li segue.
+
+Alcuni account sono creator: aprono un canale, e uno soltanto, con un nome e una categoria (giochi, musica, chiacchiere, studio). Di ogni creator Ribalta registra anche l'IBAN su cui versare i guadagni. Su un canale vanno in onda le dirette: di ogni diretta interessano il titolo, il momento in cui comincia, quello in cui finisce e il picco di spettatori, cioè il numero più alto di persone collegate nello stesso momento. Il creator può invitare in diretta fino a tre ospiti, che devono essere a loro volta creator, e Ribalta vuole sapere chi è stato ospite di quale diretta.
+
+Chi vuole sostenere un canale si abbona: un abbonamento dura un mese, ha un livello da 1 a 3 e alla scadenza si può rinnovare. Ribalta conserva anche gli abbonamenti scaduti, perché sul profilo mostra da quanti mesi in tutto una persona sostiene un canale. Dalle dirette gli spettatori ritagliano clip lunghe al massimo 60 secondi: di ogni clip si registrano il titolo, il punto della diretta da cui parte, la durata e l'account che l'ha creata.
+
+La moderazione è affidata a dipendenti di Ribalta, che non hanno un account sulla piattaforma: di ognuno interessano nome, cognome e turno di lavoro. Quando un moderatore sospende un account, si registrano la data, il motivo e la durata della sospensione in giorni. Finita la sospensione l'account torna attivo, e niente impedisce che venga sospeso di nuovo.
+
+## Richieste
+
+1. **Analisi del dominio.** Elenca le entità, gli attributi, le associazioni e gli identificatori che ricavi dal testo, motivando le scelte meno ovvie e scrivendo le ipotesi su ciò che il testo non dice.
+2. **Diagramma E/R.** Disegna il diagramma completo, con le cardinalità e le coperture, e accanto i vincoli che il diagramma non riesce a esprimere.
+
+## Obiettivi facoltativi
+
+Ribalta cresce e cambia due regole. Per ciascuna, separatamente, indica come cambia il modello:
+
+- alcuni creator diventano partner di Ribalta, e di ogni partner si registrano la percentuale sui guadagni e la data in cui è stato firmato l'accordo;
+- un canale può essere gestito da una squadra di creator, fino a cinque, e ogni creator può far parte di più squadre.

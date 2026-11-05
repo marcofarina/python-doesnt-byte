@@ -58,7 +58,7 @@ module.exports = [
             label: 'Generalizzazioni',
             collapsed: true, // lezione: chiusa
             items: [
-              'archivista/modellare-il-dominio/generalizzazioni/esercizio-onda',
+              'archivista/modellare-il-dominio/generalizzazioni/esercizio-ribalta',
             ],
           },
         ],
