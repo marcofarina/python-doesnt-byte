@@ -1,10 +1,14 @@
 // Dati della campagna Value 4 Value.
 //
-// ⚠️ PLACEHOLDER — aggiorna a mano questi valori.
-//   - `raised`: euro raccolti finora (la barra obiettivi si calcola su questo);
-//   - `milestones`: i traguardi (l'ultimo è il massimo della barra);
-//   - `DONORS`: l'elenco dei sostenitori (tier 3 = ringraziamento speciale).
-// Quando avrai dati reali, sostituiscili qui: il resto della pagina si adatta.
+//   - `RACCOLTO_PRECEDENTE`: euro raccolti prima dei contributi con `importo`
+//     (il totale reale di quei contributi, sostenitori con nome compresi);
+//   - `V4V_DONORS`: l'elenco dei sostenitori (tier 3 = ringraziamento speciale).
+//     Un sostenitore con `importo` si somma al totale; senza `importo` è già
+//     contato in `RACCOLTO_PRECEDENTE`;
+//   - `raised` = `RACCOLTO_PRECEDENTE` + somma degli `importo`: è la barra.
+//     Va azzerato (`RACCOLTO_PRECEDENTE = 0`, `importo` tolti) a fine anno
+//     scolastico, quando Marco decide di ripartire da zero;
+//   - `milestones`: i traguardi (l'ultimo è il massimo della barra).
 
 import type { IconName } from '@site/src/components/Icon';
 
@@ -19,11 +23,18 @@ export interface Donor {
   name: string;
   /** 1 = sostenitore · 2 = ricorrente · 3 = ringraziamento speciale (cuore) */
   tier: 1 | 2 | 3;
+  /** Euro di questo contributo, se noto; vedi `RACCOLTO_PRECEDENTE`. */
+  importo?: number;
 }
+
+const RACCOLTO_PRECEDENTE = 6.5;
+
+const sommaDonazioni = (donatori: Donor[]) =>
+  donatori.reduce((somma, d) => somma + (d.importo ?? 0), 0);
 
 export const V4V_GOALS = {
   currency: '€',
-  raised: 6.5, // PLACEHOLDER
+  raised: 0, // calcolato sotto da RACCOLTO_PRECEDENTE + V4V_DONORS
   year: 2026,
   costNote:
     'Il sito è ospitato gratis su GitHub Pages: restano il dominio e gli strumenti con cui sviluppo e aggiorno il libro (sì, anche l’assistente AI che mi dà una mano). Ogni traguardo sblocca qualcosa di concreto.',
@@ -49,14 +60,15 @@ export const V4V_GOALS = {
   ] as Milestone[],
 };
 
-// PLACEHOLDER — sostenitori di esempio.
 export const V4V_DONORS: Donor[] = [
   { name: 'Thomas A.', tier: 1 },
   { name: 'Maggy B.', tier: 1 },
   { name: 'Daniele P.', tier: 1 },
-  { name: 'Paolo P.', tier: 1 },
-  { name: 'Matteo P.', tier: 1 },
+  { name: 'Paolo P.', tier: 1, importo: 5 },
+  { name: 'Matteo P.', tier: 1, importo: 4 },
 ];
+
+V4V_GOALS.raised = RACCOLTO_PRECEDENTE + sommaDonazioni(V4V_DONORS);
 
 // Metodi di donazione.
 //   - paypal / satispay: URL aperti in una nuova scheda; il QR codifica l'URL.
