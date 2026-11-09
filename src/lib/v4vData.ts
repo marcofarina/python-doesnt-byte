@@ -54,6 +54,8 @@ export const V4V_DONORS: Donor[] = [
   { name: 'Thomas A.', tier: 1 },
   { name: 'Maggy B.', tier: 1 },
   { name: 'Daniele P.', tier: 1 },
+  { name: 'Paolo P.', tier: 1 },
+  { name: 'Matteo P.', tier: 1 },
 ];
 
 // Metodi di donazione.
