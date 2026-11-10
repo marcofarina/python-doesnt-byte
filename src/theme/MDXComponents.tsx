@@ -31,6 +31,7 @@ import Esito from '@site/src/components/Esito';
 import AvanzamentoVolume from '@site/src/components/AvanzamentoVolume';
 import DiagrammaER from '@site/src/components/DiagrammaER';
 import Figura from '@site/src/components/Figura';
+import Schema from '@site/src/components/Schema';
 
 export default {
   ...MDXComponents,
@@ -62,4 +63,5 @@ export default {
   AvanzamentoVolume,
   DiagrammaER,
   Figura,
+  Schema,
 };
