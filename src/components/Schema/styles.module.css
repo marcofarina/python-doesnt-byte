@@ -1,0 +1,52 @@
+/* Stesso Excalifont dei diagrammi E/R (frammento latino, licenza OFL). */
+@font-face {
+  font-family: 'Excalifont';
+  src: url('../DiagrammaER/Excalifont-Regular-latin.woff2') format('woff2');
+  font-display: swap;
+}
+
+.schema {
+  font-family: 'Excalifont', var(--ifm-font-family-base);
+  font-size: 1.2rem;
+  line-height: 1.5;
+  margin: 1.25rem 0 0;
+  padding: 0.55rem 0.9rem 0.55rem 2.2rem;
+  /* Righe successive sotto la parentesi: rientro appeso. */
+  text-indent: -1.3rem;
+  background: var(--ifm-color-emphasis-100);
+  border: 1.5px dashed var(--ifm-color-emphasis-400);
+  border-radius: var(--radius-md, 10px);
+}
+
+/* Schemi consecutivi: un blocco unico, senza spazio in mezzo. */
+.schema + .schema {
+  margin-top: 0.4rem;
+}
+
+.nome {
+  font-weight: 700;
+}
+
+.par {
+  opacity: 0.6;
+}
+
+.attr {
+  white-space: nowrap;
+}
+
+.pk {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.fk {
+  /* Excalifont non ha il corsivo: lo inclino a mano. */
+  display: inline-block;
+  transform: skewX(-12deg);
+}
+
+html[data-theme='dark'] .schema {
+  background: var(--ifm-color-emphasis-200);
+}

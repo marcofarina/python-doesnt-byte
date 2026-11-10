@@ -1,0 +1,446 @@
+---
+title: Tradurre entità e associazioni in tabelle
+sidebar_label: Tradurre in tabelle
+sidebar_position: 13
+description: Le regole per passare dal diagramma E/R alle tabelle sembrano convenzioni da imparare a memoria. Ognuna è invece la scelta che non perde informazione e non la scrive due volte, e lo vediamo traducendo il modello di Hogwarts e provando ogni volta l’alternativa. Poi tocca a te, con la biblioteca.
+---
+
+import coppieInColonna from '@site/src/figure/coppie-in-colonna';
+
+# Tradurre entità e associazioni in tabelle
+
+<Epigraph author="J. R. R. Tolkien, La Compagnia dell'Anello (1954)">
+
+Speak, friend, and enter.
+
+</Epigraph>
+
+La [lezione precedente](./il-modello-relazionale.mdx) ha definito la relazione e il modo di scriverne lo schema, con la chiave primaria sottolineata, ma ha lasciato incompleto lo schema della tabella `assegnazione`: le colonne `studente` e `professore` contengono la chiave primaria di un'altra relazione, e lo schema non aveva ancora un modo per segnarle. In questa lezione traduciamo in relazioni il modello di Hogwarts costruito nel capitolo 2, e colonne come quelle diventano il modo in cui le relazioni registrano le associazioni. Le regole della traduzione si trovano in molti manuali, riassunte in formule da imparare a memoria: una colonna in più "dal lato molti", una tabella in più per il molti a molti. Per ogni regola proveremo anche l'alternativa, e vedremo che quasi sempre l'alternativa perde informazione o la scrive due volte.
+
+:::prereq
+
+- Relazione, schema, chiave primaria; un solo valore atomico in ogni cella ([lezione precedente](./il-modello-relazionale.mdx))
+- L'attributo composto e l'attributo opzionale (lezione "[Entità e attributi](./entita-e-attributi.mdx)")
+- Le cardinalità e i tre tipi di associazione; le due bacchette di Ron (lezione "[Le cardinalità](./le-cardinalita.mdx)")
+- L'iscrizione con il voto, e l'assegnazione come entità (lezione "[Le associazioni molti a molti](./associazioni-molti-a-molti.mdx)")
+- Il modello della biblioteca di Hogwarts (lezione "[Leggere un dominio e ricavarne il modello](./leggere-un-dominio.mdx)")
+
+:::
+
+:::learn
+
+- Tradurre un'entità in una relazione, con i suoi attributi e la sua chiave primaria
+- Tradurre un'associazione uno a molti con una chiave esterna, e spiegare perché la chiave esterna sta in quella relazione
+- Tradurre un'associazione molti a molti in una relazione propria, e dire qual è la sua chiave primaria
+- Decidere se un'associazione uno a uno si accorpa in una relazione sola
+- Tradurre un diagramma E/R completo in uno schema relazionale, motivando ogni chiave esterna
+
+:::
+
+## Ogni entità diventa una relazione
+
+Il diagramma qui sotto raccoglie il modello di Hogwarts che il capitolo 2 ha costruito un pezzo per lezione: gli studenti con la loro casa, i corsi con il voto di ogni iscrizione, le assegnazioni dei punti con lo studente che le riceve e il professore che le dà, e il professore che dirige ogni casa. Il diagramma è più largo della colonna: su uno schermo stretto scorre di lato dentro la figura.
+
+<DiagrammaER
+  titolo="Il modello di Hogwarts da tradurre"
+  descrizione="Cinque entità e cinque associazioni. Corso (materia e anno, identificatore composto) è collegato a studente (matricola, nominativo composto da nome e cognome, anno, patronus opzionale) da iscrizione, con l'attributo voto: (0,N) accanto a corso, (1,N) accanto a studente. Studente è collegato a casa (nome, colori, animale) da appartiene: (1,1) accanto a studente, (0,N) accanto a casa. Studente è collegato ad assegnazione (id, punti) da riceve: (0,N) accanto a studente, (1,1) accanto ad assegnazione. Assegnazione è collegata a professore (codice, nome) da dà: (1,1) accanto ad assegnazione, (0,N) accanto a professore. Casa è collegata a professore da dirige: (1,1) accanto a casa, (0,1) accanto a professore."
+  entita={[
+    {
+      id: 'corso',
+      col: 0,
+      riga: 0,
+      attributi: ['materia', 'anno'],
+      latoAttributi: 'sotto',
+      identificatore: ['materia', 'anno'],
+    },
+    {
+      id: 'studente',
+      col: 2,
+      riga: 0,
+      attributi: [
+        { nome: 'matricola', identificatore: true },
+        { nome: 'nominativo', componenti: ['nome', 'cognome'] },
+        'anno',
+        { nome: 'patronus', card: '(0,1)' },
+      ],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'casa',
+      col: 4,
+      riga: 0,
+      attributi: [{ nome: 'nome', identificatore: true }, 'colori', 'animale'],
+      latoAttributi: 'sopra',
+    },
+    {
+      id: 'assegnazione',
+      col: 2,
+      riga: 2,
+      attributi: [{ nome: 'id', identificatore: true }, 'punti'],
+      latoAttributi: 'sinistra',
+    },
+    {
+      id: 'professore',
+      col: 4,
+      riga: 2,
+      attributi: [{ nome: 'codice', identificatore: true }, 'nome'],
+      latoAttributi: 'sotto',
+    },
+  ]}
+  associazioni={[
+    {
+      id: 'iscrizione',
+      col: 1,
+      riga: 0,
+      attributi: ['voto'],
+      latoAttributi: 'sotto',
+      tra: [
+        { entita: 'corso', card: '(0,N)' },
+        { entita: 'studente', card: '(1,N)' },
+      ],
+    },
+    {
+      id: 'appartiene',
+      col: 3,
+      riga: 0,
+      tra: [
+        { entita: 'studente', card: '(1,1)' },
+        { entita: 'casa', card: '(0,N)' },
+      ],
+    },
+    {
+      id: 'riceve',
+      col: 2,
+      riga: 1,
+      tra: [
+        { entita: 'studente', card: '(0,N)' },
+        { entita: 'assegnazione', card: '(1,1)' },
+      ],
+    },
+    {
+      id: 'dà',
+      col: 3,
+      riga: 2,
+      tra: [
+        { entita: 'assegnazione', card: '(1,1)' },
+        { entita: 'professore', card: '(0,N)' },
+      ],
+    },
+    {
+      id: 'dirige',
+      col: 4,
+      riga: 1,
+      tra: [
+        { entita: 'casa', card: '(1,1)' },
+        { entita: 'professore', card: '(0,1)' },
+      ],
+    },
+  ]}
+  cella={[200, 170]}
+/>
+
+La traduzione comincia dalle entità, perché nello schema ogni associazione è registrata con le chiavi primarie delle entità che collega. Ogni entità diventa una relazione con lo stesso nome, ogni attributo semplice diventa un attributo della relazione, e l'identificatore diventa la chiave primaria, come abbiamo visto nella lezione precedente. Nel diagramma il professore ha un codice come identificatore, come nella biblioteca della lezione "[Leggere un dominio e ricavarne il modello](./leggere-un-dominio.mdx)". Per quattro delle cinque entità la traduzione non richiede nessuna scelta:
+
+<Schema def="casa([nome], colori, animale)" />
+
+<Schema def="corso([materia], [anno])" />
+
+<Schema def="professore([codice], nome)" />
+
+<Schema def="assegnazione([id], punti)" />
+
+L'entità `studente` ha invece due attributi che non sono semplici. Il nominativo è un attributo composto, formato da nome e cognome. Se restasse un attributo solo, con valori come `Fred Weasley`, la domanda della lezione "Entità e attributi", quanti Weasley ci sono a Hogwarts, richiederebbe di tagliare ogni nominativo dopo lo spazio: il cognome starebbe dentro un valore che il DBMS confronta sempre intero. Per il dominio di Hogwarts il nominativo non è un valore atomico. Un attributo composto si scioglie quindi nelle sue parti, e ogni parte diventa un attributo della relazione: `nome` e `cognome`. Il nominativo nello schema non compare più, perché era il nome del gruppo e non un dato.
+
+Il Patronus è un attributo opzionale: quasi nessuno studente del primo anno ne ha uno. Diventa un attributo come gli altri, e nelle righe degli studenti senza Patronus la sua cella resta vuota. Che cosa contiene davvero una cella vuota, e come si comporta nelle interrogazioni, lo vedremo nella lezione "Il valore che non c'è", l'ultima di questo capitolo.
+
+<Schema def="studente([matricola], nome, cognome, anno, patronus)" />
+
+Nessuna di queste cinque relazioni contiene ancora un'associazione: lo studente non ha una casa, e l'assegnazione non ha né uno studente né un professore. Le associazioni si traducono nelle prossime tre sezioni, una sezione per ogni tipo. Il modello non ha generalizzazioni. Se ne avesse, andrebbero tolte prima di cominciare, con uno dei tre modi della lezione "[Generalizzazioni](./generalizzazioni.mdx)", perché una relazione non ha figlie.
+
+## Uno a molti: la casa nella riga dello studente
+
+L'associazione `appartiene` è un insieme di coppie, una per ogni studente: (Harry Potter, Grifondoro), (Hermione Granger, Grifondoro), (Draco Malfoy, Serpeverde), e così via. Le cardinalità dicono in quante coppie compare ogni occorrenza. Accanto a `studente` c'è `(1,1)`: ogni studente compare in una coppia sola. Accanto a `casa` c'è `(0,N)`: Grifondoro compare in tante coppie quanti sono i suoi studenti.
+
+Una coppia in cui lo studente compare una volta sola si può scrivere nella riga dello studente. Basta aggiungere alla relazione `studente` un attributo `casa`, con il valore della chiave primaria della casa: la riga di Harry riceve `Grifondoro`, quella di Draco `Serpeverde`, e l'insieme delle coppie diventa una colonna. La figura qui sotto mostra il passaggio, coppia per coppia.
+
+<Figura figura={coppieInColonna} />
+
+La tabella qui sotto mostra alcune righe della relazione `studente`, con le colonne che servono qui.
+
+| matricola | nome     | cognome | casa       |
+| --------- | -------- | ------- | ---------- |
+| 1001      | Harry    | Potter  | Grifondoro |
+| 1002      | Hermione | Granger | Grifondoro |
+| 1005      | Draco    | Malfoy  | Serpeverde |
+| 1006      | Padma    | Patil   | Corvonero  |
+
+Proviamo l'altro verso: la colonna nella relazione `casa`, con il valore della chiave primaria dello studente. La riga di Serpeverde riceverebbe la matricola di Draco, e quella di Corvonero la matricola di Padma. La riga di Grifondoro dovrebbe ricevere le matricole di Harry, Hermione, Ron, Neville, Fred e George: sei valori in una cella, e una cella di una relazione contiene un solo valore atomico. Sei colonne `studente_1`, `studente_2` e così via spostano il problema al settimo Grifondoro, come le colonne `legno_2` e `nucleo_2` della lezione "[Le cardinalità](./le-cardinalita.mdx)" spostavano il problema alla terza bacchetta di Ron. La colonna che registra l'associazione può stare da un lato solo: nella relazione dell'entità che compare al massimo in una coppia, cioè quella con il massimo 1 accanto a sé.
+
+Nello schema la nuova colonna `casa` è in corsivo, e sotto lo schema una riga indica a quale chiave primaria si riferisce, nella stessa forma dei vincoli sui domini della lezione precedente:
+
+<Schema def="studente([matricola], nome, cognome, anno, patronus, {casa})" />
+
+- `studente.casa` si riferisce a `casa.nome`.
+
+:::definition[Chiave esterna]
+
+Una **chiave esterna** è un attributo, o un insieme di attributi, di una relazione i cui valori devono comparire fra i valori della chiave primaria di un'altra relazione: ogni valore della colonna `casa` della relazione `studente` deve essere il nome di una riga della relazione `casa`.
+
+:::
+
+Il nome non è nuovo: la lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)" ha chiamato vincolo di chiave esterna la regola con cui il DBMS ha rifiutato un'assegnazione a uno studente che nella tabella `studente` non c'era. Che cosa fa il DBMS quando a sparire è la riga a cui la chiave esterna si riferisce, lo vediamo nella [prossima lezione](./le-chiavi-esterne.mdx).
+
+Nella traduzione passa anche il minimo della cardinalità. Il minimo 1 accanto a `studente` vuol dire che la colonna `casa` non può restare vuota: è il vincolo che nella lezione "Le cardinalità" ha rifiutato Ginny prima dello smistamento. Con il minimo 0, la colonna `casa` di uno studente non ancora smistato resterebbe vuota.
+
+:::warning[Il “lato molti” non è il lato della N]
+
+Molti manuali riassumono la regola così: la chiave esterna va dal lato molti. Nella notazione di questo libro le cardinalità stanno accanto all'entità che descrivono, e la N di `appartiene` sta accanto a `casa`.
+
+- <Esito ok={false} /> la chiave esterna nella relazione dell'entità che ha la N accanto → la relazione `casa` riceve una colonna con sei matricole nella riga di Grifondoro.
+- <Esito /> la chiave esterna nella relazione dell'entità che ha il massimo 1 accanto → ogni studente ha una casa sola, e la sua cella un valore solo.
+
+Il "lato molti" dei manuali è quello degli studenti, che sono molti per ogni casa. Per non sbagliare lato, cerca il massimo 1.
+
+:::
+
+La stessa regola traduce `riceve` e `dà`. Accanto ad `assegnazione` le due associazioni hanno `(1,1)`: ogni assegnazione è ricevuta da uno studente solo e data da un professore solo. Le due chiavi esterne vanno quindi nella relazione `assegnazione`, ed è lo schema della lezione precedente, con le due colonne segnate:
+
+<Schema def="assegnazione([id], {studente}, punti, {professore})" />
+
+- `assegnazione.studente` si riferisce a `studente.matricola`;
+- `assegnazione.professore` si riferisce a `professore.codice`.
+
+Il nome di una chiave esterna può essere diverso da quello della chiave primaria a cui si riferisce: la colonna si chiama `studente` perché indica lo studente che riceve i punti, e i suoi valori sono matricole. Le tre associazioni `appartiene`, `riceve` e `dà` non hanno prodotto nessuna relazione: un'associazione uno a molti diventa una chiave esterna.
+
+## Molti a molti: una relazione per le coppie
+
+L'iscrizione è un'associazione molti a molti: accanto a `studente` c'è `(1,N)`, accanto a `corso` `(0,N)`. Nessuna delle due entità ha il massimo 1, e con la regola della sezione precedente non c'è un lato in cui mettere la colonna: nella riga di Harry della relazione `studente` servirebbero quattro corsi, nella riga di Pozioni del primo anno della relazione `corso` tutti gli studenti del primo anno.
+
+Un modo di avere un valore solo per cella, con la chiave del corso nella relazione `studente`, esiste: una riga per ogni corso che lo studente segue. Le righe di Harry diventano quattro, con la materia e l'anno del corso e il voto:
+
+| matricola | nome  | cognome | casa       | materia         | anno | voto |
+| --------- | ----- | ------- | ---------- | --------------- | ---- | ---- |
+| 1001      | Harry | Potter  | Grifondoro | Erbologia       | 1    | 6    |
+| 1001      | Harry | Potter  | Grifondoro | Incantesimi     | 1    | 7    |
+| 1001      | Harry | Potter  | Grifondoro | Pozioni         | 1    | 5    |
+| 1001      | Harry | Potter  | Grifondoro | Trasfigurazione | 1    | 6    |
+
+Ogni cella ha un valore solo, ma nome, cognome e casa di Harry sono scritti quattro volte. È la ridondanza della lezione "[La stessa informazione scritta due volte](./stessa-informazione-due-volte.mdx)", con le sue anomalie: se la casa di Harry fosse sbagliata, andrebbe corretta in quattro righe, e una riga dimenticata farebbe di Harry uno studente di due case. In più la matricola non distingue più le righe della relazione `studente`, perché per Harry ce ne sono quattro: la relazione non registra più gli studenti, registra le iscrizioni.
+
+La regola giusta è un'altra. Un'associazione molti a molti diventa una relazione propria, con una riga per ogni coppia. Gli attributi della relazione sono le chiavi primarie delle due entità, ognuna come chiave esterna, più gli attributi dell'associazione:
+
+<Schema def="iscrizione([{studente}], [{materia}], [{anno}], voto)" />
+
+- `iscrizione.studente` si riferisce a `studente.matricola`;
+- la coppia `iscrizione.materia`, `iscrizione.anno` si riferisce alla coppia `corso.materia`, `corso.anno`.
+
+La chiave esterna verso `corso` è composta, come la chiave primaria a cui si riferisce: la materia e l'anno indicano un corso solo se presi insieme. Il voto, che è un attributo della coppia, sta nella riga della coppia. Nome, cognome e casa di Harry restano scritti una volta sola, nella relazione `studente`, e nella relazione `iscrizione` Harry compare soltanto con la sua matricola, una volta per ogni corso.
+
+La chiave primaria di `iscrizione` è formata da tutte e tre le colonne che vengono dalle due entità, cioè dalla coppia studente e corso. Nel capitolo 2 abbiamo detto che un'associazione è un insieme di coppie, e che la stessa coppia non può comparire due volte: nella relazione `iscrizione` quella regola diventa la chiave primaria, e il DBMS la fa rispettare.
+
+Il database di prova del blocco qui sotto è più piccolo del modello: registra un anno scolastico solo e, come il registro dei punti, identifica gli studenti con il nome, quindi la colonna `studente` contiene un nome al posto della matricola. In questo database Neville Longbottom ha già un voto in Pozioni del primo anno, un 4. Il blocco prova a registrare a Neville un secondo voto in Pozioni, e si legge così: inserisci nella tabella `iscrizione`, nelle colonne `studente`, `materia`, `anno` e `voto`, i valori `Neville Longbottom`, `Pozioni`, 1 e 8. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+
+```sql live dataset=archivista/iscrizione title="Un secondo voto di Neville in Pozioni"
+INSERT INTO iscrizione (studente, materia, anno, voto)
+VALUES ('Neville Longbottom', 'Pozioni', 1, 8);
+```
+
+<Spoiler block>
+
+Il DBMS rifiuta l'inserimento con l'errore `UNIQUE constraint failed: iscrizione.studente, iscrizione.materia, iscrizione.anno`. La coppia (Neville Longbottom, Pozioni del primo anno) è già nella relazione, e una seconda riga con gli stessi valori nelle tre colonne della chiave primaria non entra: l'8 resta fuori, e il 4 resta al suo posto.
+
+</Spoiler>
+
+Nel messaggio, `UNIQUE` è il nome che SQLite dà al vincolo che vieta due righe con gli stessi valori in una colonna o in un gruppo di colonne; la chiave primaria è un vincolo di questo tipo, e il messaggio elenca le sue tre colonne. In questo capitolo le tabelle sono già pronte, e ci interessa quale chiave devono avere. Come si dichiara la chiave primaria quando si crea una tabella lo vedremo nel capitolo 5, quello sulla costruzione del database.
+
+Il rifiuto del DBMS è giusto finché il database registra un voto solo per ogni iscrizione. Immaginiamo invece che Hogwarts voglia conservare tutti i voti di Neville in Pozioni, uno per ogni compito in classe. La stessa coppia comparirebbe più volte, e per il criterio della lezione "[Le associazioni molti a molti](./associazioni-molti-a-molti.mdx)" l'iscrizione non sarebbe più un'associazione ma un'entità, come l'assegnazione. La sua relazione avrebbe un identificatore assegnato apposta, `id`, come chiave primaria, e lo studente e il corso sarebbero due chiavi esterne fuori dalla chiave primaria. La chiave primaria di una relazione che traduce un'associazione è la coppia proprio perché, in un'associazione, ogni coppia compare una volta sola.
+
+## Uno a uno: accorpare o collegare
+
+Resta da mantenere una promessa della lezione "[Le cardinalità](./le-cardinalita.mdx)": decidere se la bacchetta, quando `possiede` ha `(1,1)` da tutti e due i lati, convenga metterla nella riga dello studente. Con la sola bacchetta di adesso, ogni studente ne ha una e ogni bacchetta registrata è di uno studente. Legno, nucleo e lunghezza hanno quindi un valore solo per ogni studente, e possono diventare attributi della relazione `studente`:
+
+<Schema def="studente([matricola], nome, cognome, anno, patronus, {casa}, legno, nucleo, lunghezza)" />
+
+Accorpare `studente` e `bacchetta` in una relazione sola non perde niente e non scrive niente due volte. Anche due relazioni, con una chiave esterna da `bacchetta` a `studente`, registrerebbero gli stessi fatti, ma per ogni domanda su uno studente e sulla sua bacchetta servirebbe unire due tabelle. Con lo storico delle bacchette di Ron, invece, accanto a `studente` c'è `(1,N)`, l'associazione è uno a molti, e la regola è quella della casa: una relazione `bacchetta` con una chiave esterna verso lo studente che la possiede. Per questo chi progetta accorpa due entità solo quando il massimo 1 è una regola del dominio e non un caso dei dati di oggi: se il dominio cambia, tre colonne della relazione `studente` diventano una relazione nuova.
+
+Anche l'associazione `dirige` del diagramma è uno a uno, con minimi diversi: `(1,1)` accanto a `casa`, `(0,1)` accanto a `professore`. Accorpare `casa` e `professore` non ha senso, perché ognuna delle due entità partecipa ad altre associazioni per conto suo: la casa accoglie gli studenti, il professore dà i punti. Resta da scegliere in quale delle due relazioni mettere la chiave esterna. Nella relazione `professore` una colonna `casa_diretta` avrebbe un valore solo per i quattro direttori, e resterebbe vuota per Silente e per ogni altro professore. Nella relazione `casa` una colonna `direttore` ha un valore in ogni riga, perché ogni casa ha il suo direttore:
+
+<Schema def="casa([nome], colori, animale, {direttore})" />
+
+- `casa.direttore` si riferisce a `professore.codice`.
+
+In un'associazione uno a uno con il minimo 0 da un lato, la chiave esterna va nella relazione dell'entità con il minimo 1, dove non resta mai vuota. Una cella vuota non è un errore, e l'ultima lezione del capitolo spiega come trattarla; una colonna che resta vuota in quasi tutte le righe, però, di solito sta nella relazione sbagliata.
+
+## Il tuo turno
+
+Traduci in uno schema relazionale il modello della biblioteca di Hogwarts, il diagramma della lezione "[Leggere un dominio e ricavarne il modello](./leggere-un-dominio.mdx)" con le sue tre ipotesi. Il modello ha sei entità, `autore`, `libro`, `copia`, `prestito`, `studente` e `professore`, e cinque associazioni: `scrive`, `esemplare`, `riguarda`, `richiede` e `firma`. Lavora su carta, nell'ordine di questa lezione: prima le entità, poi le associazioni, una per una, guardando i massimi. Sotto lo schema scrivi a che cosa si riferisce ogni chiave esterna, e in una riga perché sta in quella relazione.
+
+<details>
+<summary>Una soluzione possibile</summary>
+
+**Le entità.** Ogni entità diventa una relazione, e ogni identificatore una chiave primaria.
+
+<Schema def="autore([codice], nome, cognome)" />
+
+<Schema def="libro([codice], titolo, anno, riservato)" />
+
+<Schema def="studente([matricola], nome)" />
+
+<Schema def="professore([codice], nome)" />
+
+**Uno a molti.** Le associazioni `esemplare`, `riguarda`, `richiede` e `firma` hanno il massimo 1 da un lato, accanto a `copia` o a `prestito`, e diventano chiavi esterne in quelle due relazioni:
+
+<Schema def="copia([inventario], stato, {libro})" />
+
+<Schema def="prestito([id], uscita, rientro, {copia}, {studente}, {professore})" />
+
+- `copia.libro` si riferisce a `libro.codice`: ogni copia è un esemplare di un libro solo, mentre un libro ha più copie.
+- `prestito.copia` si riferisce a `copia.inventario`: ogni prestito riguarda una copia sola, mentre una copia esce molte volte.
+- `prestito.studente` si riferisce a `studente.matricola`: ogni prestito è richiesto da uno studente solo.
+- `prestito.professore` si riferisce a `professore.codice`: ogni prestito ha al massimo una firma. Il minimo accanto a `prestito` è 0, quindi nei prestiti dei libri non riservati la colonna resta vuota, come la data di rientro di una copia non ancora restituita.
+
+**Molti a molti.** L'associazione `scrive` diventa una relazione propria, con la coppia come chiave primaria:
+
+<Schema def="scrive([{autore}], [{libro}])" />
+
+- `scrive.autore` si riferisce a `autore.codice`;
+- `scrive.libro` si riferisce a `libro.codice`.
+
+La relazione `scrive` non ha altri attributi, perché l'associazione non ne ha: contiene soltanto le coppie.
+
+I due vincoli non esprimibili del modello, la firma se e solo se il libro è riservato e al massimo un prestito aperto per copia, restano scritti sotto lo schema: nessuna chiave li fa rispettare. Il modello non ha generalizzazioni; se studenti e professori fossero figli di un'entità `persona`, come nella lezione "Generalizzazioni", la scelta di uno dei tre modi verrebbe prima di tutto il resto.
+
+Altre soluzioni sono accettabili, se motivate. Per esempio, `firma` può diventare una relazione propria, firma(<u>_prestito_</u>, _professore_), con una riga solo per i prestiti firmati: la colonna `professore` di `prestito` non resta più vuota, e per sapere chi ha firmato un prestito servono due tabelle.
+
+</details>
+
+:::nutshell
+
+| Nel diagramma                 | Nello schema relazionale                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------ |
+| entità                        | una relazione; l'identificatore diventa la chiave primaria                                             |
+| attributo composto            | un attributo per ogni parte                                                                            |
+| attributo opzionale           | un attributo che in alcune righe resta vuoto                                                           |
+| associazione uno a molti      | una chiave esterna nella relazione dell'entità con il massimo 1                                        |
+| associazione molti a molti    | una relazione propria, con le chiavi delle due entità come chiave primaria e gli attributi dell'associazione |
+| associazione uno a uno        | una relazione sola, se il massimo 1 è una regola del dominio e le due entità non hanno altre associazioni; altrimenti una chiave esterna nella relazione dell'entità con il minimo 1 |
+| generalizzazione              | tolta prima della traduzione, con uno dei tre modi                                                     |
+
+- Una chiave esterna è un attributo i cui valori devono comparire nella chiave primaria di un'altra relazione. Nello schema si scrive in corsivo, con sotto la chiave primaria a cui si riferisce.
+- La chiave esterna di un'associazione uno a molti non può stare dall'altro lato: lì una cella dovrebbe contenere più valori.
+- Un molti a molti con la chiave esterna in una delle due relazioni riscrive l'entità a ogni coppia: è ridondanza.
+- La chiave primaria della relazione di un'associazione è la coppia, perché un'associazione non contiene due volte la stessa coppia. Se la coppia si ripete, il fatto è un'entità, con il suo `id`.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Nel modello della Coppa di Quidditch ogni partita è arbitrata da un professore: nell'associazione `arbitra` c'è `(1,1)` accanto a `partita` e `(0,N)` accanto a `professore`. Dove va la chiave esterna?
+  </QuizQuestion>
+
+  <QuizOption>
+    Nella relazione `professore`, perché la N sta accanto a `professore`.
+    <QuizFeedback>
+      Accanto a `professore` c'è la N proprio perché un professore può arbitrare molte partite: nella sua riga servirebbero più valori in una cella.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Nella relazione `partita`, con una colonna `arbitro` che si riferisce a `professore.codice`.
+    <QuizFeedback>
+      Esatto. Ogni partita ha un arbitro solo, quindi la sua riga ha un valore solo da registrare.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    In una relazione propria `arbitra`, con la coppia partita e professore come chiave primaria.
+    <QuizFeedback>
+      È la regola del molti a molti. Qui ogni partita compare in una coppia sola, e la coppia sta tutta in una colonna della relazione `partita`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    In tutte e due le relazioni, così si legge da tutti e due i lati.
+    <QuizFeedback>
+      Le stesse coppie scritte due volte sono una ridondanza: il giorno in cui una delle due copie non viene aggiornata, le relazioni si contraddicono.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Un compagno traduce l'iscrizione con lo schema iscrizione(<u>_studente_</u>, _materia_, _anno_, voto): solo lo studente nella chiave primaria. Che cosa succede quando registra i corsi di Harry?
+  </QuizQuestion>
+
+  <QuizOption>
+    Niente di strano: la chiave primaria distingue gli studenti, e ogni studente ha la sua riga.
+    <QuizFeedback>
+      Ogni studente ha una riga sola, e proprio per questo Harry non può avere quattro corsi: le righe della relazione `iscrizione` sono coppie, non studenti.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Il primo corso entra, il secondo viene rifiutato: con questa chiave ogni studente può comparire in una riga sola.
+    <QuizFeedback>
+      Esatto. La chiave primaria deve essere la coppia, studente e corso: è la coppia a comparire una volta sola.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Entrano tutti e quattro i corsi, ma il voto si può registrare solo per il primo.
+    <QuizFeedback>
+      Con lo studente come chiave primaria, la seconda riga di Harry ha lo stesso valore di chiave della prima, e il DBMS la rifiuta per intero, voto compreso.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    I quattro corsi finiscono nella stessa cella, separati da virgole.
+    <QuizFeedback>
+      Il DBMS non unisce le righe: rifiuta quella che viola la chiave. E una cella con quattro corsi non sarebbe comunque un valore atomico.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Nella Coppa di Quidditch ogni casa ha un capitano, e solo pochi studenti lo sono: nell'associazione `capitano` c'è `(1,1)` accanto a `casa` e `(0,1)` accanto a `studente`. Dove conviene mettere la chiave esterna?
+  </QuizQuestion>
+
+  <QuizOption>
+    Nella relazione `studente`, con una colonna `capitano_di` che indica la casa.
+    <QuizFeedback>
+      Funziona, ma la colonna avrebbe un valore solo nelle righe dei quattro capitani, e resterebbe vuota in quelle di tutti gli altri studenti.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Nella relazione `casa`, con una colonna `capitano` che si riferisce alla matricola dello studente.
+    <QuizFeedback>
+      Esatto. Ogni casa ha il suo capitano, quindi la colonna ha un valore in ogni riga: la chiave esterna va dal lato del minimo 1.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    In una relazione propria `capitano`, perché l'associazione è uno a uno.
+    <QuizFeedback>
+      Una relazione propria serve quando nessun lato ha il massimo 1. Qui tutti e due i lati hanno il massimo 1, e basta una colonna.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Accorpando casa e studente in una relazione sola.
+    <QuizFeedback>
+      Si accorpa quando a ogni occorrenza di un'entità corrisponde un'occorrenza dell'altra, come per lo studente e la sua bacchetta. Qui quasi nessuno studente è capitano, e ogni casa ha sette giocatori nell'associazione `gioca`: le due entità non stanno in una riga sola.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[La prossima lezione]
+
+Sotto ogni schema di questa lezione c'è una riga per ogni chiave esterna, che dice a quale chiave primaria si riferisce. Nella [prossima lezione](./le-chiavi-esterne.mdx) vediamo che il DBMS fa rispettare quel riferimento in tutti e due i versi: rifiuta un valore che non corrisponde a nessuna riga, come nel capitolo 1, e rifiuta anche di cancellare una riga a cui altre righe si riferiscono. Fred e George Weasley stanno per lasciare Hogwarts, e i loro punti sono ancora nel registro.
+
+:::
