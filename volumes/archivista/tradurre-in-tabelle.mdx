@@ -151,7 +151,7 @@ La traduzione comincia dalle entità, perché nello schema ogni associazione è 
 
 L'entità `studente` ha invece due attributi che non sono semplici. Il nominativo è un attributo composto, formato da nome e cognome. Se restasse un attributo solo, con valori come `Fred Weasley`, la domanda della lezione "Entità e attributi", quanti Weasley ci sono a Hogwarts, richiederebbe di tagliare ogni nominativo dopo lo spazio: il cognome starebbe dentro un valore che il DBMS confronta sempre intero. Per il dominio di Hogwarts il nominativo non è un valore atomico. Un attributo composto si scioglie quindi nelle sue parti, e ogni parte diventa un attributo della relazione: `nome` e `cognome`. Il nominativo nello schema non compare più, perché era il nome del gruppo e non un dato.
 
-Il Patronus è un attributo opzionale: quasi nessuno studente del primo anno ne ha uno. Diventa un attributo come gli altri, e nelle righe degli studenti senza Patronus la sua cella resta vuota. Che cosa contiene davvero una cella vuota, e come si comporta nelle interrogazioni, lo vedremo nella lezione "[Il valore che non c'è](./il-valore-null.mdx)", l'ultima di questo capitolo.
+Il Patronus è un attributo opzionale: quasi nessuno studente del primo anno ne ha uno. Diventa un attributo come gli altri, e nelle righe degli studenti senza Patronus la sua cella resta vuota. Che cosa contiene davvero una cella vuota, e come si comporta nelle interrogazioni, lo vedremo nella lezione "Il valore che non c'è", l'ultima di questo capitolo.
 
 <Schema def="studente([matricola], nome, cognome, anno, patronus)" />
 
@@ -269,7 +269,7 @@ Anche l'associazione `dirige` del diagramma è uno a uno, con minimi diversi: `(
 
 - `casa.direttore` si riferisce a `professore.codice`.
 
-In un'associazione uno a uno con il minimo 0 da un lato, la chiave esterna va nella relazione dell'entità con il minimo 1, dove non resta mai vuota. Una cella vuota non è un errore, e l'[ultima lezione del capitolo](./il-valore-null.mdx) spiega come trattarla; una colonna che resta vuota in quasi tutte le righe, però, di solito sta nella relazione sbagliata.
+In un'associazione uno a uno con il minimo 0 da un lato, la chiave esterna va nella relazione dell'entità con il minimo 1, dove non resta mai vuota. Una cella vuota non è un errore, e l'ultima lezione del capitolo spiega come trattarla; una colonna che resta vuota in quasi tutte le righe, però, di solito sta nella relazione sbagliata.
 
 ## Il tuo turno
 
