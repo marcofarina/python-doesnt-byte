@@ -15,13 +15,13 @@ by any other name would smell as sweet.
 
 </Epigraph>
 
-Alla fine della scorsa lezione ti ho lasciato con un fastidio. Ogni volta che vogliamo mostrare un brano scriviamo a mano la stessa f-string: `print(f"{bohemian.titolo} — {bohemian.artista}")`. È ripetitivo, è facile sbagliarlo, e soprattutto è strano: l'oggetto *sa* tutto di sé — titolo, artista, durata — eppure tocca a noi, da fuori, ricostruirgli la frase ogni volta.
+Alla fine della [scorsa lezione](./metodi-di-classe-e-statici.mdx) ti ho lasciato con un fastidio. Ogni volta che vogliamo mostrare un brano scriviamo a mano la stessa f-string: `print(f"{bohemian.titolo} — {bohemian.artista}")`. È ripetitivo, è facile sbagliarlo, e soprattutto è strano: l'oggetto *sa* tutto di sé — titolo, artista, durata — eppure tocca a noi, da fuori, ricostruirgli la frase ogni volta.
 
 E se fosse il brano stesso a sapersi raccontare? Se potessimo scrivere semplicemente `print(bohemian)` e ottenere una descrizione sensata? Oggi insegniamo all'oggetto a presentarsi da solo. Lo faremo incontrando i primi due **metodi speciali** di Python — quelli con il doppio trattino basso ai lati, i cosiddetti *dunder* — di cui in realtà ne hai già usato uno senza farci caso: `__init__`.
 
 :::prereq
 
-- La lezione precedente, *Metodi di classe e statici* — in particolare attributi e metodi d'istanza, e il fatto che `__init__` viene chiamato da Python per te
+- La lezione precedente, *[Metodi di classe e statici](./metodi-di-classe-e-statici.mdx)* — in particolare attributi e metodi d'istanza, e il fatto che `__init__` viene chiamato da Python per te
 - *f-string* per comporre stringhe (`f"{variabile}"`)
 - La differenza tra **stampare** un valore (`print`) e **restituirlo** (`return`) da una funzione
 - Liste: sapere cosa succede quando ne stampi una con `print`
@@ -77,7 +77,7 @@ print(bohemian)
 print(f"In riproduzione: {bohemian}")
 ```
 
-Niente più indirizzi di memoria. E nota la seconda riga: anche dentro una f-string, `{bohemian}` passa da `__str__`. Lo stesso vale per `str(bohemian)`. Da ora il brano sa dire chi è, e noi non dobbiamo più ricostruirgli la frase ogni volta: la formattazione vive **dentro** l'oggetto, in un posto solo. È esattamente la coesione di cui parliamo dalla prima lezione.
+Niente più indirizzi di memoria. E nota la seconda riga: anche dentro una f-string, `{bohemian}` passa da `__str__`. Lo stesso vale per `str(bohemian)`. Da ora il brano sa dire chi è, e noi non dobbiamo più ricostruirgli la frase ogni volta: la formattazione vive **dentro** l'oggetto, in un posto solo. È esattamente la coesione di cui parliamo dalla [prima lezione](./perche-gli-oggetti.mdx).
 
 :::definition[Metodo speciale (*dunder*)]
 
@@ -362,7 +362,7 @@ Stessa playlist, due letture: una per chi ascolta, una per chi mette le mani nel
 
 :::tip[Per andare oltre]
 
-I nostri brani ora si raccontano bene, ma c'è ancora una falla: chiunque, da fuori, può scrivere `bohemian.durata = -50` e darci un brano dalla durata negativa. L'oggetto non si difende. La prossima lezione apre il **Capitolo II** e affronta proprio questo: l'**incapsulamento**, cioè come un oggetto protegge il proprio stato e decide cosa lasciar toccare e cosa no.
+I nostri brani ora si raccontano bene, ma c'è ancora una falla: chiunque, da fuori, può scrivere `bohemian.durata = -50` e darci un brano dalla durata negativa. L'oggetto non si difende. La [prossima lezione](./incapsulamento.mdx) apre il **Capitolo II** e affronta proprio questo: l'**incapsulamento**, cioè come un oggetto protegge il proprio stato e decide cosa lasciar toccare e cosa no.
 
 Nel frattempo, un esercizio senza fretta: riprendi la classe `Utente` immaginata la scorsa lezione. Scrivi il suo `__repr__` (che assomigli al costruttore: `Utente('mario@...', ...)`) e poi chiediti — la versione per l'utente, lo `__str__`, sarebbe **diversa**? Un profilo social mostra `@mario`, mica l'email completa. Se la risposta è sì, hai trovato il caso in cui valgono entrambi i metodi.
 
