@@ -66,6 +66,7 @@ export const V4V_DONORS: Donor[] = [
   { name: 'Daniele P.', tier: 1 },
   { name: 'Paolo P.', tier: 1, importo: 5 },
   { name: 'Matteo P.', tier: 1, importo: 4 },
+  { name: 'Simone G.', tier: 1, importo: 2 },
 ];
 
 V4V_GOALS.raised = RACCOLTO_PRECEDENTE + sommaDonazioni(V4V_DONORS);
