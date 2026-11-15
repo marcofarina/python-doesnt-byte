@@ -11,6 +11,7 @@
  *     ->  static/sql-datasets/archivista/omonimi.sql
  *     ->  static/sql-datasets/archivista/corsi-colonna.sql
  *     ->  static/sql-datasets/archivista/iscrizione.sql
+ *     ->  static/sql-datasets/archivista/patronus.sql
  *
  * registro-punti: tre tabelle (studente, professore, assegnazione).
  * L'assegnazione NON porta la casa (sta in studente): è la normalizzazione
@@ -22,6 +23,10 @@
  * corsi-colonna / iscrizione: i corsi in una colonna di studente, poi
  * l'associazione molti a molti con il voto (lezione «Le associazioni molti a
  * molti»). Corsi e voti non sono nell'archivio JSON: stanno in CORSI e VOTI.
+ * patronus: i membri dell'Esercito di Silente nel 1995-96 più Draco Malfoy,
+ * con il Patronus (NULL dove non c'è) e la casa senza NOT NULL (lezione «Il
+ * valore che non c'è: NULL»). Gli studenti non sono quelli di studenti.json
+ * (altri anni, altri personaggi): stanno in PATRONUS, come CORSI e VOTI.
  *
  * Uso:
  *   node scripts/archivio-sql.mjs           riscrive il seed
@@ -356,6 +361,80 @@ ${righeIscrizioni};
 `;
 }
 
+/**
+ * Studenti del 1995-96 (anno di *L'Ordine della Fenice*) con il Patronus.
+ * `patronus: null` è il valore che manca. Draco non ha un Patronus secondo
+ * J. K. Rowling (citata da HP Lexicon); a Neville nessuna fonte, libri compresi,
+ * ne assegna uno. Ron (terrier Jack Russell) e Ginny
+ * (cavallo) hanno la forma da Rowling e dal sito ufficiale, non da un
+ * capitolo. Fonti e date della verifica: pm/piano-2026-10-capitolo-3.md.
+ */
+const PATRONUS = [
+  { nome: 'Harry Potter', casa: 'Grifondoro', anno: 5, patronus: 'cervo' },
+  { nome: 'Hermione Granger', casa: 'Grifondoro', anno: 5, patronus: 'lontra' },
+  { nome: 'Ron Weasley', casa: 'Grifondoro', anno: 5, patronus: 'terrier' },
+  { nome: 'Ginny Weasley', casa: 'Grifondoro', anno: 4, patronus: 'cavallo' },
+  { nome: 'Luna Lovegood', casa: 'Corvonero', anno: 4, patronus: 'lepre' },
+  { nome: 'Cho Chang', casa: 'Corvonero', anno: 6, patronus: 'cigno' },
+  { nome: 'Seamus Finnigan', casa: 'Grifondoro', anno: 5, patronus: 'volpe' },
+  {
+    nome: 'Ernie Macmillan',
+    casa: 'Tassofrasso',
+    anno: 5,
+    patronus: 'cinghiale',
+  },
+  { nome: 'Neville Longbottom', casa: 'Grifondoro', anno: 5, patronus: null },
+  { nome: 'Draco Malfoy', casa: 'Serpeverde', anno: 5, patronus: null },
+];
+
+function patronus(case_) {
+  const note = new Set(case_.map((c) => c.nome));
+  for (const s of PATRONUS) {
+    if (!note.has(s.casa)) {
+      throw new Error(
+        `${s.nome}: casa «${s.casa}» in PATRONUS, che non è in case.json`,
+      );
+    }
+  }
+  const righeCase = case_
+    .map((c) => `    (${q(c.nome)}, ${q(c.colori)}, ${q(c.animale)})`)
+    .join(',\n');
+  const righeStudenti = PATRONUS.map(
+    (s) =>
+      `    (${q(s.nome)}, ${q(s.casa)}, ${s.anno}, ${s.patronus === null ? 'NULL' : q(s.patronus)})`,
+  ).join(',\n');
+
+  return `-- Dataset «patronus» — Volume 3, lezione «Il valore che non c'è: NULL».
+-- Gli studenti dell'Esercito di Silente nel 1995-96, più Draco Malfoy, con il
+-- loro Patronus. Draco non ne ha uno secondo J. K. Rowling (citata da HP
+-- Lexicon); a Neville nessuna fonte ne assegna uno. La loro cella è NULL.
+-- La casa di studente è una chiave esterna senza NOT NULL: una riga può non
+-- nominare nessuna casa, ed è accettata.
+--
+-- FILE GENERATO da scripts/archivio-sql.mjs a partire da case.json e da
+-- PATRONUS nello script. Non modificarlo a mano: lancia \`npm run archivio:sql\`.
+
+CREATE TABLE casa (
+    nome     TEXT PRIMARY KEY,
+    colori   TEXT NOT NULL,
+    animale  TEXT NOT NULL
+);
+
+CREATE TABLE studente (
+    nome      TEXT    PRIMARY KEY,
+    casa      TEXT    REFERENCES casa(nome),
+    anno      INTEGER NOT NULL,
+    patronus  TEXT
+);
+
+INSERT INTO casa (nome, colori, animale) VALUES
+${righeCase};
+
+INSERT INTO studente (nome, casa, anno, patronus) VALUES
+${righeStudenti};
+`;
+}
+
 function generate() {
   const studenti = leggi(studentiPath);
   const punti = leggi(puntiPath);
@@ -377,6 +456,7 @@ function generate() {
     'omonimi.sql': omonimi(studenti, punti),
     'corsi-colonna.sql': corsiColonna(studenti),
     'iscrizione.sql': iscrizione(studenti),
+    'patronus.sql': patronus(case_),
   };
 }
 

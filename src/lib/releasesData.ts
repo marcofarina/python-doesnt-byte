@@ -64,9 +64,18 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
+    v: '0.22.0',
+    date: '3 novembre 2026',
+    latest: true,
+    notes: {
+      content: [
+        'Volume 4, Biblioteca dell’Apprendista: il primo esercizio del Manuale dell’Archivista, «Onda, le dirette in streaming». Dal testo di una piattaforma di dirette video si ricava il modello E/R completo, fino alle generalizzazioni. La lezione «Generalizzazioni» lo elenca fra gli esercizi assegnati.',
+      ],
+    },
+  },
+  {
     v: '0.21.1',
     date: '22 ottobre 2026',
-    latest: true,
     notes: {
       improved: [
         'Il libro ha un indirizzo suo: https://python.rainbowbits.cloud. I vecchi indirizzi rainbowbits.cloud/python-doesnt-byte portano alla stessa pagina in quello nuovo, anche dai link già condivisi.',

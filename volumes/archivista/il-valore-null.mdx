@@ -1,0 +1,329 @@
+---
+draft: true
+title: 'Il valore che non c’è: NULL'
+sidebar_label: Il valore NULL
+sidebar_position: 15
+description: Una cella vuota non contiene zero né un testo vuoto, ma NULL, e un confronto con NULL non è né vero né falso. Una query che filtra perde le righe con NULL senza nessun errore. Lo vediamo con il Patronus degli studenti dell’Esercito di Silente, e decidiamo quali colonne di uno schema possono restare vuote.
+database: archivista/patronus
+---
+
+# Il valore che non c’è: NULL
+
+<Epigraph author="Tony Hoare, QCon London (2009)">
+
+I call it my billion-dollar mistake. It was the invention of the null reference in 1965.
+
+</Epigraph>
+
+Una delle tre risposte alla partenza di Fred, nella [lezione precedente](./le-chiavi-esterne.mdx), lasciava vuota la colonna `studente` di un'assegnazione, e una chiave esterna vuota non rendeva orfana la riga. Le celle vuote non sono nuove. Il capitolo 2 ne ha lasciate in sospeso due: il Patronus, un attributo opzionale che quasi nessuno studente del primo anno possiede, e la casa di Ginny prima dello smistamento, che con il minimo 0 sarebbe rimasta vuota. Nella lezione "[Tradurre entità e associazioni in tabelle](./tradurre-in-tabelle.mdx)" l'attributo opzionale è diventato una colonna che in alcune righe resta vuota. Una cella vuota sembra non contenere niente, o al più uno zero o un testo vuoto. Contiene invece un segnaposto con un nome suo, `NULL`, e in questa lezione vediamo che per colpa sua una domanda al database può perdere delle righe senza nessun errore.
+
+:::prereq
+
+- Relazione, chiave primaria e chiave esterna; l'attributo opzionale diventato colonna (lezioni "[Il modello relazionale](./il-modello-relazionale.mdx)" e "[Tradurre entità e associazioni in tabelle](./tradurre-in-tabelle.mdx)")
+- Il vincolo di chiave esterna e la riga orfana ([lezione precedente](./le-chiavi-esterne.mdx))
+- Il minimo di una cardinalità e Ginny prima dello smistamento (lezione "[Le cardinalità](./le-cardinalita.mdx)")
+- Gli operatori `and`, `or` e `not` di Python e le loro tabelle di verità
+
+:::
+
+:::learn
+
+- Prevedere il risultato di un confronto con `NULL`, e di un filtro su una colonna che contiene `NULL`
+- Cercare le celle vuote con `IS NULL` e `IS NOT NULL`
+- Combinare vero, falso e sconosciuto con `AND`, `OR` e `NOT`
+- Spiegare perché una chiave esterna può essere `NULL` e una chiave primaria no
+- Decidere, per ogni colonna di uno schema, se può restare vuota, e riconoscere i significati diversi di una cella vuota
+
+:::
+
+## Chi non ha un cervo
+
+Per questa lezione serve un database piccolo, con due tabelle, `casa` e `studente`. La tabella `studente` registra alcuni studenti dell'Esercito di Silente, il gruppo a cui Harry, nel quinto libro, insegna di nascosto Difesa contro le Arti Oscure, più Draco Malfoy, che nell'Esercito non è mai entrato. Lo schema della tabella è questo:
+
+<Schema def="studente([nome], {casa}, anno, patronus)" />
+
+- `studente.casa` si riferisce a `casa.nome`.
+
+Il blocco qui sotto mostra la tabella `studente`.
+
+```sql live dataset=archivista/patronus hideQuery
+SELECT * FROM studente;
+```
+
+Il Patronus di Harry è un cervo, come nella lezione "[Entità e attributi](./entita-e-attributi.mdx)", e gli altri sette studenti da Hermione a Ernie Macmillan hanno ciascuno un animale diverso. Nelle righe di Neville e di Draco, invece, la colonna `patronus` non contiene un animale: il risultato mostra `NULL`, in corsivo, perché nel database il loro Patronus non è registrato.
+
+Il blocco seguente si legge: seleziona nome e Patronus dalla tabella `studente`, solo nelle righe in cui (`WHERE`, "dove") il Patronus è diverso da `cervo`. Il simbolo `<>` vuol dire "diverso da", come `!=` in Python. Come si scrive un filtro lo vedremo nel capitolo 6, quello sulle interrogazioni di una tabella; qui basta leggere il blocco come una frase. Le righe della tabella sono dieci, e un solo Patronus è un cervo. Prima di eseguire il blocco, prova a prevedere quante righe restituisce.
+
+```sql live dataset=archivista/patronus title="Chi non ha un cervo"
+SELECT nome, patronus FROM studente
+WHERE patronus <> 'cervo';
+```
+
+<Spoiler block>
+
+Il blocco restituisce sette righe, non nove. Manca Harry, che ha davvero un cervo, e mancano anche Neville e Draco, le due righe in cui il Patronus non è registrato.
+
+</Spoiler>
+
+Il DBMS non ha segnalato niente: nessun errore, nessun avviso, un risultato di sette righe che sembra giusto. Chi legge il risultato senza conoscere la tabella non ha modo di accorgersi che mancano due studenti. Nella lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)" abbiamo distinto due modi in cui un guasto si presenta, il rifiuto e il silenzio: questo è un silenzio. Il motivo sta nel valore che la condizione `patronus <> 'cervo'` ha nelle righe di Neville e di Draco. Prima di guardarlo, proviamo a cercare quelle due righe.
+
+## Cercare chi non ce l'ha
+
+Le righe di Neville e di Draco hanno `NULL` nella colonna `patronus`, quindi per trovarle sembra naturale chiedere le righe in cui il Patronus è uguale a `NULL`. Il blocco qui sotto si legge: seleziona nome e Patronus dalla tabella `studente`, solo nelle righe in cui il Patronus è uguale a `NULL`. Prima di eseguire il blocco, prova a prevedere quali nomi compaiono nel risultato.
+
+```sql live dataset=archivista/patronus title="Il Patronus uguale a NULL"
+SELECT nome, patronus FROM studente
+WHERE patronus = NULL;
+```
+
+<Spoiler block>
+
+Il risultato non contiene nessuna riga, nemmeno quelle di Neville e di Draco. Anche questa volta il DBMS non segnala niente: accetta la condizione, e la condizione non è vera in nessuna riga.
+
+</Spoiler>
+
+Per capire che cosa succede, chiediamo al DBMS il valore delle due condizioni riga per riga, invece di usarle per filtrare. Il blocco qui sotto si legge: per ogni riga della tabella `studente` elenca il nome, il Patronus, il valore della condizione `patronus <> 'cervo'` con il nome `diverso_da_cervo`, e il valore della condizione `patronus = NULL` con il nome `uguale_a_null`. Nel risultato SQLite scrive vero come 1 e falso come 0.
+
+```sql live dataset=archivista/patronus title="Il valore delle due condizioni"
+SELECT nome, patronus,
+       patronus <> 'cervo' AS diverso_da_cervo,
+       patronus = NULL AS uguale_a_null
+FROM studente;
+```
+
+Nella colonna `diverso_da_cervo` la riga di Harry ha 0, falso, e le righe degli altri sette animali hanno 1, vero. Nelle righe di Neville e di Draco non c'è né 0 né 1: c'è `NULL`. Il risultato di un confronto con `NULL` non è né vero né falso, è sconosciuto, e SQL scrive anche questo risultato come `NULL`. Il Patronus di Neville potrebbe essere un cervo oppure no: il database non lo sa, quindi non sa nemmeno se è diverso da un cervo.
+
+Nella colonna `uguale_a_null` c'è `NULL` in tutte le dieci righe, anche in quelle di Neville e di Draco, dove pure il Patronus è `NULL`. Confrontare un valore con `NULL` vuol dire confrontarlo con un valore che non conosciamo, e il risultato è sconosciuto qualunque sia il valore. Vale anche per due celle vuote: il Patronus di Neville e quello di Draco non sono noti, e il database non può dire se sono uguali. Per SQL `NULL = NULL` è sconosciuto.
+
+Un filtro con `WHERE` tiene una riga soltanto se la condizione è vera. Una riga con la condizione falsa esce, come quella di Harry; una riga con la condizione sconosciuta esce anche lei. Per questo le righe di Neville e di Draco sono sparite da tutti e due i risultati.
+
+Per trovare le celle vuote SQL ha un operatore apposta, che non confronta due valori ma controlla se la cella è vuota: `IS NULL` ("è NULL") è vero se la cella contiene `NULL` e falso altrimenti, mai sconosciuto. Il blocco qui sotto si legge: seleziona nome e Patronus dalla tabella `studente`, solo nelle righe in cui il Patronus è `NULL`.
+
+```sql live dataset=archivista/patronus title="Il Patronus è NULL"
+SELECT nome, patronus FROM studente
+WHERE patronus IS NULL;
+```
+
+Questa volta il risultato contiene Neville e Draco. L'operatore opposto, `IS NOT NULL` ("non è NULL"), tiene le righe in cui il Patronus è registrato: gli otto studenti con un animale.
+
+Una cella vuota non contiene zero e non contiene un testo vuoto. Se nella cella di Neville ci fosse il testo vuoto `''`, il confronto con `'cervo'` sarebbe vero, perché `''` è un testo e non è `cervo`, e Neville comparirebbe nel primo risultato. Zero e testo vuoto sono valori del dominio, e il DBMS li confronta come tutti gli altri; `NULL` indica che nella cella un valore non c'è.
+
+:::definition[NULL]
+
+**`NULL`** è il segnaposto che occupa una cella quando il suo valore manca. Non appartiene al dominio della colonna: non è zero, non è un testo vuoto, non è un animale. Un confronto fra `NULL` e un valore qualunque, `NULL` compreso, ha come risultato sconosciuto, che SQL scrive anch'esso `NULL`.
+
+Gli operatori `IS NULL` e `IS NOT NULL` controllano se una cella è vuota, e hanno sempre come risultato vero o falso.
+
+:::
+
+La citazione in cima alla pagina parla di un parente di `NULL`, con lo stesso nome e un comportamento diverso. Il riferimento nullo che Tony Hoare introdusse nel 1965, nel linguaggio di programmazione ALGOL W, è un riferimento che non indica nessun oggetto: un programma che lo usa come se indicasse un oggetto di solito si ferma con un errore, e Hoare stima che quegli errori siano costati un miliardo di dollari in quarant'anni. In Python succede qualcosa di simile con `None`: `None.upper()` ferma il programma con un `AttributeError`. Però in Python `None == None` vale `True`, mentre in SQL `NULL = NULL` è sconosciuto. E il `NULL` di SQL non ferma niente: dove il riferimento nullo fa fallire un programma con un errore, `NULL` fa sparire delle righe in silenzio.
+
+## Vero, falso e sconosciuto
+
+Con `NULL` una condizione di SQL ha tre risultati possibili, vero, falso e sconosciuto, e la logica che li combina si chiama **logica a tre valori**. In Python le condizioni hanno due risultati, `True` e `False`, e le tabelle di verità di `and`, `or` e `not` combinano soltanto quelli. In SQL gli stessi operatori si scrivono `AND`, `OR` e `NOT`, e devono combinare anche sconosciuto.
+
+La regola si ricava leggendo sconosciuto come "vero oppure falso, non sappiamo quale". Calcoliamo il risultato due volte, mettendo vero al posto di sconosciuto e poi falso: se i due risultati coincidono, quello è il risultato; se sono diversi, il risultato è sconosciuto. Per falso `AND` sconosciuto, falso `AND` vero e falso `AND` falso danno tutti e due falso, quindi il risultato è falso. Per vero `AND` sconosciuto, invece, vero `AND` vero è vero e vero `AND` falso è falso, quindi il risultato è sconosciuto. La tabella raccoglie tutti i casi; l'ordine dei due operandi non cambia il risultato.
+
+| A           | B           | A `AND` B   | A `OR` B    |
+| ----------- | ----------- | ----------- | ----------- |
+| vero        | vero        | vero        | vero        |
+| vero        | sconosciuto | sconosciuto | vero        |
+| vero        | falso       | falso       | vero        |
+| sconosciuto | sconosciuto | sconosciuto | sconosciuto |
+| sconosciuto | falso       | falso       | sconosciuto |
+| falso       | falso       | falso       | falso       |
+
+`NOT` scambia vero e falso, come `not` in Python, e lascia sconosciuto com'è: il contrario di un valore che non conosciamo è un valore che non conosciamo.
+
+Con la tabella di verità possiamo scrivere una condizione che non perde nessuno studente. Gli studenti senza un cervo registrato sono quelli per cui vale `patronus <> 'cervo' OR patronus IS NULL`: nella riga di Neville il primo confronto è sconosciuto e il secondo è vero, e sconosciuto `OR` vero è vero. La condizione è vera in nove righe, tutte tranne quella di Harry, che ha falso `OR` falso.
+
+:::warning[Negare non recupera le righe con NULL]
+
+- <Esito ok={false} /> `WHERE NOT (patronus = 'cervo')` → sette righe, come con `<>`: per Neville `patronus = 'cervo'` è sconosciuto, e `NOT` sconosciuto è ancora sconosciuto.
+- <Esito /> `WHERE patronus <> 'cervo' OR patronus IS NULL` → nove righe: `IS NULL` è vero nelle righe di Neville e di Draco.
+
+Prova a scrivere le due condizioni al posto di quella del blocco "Chi non ha un cervo", e a rieseguire il blocco.
+
+:::
+
+`NULL` tornerà nelle interrogazioni dei prossimi capitoli: con i filtri nel capitolo 6, e con i conteggi nel capitolo 8, quello sull'aggregazione, dove contare le righe della tabella `studente` e contare i Patronus registrati danno due numeri diversi.
+
+## NULL e le chiavi
+
+Nella lezione "[Le cardinalità](./le-cardinalita.mdx)" il DBMS ha rifiutato Ginny prima dello smistamento, perché nel database di quella lezione la colonna `casa` non poteva restare vuota. Avevamo detto che con il minimo 0 accanto a `studente` la sua casa sarebbe rimasta vuota fino allo smistamento. Il database di questa pagina corrisponde al modello con il minimo 0: la colonna `casa` della tabella `studente` è una chiave esterna verso `casa.nome`, e può restare vuota.
+
+Nel quinto libro arriva a Hogwarts Euan Abercrombie, un ragazzino del primo anno che il Cappello Parlante smista a Grifondoro al banchetto d'inizio anno. Immaginiamo, come nella lezione "Le cardinalità", che la segreteria voglia registrarlo in estate, appena parte la sua lettera di ammissione, quando nessuno conosce ancora la sua casa. Il blocco qui sotto si legge: inserisci nella tabella `studente`, nelle colonne `nome` e `anno`, i valori `Euan Abercrombie` e 1. La casa e il Patronus mancano. Il vincolo di chiave esterna chiede che ogni valore della colonna `casa` compaia fra i nomi della tabella `casa`, e `NULL` non è il nome di nessuna casa. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
+
+```sql live dataset=archivista/patronus title="Euan Abercrombie prima dello smistamento"
+INSERT INTO studente (nome, anno)
+VALUES ('Euan Abercrombie', 1);
+```
+
+<Spoiler block>
+
+Il DBMS accetta l'inserimento e segnala una riga modificata. Nel pannello "Database" della colonna di destra la tabella `studente` ha una riga nuova, quella di Euan, con `NULL` nella colonna `casa` e nella colonna `patronus`.
+
+</Spoiler>
+
+Il vincolo di chiave esterna controlla soltanto le celle che contengono un valore. Una cella `NULL` non indica nessuna casa, quindi non indica una casa che non esiste: la riga di Euan non è orfana, come l'assegnazione senza studente della lezione precedente. Un nome di casa che non esiste, invece, il vincolo lo rifiuta. Prova ad aggiungere all'inserimento la colonna `casa`, prima con il valore `Grifondoro` e poi con un nome che non è di nessuna casa, e a rieseguire il blocco.
+
+La differenza con Ginny sta nella tabella, non nello studente. Nel database della lezione "Le cardinalità" la colonna `casa` era obbligatoria, e il messaggio con cui il DBMS ha rifiutato Ginny, `NOT NULL constraint failed`, nomina proprio il vincolo che vieta `NULL` in una colonna. Nella tabella di questa pagina la colonna `casa` non ha quel vincolo. Il minimo di una cardinalità passa così nello schema: con il minimo 1 la chiave esterna è una colonna che non ammette `NULL`, con il minimo 0 una colonna che lo ammette. Lo stesso vale per un attributo opzionale come il Patronus, che nel diagramma ha `(0,1)` accanto al nome. Come si dichiara che una colonna non ammette `NULL` lo vedremo nel capitolo 5, quello sulla costruzione del database.
+
+Una chiave esterna può essere `NULL`; una chiave primaria no. La chiave primaria serve a distinguere ogni riga da tutte le altre, e un valore sconosciuto non distingue niente: se due righe della tabella `studente` avessero `NULL` come nome, il DBMS non potrebbe nemmeno dire se sono la stessa riga, perché `NULL = NULL` è sconosciuto. Per il modello relazionale una chiave primaria non contiene mai `NULL`, e nemmeno una sua parte: una riga della relazione `iscrizione` con il corso ma senza lo studente non sarebbe l'iscrizione di nessuno.
+
+:::note[Una stranezza di SQLite]
+
+SQLite non applica la regola da solo a tutte le chiavi primarie. Nella sua documentazione è scritto che, per un difetto delle prime versioni, una chiave primaria come `nome` accetta `NULL` se la colonna non è dichiarata anche obbligatoria, mentre lo standard SQL vorrebbe che una chiave primaria non lo accettasse mai. Gli sviluppatori di SQLite non lo hanno corretto per non rompere i programmi già scritti. Quando nel capitolo 5 creeremo le tabelle, dichiareremo obbligatorie tutte le colonne di ogni chiave primaria.
+
+:::
+
+## Tre significati per un solo NULL
+
+Dopo l'inserimento di Euan, la tabella `studente` che vedi nel pannello "Database" ha tre celle vuote nella colonna `patronus`, quelle di Neville, di Draco e di Euan, e una nella colonna `casa`, quella di Euan. Le celle contengono tutte lo stesso segnaposto, ma non registrano la stessa cosa. Prendiamone tre.
+
+Nessuno dei libri descrive il Patronus di Neville. Di Euan, invece, immaginiamo che la segreteria sappia che non sa evocare un Patronus, come quasi tutti gli studenti del primo anno. La casa di Euan, infine, la deciderà il Cappello Parlante il 1° settembre.
+
+| Cella                | Che cosa vuol dire `NULL`                         |
+| -------------------- | ------------------------------------------------- |
+| `patronus` di Neville | il valore potrebbe esistere, e il database non lo conosce |
+| `patronus` di Euan    | il valore non esiste                              |
+| `casa` di Euan        | il valore esisterà, ma non è ancora stato deciso  |
+
+Il DBMS tratta le tre celle allo stesso modo, e nessuna query le distingue: in una tabella che contiene la riga di Euan, `patronus IS NULL` trova insieme Neville, Draco ed Euan. Per una domanda come "chi non sa evocare un Patronus?" la differenza invece conta: Euan sì, di Neville non lo sappiamo.
+
+Se il dominio deve distinguere i significati, l'informazione va registrata da un'altra parte. Un valore inventato nella colonna, come `nessuno` nella cella del Patronus di Euan, non è una buona scelta: `nessuno` non è un animale, e ogni programma che legge la colonna deve saperlo. È il problema dell'assegnazione finta di zero punti con cui, nella lezione "[La stessa informazione scritta due volte](./stessa-informazione-due-volte.mdx)", Lupin entrava nel registro: una riga che ogni programma doveva riconoscere e scartare. Funziona meglio una colonna in più, per esempio `stato_patronus` con i valori `noto`, `assente` e `sconosciuto`: la colonna `patronus` contiene un animale solo quando lo stato è `noto`, e ogni sua cella vuota ha la spiegazione in una cella che non resta mai vuota.
+
+Per la casa di Euan, invece, una colonna in più non serve. Nel database c'è un solo motivo per cui la casa di uno studente può mancare, lo smistamento che non è ancora avvenuto, e la cella vuota ha un significato solo. Lo stesso vale per la data di rientro di un prestito nella biblioteca della lezione "[Leggere un dominio e ricavarne il modello](./leggere-un-dominio.mdx)", che "resta vuota finché la copia non torna": un rientro `NULL` vuol dire soltanto che la copia è ancora fuori.
+
+:::info[Le due marche di Codd]
+
+Nel dicembre 1986 Edgar F. Codd, che nel 1970 aveva proposto il modello relazionale, pubblicò sulla rivista _SIGMOD Record_ (volume 15, numero 4) l'articolo "Missing Information (Applicable and Inapplicable) in Relational Databases". Codd proponeva di sostituire il `NULL` unico con due segni, che chiamava marche (_marks_): la marca A per un valore che manca ma che si applica all'oggetto (_missing-but-applicable_), come lo stipendio sconosciuto di un impiegato, e la marca I per un valore che non si applica (_inapplicable_), come la provvigione di un impiegato che in quel momento non vende niente. Il Patronus di Neville avrebbe una marca A, quello di Euan una marca I. Fra i motivi per cui parlava di marche e non di valori, Codd scriveva che le marche quasi mai si comportano come valori, e che alcuni linguaggi di programmazione chiamano "null" oggetti di significato molto diverso. SQL ha tenuto un `NULL` solo.
+
+:::
+
+Per ogni colonna di uno schema, quindi, chi progetta risponde a due domande. La prima è se la colonna può restare vuota, e la risposta viene dal modello: mai per una colonna della chiave primaria; sì per un attributo opzionale e per una chiave esterna con il minimo 0; no per tutte le altre colonne. La seconda domanda, per le colonne che possono restare vuote, è che cosa vuol dire una cella vuota: se i significati possibili sono più di uno, serve un'altra colonna che dica quale.
+
+:::nutshell
+
+- `NULL` è il segnaposto di una cella senza valore. Non è zero né un testo vuoto, e non appartiene al dominio della colonna.
+- Un confronto con `NULL`, anche `NULL = NULL`, ha come risultato sconosciuto. Le condizioni di SQL seguono una logica a tre valori: vero, falso, sconosciuto.
+- Un filtro tiene solo le righe in cui la condizione è vera: le righe con la condizione sconosciuta escono senza nessun errore.
+- Le celle vuote si cercano con `IS NULL` e `IS NOT NULL`, mai con `= NULL`.
+- Falso `AND` qualunque cosa è falso, vero `OR` qualunque cosa è vero, `NOT` sconosciuto è sconosciuto. Per non perdere le righe con `NULL` si aggiunge `OR ... IS NULL`.
+- Una chiave esterna `NULL` non indica nessuna riga e non è orfana. Una chiave primaria non contiene mai `NULL`.
+- Il minimo 0 di una cardinalità, o un attributo opzionale, diventa una colonna che ammette `NULL`; il minimo 1 una colonna che non lo ammette.
+- Lo stesso `NULL` può voler dire "non lo sappiamo", "non esiste" o "non ancora". Se il dominio deve distinguerli, serve un'altra colonna.
+
+:::
+
+<QuizDeck>
+
+<Quiz>
+  <QuizQuestion>
+    Sul database di questa pagina, senza Euan, quali righe restituisce la condizione `patronus <> 'cervo' OR casa = 'Grifondoro'`?
+  </QuizQuestion>
+
+  <QuizOption>
+    Sette righe, le stesse del blocco "Chi non ha un cervo".
+    <QuizFeedback>
+      Il secondo confronto aggiunge le righe di Grifondoro: Harry, che ha falso `OR` vero, e Neville, che ha sconosciuto `OR` vero. Tutti e due i risultati sono veri.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Otto righe: tutte tranne quelle di Neville e di Draco, che hanno il Patronus `NULL`.
+    <QuizFeedback>
+      Per Neville il primo confronto è sconosciuto, ma il secondo è vero, perché Neville è di Grifondoro, e sconosciuto `OR` vero è vero.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Nove righe: tutte tranne quella di Draco.
+    <QuizFeedback>
+      Esatto. Draco ha il Patronus `NULL` ed è di Serpeverde: sconosciuto `OR` falso è sconosciuto, e la riga esce. Neville passa grazie al secondo confronto.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Tutte e dieci le righe.
+    <QuizFeedback>
+      Nella riga di Draco nessuno dei due confronti è vero: il primo è sconosciuto, il secondo falso, e il filtro tiene solo le righe con la condizione vera.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Nella biblioteca di Hogwarts la relazione è prestito(<u>id</u>, uscita, rientro, _copia_, _studente_, _professore_), e la data di rientro resta vuota finché la copia non torna. Per trovare le copie ancora fuori, un compagno scrive `SELECT copia FROM prestito WHERE rientro = NULL`. Che cosa ottiene?
+  </QuizQuestion>
+
+  <QuizOption>
+    Le copie dei prestiti con la data di rientro vuota, cioè le copie ancora fuori.
+    <QuizFeedback>
+      `rientro = NULL` è sconosciuto in ogni riga, anche in quelle con la data vuota, e il filtro le scarta tutte. Per le celle vuote serve `rientro IS NULL`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    Nessuna riga, senza nessun errore.
+    <QuizFeedback>
+      Esatto. Un confronto con `NULL` è sconosciuto in ogni riga, quindi nessuna riga passa il filtro, e il DBMS non lo segnala. La condizione giusta è `rientro IS NULL`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Un errore, perché un valore non si può confrontare con `NULL`.
+    <QuizFeedback>
+      SQL accetta il confronto e gli dà come risultato sconosciuto: è il blocco "Il Patronus uguale a NULL" di questa lezione, che non ha dato nessun errore.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    Tutti i prestiti, perché una data vuota è uguale a qualunque cosa.
+    <QuizFeedback>
+      Una cella vuota non è uguale a niente, nemmeno a un'altra cella vuota: ogni confronto con lei è sconosciuto, e il filtro scarta le righe sconosciute.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+<Quiz>
+  <QuizQuestion>
+    Nello schema di Hogwarts della lezione "Tradurre entità e associazioni in tabelle", quale di queste colonne può restare vuota?
+  </QuizQuestion>
+
+  <QuizOption>
+    `studente.matricola`
+    <QuizFeedback>
+      È la chiave primaria della relazione `studente`, e una chiave primaria non contiene mai `NULL`: una riga senza matricola non si distinguerebbe dalle altre.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    `assegnazione.studente`
+    <QuizFeedback>
+      Nell'associazione `riceve` accanto ad `assegnazione` c'è `(1,1)`: ogni assegnazione è ricevuta da uno studente, e il minimo 1 diventa una colonna che non ammette `NULL`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption correct>
+    `studente.patronus`
+    <QuizFeedback>
+      Esatto. Il Patronus è un attributo opzionale, con `(0,1)` accanto al nome, e diventa una colonna che ammette `NULL`.
+    </QuizFeedback>
+  </QuizOption>
+
+  <QuizOption>
+    `casa.direttore`
+    <QuizFeedback>
+      Nell'associazione `dirige` accanto a `casa` c'è `(1,1)`: ogni casa ha il suo direttore, ed è proprio per questo che la chiave esterna sta nella relazione `casa`, dove non resta mai vuota.
+    </QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+</QuizDeck>
+
+:::tip[Il prossimo capitolo]
+
+Con questa lezione il modello di Hogwarts è diventato uno schema relazionale: relazioni, chiavi primarie, chiavi esterne e colonne che possono restare vuote. Il prossimo capitolo, "Normalizzare", torna alle anomalie della lezione "La stessa informazione scritta due volte" e dà un metodo per trovarle in uno schema prima che compaiano nei dati.
+
+:::

@@ -7,9 +7,11 @@
  *     Biblioteca dell'Apprendista la prima briciola è il volume-sorgente (es.
  *     «Manuale del Programmatore») e si ha l'impressione di essere nel Vol.1
  *     invece che negli esercizi del Vol.4.
- *  2. nella sola Biblioteca dell'Apprendista la prima briciola della sidebar (il
- *     volume-sorgente) è accorciata a «Vol. N»: affianco a «Biblioteca
- *     dell'Apprendista» due titoli di libro interi confondono.
+ *  2. nella sola Biblioteca dell'Apprendista il percorso è corto (Marco,
+ *     2026-11-03): «Vol. N › lezione › esercizio», senza casetta, senza la
+ *     briciola del volume corrente e senza capitolo; l'ultima briciola perde il
+ *     prefisso «Esercizio:»/«Laboratorio:». Il percorso intero resta nella
+ *     sidebar e nei dati strutturati.
  *
  * Il resto è copia fedele dell'originale: ricontrollare a ogni upgrade di
  * Docusaurus (vedi memoria upgrade_risks).
@@ -97,10 +99,14 @@ export default function DocBreadcrumbs(): ReactNode {
   if (!breadcrumbs) {
     return null;
   }
-  // Solo in Biblioteca dell'Apprendista: la prima briciola della sidebar è il
-  // volume-sorgente (es. «Manuale del Programmatore»). Accanto a «Biblioteca
-  // dell'Apprendista» due titoli di libro confondono → la accorciamo a «Vol. N».
-  const shortenFirst = pluginId === 'apprendista';
+  // Solo in Biblioteca dell'Apprendista il percorso si accorcia a
+  // «Vol. N › lezione › esercizio»: niente casetta, niente briciola del volume
+  // corrente né capitolo, e il volume-sorgente diventa «Vol. N». Dall'ultima
+  // briciola cade il prefisso del tipo («Esercizio: …»), che il badge già dice.
+  const apprendista = pluginId === 'apprendista';
+  const items = apprendista
+    ? breadcrumbs.filter((_, idx) => idx === 0 || idx >= breadcrumbs.length - 2)
+    : breadcrumbs;
   return (
     <>
       <DocBreadcrumbsStructuredData breadcrumbs={breadcrumbs} />
@@ -116,18 +122,24 @@ export default function DocBreadcrumbs(): ReactNode {
         })}
       >
         <ul className="breadcrumbs">
-          {homePageRoute && <HomeBreadcrumbItem />}
-          <VolumeBreadcrumbItem />
-          {breadcrumbs.map((item, idx) => {
-            const isLast = idx === breadcrumbs.length - 1;
+          {!apprendista && homePageRoute && <HomeBreadcrumbItem />}
+          {!apprendista && <VolumeBreadcrumbItem />}
+          {items.map((item, idx) => {
+            const isLast = idx === items.length - 1;
             const href =
               item.type === 'category' && item.linkUnlisted
                 ? undefined
                 : item.href;
-            const label =
-              shortenFirst && idx === 0
-                ? (volumeShortByLabel(item.label) ?? item.label)
-                : item.label;
+            let label = item.label;
+            if (apprendista && idx === 0) {
+              label = volumeShortByLabel(item.label) ?? item.label;
+            } else if (apprendista && isLast) {
+              const short = item.label.replace(
+                /^(Esercizio|Laboratorio)\s*:\s*/i,
+                '',
+              );
+              label = short.charAt(0).toUpperCase() + short.slice(1);
+            }
             return (
               <BreadcrumbsItem key={idx} active={isLast}>
                 <BreadcrumbsItemLink href={href} isLast={isLast}>

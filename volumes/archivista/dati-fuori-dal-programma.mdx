@@ -59,7 +59,7 @@ with open("punti.json", encoding="utf-8") as file_punti:
 
 <Figura figura={fileECopia} />
 
-:::note[In questa pagina non c'è un disco]
+:::note[In questa pagina non c’è un disco]
 
 Il browser non lascia aprire i file del tuo computer, quindi nei blocchi eseguibili `open` non funziona. Al suo posto trovi la funzione `leggi_file("punti.json")`, preparata per questa pagina: restituisce lo stesso testo che leggeresti dal file. `json.loads` lo trasforma nella lista di dizionari, come `json.load` fa con un file aperto. Nel tuo editor scriveresti la versione con `open`.
 

@@ -75,10 +75,8 @@ function transformJsx(s, siteDir, archivio) {
     /^\s*import\s+(\w+)\s+from\s+['"](@site\/src\/figure\/[^'"]+)['"]/gm,
   ))
     figure[nome] = modulo;
-  s = s.replace(
-    /<Figura\b[^>]*\bfigura=\{(\w+)\}[^>]*\/>/g,
-    (_m, nome) =>
-      figure[nome] ? `\n${figuraInTesto(figure[nome], siteDir)}\n` : OMITTED,
+  s = s.replace(/<Figura\b[^>]*\bfigura=\{(\w+)\}[^>]*\/>/g, (_m, nome) =>
+    figure[nome] ? `\n${figuraInTesto(figure[nome], siteDir)}\n` : OMITTED,
   );
 
   // Righe di import/export MDX e commenti JSX `{/* … */}`.
@@ -86,15 +84,23 @@ function transformJsx(s, siteDir, archivio) {
   s = s.replace(/\{\/\*[\s\S]*?\*\/\}/g, '');
 
   // <PyRunner src="…" … /> → inline del .py (prima delle OMITTED su PyRunner).
-  s = s.replace(
-    /<PyRunner\b[^>]*\bsrc=["']([^"']+)["'][^>]*\/>/g,
-    (_m, src) => inlinePyRunnerSrc(src, siteDir),
+  s = s.replace(/<PyRunner\b[^>]*\bsrc=["']([^"']+)["'][^>]*\/>/g, (_m, src) =>
+    inlinePyRunnerSrc(src, siteDir),
   );
 
   // <FileArchivio nome="…" /> → inline del file d'archivio.
   s = s.replace(
     /<FileArchivio\b[^>]*\bnome=["']([^"']+)["'][^>]*\/>/g,
     (_m, nome) => inlineFileArchivio(nome, archivio),
+  );
+
+  // <Schema def="r([pk], {fk})" /> → r(<u>pk</u>, _fk_): chiave primaria
+  // sottolineata, chiave esterna in corsivo.
+  s = s.replace(/<Schema\s+def="([^"]+)"\s*\/>/g, (_m, def) =>
+    def
+      .replace(/\[\{([^\]}]+)\}\]/g, '<u>_$1_</u>')
+      .replace(/\[([^\]]+)\]/g, '<u>$1</u>')
+      .replace(/\{([^}]+)\}/g, '_$1_'),
   );
 
   // <InlineCode …>x</InlineCode> → `x` (tollera attributi, es. kind="keyword").
