@@ -54,7 +54,7 @@ Nessun nome. La tabella `studente` contiene nove studenti, e tutti seguono Pozio
 
 </Spoiler>
 
-Il DBMS non ha sbagliato: ha confrontato due testi, e i due testi sono diversi. L'errore sta nella tabella, che contiene quattro coppie dell'associazione in una cella sola. Un'istruzione che cerca una parola dentro un testo esiste; con questa tabella, però, ogni domanda sui corsi diventa un lavoro sul testo, e la stessa istruzione troverebbe Pozioni anche in un corso chiamato "Pozioni avanzate". Perché in una tabella ogni cella debba contenere un valore solo lo spiega la prima lezione del capitolo 3; qui basta vedere che cosa succede quando una cella ne contiene quattro.
+Il DBMS non ha sbagliato: ha confrontato due testi, e i due testi sono diversi. L'errore sta nella tabella, che contiene quattro coppie dell'associazione in una cella sola. Un'istruzione che cerca una parola dentro un testo esiste; con questa tabella, però, ogni domanda sui corsi diventa un lavoro sul testo, e la stessa istruzione troverebbe Pozioni anche in un corso chiamato "Pozioni avanzate". Perché in una tabella ogni cella debba contenere un valore solo lo spiega la [prima lezione del capitolo 3](./il-modello-relazionale.mdx); qui basta vedere che cosa succede quando una cella ne contiene quattro.
 
 C'è poi una domanda che con la tabella `studente` non ha risposta, qualunque istruzione si scriva: che voto ha preso Hermione in Pozioni.
 
@@ -106,7 +106,7 @@ Quando un'associazione ha attributi suoi, spesso il nome più naturale è un sos
   cella={[280, 150]}
 />
 
-Le cardinalità dicono che ogni studente è iscritto ad almeno un corso, senza un massimo, e che un corso può non avere ancora iscritti. Nelle tabelle un'associazione molti a molti diventa una tabella propria, con una riga per ogni coppia: come si costruisce lo vedremo nel capitolo 3. Il blocco qui sotto ne mostra il risultato, la tabella `iscrizione`, con una riga per ogni studente e per ogni corso che segue.
+Le cardinalità dicono che ogni studente è iscritto ad almeno un corso, senza un massimo, e che un corso può non avere ancora iscritti. Nelle tabelle un'associazione molti a molti diventa una tabella propria, con una riga per ogni coppia: come si costruisce lo vedremo nel [capitolo 3](./tradurre-in-tabelle.mdx). Il blocco qui sotto ne mostra il risultato, la tabella `iscrizione`, con una riga per ogni studente e per ogni corso che segue.
 
 ```sql live dataset=archivista/iscrizione hideQuery
 SELECT * FROM iscrizione LIMIT 6;

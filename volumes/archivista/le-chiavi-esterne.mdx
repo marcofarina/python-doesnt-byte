@@ -21,7 +21,7 @@ Nella [lezione precedente](./tradurre-in-tabelle.mdx) ogni associazione uno a mo
 - Chiave primaria e chiave esterna, e lo schema con la chiave esterna in corsivo ([lezione precedente](./tradurre-in-tabelle.mdx))
 - Il vincolo di chiave esterna che rifiuta `Neville Logbottom`, e la prima assegnazione di Lupin (lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)")
 - I due James Potter e l'unione con una tabella senza chiave (lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)")
-- Il minimo di una cardinalità, e come passa nella traduzione (lezione "[Le cardinalità](./le-cardinalita.mdx)" e lezione precedente)
+- Il minimo di una cardinalità, e come passa nella traduzione (lezione "[Le cardinalità](./le-cardinalita.mdx)" e [lezione precedente](./tradurre-in-tabelle.mdx))
 
 :::
 
@@ -36,7 +36,7 @@ Nella [lezione precedente](./tradurre-in-tabelle.mdx) ogni associazione uno a mo
 
 ## Il verso che non abbiamo visto
 
-I blocchi di questa pagina usano il registro dei punti della lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)". Nella tabella `studente` la chiave primaria è ancora il nome, come nel database dei voti della lezione precedente, e lo schema delle due tabelle che ci interessano è questo:
+I blocchi di questa pagina usano il registro dei punti della lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)". Nella tabella `studente` la chiave primaria è ancora il nome, come nel database dei voti della [lezione precedente](./tradurre-in-tabelle.mdx), e lo schema delle due tabelle che ci interessano è questo:
 
 <Schema def="studente([nome], casa, anno)" />
 
@@ -81,7 +81,7 @@ Il rifiuto ha salvato l'assegnazione 7, ma il problema da cui siamo partiti rest
 
 L'ultima istruzione del blocco calcola il totale dei punti di ogni casa dopo le cancellazioni. È la query del totale per casa che hai letto nella lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)"; come si scrive una query che somma molte righe lo vedremo nel capitolo 8, dedicato all'aggregazione. Il totale sta nello stesso blocco delle cancellazioni perché ogni blocco di questa pagina riparte dalle tabelle iniziali: calcolato in un blocco separato, non vedrebbe le cancellazioni.
 
-Prima delle cancellazioni Grifondoro ha tre punti, come nel conteggio di McGonagall del capitolo 1, ed è terza, dietro Corvonero e Tassofrasso con dieci punti ciascuna. Prima di eseguire il blocco, prova a prevedere il totale di Grifondoro dopo le cancellazioni e il suo posto fra le case.
+Prima delle cancellazioni Grifondoro ha tre punti, come nel conteggio di McGonagall del [capitolo 1](./dati-fuori-dal-programma.mdx), ed è terza, dietro Corvonero e Tassofrasso con dieci punti ciascuna. Prima di eseguire il blocco, prova a prevedere il totale di Grifondoro dopo le cancellazioni e il suo posto fra le case.
 
 ```sql live dataset=archivista/registro-punti title="La cascata, a mano"
 DELETE FROM assegnazione WHERE studente = 'Fred Weasley';
@@ -127,7 +127,7 @@ La scelta si dichiara insieme alla chiave esterna, quando si crea la tabella, co
 
 Resta una domanda sulla riga scritta sotto lo schema: perché la colonna `studente` dell'assegnazione deve riferirsi proprio alla chiave primaria della tabella `studente`, e non a una colonna qualunque? Torniamo ai due James Potter della lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)". Nella versione del registro senza chiave la tabella `studente` conteneva due righe con il nome `James Potter`, il padre di Harry e il suo figlio maggiore, e l'assegnazione dei dieci punti dati a `James Potter` si univa a tutte e due, come mostrava la figura di quella lezione. Il valore `James Potter` non indicava uno studente, ne indicava due.
 
-Supponiamo che il DBMS accettasse una chiave esterna verso quella colonna `nome`, che non è una chiave. Il controllo "il valore compare nella tabella `studente`" passerebbe, ma non garantirebbe niente. Se qualcuno cancellasse per errore la riga del padre, il nome `James Potter` resterebbe nella tabella con la riga del figlio: nessuna assegnazione risulterebbe orfana, e i dieci punti del padre passerebbero al figlio senza che nessuno lo abbia deciso e senza nessun errore. Una chiave esterna serve a indicare una riga, e un valore indica una riga sola soltanto se la colonna a cui si riferisce è una chiave: per questo la definizione della lezione precedente chiede che i valori della chiave esterna compaiano fra quelli di una chiave primaria.
+Supponiamo che il DBMS accettasse una chiave esterna verso quella colonna `nome`, che non è una chiave. Il controllo "il valore compare nella tabella `studente`" passerebbe, ma non garantirebbe niente. Se qualcuno cancellasse per errore la riga del padre, il nome `James Potter` resterebbe nella tabella con la riga del figlio: nessuna assegnazione risulterebbe orfana, e i dieci punti del padre passerebbero al figlio senza che nessuno lo abbia deciso e senza nessun errore. Una chiave esterna serve a indicare una riga, e un valore indica una riga sola soltanto se la colonna a cui si riferisce è una chiave: per questo la definizione della [lezione precedente](./tradurre-in-tabelle.mdx) chiede che i valori della chiave esterna compaiano fra quelli di una chiave primaria.
 
 :::note[Quando lo schema è sbagliato]
 

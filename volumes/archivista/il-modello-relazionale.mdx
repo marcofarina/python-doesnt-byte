@@ -48,7 +48,7 @@ Il foglio funziona: McGonagall lo legge a colpo d'occhio, e quando corregge un p
 
 ## La riga numero uno
 
-Nel foglio Harry Potter sta nella riga 2, e "la riga 2" è un modo valido di indicarlo. Anche la lista `registro` del capitolo 1 aveva le sue posizioni: `registro[9]` era la decima assegnazione, quella di Padma, e `del registro[9]` la cancellava.
+Nel foglio Harry Potter sta nella riga 2, e "la riga 2" è un modo valido di indicarlo. Anche la lista `registro` del [capitolo 1](./stessa-informazione-due-volte.mdx) aveva le sue posizioni: `registro[9]` era la decima assegnazione, quella di Padma, e `del registro[9]` la cancellava.
 
 Proviamo a cercare la prima riga in una tabella del database. Il primo blocco qui sotto si legge: seleziona tutte le colonne (l'asterisco) dalla tabella `studente`. Il secondo blocco si legge: seleziona la colonna `nome` dalla tabella `studente`. I due blocchi leggono la stessa tabella del registro dei punti e nessuno dei due la modifica. Prima di eseguire i due blocchi, prova a prevedere quale nome compare per primo nel risultato di ciascuno.
 
@@ -74,7 +74,7 @@ Nel foglio di calcolo, invece, la posizione contiene informazioni. Hermione, Ron
 
 ## Due righe uguali
 
-In un insieme ogni elemento c'è una volta sola: un insieme che contiene Harry due volte è l'insieme che contiene Harry. Vale anche per una tabella del modello relazionale. Due righe con gli stessi valori in tutte le colonne sono la stessa riga, e la tabella la contiene una volta. Nel capitolo 2 abbiamo usato la stessa regola per le associazioni: un'associazione è un insieme di coppie, e la stessa coppia non può comparire due volte.
+In un insieme ogni elemento c'è una volta sola: un insieme che contiene Harry due volte è l'insieme che contiene Harry. Vale anche per una tabella del modello relazionale. Due righe con gli stessi valori in tutte le colonne sono la stessa riga, e la tabella la contiene una volta. Nel [capitolo 2](./associazioni-molti-a-molti.mdx) abbiamo usato la stessa regola per le associazioni: un'associazione è un insieme di coppie, e la stessa coppia non può comparire due volte.
 
 Nel foglio di calcolo niente impedisce di incollare due volte la riga di Neville, e nel totale i suoi −40 punti conterebbero il doppio. Nella lezione "[Identificare senza ambiguità: le chiavi](./le-chiavi.mdx)" è successo qualcosa di simile in un database: la versione del registro senza chiave conteneva due righe `James Potter`, `Grifondoro`, `1`, identiche, una per il padre di Harry e una per suo figlio, e i dieci punti dati a James entravano nel totale due volte. SQL accetta due righe uguali in una tabella a cui nessuno ha dato una chiave, ma una tabella così non è più una relazione. Per il modello relazionale le due righe di James Potter sono una riga sola, e una delle due persone non c'è: per registrarle tutte e due serve un attributo con un valore diverso per ciascuna, come la matricola.
 
@@ -85,7 +85,7 @@ Lo stesso problema tocca fatti che si ripetono davvero. Nella tabella `assegnazi
 | 4   | Harry Potter | −1    | Piton      |
 | 5   | Harry Potter | −1    | Piton      |
 
-Senza la colonna `id` le due righe sarebbero uguali, e in un insieme una delle due sparirebbe, insieme a uno dei due punti. La colonna `id` sta nella tabella proprio per questo: è l'identificatore assegnato apposta della lezione sulle chiavi, e rende diverse due righe che registrano due fatti con lo stesso contenuto.
+Senza la colonna `id` le due righe sarebbero uguali, e in un insieme una delle due sparirebbe, insieme a uno dei due punti. La colonna `id` sta nella tabella proprio per questo: è l'identificatore assegnato apposta della [lezione sulle chiavi](./le-chiavi.mdx), e rende diverse due righe che registrano due fatti con lo stesso contenuto.
 
 Ogni relazione, quindi, ha almeno un attributo, o un gruppo di attributi, che distingue ogni riga da tutte le altre. Nel modello E/R lo abbiamo chiamato identificatore; nelle relazioni si chiama chiave.
 
@@ -148,7 +148,7 @@ Sotto lo schema si scrivono, in frasi, i vincoli che i nomi degli attributi non 
 - il dominio di `anno` è l'insieme degli interi da 1 a 7;
 - il dominio di `casa` è l'insieme dei nomi delle quattro case.
 
-Una chiave primaria composta da più attributi li ha sottolineati tutti, come il corso identificato da materia e anno nella lezione sulle chiavi:
+Una chiave primaria composta da più attributi li ha sottolineati tutti, come il corso identificato da materia e anno nella [lezione sulle chiavi](./le-chiavi.mdx):
 
 <Schema def="corso([materia], [anno])" />
 

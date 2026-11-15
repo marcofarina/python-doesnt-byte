@@ -165,7 +165,7 @@ Il DBMS accetta l'inserimento e segnala una riga modificata. Nel pannello "Datab
 
 </Spoiler>
 
-Il vincolo di chiave esterna controlla soltanto le celle che contengono un valore. Una cella `NULL` non indica nessuna casa, quindi non indica una casa che non esiste: la riga di Euan non è orfana, come l'assegnazione senza studente della lezione precedente. Un nome di casa che non esiste, invece, il vincolo lo rifiuta. Prova ad aggiungere all'inserimento la colonna `casa`, prima con il valore `Grifondoro` e poi con un nome che non è di nessuna casa, e a rieseguire il blocco.
+Il vincolo di chiave esterna controlla soltanto le celle che contengono un valore. Una cella `NULL` non indica nessuna casa, quindi non indica una casa che non esiste: la riga di Euan non è orfana, come l'assegnazione senza studente della [lezione precedente](./le-chiavi-esterne.mdx). Un nome di casa che non esiste, invece, il vincolo lo rifiuta. Prova ad aggiungere all'inserimento la colonna `casa`, prima con il valore `Grifondoro` e poi con un nome che non è di nessuna casa, e a rieseguire il blocco.
 
 La differenza con Ginny sta nella tabella, non nello studente. Nel database della lezione "Le cardinalità" la colonna `casa` era obbligatoria, e il messaggio con cui il DBMS ha rifiutato Ginny, `NOT NULL constraint failed`, nomina proprio il vincolo che vieta `NULL` in una colonna. Nella tabella di questa pagina la colonna `casa` non ha quel vincolo. Il minimo di una cardinalità passa così nello schema: con il minimo 1 la chiave esterna è una colonna che non ammette `NULL`, con il minimo 0 una colonna che lo ammette. Lo stesso vale per un attributo opzionale come il Patronus, che nel diagramma ha `(0,1)` accanto al nome. Come si dichiara che una colonna non ammette `NULL` lo vedremo nel capitolo 5, quello sulla costruzione del database.
 
@@ -324,6 +324,6 @@ Per ogni colonna di uno schema, quindi, chi progetta risponde a due domande. La 
 
 :::tip[Il prossimo capitolo]
 
-Con questa lezione il modello di Hogwarts è diventato uno schema relazionale: relazioni, chiavi primarie, chiavi esterne e colonne che possono restare vuote. Il prossimo capitolo, "Normalizzare", torna alle anomalie della lezione "La stessa informazione scritta due volte" e dà un metodo per trovarle in uno schema prima che compaiano nei dati.
+Con questa lezione il modello di Hogwarts è diventato uno schema relazionale: relazioni, chiavi primarie, chiavi esterne e colonne che possono restare vuote. Il prossimo capitolo, "Normalizzare", torna alle anomalie della lezione "[La stessa informazione scritta due volte](./stessa-informazione-due-volte.mdx)" e dà un metodo per trovarle in uno schema prima che compaiano nei dati.
 
 :::

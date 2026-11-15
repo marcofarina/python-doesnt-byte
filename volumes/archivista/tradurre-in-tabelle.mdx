@@ -139,7 +139,7 @@ Il diagramma qui sotto raccoglie il modello di Hogwarts che il capitolo 2 ha cos
   cella={[200, 170]}
 />
 
-La traduzione comincia dalle entità, perché nello schema ogni associazione è registrata con le chiavi primarie delle entità che collega. Ogni entità diventa una relazione con lo stesso nome, ogni attributo semplice diventa un attributo della relazione, e l'identificatore diventa la chiave primaria, come abbiamo visto nella lezione precedente. Nel diagramma il professore ha un codice come identificatore, come nella biblioteca della lezione "[Leggere un dominio e ricavarne il modello](./leggere-un-dominio.mdx)". Per quattro delle cinque entità la traduzione non richiede nessuna scelta:
+La traduzione comincia dalle entità, perché nello schema ogni associazione è registrata con le chiavi primarie delle entità che collega. Ogni entità diventa una relazione con lo stesso nome, ogni attributo semplice diventa un attributo della relazione, e l'identificatore diventa la chiave primaria, come abbiamo visto nella [lezione precedente](./il-modello-relazionale.mdx). Nel diagramma il professore ha un codice come identificatore, come nella biblioteca della lezione "[Leggere un dominio e ricavarne il modello](./leggere-un-dominio.mdx)". Per quattro delle cinque entità la traduzione non richiede nessuna scelta:
 
 <Schema def="casa([nome], colori, animale)" />
 
@@ -149,7 +149,7 @@ La traduzione comincia dalle entità, perché nello schema ogni associazione è 
 
 <Schema def="assegnazione([id], punti)" />
 
-L'entità `studente` ha invece due attributi che non sono semplici. Il nominativo è un attributo composto, formato da nome e cognome. Se restasse un attributo solo, con valori come `Fred Weasley`, la domanda della lezione "Entità e attributi", quanti Weasley ci sono a Hogwarts, richiederebbe di tagliare ogni nominativo dopo lo spazio: il cognome starebbe dentro un valore che il DBMS confronta sempre intero. Per il dominio di Hogwarts il nominativo non è un valore atomico. Un attributo composto si scioglie quindi nelle sue parti, e ogni parte diventa un attributo della relazione: `nome` e `cognome`. Il nominativo nello schema non compare più, perché era il nome del gruppo e non un dato.
+L'entità `studente` ha invece due attributi che non sono semplici. Il nominativo è un attributo composto, formato da nome e cognome. Se restasse un attributo solo, con valori come `Fred Weasley`, la domanda della lezione "[Entità e attributi](./entita-e-attributi.mdx)", quanti Weasley ci sono a Hogwarts, richiederebbe di tagliare ogni nominativo dopo lo spazio: il cognome starebbe dentro un valore che il DBMS confronta sempre intero. Per il dominio di Hogwarts il nominativo non è un valore atomico. Un attributo composto si scioglie quindi nelle sue parti, e ogni parte diventa un attributo della relazione: `nome` e `cognome`. Il nominativo nello schema non compare più, perché era il nome del gruppo e non un dato.
 
 Il Patronus è un attributo opzionale: quasi nessuno studente del primo anno ne ha uno. Diventa un attributo come gli altri, e nelle righe degli studenti senza Patronus la sua cella resta vuota. Che cosa contiene davvero una cella vuota, e come si comporta nelle interrogazioni, lo vedremo nella lezione "Il valore che non c'è", l'ultima di questo capitolo.
 
@@ -176,7 +176,7 @@ La tabella qui sotto mostra alcune righe della relazione `studente`, con le colo
 
 Proviamo l'altro verso: la colonna nella relazione `casa`, con il valore della chiave primaria dello studente. La riga di Serpeverde riceverebbe la matricola di Draco, e quella di Corvonero la matricola di Padma. La riga di Grifondoro dovrebbe ricevere le matricole di Harry, Hermione, Ron, Neville, Fred e George: sei valori in una cella, e una cella di una relazione contiene un solo valore atomico. Sei colonne `studente_1`, `studente_2` e così via spostano il problema al settimo Grifondoro, come le colonne `legno_2` e `nucleo_2` della lezione "[Le cardinalità](./le-cardinalita.mdx)" spostavano il problema alla terza bacchetta di Ron. La colonna che registra l'associazione può stare da un lato solo: nella relazione dell'entità che compare al massimo in una coppia, cioè quella con il massimo 1 accanto a sé.
 
-Nello schema la nuova colonna `casa` è in corsivo, e sotto lo schema una riga indica a quale chiave primaria si riferisce, nella stessa forma dei vincoli sui domini della lezione precedente:
+Nello schema la nuova colonna `casa` è in corsivo, e sotto lo schema una riga indica a quale chiave primaria si riferisce, nella stessa forma dei vincoli sui domini della [lezione precedente](./il-modello-relazionale.mdx):
 
 <Schema def="studente([matricola], nome, cognome, anno, patronus, {casa})" />
 
@@ -190,7 +190,7 @@ Una **chiave esterna** è un attributo, o un insieme di attributi, di una relazi
 
 Il nome non è nuovo: la lezione "[Che cosa fa un DBMS al posto tuo](./che-cosa-fa-un-dbms.mdx)" ha chiamato vincolo di chiave esterna la regola con cui il DBMS ha rifiutato un'assegnazione a uno studente che nella tabella `studente` non c'era. Che cosa fa il DBMS quando a sparire è la riga a cui la chiave esterna si riferisce, lo vediamo nella [prossima lezione](./le-chiavi-esterne.mdx).
 
-Nella traduzione passa anche il minimo della cardinalità. Il minimo 1 accanto a `studente` vuol dire che la colonna `casa` non può restare vuota: è il vincolo che nella lezione "Le cardinalità" ha rifiutato Ginny prima dello smistamento. Con il minimo 0, la colonna `casa` di uno studente non ancora smistato resterebbe vuota.
+Nella traduzione passa anche il minimo della cardinalità. Il minimo 1 accanto a `studente` vuol dire che la colonna `casa` non può restare vuota: è il vincolo che nella lezione "[Le cardinalità](./le-cardinalita.mdx)" ha rifiutato Ginny prima dello smistamento. Con il minimo 0, la colonna `casa` di uno studente non ancora smistato resterebbe vuota.
 
 :::warning[Il “lato molti” non è il lato della N]
 
@@ -236,7 +236,7 @@ La regola giusta è un'altra. Un'associazione molti a molti diventa una relazion
 
 La chiave esterna verso `corso` è composta, come la chiave primaria a cui si riferisce: la materia e l'anno indicano un corso solo se presi insieme. Il voto, che è un attributo della coppia, sta nella riga della coppia. Nome, cognome e casa di Harry restano scritti una volta sola, nella relazione `studente`, e nella relazione `iscrizione` Harry compare soltanto con la sua matricola, una volta per ogni corso.
 
-La chiave primaria di `iscrizione` è formata da tutte e tre le colonne che vengono dalle due entità, cioè dalla coppia studente e corso. Nel capitolo 2 abbiamo detto che un'associazione è un insieme di coppie, e che la stessa coppia non può comparire due volte: nella relazione `iscrizione` quella regola diventa la chiave primaria, e il DBMS la fa rispettare.
+La chiave primaria di `iscrizione` è formata da tutte e tre le colonne che vengono dalle due entità, cioè dalla coppia studente e corso. Nel [capitolo 2](./associazioni-molti-a-molti.mdx) abbiamo detto che un'associazione è un insieme di coppie, e che la stessa coppia non può comparire due volte: nella relazione `iscrizione` quella regola diventa la chiave primaria, e il DBMS la fa rispettare.
 
 Il database di prova del blocco qui sotto è più piccolo del modello: registra un anno scolastico solo e, come il registro dei punti, identifica gli studenti con il nome, quindi la colonna `studente` contiene un nome al posto della matricola. In questo database Neville Longbottom ha già un voto in Pozioni del primo anno, un 4. Il blocco prova a registrare a Neville un secondo voto in Pozioni, e si legge così: inserisci nella tabella `iscrizione`, nelle colonne `studente`, `materia`, `anno` e `voto`, i valori `Neville Longbottom`, `Pozioni`, 1 e 8. Prima di eseguire il blocco, prova a prevedere che cosa fa il DBMS.
 
@@ -308,7 +308,7 @@ Traduci in uno schema relazionale il modello della biblioteca di Hogwarts, il di
 
 La relazione `scrive` non ha altri attributi, perché l'associazione non ne ha: contiene soltanto le coppie.
 
-I due vincoli non esprimibili del modello, la firma se e solo se il libro è riservato e al massimo un prestito aperto per copia, restano scritti sotto lo schema: nessuna chiave li fa rispettare. Il modello non ha generalizzazioni; se studenti e professori fossero figli di un'entità `persona`, come nella lezione "Generalizzazioni", la scelta di uno dei tre modi verrebbe prima di tutto il resto.
+I due vincoli non esprimibili del modello, la firma se e solo se il libro è riservato e al massimo un prestito aperto per copia, restano scritti sotto lo schema: nessuna chiave li fa rispettare. Il modello non ha generalizzazioni; se studenti e professori fossero figli di un'entità `persona`, come nella lezione "[Generalizzazioni](./generalizzazioni.mdx)", la scelta di uno dei tre modi verrebbe prima di tutto il resto.
 
 Altre soluzioni sono accettabili, se motivate. Per esempio, `firma` può diventare una relazione propria, firma(<u>_prestito_</u>, _professore_), con una riga solo per i prestiti firmati: la colonna `professore` di `prestito` non resta più vuota, e per sapere chi ha firmato un prestito servono due tabelle.
 
@@ -441,6 +441,6 @@ Altre soluzioni sono accettabili, se motivate. Per esempio, `firma` può diventa
 
 :::tip[La prossima lezione]
 
-Sotto ogni schema di questa lezione c'è una riga per ogni chiave esterna, che dice a quale chiave primaria si riferisce. Nella [prossima lezione](./le-chiavi-esterne.mdx) vediamo che il DBMS fa rispettare quel riferimento in tutti e due i versi: rifiuta un valore che non corrisponde a nessuna riga, come nel capitolo 1, e rifiuta anche di cancellare una riga a cui altre righe si riferiscono. Fred e George Weasley stanno per lasciare Hogwarts, e i loro punti sono ancora nel registro.
+Sotto ogni schema di questa lezione c'è una riga per ogni chiave esterna, che dice a quale chiave primaria si riferisce. Nella [prossima lezione](./le-chiavi-esterne.mdx) vediamo che il DBMS fa rispettare quel riferimento in tutti e due i versi: rifiuta un valore che non corrisponde a nessuna riga, come nel [capitolo 1](./che-cosa-fa-un-dbms.mdx), e rifiuta anche di cancellare una riga a cui altre righe si riferiscono. Fred e George Weasley stanno per lasciare Hogwarts, e i loro punti sono ancora nel registro.
 
 :::
