@@ -21,6 +21,11 @@
  *   confronta con i rettangoli delle annotazioni (`Range.getClientRects`).
  * - Tastiera: con la barra o il menu aperti, Tab ci entra, le frecce si
  *   spostano fra i pulsanti, Esc chiude.
+ * - Note (fase Q2): i posti ancorati vanno al pannello Note attraverso il
+ *   ponte (src/lib/quaderno/ponte.ts). «Nota» nella barra apre una bozza nel
+ *   pannello; un clic su un testo con nota apre il pannello sulla sua scheda.
+ *   Il testo con nota (e quello della bozza) ha la sottolineatura
+ *   `pdb-con-nota`.
  *
  * Senza `CSS.highlights` (browser vecchi) il componente non fa niente.
  * Lo monta il Layout del DocItem, una volta per pagina (`key` = pagina).
@@ -38,7 +43,11 @@ import React, {
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faEraser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheck,
+  faEraser,
+  faNoteSticky,
+} from '@fortawesome/free-solid-svg-icons';
 
 import { ancora, descrivi } from '@site/src/lib/quaderno/ancora';
 import {
@@ -49,6 +58,16 @@ import {
   useQuaderno,
 } from '@site/src/lib/quaderno/archivio';
 import { SELETTORE_RADICE } from '@site/src/lib/quaderno/pagine';
+import {
+  ID_BOZZA,
+  azzeraPonte,
+  chiediScheda,
+  evidenziatoreSupportato,
+  iniziaBozza,
+  pubblicaPosti,
+  usePonte,
+  type Posto,
+} from '@site/src/lib/quaderno/ponte';
 import {
   costruisciTesto,
   daRange,
@@ -110,18 +129,12 @@ type Aperto =
     } & Posizione)
   | ({ tipo: 'menu'; annotazione: Annotazione } & Posizione);
 
-/** Il browser sa disegnare gli highlight? */
-function supportato(): boolean {
-  return (
-    typeof CSS !== 'undefined' &&
-    !!CSS.highlights &&
-    typeof Highlight === 'function'
-  );
-}
-
 function nomeHighlight(c: Colore): string {
   return `pdb-${c}`;
 }
+
+/** La sottolineatura del testo con nota (src/css/custom.css). */
+const CON_NOTA = 'pdb-con-nota';
 
 /** `CSS.highlights` è un Map; i tipi del DOM lo dicono solo con DOM.Iterable. */
 function registro(): Map<string, Highlight> {
@@ -184,7 +197,7 @@ export default function Evidenziatore({
   // Sul server e durante l'hydration: spento.
   const attivo = useSyncExternalStore(
     nessunaIscrizione,
-    supportato,
+    evidenziatoreSupportato,
     () => false,
   );
   return attivo ? <EvidenziatoreAttivo pagina={pagina} /> : null;
@@ -193,6 +206,7 @@ export default function Evidenziatore({
 function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
   const annotazioni = useAnnotazioniPagina(pagina);
   const { legenda } = useQuaderno();
+  const { bozza } = usePonte();
   const [aperto, setAperto] = useState<Aperto | null>(null);
   const [annuncio, setAnnuncio] = useState('');
   const stato = useRef<Stato | null>(null);
@@ -210,10 +224,17 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
     if (!radice) return;
     const t = costruisciTesto(radice);
     const ancorate: Ancorata[] = [];
+    const posti = new Map<string, Posto>();
     for (const a of annotazioni) {
       const p = ancora(t, a.selettore);
-      if (p) ancorate.push({ a, ...p, range: intervallo(t, p.inizio, p.fine) });
+      if (!p) continue;
+      const x = { a, ...p, range: intervallo(t, p.inizio, p.fine) };
+      ancorate.push(x);
+      posti.set(a.id, { inizio: x.inizio, fine: x.fine, range: x.range });
     }
+    const pb = bozza && ancora(t, bozza);
+    if (pb)
+      posti.set(ID_BOZZA, { ...pb, range: intervallo(t, pb.inizio, pb.fine) });
     stato.current = { t, ancorate };
     for (const c of COLORI) {
       const ranges = ancorate
@@ -221,7 +242,14 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
         .map((x) => x.range);
       registro().set(nomeHighlight(c), new Highlight(...ranges));
     }
-  }, [annotazioni]);
+    const conNota = ancorate.filter((x) => x.a.nota).map((x) => x.range);
+    const rb = posti.get(ID_BOZZA)?.range;
+    registro().set(
+      CON_NOTA,
+      new Highlight(...(rb ? [...conNota, rb] : conNota)),
+    );
+    pubblicaPosti(posti);
+  }, [annotazioni, bozza]);
 
   useEffect(() => {
     ricostruisci();
@@ -252,6 +280,8 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
   useEffect(
     () => () => {
       for (const c of COLORI) registro().delete(nomeHighlight(c));
+      registro().delete(CON_NOTA);
+      azzeraPonte();
     },
     [],
   );
@@ -284,8 +314,10 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
     const sopra = st.ancorate.filter(
       (x) => x.a.colore !== null && x.inizio < o.fine && x.fine > o.inizio,
     );
+    // Anche una nota senza colore: «Nota» la riapre, un colore glielo dà.
     const esatta =
-      sopra.find((x) => x.inizio === o.inizio && x.fine === o.fine)?.a ?? null;
+      st.ancorate.find((x) => x.inizio === o.inizio && x.fine === o.fine)?.a ??
+      null;
     setAperto({
       tipo: 'barra',
       ...o,
@@ -344,7 +376,6 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
       // Fra più evidenziazioni sovrapposte vince la più corta.
       let scelta: { x: Ancorata; rect: DOMRect } | null = null;
       for (const x of st.ancorate) {
-        if (x.a.colore === null) continue;
         const rect = rettangoli(x.range).find(
           (q) =>
             e.clientX >= q.left &&
@@ -359,6 +390,14 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
           scelta = { x, rect };
       }
       if (!scelta) return;
+      // Con una nota si apre il pannello sulla sua scheda. `preventDefault`
+      // dice al pannello dal basso del telefono di non chiudersi per questo clic.
+      if (scelta.x.a.nota) {
+        e.preventDefault();
+        setAperto(null);
+        chiediScheda(scelta.x.a.id);
+        return;
+      }
       const pos = posiziona([scelta.rect], tocco.current);
       if (pos) setAperto({ tipo: 'menu', annotazione: scelta.x.a, ...pos });
     };
@@ -444,6 +483,24 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
     finito(`Evidenziato in ${NOMI[c].toLowerCase()}.`);
   };
 
+  const nota = () => {
+    if (!aperto) return;
+    const esistente =
+      aperto.tipo === 'menu' ? aperto.annotazione : aperto.esatta;
+    if (esistente) {
+      chiediScheda(esistente.id, true);
+    } else if (aperto.tipo === 'barra') {
+      const st = stato.current;
+      if (!st) return;
+      iniziaBozza(descrivi(st.t, aperto.inizio, aperto.fine));
+    }
+    // Il fuoco lo prende la scheda nel pannello.
+    window.getSelection()?.removeAllRanges();
+    setAnnuncio('Scrivi la nota nel pannello Note.');
+    setAperto(null);
+    focoPrima.current = null;
+  };
+
   const togliTutto = () => {
     if (!aperto) return;
     const via = aperto.tipo === 'menu' ? [aperto.annotazione] : aperto.sopra;
@@ -500,9 +557,18 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
               </span>
             </button>
           ))}
+          <span className={styles.divisore} aria-hidden="true" />
+          <button
+            type="button"
+            className={styles.togli}
+            data-azione="nota"
+            onClick={nota}
+          >
+            <FontAwesomeIcon icon={faNoteSticky} aria-hidden="true" />
+            Nota
+          </button>
           {togliVisibile && (
             <>
-              <span className={styles.divisore} aria-hidden="true" />
               <button
                 type="button"
                 className={styles.togli}

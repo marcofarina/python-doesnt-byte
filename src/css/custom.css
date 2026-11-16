@@ -1558,6 +1558,7 @@ html[data-theme='light'] {
   --quaderno-azzurro-pieno: #38bdf8;
   --quaderno-rosa-pieno: #f472b6;
   --quaderno-superficie: #ffffff;
+  --quaderno-attiva: rgba(29, 104, 225, 0.14);
 }
 
 html[data-theme='dark'] {
@@ -1570,6 +1571,7 @@ html[data-theme='dark'] {
   --quaderno-azzurro-pieno: #7dd3fc;
   --quaderno-rosa-pieno: #f9a8d4;
   --quaderno-superficie: #1c1c20;
+  --quaderno-attiva: rgba(117, 163, 237, 0.2);
 }
 
 ::highlight(pdb-giallo) {
@@ -1583,6 +1585,19 @@ html[data-theme='dark'] {
 }
 ::highlight(pdb-rosa) {
   background-color: var(--quaderno-rosa);
+}
+
+/* Fase Q2: il testo con una nota ha una sottolineatura punteggiata (anche
+   quello della nota che si sta scrivendo); il testo della scheda attiva nel
+   pannello Note si scurisce. In Firefox 140–145 la sottolineatura non si vede
+   (fatto 11 del piano). */
+::highlight(pdb-con-nota) {
+  text-decoration: underline dotted var(--at-accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+::highlight(pdb-attiva) {
+  background-color: var(--quaderno-attiva);
 }
 
 @media (prefers-reduced-motion: reduce) {

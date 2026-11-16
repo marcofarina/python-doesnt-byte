@@ -15,8 +15,13 @@ export interface AccessoQuaderno {
   /** La chiave della pagina aperta. */
   pagina(): string;
   quaderno(): Quaderno;
-  /** Annota il testo fra due offset del testo evidenziabile. */
-  aggiungi(inizio: number, fine: number, colore: Colore | null): Annotazione;
+  /** Annota il testo fra due offset del testo evidenziabile (nota: fase Q2). */
+  aggiungi(
+    inizio: number,
+    fine: number,
+    colore: Colore | null,
+    nota?: string,
+  ): Annotazione;
   /** Annota la selezione del documento (la parte evidenziabile). */
   aggiungiSelezione(colore: Colore | null): Annotazione | null;
   ancora(s: Selettore): { inizio: number; fine: number } | null;
@@ -42,8 +47,13 @@ export function useSondaQuaderno(pagina: string | null): void {
     const accesso: AccessoQuaderno = {
       pagina: () => pagina,
       quaderno: leggiQuaderno,
-      aggiungi(inizio, fine, colore) {
-        return aggiungi(pagina, descrivi(testoPagina(), inizio, fine), colore);
+      aggiungi(inizio, fine, colore, nota) {
+        return aggiungi(
+          pagina,
+          descrivi(testoPagina(), inizio, fine),
+          colore,
+          nota,
+        );
       },
       aggiungiSelezione(colore) {
         const sel = window.getSelection();

@@ -1,25 +1,31 @@
 /**
- * Colonna — la colonna destra delle lezioni del Volume 3, con i pannelli
- * «Archivio» (pm/piano-2026-10-archivio.md) e «Database»
- * (pm/piano-2026-10-pannello-database.md).
+ * Colonna — la colonna destra delle lezioni, con i pannelli «Archivio»
+ * (pm/piano-2026-10-archivio.md), «Database»
+ * (pm/piano-2026-10-pannello-database.md) e «Note»
+ * (pm/piano-2026-11-quaderno.md, fase Q2).
  *
- * La colonna compare se la lezione dichiara `archivio:`, `database:` o
- * entrambi. Si apre un pannello alla volta; chiusi entrambi torna l'indice.
+ * La colonna compare in tutte le pagine con l'evidenziatore (pannello Note) e
+ * nelle lezioni che dichiarano `archivio:` o `database:`. Si apre un pannello
+ * alla volta; chiusi tutti torna l'indice.
  *
  * - Desktop: <ColonnaRail> sta nella colonna dell'indice. I pulsanti restano
- *   in testa, «Archivio» sopra e «Database» sotto; il pannello aperto prende
- *   il posto dell'indice.
+ *   in testa, nell'ordine Archivio, Database, Note; il pannello aperto prende
+ *   il posto dell'indice. Le Note da 1280 px fanno eccezione: niente
+ *   pannello, le schede scorrono con il testo accanto al punto a cui si
+ *   riferiscono (<NoteAllineate>), e in testa restano solo i pulsanti.
  * - Telefono: <ColonnaSheet>, pulsante flottante e pannello che sale dal basso
- *   fino a metà schermo, con una scheda per pannello se sono due.
+ *   fino a metà schermo, con una scheda per pannello se sono più di uno.
  *
  * Lo stato vive in useColonna(), chiamato dal Layout del DocItem perché anche
  * la larghezza delle colonne dipende dal pannello aperto. Il pannello aperto si
- * ricorda fra le pagine in sessionStorage.
+ * ricorda fra le pagine in sessionStorage. Una richiesta del ponte del
+ * quaderno (clic su un testo con nota, «Nota» nella barra) apre le Note.
  */
 import React, {
   useCallback,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
   type KeyboardEvent,
@@ -34,10 +40,18 @@ import {
   faBoxArchive,
   faChevronDown,
   faDatabase,
+  faNoteSticky,
   faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useMemoria } from '@site/src/lib/memoria';
+import { useAnnotazioniPagina } from '@site/src/lib/quaderno/archivio';
+import { usePonte } from '@site/src/lib/quaderno/ponte';
+import {
+  NoteAllineate,
+  NoteElenco,
+  useNoteAllineate,
+} from '@site/src/components/NotePagina';
 import {
   ArchivioContenuto,
   useArchivio,
@@ -52,11 +66,19 @@ import {
 
 import styles from './styles.module.css';
 
-export type Sezione = 'archivio' | 'database';
+export type Sezione = 'archivio' | 'database' | 'note';
+
+export interface NoteColonna {
+  /** Chiave della pagina nel quaderno (`src/lib/quaderno/pagine.ts`). */
+  pagina: string;
+  /** Annotazioni della pagina, per il numero sul pulsante. */
+  quante: number;
+}
 
 export interface Colonna {
   archivio: Archivio | null;
   database: DatabasePagina | null;
+  note: NoteColonna | null;
   /** Il pannello aperto, null se è chiuso (si vede l'indice). */
   aperta: Sezione | null;
   apri: (sezione: Sezione | null) => void;
@@ -67,8 +89,11 @@ const CHIAVE_APERTA = 'pdb.colonna.aperta';
 // chiave nuova non esiste, chi aveva l'archivio aperto lo ritrova aperto.
 const CHIAVE_ARCHIVIO_VECCHIA = 'pdb.archivio.aperto';
 
-/** Stato della colonna della pagina; `null` se la lezione non ha pannelli. */
-export function useColonna(): Colonna | null {
+/**
+ * Stato della colonna della pagina; `null` se la pagina non ha pannelli.
+ * `pagina` è la chiave del quaderno, null nelle pagine senza evidenziatore.
+ */
+export function useColonna(pagina: string | null): Colonna | null {
   const { frontMatter } = useDoc();
   const archivio = useArchivio();
   const dichiarato = (frontMatter as { database?: unknown }).database;
@@ -87,7 +112,9 @@ export function useColonna(): Colonna | null {
       ? 'archivio'
       : voluta === 'database' && datasetKey !== null
         ? 'database'
-        : null;
+        : voluta === 'note' && pagina !== null
+          ? 'note'
+          : null;
 
   const database = useDatabasePagina(datasetKey, aperta === 'database');
   const apri = useCallback(
@@ -95,8 +122,21 @@ export function useColonna(): Colonna | null {
     [ricorda],
   );
 
-  if (archivio === null && database === null) return null;
-  return { archivio, database, aperta, apri };
+  // Il ponte chiede una scheda: si aprono le Note (la scheda la cerca il
+  // pannello stesso).
+  const quante = useAnnotazioniPagina(pagina ?? '').length;
+  const { richiesta } = usePonte();
+  const nRichiesta = richiesta?.n ?? 0;
+  useEffect(() => {
+    if (nRichiesta > 0 && pagina !== null) apri('note');
+  }, [nRichiesta, pagina, apri]);
+
+  const note = useMemo(
+    () => (pagina === null ? null : { pagina, quante }),
+    [pagina, quante],
+  );
+  if (archivio === null && database === null && note === null) return null;
+  return { archivio, database, note, aperta, apri };
 }
 
 function Pallino({ n }: { n: number }): ReactNode {
@@ -117,12 +157,16 @@ interface ColonnaRailProps {
 }
 
 export function ColonnaRail({ colonna, toc }: ColonnaRailProps): ReactNode {
-  const { archivio, database, aperta, apri } = colonna;
+  const { archivio, database, note, aperta, apri } = colonna;
   const idPannello = useId();
   const pulsanti = useRef<Record<Sezione, HTMLButtonElement | null>>({
     archivio: null,
     database: null,
+    note: null,
   });
+  // Da 1280 px le Note non hanno pannello: schede accanto al testo.
+  const allineate = useNoteAllineate();
+  const noteAccanto = aperta === 'note' && note !== null && allineate;
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== 'Escape' || aperta === null) return;
@@ -162,66 +206,108 @@ export function ColonnaRail({ colonna, toc }: ColonnaRailProps): ReactNode {
   );
 
   return (
-    <div
-      data-colonna=""
-      className={clsx(styles.rail, aperta !== null && styles.railAperto)}
-      onKeyDown={onKeyDown}
-    >
-      <div className={styles.pulsanti}>
-        {archivio &&
-          interruttore(
-            'archivio',
-            faBoxArchive,
-            'Archivio',
-            archivio.files.length === 1
-              ? '1 file'
-              : `${archivio.files.length} file`,
-          )}
-        {database &&
-          interruttore(
-            'database',
-            faDatabase,
-            'Database',
-            database.datasetKey.split('/').pop() ?? '',
-            database.daVedere,
-          )}
+    <>
+      <div
+        data-colonna=""
+        className={clsx(
+          styles.rail,
+          aperta !== null && !noteAccanto && styles.railAperto,
+          noteAccanto && styles.railNote,
+        )}
+        onKeyDown={onKeyDown}
+      >
+        <div className={styles.pulsanti}>
+          {archivio &&
+            interruttore(
+              'archivio',
+              faBoxArchive,
+              'Archivio',
+              archivio.files.length === 1
+                ? '1 file'
+                : `${archivio.files.length} file`,
+            )}
+          {database &&
+            interruttore(
+              'database',
+              faDatabase,
+              'Database',
+              database.datasetKey.split('/').pop() ?? '',
+              database.daVedere,
+            )}
+          {note &&
+            interruttore(
+              'note',
+              faNoteSticky,
+              'Note',
+              note.quante > 0 ? String(note.quante) : '',
+            )}
+        </div>
+        {aperta === 'archivio' && archivio ? (
+          <section
+            id={idPannello}
+            aria-label="Archivio"
+            data-archivio=""
+            className={styles.pannello}
+          >
+            <ArchivioContenuto archivio={archivio} />
+          </section>
+        ) : aperta === 'database' && database ? (
+          <section
+            id={idPannello}
+            aria-label="Database"
+            className={styles.pannello}
+          >
+            <DatabaseContenuto db={database} />
+          </section>
+        ) : aperta === 'note' && note ? (
+          !noteAccanto && (
+            <section
+              id={idPannello}
+              aria-label="Note"
+              data-note=""
+              className={styles.pannello}
+            >
+              <NoteElenco pagina={note.pagina} />
+            </section>
+          )
+        ) : (
+          <div className={styles.indice}>{toc}</div>
+        )}
       </div>
-      {aperta === 'archivio' && archivio ? (
-        <section
-          id={idPannello}
-          aria-label="Archivio"
-          data-archivio=""
-          className={styles.pannello}
-        >
-          <ArchivioContenuto archivio={archivio} />
+      {noteAccanto && (
+        <section id={idPannello} aria-label="Note" data-note="">
+          <NoteAllineate pagina={note.pagina} />
         </section>
-      ) : aperta === 'database' && database ? (
-        <section
-          id={idPannello}
-          aria-label="Database"
-          className={styles.pannello}
-        >
-          <DatabaseContenuto db={database} />
-        </section>
-      ) : (
-        <div className={styles.indice}>{toc}</div>
       )}
-    </div>
+    </>
   );
 }
 
 /* ─────────────── Telefono: pulsante flottante e pannello dal basso ─────────────── */
 
-const SEZIONI: Record<Sezione, { icona: typeof faBoxArchive; nome: string }> = {
-  archivio: { icona: faBoxArchive, nome: 'Archivio' },
-  database: { icona: faDatabase, nome: 'Database' },
+const SEZIONI: Record<
+  Sezione,
+  { icona: typeof faBoxArchive; nome: string; chiudi: string }
+> = {
+  archivio: {
+    icona: faBoxArchive,
+    nome: 'Archivio',
+    chiudi: "Chiudi l'archivio",
+  },
+  database: {
+    icona: faDatabase,
+    nome: 'Database',
+    chiudi: 'Chiudi il database',
+  },
+  note: { icona: faNoteSticky, nome: 'Note', chiudi: 'Chiudi le note' },
 };
 
 export function ColonnaSheet({ colonna }: { colonna: Colonna }): ReactNode {
-  const { archivio, database, aperta, apri } = colonna;
+  const { archivio, database, note, aperta, apri } = colonna;
   const sezioni: Sezione[] = [
     ...(archivio ? (['archivio'] as const) : []),
     ...(database ? (['database'] as const) : []),
+    ...(note ? (['note'] as const) : []),
   ];
   const aperto = aperta !== null;
   const idPannello = useId();
@@ -232,6 +318,7 @@ export function ColonnaSheet({ colonna }: { colonna: Colonna }): ReactNode {
   const linguette = useRef<Record<Sezione, HTMLButtonElement | null>>({
     archivio: null,
     database: null,
+    note: null,
   });
   // L'ultimo pannello guardato: il pulsante flottante riapre quello.
   const [ultima, setUltima] = useState<Sezione | null>(null);
@@ -269,6 +356,14 @@ export function ColonnaSheet({ colonna }: { colonna: Colonna }): ReactNode {
     const onClick = (e: MouseEvent) => {
       const t = e.target as Node;
       if (pannello.current?.contains(t) || pulsante.current?.contains(t))
+        return;
+      // Un clic su un testo con nota (l'Evidenziatore lo segna con
+      // preventDefault) o sulla barra dei colori apre le Note: non chiudere.
+      if (
+        e.defaultPrevented ||
+        (t instanceof Element &&
+          t.closest('[data-quaderno-barra], [data-quaderno-menu]'))
+      )
         return;
       chiudi();
     };
@@ -317,7 +412,12 @@ export function ColonnaSheet({ colonna }: { colonna: Colonna }): ReactNode {
     linguette.current[sezioni[dest]]?.focus();
   };
 
-  const nomePulsante = sezioni.map((s) => SEZIONI[s].nome).join(' · ');
+  const nomi = sezioni.map((s) => SEZIONI[s].nome);
+  const soloIcone = sezioni.length > 2;
+  const nomePulsante = soloIcone
+    ? `${nomi.slice(0, -1).join(', ')} e ${nomi[nomi.length - 1]}`
+    : nomi.join(' · ');
+  const corrente = aperta ?? ultima ?? sezioni[0];
 
   // Portal su <body>: un antenato con transform o filter farebbe da containing
   // block e il `position: fixed` non sarebbe più relativo allo schermo.
@@ -327,20 +427,22 @@ export function ColonnaSheet({ colonna }: { colonna: Colonna }): ReactNode {
       <button
         ref={pulsante}
         type="button"
-        className={styles.flottante}
+        className={clsx(styles.flottante, soloIcone && styles.flottanteIcone)}
         aria-expanded={aperto}
         aria-controls={idPannello}
         aria-label={
           daVedere > 0
             ? `${nomePulsante}: ${etichettaDaVedere(daVedere)}`
-            : undefined
+            : soloIcone
+              ? nomePulsante
+              : undefined
         }
         onClick={apriDaPulsante}
       >
         {sezioni.map((s) => (
           <FontAwesomeIcon key={s} icon={SEZIONI[s].icona} />
         ))}
-        {nomePulsante}
+        {!soloIcone && nomePulsante}
         <Pallino n={daVedere} />
       </button>
       <div
@@ -356,7 +458,7 @@ export function ColonnaSheet({ colonna }: { colonna: Colonna }): ReactNode {
             <div
               role="tablist"
               id={idSezioni}
-              aria-label="Archivio e database"
+              aria-label="Pannelli della lezione"
               className={clsx(styles.schede, styles.sezioni)}
               onKeyDown={onKeyDownSezioni}
             >
@@ -396,7 +498,7 @@ export function ColonnaSheet({ colonna }: { colonna: Colonna }): ReactNode {
             aria-label={
               sezioni.length > 1
                 ? 'Chiudi il pannello'
-                : `Chiudi ${sezioni[0] === 'archivio' ? "l'archivio" : 'il database'}`
+                : SEZIONI[sezioni[0]].chiudi
             }
             onClick={chiudi}
           >
@@ -404,7 +506,11 @@ export function ColonnaSheet({ colonna }: { colonna: Colonna }): ReactNode {
           </button>
         </div>
         <div className={styles.sheetCorpo}>
-          {(aperta ?? ultima ?? sezioni[0]) === 'database' && database ? (
+          {corrente === 'note' && note ? (
+            <div data-note="" className={styles.sheetCorpo}>
+              <NoteElenco pagina={note.pagina} />
+            </div>
+          ) : corrente === 'database' && database ? (
             <DatabaseContenuto db={database} />
           ) : (
             archivio && (

@@ -1,7 +1,7 @@
 /**
- * Banco di prova del quaderno (piano pm/piano-2026-11-quaderno.md, fasi Q0 e
- * Q1): ancoraggio, archivio locale, unione ed evidenziatore in pagina, contro
- * la sandbox docs/quaderno-test.
+ * Banco di prova del quaderno (piano pm/piano-2026-11-quaderno.md, fasi Q0–Q2):
+ * ancoraggio, archivio locale, unione, evidenziatore in pagina e pannello Note,
+ * contro la sandbox docs/quaderno-test.
  *
  * - L'unione (`src/lib/quaderno/unisci.ts`) si prova in Node, caricata con jiti.
  * - Ancoraggio e archivio si provano nel browser attraverso `window.__quaderno`
@@ -10,6 +10,9 @@
  * - L'evidenziatore si prova come lo usa lo studente: selezione, clic sulla
  *   barra e sul testo evidenziato, `CSS.highlights` per vedere che cosa è
  *   disegnato.
+ * - Il pannello Note si prova a 1440 px, dove le schede stanno accanto al
+ *   testo: nota scritta dalla barra, allineamento, schede che non si
+ *   sovrappongono, clic sul testo con nota, orfane dopo una riscrittura.
  *
  * Lavora contro `npm start` sulla porta 3000. Il browser è il Chrome installato
  * (`channel: 'chrome'`); per usarne un altro, QUADERNO_CHROME=/percorso/chrome.
@@ -631,6 +634,218 @@ async function proveEvidenziatore(browser) {
   await vecchio.close();
 }
 
+/* ------------------------------------------------------------------- note */
+
+const NOTE = '[data-note]';
+
+/** Il posto (offset) di una frase unica nel testo della pagina. */
+async function posto(page, frase) {
+  const testo = await sonda(page, () => window.__quaderno.testo());
+  return una(testo, frase);
+}
+
+/** Bordo alto della prima riga del testo di un'annotazione, nel viewport. */
+const altoTesto = (page, selettore) =>
+  page.evaluate((s) => {
+    const q = window.__quaderno;
+    const o = q.ancora(s);
+    const radice = document.querySelector('.theme-doc-markdown');
+    const w = document.createTreeWalker(radice, NodeFilter.SHOW_TEXT);
+    // Stesso offset del testo evidenziabile: si cerca il nodo dalla frase.
+    for (let n = w.nextNode(); n; n = w.nextNode()) {
+      const i = n.data.indexOf(s.esatto);
+      if (i < 0) continue;
+      const r = document.createRange();
+      r.setStart(n, i);
+      r.setEnd(n, i + s.esatto.length);
+      return o ? r.getClientRects()[0].top : null;
+    }
+    return null;
+  }, selettore);
+
+const altoScheda = (page, id) =>
+  page.evaluate(
+    (x) =>
+      document
+        .querySelector(`[data-note] [data-nota-id="${x}"]`)
+        ?.getBoundingClientRect().top ?? null,
+    id,
+  );
+
+async function proveNote(browser) {
+  const ctx = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+  });
+  // Il pannello Note aperto, come se lo studente l'avesse aperto prima.
+  await ctx.addInitScript(() => {
+    if (!sessionStorage.getItem('pdb.colonna.aperta'))
+      sessionStorage.setItem('pdb.colonna.aperta', 'note');
+  });
+  const page = await ctx.newPage();
+  const erroriPagina = [];
+  page.on('pageerror', (e) => erroriPagina.push(e.message));
+  await apri(page);
+  await sonda(page, () => window.__quaderno.svuota());
+  await apri(page);
+  const testoNota = 'Da chiedere a Madama Pince.';
+
+  await caso(
+    'note: «Nota» nella barra → scheda in modifica → salvata nel pannello e nel quaderno',
+    async () => {
+      await page.waitForSelector(NOTE, { timeout: 3000 });
+      await seleziona(page, 'Il dizionario di latino');
+      await page.waitForSelector(BARRA, { timeout: 2000 });
+      await page.click(`${BARRA} [data-azione="nota"]`);
+      await page.waitForFunction(
+        () =>
+          document.activeElement?.tagName === 'TEXTAREA' &&
+          document.activeElement.closest('[data-note]'),
+        null,
+        { timeout: 2000 },
+      );
+      // La bozza non è ancora nel quaderno.
+      assert.equal(
+        await sonda(
+          page,
+          () => window.__quaderno.quaderno().annotazioni.length,
+        ),
+        0,
+      );
+      await page.keyboard.type(testoNota);
+      await page.click(`${NOTE} [data-azione="salva"]`);
+      const [a] = await sonda(
+        page,
+        () => window.__quaderno.quaderno().annotazioni,
+      );
+      assert.equal(a.nota, testoNota);
+      assert.equal(a.colore, null);
+      assert.equal(a.selettore.esatto, 'Il dizionario di latino');
+      const scheda = page.locator(`${NOTE} [data-nota-id="${a.id}"]`);
+      assert.match(await scheda.innerText(), /Madama Pince/);
+      await page.waitForFunction(
+        () => CSS.highlights.get('pdb-con-nota')?.size === 1,
+        null,
+        { timeout: 2000 },
+      );
+    },
+  );
+
+  await caso(
+    'note: a 1440 px la scheda sta entro 8 px dall’altezza del suo testo',
+    async () => {
+      const [a] = await sonda(
+        page,
+        () => window.__quaderno.quaderno().annotazioni,
+      );
+      await page.waitForTimeout(400);
+      const t = await altoTesto(page, a.selettore);
+      const s = await altoScheda(page, a.id);
+      assert.ok(t !== null && s !== null, 'testo o scheda mancanti');
+      assert.ok(Math.abs(t - s) <= 8, `scarto di ${Math.round(t - s)} px`);
+    },
+  );
+
+  await caso(
+    'note: due note sulla stessa riga → schede che non si sovrappongono',
+    async () => {
+      const x = await posto(page, 'Sul primo scaffale stanno gli atlanti');
+      const y = await posto(page, 'rilegati in pelle verde');
+      const a1 = await sonda(
+        page,
+        ([i, f]) => window.__quaderno.aggiungi(i, f, 'giallo', 'Prima nota.'),
+        [x.inizio, x.fine],
+      );
+      const a2 = await sonda(
+        page,
+        ([i, f]) => window.__quaderno.aggiungi(i, f, 'rosa', 'Seconda nota.'),
+        [y.inizio, y.fine],
+      );
+      await page.waitForTimeout(600);
+      const t1 = await altoTesto(page, a1.selettore);
+      const t2 = await altoTesto(page, a2.selettore);
+      assert.ok(
+        Math.abs(t1 - t2) < 2,
+        'le due frasi non sono sulla stessa riga',
+      );
+      const r = await page.evaluate(
+        (ids) =>
+          ids.map((id) => {
+            const q = document
+              .querySelector(`[data-note] [data-nota-id="${id}"]`)
+              .getBoundingClientRect();
+            return { top: q.top, bottom: q.bottom };
+          }),
+        [a1.id, a2.id],
+      );
+      assert.ok(
+        r[0].bottom <= r[1].top || r[1].bottom <= r[0].top,
+        `schede sovrapposte: ${JSON.stringify(r)}`,
+      );
+    },
+  );
+
+  await caso(
+    'note: clic sul testo con nota → pannello aperto sulla sua scheda',
+    async () => {
+      // Pannello chiuso dal suo pulsante.
+      await page.click('[data-colonna] button[aria-expanded="true"]');
+      await page.waitForSelector(NOTE, { state: 'detached', timeout: 2000 });
+      const [a] = await sonda(page, () =>
+        window.__quaderno
+          .quaderno()
+          .annotazioni.filter((x) => x.nota === 'Seconda nota.'),
+      );
+      const p = await page.evaluate(() => {
+        const r = [...CSS.highlights.get('pdb-rosa')][0];
+        const q = r.getClientRects()[0];
+        return { x: q.left + q.width / 2, y: q.top + q.height / 2 };
+      });
+      await page.mouse.click(p.x, p.y);
+      await page.waitForSelector(NOTE, { timeout: 2000 });
+      await page.waitForFunction(
+        (id) =>
+          document.activeElement?.closest('[data-nota-id]')?.dataset.notaId ===
+          id,
+        a.id,
+        { timeout: 2000 },
+      );
+      assert.equal(await page.locator(MENU).count(), 0);
+    },
+  );
+
+  await caso(
+    'note: riscrittura → la nota sulla frase tolta finisce in «Non ritrovo il punto»',
+    async () => {
+      const t = await posto(
+        page,
+        'Quando il registro si riempie, ne apre uno nuovo e ripone il vecchio in cantina.',
+      );
+      const a = await sonda(
+        page,
+        ([i, f]) => window.__quaderno.aggiungi(i, f, null, 'Nota orfana.'),
+        [t.inizio, t.fine],
+      );
+      await page.waitForTimeout(400);
+      await apri(page, 2);
+      await page.waitForSelector(
+        `[data-note-orfane] [data-nota-id="${a.id}"]`,
+        { timeout: 3000 },
+      );
+      // Le altre restano accanto al loro testo.
+      assert.equal(
+        await page.locator(`[data-note-orfane] [data-nota-id]`).count(),
+        1,
+      );
+    },
+  );
+
+  await caso('note: nessun errore in pagina', () => {
+    assert.deepEqual(erroriPagina, []);
+  });
+  await sonda(page, () => window.__quaderno.svuota());
+  await ctx.close();
+}
+
 async function main() {
   await proveUnione();
   try {
@@ -650,6 +865,7 @@ async function main() {
   try {
     await proveBrowser(browser);
     await proveEvidenziatore(browser);
+    await proveNote(browser);
   } finally {
     await browser.close();
   }
