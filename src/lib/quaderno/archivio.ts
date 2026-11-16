@@ -68,17 +68,27 @@ function eAnnotazione(x: unknown): x is Annotazione {
 /** Da JSON a quaderno; null se non c'è o non si legge. */
 export function daJson(testo: string | null): Quaderno | null {
   if (!testo) return null;
-  let grezzo: Partial<Quaderno> & { formato?: number };
+  let grezzo: unknown;
   try {
     grezzo = JSON.parse(testo);
   } catch {
     return null;
   }
-  if (typeof grezzo !== 'object' || grezzo === null) return null;
-  if (typeof grezzo.formato === 'number' && grezzo.formato > 1) {
+  const formato = (grezzo as { formato?: unknown } | null)?.formato;
+  if (typeof formato === 'number' && formato > 1) {
     bloccato = true;
     return null;
   }
+  return valida(grezzo);
+}
+
+/**
+ * Da un oggetto qualunque (un file, lo zaino) a quaderno di formato 1; null se
+ * non ha la forma attesa. Le annotazioni rovinate si scartano una per una.
+ */
+export function valida(x: unknown): Quaderno | null {
+  if (typeof x !== 'object' || x === null) return null;
+  const grezzo = x as Partial<Quaderno> & { formato?: number };
   if (grezzo.formato !== 1 || !Array.isArray(grezzo.annotazioni)) return null;
   const vuoto = quadernoVuoto();
   const legenda = { ...vuoto.legenda };
@@ -193,7 +203,8 @@ function adesso(dopo?: string): string {
   ).toISOString();
 }
 
-function iscriviti(f: () => void): () => void {
+/** Avvisa a ogni cambio del quaderno: qui, da un'altra scheda, dallo zaino. */
+export function iscriviti(f: () => void): () => void {
   ascoltatori.add(f);
   return () => ascoltatori.delete(f);
 }

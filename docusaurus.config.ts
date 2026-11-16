@@ -61,6 +61,17 @@ export default async function createConfig(): Promise<Config> {
     url: 'https://python.rainbowbits.cloud',
     baseUrl: '/',
 
+    // Servizio dello zaino (servizi/zaino/, piano pm/piano-2026-11-quaderno.md).
+    // In `npm start` il Worker locale di `npx wrangler dev`; ZAINO_URL lo
+    // sostituisce in tutti e due i casi.
+    customFields: {
+      zaino:
+        process.env.ZAINO_URL ??
+        (process.env.NODE_ENV === 'production'
+          ? 'https://zaino.rainbowbits.cloud'
+          : 'http://localhost:8787'),
+    },
+
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
     organizationName: 'marcofarina', // Usually your GitHub org/username.

@@ -19,6 +19,12 @@
  *   «Vai al testo» (`?annotazione=<id>`), orfane e pagine tolte. Il file del
  *   quaderno (`src/lib/quaderno/file.ts`) si prova anche in Node, con jiti.
  *
+ * - Lo zaino (fase Q4): l'unione delle buste si prova in Node; la
+ *   sincronizzazione con due contesti del browser (due dispositivi) contro il
+ *   servizio locale di `npx wrangler dev` (servizi/zaino, porta 8787; per un
+ *   altro indirizzo ZAINO_SERVER). Il servizio vede solo blob cifrati: il banco
+ *   controlla che il testo di una nota non ci sia.
+ *
  * Lavora contro `npm start` sulla porta 3000. Il browser è il Chrome installato
  * (`channel: 'chrome'`); per usarne un altro, QUADERNO_CHROME=/percorso/chrome.
  * Per un dev server su un'altra porta, QUADERNO_SERVER=http://localhost:3001.
@@ -36,6 +42,7 @@ const RADICE = path.resolve(
   '..',
 );
 const SERVER = process.env.QUADERNO_SERVER ?? 'http://localhost:3000';
+const ZAINO = process.env.ZAINO_SERVER ?? 'http://localhost:8787';
 const PAGINA = '/docs/quaderno-test/';
 
 const esiti = [];
@@ -1287,14 +1294,352 @@ async function proveQuaderno(browser) {
   await ctx.close();
 }
 
+/* ------------------------------------------------------------- zaino */
+
+async function proveBuste() {
+  const jiti = jitiFactory(import.meta.url, { interopDefault: true });
+  const { registraSezione, unisciContenuti, canonico } = jiti(
+    path.join(RADICE, 'src/lib/zaino/sezioni.ts'),
+  );
+  // Una sezione giocattolo: un insieme di parole, unito per unione.
+  registraSezione({
+    nome: 'parole',
+    formato: 1,
+    vuota: () => [],
+    leggi: () => [],
+    scrivi: () => {},
+    unisci: (a, b) => [...new Set([...a, ...b])].sort(),
+    iscriviti: () => () => {},
+    valida: (x) => (Array.isArray(x) ? x : null),
+    svuota: () => {},
+  });
+  const busta = (sezioni) => ({ formato: 1, sezioni });
+  const sez = (dati, modificata, formato = 1) => ({
+    formato,
+    modificata,
+    dati,
+  });
+  const a = busta({
+    parole: sez(['gatto'], '2026-11-01T10:00:00.000Z'),
+    pyquest: sez({ livelli: 3 }, '2026-11-02T10:00:00.000Z'),
+    futura: sez('vecchia', '2026-11-05T10:00:00.000Z'),
+  });
+  const b = busta({
+    parole: sez(['cane'], '2026-11-03T10:00:00.000Z'),
+    pyquest: sez({ livelli: 5 }, '2026-11-04T10:00:00.000Z'),
+    futura: sez('nuova', '2026-11-01T10:00:00.000Z', 2),
+  });
+
+  await caso('zaino: unisciContenuti commutativa e idempotente', () => {
+    const ab = unisciContenuti(a, b);
+    assert.equal(canonico(ab), canonico(unisciContenuti(b, a)));
+    assert.equal(canonico(unisciContenuti(ab, ab)), canonico(ab));
+    assert.equal(canonico(unisciContenuti(ab, a)), canonico(ab));
+  });
+
+  await caso(
+    'zaino: sezione nota unita con la sua regola, data della parte nuova',
+    () => {
+      const ab = unisciContenuti(a, b);
+      assert.deepEqual(ab.sezioni.parole.dati, ['cane', 'gatto']);
+      assert.equal(ab.sezioni.parole.modificata, '2026-11-03T10:00:00.000Z');
+      // Una parte che non aggiunge niente non cambia la data.
+      const sotto = busta({
+        parole: sez(['cane'], '2026-12-01T00:00:00.000Z'),
+      });
+      const piu = busta({
+        parole: sez(['cane', 'gatto'], '2026-11-03T10:00:00.000Z'),
+      });
+      assert.equal(
+        unisciContenuti(sotto, piu).sezioni.parole.modificata,
+        '2026-11-03T10:00:00.000Z',
+      );
+    },
+  );
+
+  await caso(
+    'zaino: sezioni sconosciute intatte, vince la modificata più recente',
+    () => {
+      const ab = unisciContenuti(a, b);
+      assert.deepEqual(ab.sezioni.pyquest, b.sezioni.pyquest);
+      const solo = unisciContenuti(a, busta({}));
+      assert.deepEqual(solo.sezioni.pyquest, a.sezioni.pyquest);
+    },
+  );
+
+  await caso(
+    'zaino: una sezione di formato più alto non si riscrive mai',
+    () => {
+      // `futura` di formato 2 vince anche se più vecchia…
+      const ab = unisciContenuti(a, b);
+      assert.deepEqual(ab.sezioni.futura, b.sezioni.futura);
+      // …e lo stesso per una sezione nota di formato più alto del client.
+      const nuova = busta({
+        parole: sez({ forma: 'nuova' }, '2026-01-01T00:00:00.000Z', 2),
+      });
+      assert.deepEqual(
+        unisciContenuti(a, nuova).sezioni.parole,
+        nuova.sezioni.parole,
+      );
+    },
+  );
+}
+
+const TESTO_NOTA = 'nota di prova segreta';
+
+async function dispositivo(browser) {
+  const ctx = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+  });
+  const page = await ctx.newPage();
+  const errori = [];
+  page.on('pageerror', (e) => errori.push(e.message));
+  await apri(page);
+  await page.waitForFunction(() => window.__zaino?.stato().supportato);
+  await sonda(page, () => window.__quaderno.svuota());
+  return { ctx, page, errori };
+}
+
+const vive = (page) =>
+  sonda(page, () =>
+    window.__quaderno
+      .quaderno()
+      .annotazioni.filter((a) => !a.cancellata)
+      .map((a) => `${a.id}|${a.colore}|${a.nota}`)
+      .sort(),
+  );
+
+const sincronizza = (page) => sonda(page, () => window.__zaino.sincronizza());
+
+async function proveZaino(browser) {
+  const A = await dispositivo(browser);
+  const B = await dispositivo(browser);
+  const ann = {};
+  let codice = null;
+
+  await caso(
+    'zaino: crea su A → sincronizzato, codice di 20 caratteri',
+    async () => {
+      ann.a1 = await sonda(
+        A.page,
+        (nota) => window.__quaderno.aggiungi(10, 40, 'giallo', nota),
+        TESTO_NOTA,
+      );
+      codice = await sonda(A.page, () => window.__zaino.crea());
+      assert.match(codice, /^[0-9A-HJKMNP-TV-Z]{20}$/);
+      const st = await sonda(A.page, () => window.__zaino.stato());
+      assert.equal(st.fase, 'sincronizzato');
+      assert.equal(st.inSospeso, false);
+    },
+  );
+
+  await caso(
+    'zaino: codice sbagliato → inesistente, nessun collegamento',
+    async () => {
+      const esito = await sonda(B.page, () =>
+        window.__zaino.apri('0000-0000-0000-0000-0000'),
+      );
+      assert.equal(esito, 'inesistente');
+      assert.equal(await sonda(B.page, () => window.__zaino.codice()), null);
+    },
+  );
+
+  await caso(
+    'zaino: apri su B (codice a gruppi, minuscolo) → stesse annotazioni',
+    async () => {
+      const scritto = codice.toLowerCase().match(/.{4}/g).join('-');
+      const esito = await sonda(B.page, (c) => window.__zaino.apri(c), scritto);
+      assert.equal(esito, 'aperto');
+      assert.deepEqual(await vive(B.page), await vive(A.page));
+    },
+  );
+
+  await caso(
+    'zaino: modifica su A → dopo 5 s parte da sola → compare su B',
+    async () => {
+      ann.a2 = await sonda(A.page, () =>
+        window.__quaderno.aggiungi(60, 80, 'verde'),
+      );
+      assert.equal(
+        await sonda(A.page, () => window.__zaino.stato().inSospeso),
+        true,
+      );
+      await A.page.waitForFunction(
+        () => {
+          const s = window.__zaino.stato();
+          return s.fase === 'sincronizzato' && !s.inSospeso;
+        },
+        null,
+        { timeout: 10000 },
+      );
+      await sincronizza(B.page);
+      assert.ok((await vive(B.page)).some((x) => x.startsWith(ann.a2.id)));
+    },
+  );
+
+  await caso(
+    'zaino: modifiche contemporanee su A e B → unite su tutti e due',
+    async () => {
+      ann.a3 = await sonda(A.page, () =>
+        window.__quaderno.aggiungi(100, 120, 'rosa'),
+      );
+      ann.b1 = await sonda(B.page, () =>
+        window.__quaderno.aggiungi(130, 150, 'azzurro', 'scritta su B'),
+      );
+      await sincronizza(A.page);
+      await sincronizza(B.page); // 412 → rilegge → unisce → scrive
+      await sincronizza(A.page);
+      const va = await vive(A.page);
+      assert.deepEqual(va, await vive(B.page));
+      for (const x of [ann.a1, ann.a2, ann.a3, ann.b1])
+        assert.ok(
+          va.some((v) => v.startsWith(x.id)),
+          x.id,
+        );
+    },
+  );
+
+  await caso('zaino: cancellazione su A → sparisce su B', async () => {
+    await sonda(A.page, (id) => window.__quaderno.togli(id), ann.a2.id);
+    await sincronizza(A.page);
+    await sincronizza(B.page);
+    assert.ok(!(await vive(B.page)).some((x) => x.startsWith(ann.a2.id)));
+  });
+
+  await caso(
+    'zaino: il blob sul server non contiene il testo di una nota',
+    async () => {
+      const id = await sonda(A.page, () => window.__zaino.id());
+      assert.match(id, /^[A-Za-z0-9_-]{43}$/);
+      const r = await fetch(`${ZAINO}/v1/zaino/${id}`);
+      assert.equal(r.status, 200);
+      const blob = Buffer.from(await r.arrayBuffer());
+      for (const ago of [TESTO_NOTA, 'segreta', codice, 'quaderno'])
+        assert.equal(blob.includes(Buffer.from(ago)), false, ago);
+    },
+  );
+
+  await caso(
+    'zaino: una sezione che A non conosce resta sul server dopo un salvataggio di A',
+    async () => {
+      // Solo B sa che cos'è la sezione `prova`.
+      await sonda(B.page, () => {
+        localStorage.setItem('pdb:prova', JSON.stringify({ n: 7 }));
+        window.__zaino.registraSezione({
+          nome: 'prova',
+          formato: 1,
+          vuota: () => ({ n: 0 }),
+          leggi: () =>
+            JSON.parse(localStorage.getItem('pdb:prova') ?? '{"n":0}'),
+          scrivi: (d) => localStorage.setItem('pdb:prova', JSON.stringify(d)),
+          unisci: (a, b) => ({ n: Math.max(a.n, b.n) }),
+          iscriviti: () => () => {},
+          valida: (x) => (typeof x?.n === 'number' ? x : null),
+          svuota: () => localStorage.removeItem('pdb:prova'),
+        });
+      });
+      await sincronizza(B.page);
+      // A salva una modifica con la versione vecchia: 412, rilegge, unisce.
+      ann.a4 = await sonda(A.page, () =>
+        window.__quaderno.aggiungi(160, 180, 'giallo'),
+      );
+      await A.page.waitForFunction(
+        () => {
+          const s = window.__zaino.stato();
+          return s.fase === 'sincronizzato' && !s.inSospeso;
+        },
+        null,
+        { timeout: 10000 },
+      );
+      const ultimoA = await sonda(
+        A.page,
+        () => JSON.parse(localStorage.getItem('pdb:zaino')).ultimo,
+      );
+      assert.deepEqual(ultimoA.sezioni.prova?.dati, { n: 7 });
+      await sonda(B.page, () => localStorage.setItem('pdb:prova', '{"n":0}'));
+      await sincronizza(B.page);
+      assert.equal(
+        await sonda(B.page, () => localStorage.getItem('pdb:prova')),
+        '{"n":7}',
+      );
+      assert.ok((await vive(B.page)).some((x) => x.startsWith(ann.a4.id)));
+    },
+  );
+
+  await caso(
+    'zaino: al ricaricamento B resta collegato e sincronizzato',
+    async () => {
+      await apri(B.page);
+      await B.page.waitForFunction(
+        () => window.__zaino.stato().fase === 'sincronizzato',
+        null,
+        { timeout: 5000 },
+      );
+      assert.equal(await sonda(B.page, () => window.__zaino.codice()), codice);
+    },
+  );
+
+  await caso(
+    'zaino: cancellato da A → B si ferma e non lo ricrea',
+    async () => {
+      assert.equal(await sonda(A.page, () => window.__zaino.cancella()), true);
+      assert.equal(
+        await sonda(A.page, () => window.__zaino.stato().fase),
+        'scollegato',
+      );
+      const st = await sincronizza(B.page);
+      assert.equal(st.fase, 'errore');
+      assert.equal(st.motivo, 'cancellato');
+      await sonda(B.page, () => window.__quaderno.aggiungi(200, 220, 'verde'));
+      await B.page.waitForTimeout(6000);
+      const id = await sonda(B.page, () => window.__zaino.id());
+      assert.equal((await fetch(`${ZAINO}/v1/zaino/${id}`)).status, 404);
+    },
+  );
+
+  await caso(
+    'zaino: esci → niente codice né quaderno nel browser',
+    async () => {
+      await sonda(B.page, () => window.__zaino.esci());
+      const resto = await sonda(B.page, () => [
+        localStorage.getItem('pdb:zaino'),
+        localStorage.getItem('pdb:quaderno'),
+        window.__zaino.stato().fase,
+      ]);
+      assert.deepEqual(resto, [null, null, 'scollegato']);
+    },
+  );
+
+  await caso('zaino: nessun errore in pagina', () => {
+    assert.deepEqual([...A.errori, ...B.errori], []);
+  });
+
+  for (const d of [A, B]) {
+    await sonda(d.page, () => {
+      window.__quaderno.svuota();
+      localStorage.removeItem('pdb:prova');
+    });
+    await d.ctx.close();
+  }
+}
+
 async function main() {
   await proveUnione();
+  await proveBuste();
   try {
     const r = await fetch(`${SERVER}${PAGINA}`);
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
   } catch (e) {
     console.error(
       `Il server ${SERVER} non risponde su ${PAGINA} (${e.message}): avvia \`npm start\` e riprova.`,
+    );
+    process.exit(2);
+  }
+  try {
+    await fetch(`${ZAINO}/v1/zaino/x`);
+  } catch (e) {
+    console.error(
+      `Il servizio dello zaino ${ZAINO} non risponde (${e.message}): avvia \`npx wrangler dev\` in servizi/zaino e riprova.`,
     );
     process.exit(2);
   }
@@ -1308,6 +1653,7 @@ async function main() {
     await proveEvidenziatore(browser);
     await proveNote(browser);
     await proveQuaderno(browser);
+    await proveZaino(browser);
   } finally {
     await browser.close();
   }

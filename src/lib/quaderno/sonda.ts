@@ -6,7 +6,7 @@
 import { useEffect } from 'react';
 
 import { ancora, descrivi } from './ancora';
-import { aggiungi, leggiQuaderno, svuota } from './archivio';
+import { aggiungi, leggiQuaderno, svuota, togli } from './archivio';
 import { SELETTORE_RADICE } from './pagine';
 import { costruisciTesto, daRange, type TestoPagina } from './testo';
 import type { Annotazione, Colore, Quaderno, Selettore } from './tipi';
@@ -26,6 +26,8 @@ export interface AccessoQuaderno {
   aggiungiSelezione(colore: Colore | null): Annotazione | null;
   ancora(s: Selettore): { inizio: number; fine: number } | null;
   testo(): string;
+  /** Toglie un'annotazione (lapide), come «Togli» (per lo zaino, fase Q4). */
+  togli(id: string): void;
   svuota(): void;
 }
 
@@ -66,6 +68,7 @@ export function useSondaQuaderno(pagina: string | null): void {
       },
       ancora: (s) => ancora(testoPagina(), s),
       testo: () => testoPagina().testo,
+      togli,
       svuota,
     };
     window.__quaderno = accesso;
