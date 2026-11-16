@@ -59,6 +59,9 @@ import {
   type Quaderno,
 } from '@site/src/lib/quaderno/tipi';
 
+import ZainoStato from '@site/src/components/ZainoStato';
+import { useCodiceZaino } from '@site/src/lib/zaino/sincronizza';
+
 import styles from './styles.module.css';
 
 /** Da questa larghezza le schede stanno accanto al loro testo. */
@@ -526,6 +529,7 @@ function Scheda({ voce, note, accanto }: SchedaProps): ReactNode {
 /* ─────────────── Coda: orfane, vuoto, avviso ─────────────── */
 
 function Coda({ note, accanto }: { note: StatoNote; accanto: boolean }) {
+  const collegato = useCodiceZaino() !== null;
   const vuota = note.ancorate.length === 0 && note.orfane.length === 0;
   return (
     <>
@@ -555,19 +559,30 @@ function Coda({ note, accanto }: { note: StatoNote; accanto: boolean }) {
           ))}
         </div>
       )}
-      {note.vive > 0 && (
-        <div className={styles.avviso} data-note-avviso="">
+      {collegato ? (
+        <div className={styles.avviso} data-note-zaino="">
+          <ZainoStato />
           <p>
-            {note.vive === 1
-              ? '1 annotazione salvata solo in questo browser.'
-              : `${note.vive} annotazioni salvate solo in questo browser.`}
-          </p>
-          <p>
-            Se questo computer non è tuo, cancella le note quando hai finito: lo
-            fai dal <Link to="/quaderno">quaderno</Link>, dove puoi anche
-            scaricarle.
+            <Link to="/zaino">Gestisci lo zaino</Link>
           </p>
         </div>
+      ) : (
+        note.vive > 0 && (
+          <div className={styles.avviso} data-note-avviso="">
+            <p>
+              {note.vive === 1
+                ? '1 annotazione salvata solo in questo browser.'
+                : `${note.vive} annotazioni salvate solo in questo browser.`}{' '}
+              Per ritrovarle su altri dispositivi usa lo{' '}
+              <Link to="/zaino">zaino</Link>.
+            </p>
+            <p>
+              Se questo computer non è tuo, cancella le note quando hai finito:
+              lo fai dal <Link to="/quaderno">quaderno</Link>, dove puoi anche
+              scaricarle.
+            </p>
+          </div>
+        )
       )}
     </>
   );

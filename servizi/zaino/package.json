@@ -1,0 +1,16 @@
+{
+  "name": "pdb-zaino",
+  "private": true,
+  "description": "Servizio dello zaino di Python Doesn't Byte: caselle cifrate su Cloudflare D1",
+  "scripts": {
+    "dev": "wrangler dev",
+    "typecheck": "tsc --noEmit",
+    "prova": "node prova.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20261031.1",
+    "typescript": "~5.5.2",
+    "wrangler": "4.156.0"
+  }
+}

@@ -16,7 +16,7 @@ const PLUGIN_NAME = 'llms-txt';
 // src/pages che il template non cita e che non è in ESCLUSE.
 
 // Pagine di src/pages che restano fuori di proposito (home, sandbox, strumenti
-// da LIM, giochi non pubblici, il quaderno personale dello studente). Path senza
+// da LIM, giochi non pubblici, il quaderno e lo zaino personali dello studente). Path senza
 // baseUrl e senza barra finale.
 const ESCLUSE = [
   '',
@@ -25,6 +25,7 @@ const ESCLUSE = [
   '/level-editor',
   '/pyquest',
   '/quaderno',
+  '/zaino',
 ];
 
 const DIRECTIVE = /^<!-- docs:([\w-]+) -->$/;

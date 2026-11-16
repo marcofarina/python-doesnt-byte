@@ -218,3 +218,15 @@
     transparent 70%
   );
 }
+
+/* Lo zaino ha bisogno di attenzione: un pallino in alto a destra, non un numero. */
+.pallino {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-circle);
+  background: #dc2626;
+  box-shadow: 0 0 0 2px var(--ifm-navbar-background-color, var(--at-bg));
+}
