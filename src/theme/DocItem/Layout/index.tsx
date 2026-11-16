@@ -6,6 +6,10 @@
  * pm/piano-2026-10-pannello-database.md, fase T2), in src/components/Colonna/.
  * Le aggiunte sono marcate «Colonna».
  *
+ * Quaderno (piano pm/piano-2026-11-quaderno.md, fase Q0): nelle pagine con
+ * l'evidenziatore (`chiavePagina`) monta `window.__quaderno` per gli script di
+ * verifica. Le aggiunte sono marcate «Quaderno».
+ *
  * Eject e non wrap: i pannelli devono stare DENTRO la colonna dell'indice, che
  * questo componente costruisce; la colonna deve esserci anche nelle pagine
  * senza indice; e con un pannello aperto la colonna si allarga a spese del
@@ -18,7 +22,7 @@
 import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
 import { useWindowSize } from '@docusaurus/theme-common';
-import { useDoc } from '@docusaurus/plugin-content-docs/client';
+import { useDoc, useDocsVersion } from '@docusaurus/plugin-content-docs/client';
 import DocItemPaginator from '@theme/DocItem/Paginator';
 import DocVersionBanner from '@theme/DocVersionBanner';
 import DocVersionBadge from '@theme/DocVersionBadge';
@@ -35,6 +39,8 @@ import {
   ColonnaSheet,
   useColonna,
 } from '@site/src/components/Colonna';
+import { chiavePagina } from '@site/src/lib/quaderno/pagine';
+import { useSondaQuaderno } from '@site/src/lib/quaderno/sonda';
 
 import styles from './styles.module.css';
 
@@ -65,6 +71,9 @@ function useDocTOC() {
 export default function DocItemLayout({ children }: Props): ReactNode {
   const docTOC = useDocTOC();
   const { metadata } = useDoc();
+  // Quaderno: la chiave della pagina, null se non ha l'evidenziatore.
+  const { pluginId } = useDocsVersion();
+  useSondaQuaderno(chiavePagina(pluginId, metadata.id));
   // Colonna: su desktop (e in SSR, come l'indice) Archivio e Database stanno
   // nella colonna destra, su telefono in un pannello flottante fuori dalla
   // griglia. Un pannello aperto allarga la colonna.
