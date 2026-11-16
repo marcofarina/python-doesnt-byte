@@ -345,6 +345,15 @@ html[data-theme='dark'] .pericolo {
   font-size: 11.5px;
 }
 
+.avviso p {
+  margin: 0 0 6px;
+}
+
+.avviso a {
+  color: var(--at-accent-soft);
+  text-decoration: underline;
+}
+
 /* ─────────────── Lampo sul testo ─────────────── */
 
 .lampo {

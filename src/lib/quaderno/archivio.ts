@@ -18,6 +18,7 @@ import { useMemo, useSyncExternalStore } from 'react';
 import { storageDi } from '../zaino/area';
 import {
   COLORI,
+  MAX_NOME_COLORE,
   MAX_NOTA,
   quadernoVuoto,
   type Annotazione,
@@ -305,4 +306,57 @@ export function svuota(): void {
     /* storage non disponibile */
   }
   avvisa();
+}
+
+/** Dà un nome a un colore (la legenda); '' torna al nome del colore. */
+export function impostaLegenda(colore: Colore, nome: string): void {
+  const q = carica();
+  const nuovo = nome.slice(0, MAX_NOME_COLORE);
+  if (q.legenda[colore] === nuovo) return;
+  cambia({
+    ...q,
+    legenda: { ...q.legenda, [colore]: nuovo },
+    legendaModificata: adesso(q.legendaModificata),
+  });
+}
+
+export interface EsitoImportazione {
+  /** Annotazioni del file che questo browser non aveva. */
+  arrivate: number;
+  /** Annotazioni del file che questo browser aveva già. */
+  presenti: number;
+  /** Fra le presenti, quelle la cui versione del file era più recente. */
+  aggiornate: number;
+}
+
+/**
+ * Unisce un quaderno letto da un file a quello di questo browser (stessa
+ * regola dello zaino: `unisci`). Non sostituisce mai: un'annotazione tolta
+ * qui dopo il salvataggio del file resta tolta.
+ */
+export function importa(altro: Quaderno): EsitoImportazione {
+  const prima = carica();
+  const vivePrima = new Map(
+    prima.annotazioni.filter((a) => !a.cancellata).map((a) => [a.id, a]),
+  );
+  const unito = unisci(prima, altro);
+  const viveDopo = new Map(
+    unito.annotazioni.filter((a) => !a.cancellata).map((a) => [a.id, a]),
+  );
+  const esito: EsitoImportazione = { arrivate: 0, presenti: 0, aggiornate: 0 };
+  for (const a of altro.annotazioni) {
+    if (a.cancellata) continue;
+    const finale = viveDopo.get(a.id);
+    // Qui l'annotazione era già stata tolta, e più di recente: non torna.
+    if (!finale) continue;
+    const era = vivePrima.get(a.id);
+    if (!era) {
+      esito.arrivate += 1;
+    } else {
+      esito.presenti += 1;
+      if (JSON.stringify(era) !== JSON.stringify(finale)) esito.aggiornate += 1;
+    }
+  }
+  if (JSON.stringify(unito) !== JSON.stringify(prima)) cambia(unito);
+  return esito;
 }

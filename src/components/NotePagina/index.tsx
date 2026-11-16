@@ -31,6 +31,7 @@ import React, {
   type ReactNode,
 } from 'react';
 import clsx from 'clsx';
+import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
@@ -137,7 +138,7 @@ function lampeggia(r: Range): void {
  * scheda cliccata: se sta in un pannello dal basso, il testo deve finire
  * sopra il pannello.
  */
-function vaiAlTesto(posto: Posto, da: Element): void {
+export function vaiAlTesto(posto: Posto, da: Element): void {
   const [primo] = rettangoli(posto.range);
   if (!primo) return;
   const alto =
@@ -554,13 +555,19 @@ function Coda({ note, accanto }: { note: StatoNote; accanto: boolean }) {
           ))}
         </div>
       )}
-      {/* Segnaposto: il testo definitivo arriva con la fase Q3. */}
       {note.vive > 0 && (
-        <p className={styles.avviso} data-note-avviso="">
-          {note.vive === 1
-            ? '1 annotazione salvata solo in questo browser'
-            : `${note.vive} annotazioni salvate solo in questo browser`}
-        </p>
+        <div className={styles.avviso} data-note-avviso="">
+          <p>
+            {note.vive === 1
+              ? '1 annotazione salvata solo in questo browser.'
+              : `${note.vive} annotazioni salvate solo in questo browser.`}
+          </p>
+          <p>
+            Se questo computer non è tuo, cancella le note quando hai finito: lo
+            fai dal <Link to="/quaderno">quaderno</Link>, dove puoi anche
+            scaricarle.
+          </p>
+        </div>
       )}
     </>
   );

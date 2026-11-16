@@ -58,6 +58,9 @@ export const CONTESTO = 32;
 /** Lunghezza massima di una nota. */
 export const MAX_NOTA = 2000;
 
+/** Lunghezza massima del nome che lo studente dà a un colore (la legenda). */
+export const MAX_NOME_COLORE = 40;
+
 export function quadernoVuoto(): Quaderno {
   return {
     formato: 1,

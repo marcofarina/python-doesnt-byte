@@ -27,6 +27,11 @@
  *   Il testo con nota (e quello della bozza) ha la sottolineatura
  *   `pdb-con-nota`.
  *
+ * - Orfane e link (fase Q3): a ogni ancoraggio lascia in `orfane.ts` l'elenco
+ *   delle annotazioni senza testo, per `/quaderno`; e se l'indirizzo ha
+ *   `?annotazione=<id>` (ci portano le voci di `/quaderno`) apre la scheda di
+ *   quell'annotazione e scorre al suo testo.
+ *
  * Senza `CSS.highlights` (browser vecchi) il componente non fa niente.
  * Lo monta il Layout del DocItem, una volta per pagina (`key` = pagina).
  */
@@ -41,6 +46,7 @@ import React, {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useLocation } from '@docusaurus/router';
 import clsx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -57,6 +63,7 @@ import {
   useAnnotazioniPagina,
   useQuaderno,
 } from '@site/src/lib/quaderno/archivio';
+import { segnaOrfane } from '@site/src/lib/quaderno/orfane';
 import { SELETTORE_RADICE } from '@site/src/lib/quaderno/pagine';
 import {
   ID_BOZZA,
@@ -80,6 +87,7 @@ import {
   type Colore,
   type Quaderno,
 } from '@site/src/lib/quaderno/tipi';
+import { vaiAlTesto } from '@site/src/components/NotePagina';
 
 import styles from './styles.module.css';
 
@@ -91,6 +99,12 @@ const STACCO_TOCCO = 28;
 /** Sotto questa distanza dal bordo alto la barra va sotto (c'è la navbar). */
 const MARGINE_ALTO = 120;
 const MARGINE_LATI = 16;
+/** Parametro dell'indirizzo che porta a un'annotazione (da `/quaderno`). */
+export const PARAMETRO_ANNOTAZIONE = 'annotazione';
+/** Quanto si aspetta che il testo si ancori prima di aprire la scheda orfana. */
+const ATTESA_ANNOTAZIONE = 2500;
+/** Il pannello Note si apre e sposta il testo: si scorre dopo. */
+const ATTESA_PANNELLO = 350;
 
 const NOMI: Record<Colore, string> = {
   giallo: 'Giallo',
@@ -206,7 +220,8 @@ export default function Evidenziatore({
 function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
   const annotazioni = useAnnotazioniPagina(pagina);
   const { legenda } = useQuaderno();
-  const { bozza } = usePonte();
+  const { bozza, posti } = usePonte();
+  const { search } = useLocation();
   const [aperto, setAperto] = useState<Aperto | null>(null);
   const [annuncio, setAnnuncio] = useState('');
   const stato = useRef<Stato | null>(null);
@@ -249,7 +264,11 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
       new Highlight(...(rb ? [...conNota, rb] : conNota)),
     );
     pubblicaPosti(posti);
-  }, [annotazioni, bozza]);
+    segnaOrfane(
+      pagina,
+      annotazioni.filter((a) => !posti.has(a.id)).map((a) => a.id),
+    );
+  }, [annotazioni, bozza, pagina]);
 
   useEffect(() => {
     ricostruisci();
@@ -285,6 +304,31 @@ function EvidenziatoreAttivo({ pagina }: { pagina: string }): ReactNode {
     },
     [],
   );
+
+  // --- ?annotazione=<id>: apri la scheda e scorri al testo -------------------
+
+  const portata = useRef<string | null>(null);
+  const idVoluto = new URLSearchParams(search).get(PARAMETRO_ANNOTAZIONE);
+  useEffect(() => {
+    if (!idVoluto || portata.current === idVoluto) return undefined;
+    if (!annotazioni.some((a) => a.id === idVoluto)) return undefined;
+    const posto = posti.get(idVoluto);
+    // Il testo può ancorarsi dopo: Tabs, Spoiler e Quiz cambiano il DOM. Se
+    // non si ancora entro l'attesa, l'annotazione è orfana e si apre lo stesso
+    // la sua scheda, in «Non ritrovo il punto».
+    const apri = () => {
+      portata.current = idVoluto;
+      chiediScheda(idVoluto);
+      if (posto)
+        setTimeout(() => vaiAlTesto(posto, document.body), ATTESA_PANNELLO);
+    };
+    if (posto) {
+      apri();
+      return undefined;
+    }
+    const timer = setTimeout(apri, ATTESA_ANNOTAZIONE);
+    return () => clearTimeout(timer);
+  }, [idVoluto, annotazioni, posti]);
 
   // --- selezione → barra ----------------------------------------------------
 

@@ -3,6 +3,8 @@
  * del nostro <CurriculumIndicator/> al centro fra gli item di sinistra e
  * quelli di destra. Il componente si nasconde da sé quando nessun percorso
  * è attivo, quindi di norma la navbar resta vuota al centro.
+ * A destra, prima di GitHub, il pulsante del quaderno (/quaderno, fase Q3
+ * del piano pm/piano-2026-11-quaderno.md).
  */
 import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
@@ -25,6 +27,7 @@ import NavbarSearch from '@theme/Navbar/Search';
 import CurriculumIndicator from '@site/src/components/CurriculumIndicator';
 import NavbarIconButton from '@site/src/components/NavbarIconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHighlighter } from '@fortawesome/free-solid-svg-icons';
 import MugSaucer from '@site/src/icons/mug-saucer.svg';
 
 import styles from './styles.module.css';
@@ -108,6 +111,13 @@ export default function NavbarContent(): ReactNode {
       right={
         <>
           <NavbarItems items={rightItems} />
+          <NavbarIconButton
+            to="/quaderno"
+            ariaLabel="Il tuo quaderno"
+            tooltip="Quaderno"
+            icon={<FontAwesomeIcon icon={faHighlighter} />}
+            accent="amber"
+          />
           <NavbarIconButton
             to="https://github.com/marcofarina/python-doesnt-byte"
             target="_blank"

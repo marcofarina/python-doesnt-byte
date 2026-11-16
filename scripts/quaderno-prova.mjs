@@ -1,5 +1,5 @@
 /**
- * Banco di prova del quaderno (piano pm/piano-2026-11-quaderno.md, fasi Q0–Q2):
+ * Banco di prova del quaderno (piano pm/piano-2026-11-quaderno.md, fasi Q0–Q3):
  * ancoraggio, archivio locale, unione, evidenziatore in pagina e pannello Note,
  * contro la sandbox docs/quaderno-test.
  *
@@ -13,6 +13,11 @@
  * - Il pannello Note si prova a 1440 px, dove le schede stanno accanto al
  *   testo: nota scritta dalla barra, allineamento, schede che non si
  *   sovrappongono, clic sul testo con nota, orfane dopo una riscrittura.
+ *
+ * - La pagina `/quaderno` (fase Q3) si prova come la usa lo studente: voci per
+ *   volume e lezione, filtro, legenda, scarica → cancella → importa, link
+ *   «Vai al testo» (`?annotazione=<id>`), orfane e pagine tolte. Il file del
+ *   quaderno (`src/lib/quaderno/file.ts`) si prova anche in Node, con jiti.
  *
  * Lavora contro `npm start` sulla porta 3000. Il browser è il Chrome installato
  * (`channel: 'chrome'`); per usarne un altro, QUADERNO_CHROME=/percorso/chrome.
@@ -846,6 +851,442 @@ async function proveNote(browser) {
   await ctx.close();
 }
 
+/* ------------------------------------------------------- file del quaderno */
+
+async function proveFile() {
+  const jiti = jitiFactory(import.meta.url, { interopDefault: true });
+  const { scrivi, leggi, nomeFile } = jiti(
+    path.join(RADICE, 'src/lib/quaderno/file.ts'),
+  );
+  const lezioni = [
+    {
+      chiave: 'programmatore/variabili',
+      titolo: 'Le variabili',
+      volume: 'Manuale del Programmatore',
+    },
+    {
+      chiave: 'archivista/che-cosa-fa-un-dbms',
+      titolo: 'Che cosa fa un DBMS',
+      volume: 'Manuale dell’Archivista',
+    },
+  ];
+  const q = quaderno(
+    [
+      annotazione('f1', {
+        pagina: 'archivista/che-cosa-fa-un-dbms',
+        selettore: {
+          esatto: 'Una “citazione” con l’apice, è così — città 😀',
+          prima: '',
+          dopo: '',
+          inizio: 40,
+          titolo: null,
+        },
+        nota: 'Prima riga.\nSeconda riga, con <!-- e --> dentro.',
+      }),
+      annotazione('f2', {
+        pagina: 'programmatore/variabili',
+        colore: null,
+        nota: 'Solo nota',
+      }),
+      annotazione('f3', { pagina: 'volume/tolto' }),
+      lapide('f4', '2026-11-05T10:00:00.000Z'),
+    ],
+    { giallo: 'da ricordare' },
+    '2026-11-02T00:00:00.000Z',
+  );
+  const testo = scrivi(q, lezioni, new Date(2026, 10, 16));
+
+  await caso('file: nome con la data locale', () => {
+    assert.equal(
+      nomeFile(new Date(2026, 10, 6)),
+      'quaderno-python-doesnt-byte-2026-11-06.md',
+    );
+  });
+  await caso('file: lezioni nell’ordine dell’elenco, citazioni e note', () => {
+    const volume1 = testo.indexOf('## Manuale del Programmatore');
+    const volume2 = testo.indexOf('## Manuale dell’Archivista');
+    const tolte = testo.indexOf('## Pagina spostata o tolta');
+    assert.ok(volume1 >= 0 && volume1 < volume2 && volume2 < tolte);
+    assert.ok(testo.includes('### Che cosa fa un DBMS'));
+    assert.ok(
+      testo.includes('> Una “citazione” con l’apice, è così — città 😀'),
+    );
+    assert.ok(testo.includes('**Giallo** (da ricordare)'));
+    assert.ok(testo.includes('**Nota:** Prima riga.  \nSeconda riga'));
+    assert.ok(testo.includes('Solo nota'));
+    assert.ok(testo.includes('### volume/tolto'));
+  });
+  await caso('file: l’ultima riga si legge e dà lo stesso quaderno', () => {
+    const r = leggi(testo);
+    assert.equal(r.ok, true);
+    // Lapidi comprese: l'importazione è fedele.
+    assert.deepEqual(r.quaderno, q);
+  });
+  await caso('file: formato più nuovo e file rovinati', () => {
+    assert.equal(
+      leggi(testo.replace(/pdb-quaderno 1 /, 'pdb-quaderno 2 ')).motivo,
+      'nuovo',
+    );
+    assert.equal(leggi('# Un altro file\n').motivo, 'illeggibile');
+    assert.equal(leggi('<!-- pdb-quaderno 1 AAAA!! -->').motivo, 'illeggibile');
+    assert.equal(
+      leggi(testo.replace(/(pdb-quaderno 1 )\S{20}/, '$1AAAAAAAAAAAAAAAAAAAA'))
+        .ok,
+      false,
+    );
+  });
+}
+
+/* --------------------------------------------------------- pagina quaderno */
+
+const VOCI = '[data-quaderno-voce]';
+
+async function proveQuaderno(browser) {
+  await proveFile();
+
+  const ctx = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    acceptDownloads: true,
+  });
+  const page = await ctx.newPage();
+  const erroriPagina = [];
+  page.on('pageerror', (e) => erroriPagina.push(e.message));
+
+  const sel = (esatto, inizio) => ({
+    esatto,
+    prima: '',
+    dopo: '',
+    inizio,
+    titolo: null,
+  });
+  const base = quaderno(
+    [
+      annotazione('a1', {
+        pagina: 'archivista/che-cosa-fa-un-dbms',
+        selettore: sel('seconda citazione', 200),
+        colore: 'verde',
+        nota: 'una chiave',
+        creata: '2026-11-02T10:00:00.000Z',
+        modificata: '2026-11-02T10:00:00.000Z',
+      }),
+      annotazione('a2', {
+        pagina: 'programmatore/variabili',
+        selettore: sel('citazione nel primo volume', 10),
+      }),
+      annotazione('a3', {
+        pagina: 'archivista/che-cosa-fa-un-dbms',
+        selettore: sel('prima citazione', 50),
+        colore: null,
+        nota: 'solo nota',
+        creata: '2026-11-03T10:00:00.000Z',
+        modificata: '2026-11-03T10:00:00.000Z',
+      }),
+      annotazione('a4', {
+        pagina: 'artefice/inesistente',
+        selettore: sel('pagina tolta', 0),
+      }),
+      annotazione('a5', {
+        pagina: 'archivista/che-cosa-fa-un-dbms',
+        selettore: sel('punto perso', 90),
+        creata: '2026-11-04T10:00:00.000Z',
+        modificata: '2026-11-04T10:00:00.000Z',
+      }),
+    ],
+    { giallo: 'da ricordare' },
+    '2026-11-02T00:00:00.000Z',
+  );
+
+  async function inietta(q = base) {
+    await page.goto(`${SERVER}/quaderno/`, { waitUntil: 'networkidle' });
+    await page.evaluate(
+      ([json, orfane]) => {
+        localStorage.setItem('pdb:quaderno', json);
+        localStorage.setItem('pdb:quaderno-orfane', orfane);
+      },
+      [
+        JSON.stringify(q),
+        JSON.stringify({ 'archivista/che-cosa-fa-un-dbms': ['a5'] }),
+      ],
+    );
+    await page.reload({ waitUntil: 'networkidle' });
+    await page.waitForSelector('h1');
+  }
+  const testi = (s) => page.locator(s).allInnerTexts();
+  const letto = () =>
+    page.evaluate(() => JSON.parse(localStorage.getItem('pdb:quaderno')));
+  const perId = (q) => ({
+    ...q,
+    annotazioni: [...q.annotazioni].sort((x, y) => (x.id < y.id ? -1 : 1)),
+  });
+
+  await caso('quaderno: icona nella navbar verso /quaderno/', async () => {
+    await page.goto(`${SERVER}/`, { waitUntil: 'networkidle' });
+    const href = await page
+      .locator('a[aria-label="Il tuo quaderno"]')
+      .getAttribute('href');
+    assert.ok(href.endsWith('/quaderno/'), href);
+  });
+
+  await caso('quaderno: pagina noindex', async () => {
+    await inietta();
+    assert.equal(
+      await page.locator('meta[name="robots"]').getAttribute('content'),
+      'noindex, nofollow',
+    );
+  });
+
+  await caso(
+    'quaderno: voci per volume e lezione nell’ordine della TOC, orfane e pagine tolte a parte',
+    async () => {
+      const h2 = await testi('main h2');
+      assert.deepEqual(
+        h2.filter((t) => !/^Legenda/.test(t)),
+        [
+          'Manuale del Programmatore',
+          'Manuale dell’Archivista',
+          'Non ritrovo il punto',
+          'Pagina spostata o tolta',
+        ],
+      );
+      // Dentro la lezione, nell'ordine del testo: a3 (offset 50) prima di a1 (200).
+      const ids = await page
+        .locator(`main > section ${VOCI}`)
+        .evaluateAll((el) => el.map((x) => x.dataset.quadernoVoce));
+      assert.deepEqual(ids, ['a2', 'a3', 'a1', 'a5', 'a4']);
+      assert.equal(
+        await page.locator(`[data-quaderno-orfane] ${VOCI}`).count(),
+        1,
+      );
+      assert.equal(
+        await page.locator(`[data-quaderno-tolte] ${VOCI}`).count(),
+        1,
+      );
+    },
+  );
+
+  await caso(
+    'quaderno: ogni voce porta alla lezione con ?annotazione=',
+    async () => {
+      const href = await page
+        .locator('[data-quaderno-voce="a1"] a')
+        .getAttribute('href');
+      assert.match(href, /che-cosa-fa-un-dbms\/?\?annotazione=a1$/);
+      // La pagina tolta non ha una lezione a cui andare.
+      assert.equal(
+        await page.locator('[data-quaderno-voce="a4"] a').count(),
+        0,
+      );
+    },
+  );
+
+  await caso('quaderno: il filtro per colore e il conteggio', async () => {
+    await page.click('[data-filtro="verde"]');
+    assert.equal(await page.locator(VOCI).count(), 1);
+    assert.match(await page.locator('[data-filtro="verde"]').innerText(), /1/);
+    await page.click('[data-filtro="verde"]');
+    assert.equal(await page.locator(VOCI).count(), 5);
+  });
+
+  await caso(
+    'quaderno: la legenda si scrive e resta nel quaderno',
+    async () => {
+      await page.fill('[data-legenda="verde"]', 'domande');
+      await page.waitForTimeout(600);
+      assert.equal((await letto()).legenda.verde, 'domande');
+      assert.match(
+        await page.locator('[data-filtro="verde"]').innerText(),
+        /Verde · domande/,
+      );
+      assert.match(
+        await page.locator('[data-filtro="giallo"]').innerText(),
+        /Giallo · da ricordare/,
+      );
+    },
+  );
+
+  await caso(
+    'quaderno: l’avviso dice che le note sono solo in questo browser',
+    async () => {
+      const t = await page.locator('[data-quaderno-avviso]').innerText();
+      assert.match(t, /5 annotazioni salvate solo in questo browser/);
+      assert.match(t, /Se questo computer non è tuo, cancella le note/);
+    },
+  );
+
+  let file = '';
+  let prima;
+  await caso(
+    'quaderno: scarica → cancella → importa → stesso quaderno',
+    async () => {
+      await inietta();
+      prima = perId(await letto());
+      const [scaricato] = await Promise.all([
+        page.waitForEvent('download'),
+        page.click('[data-azione="scarica"]'),
+      ]);
+      assert.match(
+        scaricato.suggestedFilename(),
+        /^quaderno-python-doesnt-byte-\d{4}-\d{2}-\d{2}\.md$/,
+      );
+      const { readFile } = await import('node:fs/promises');
+      file = await readFile(await scaricato.path(), 'utf8');
+      assert.match(file, /^# Il mio quaderno/);
+      assert.ok(file.includes('### Che cosa fa un DBMS'));
+
+      // Cancella con conferma: il primo clic non cancella.
+      await page.click('[data-azione="cancella"]');
+      assert.equal((await letto()).annotazioni.length, 5);
+      await page.click('[data-azione="conferma-cancella"]');
+      assert.equal(
+        await page.evaluate(() => localStorage.getItem('pdb:quaderno')),
+        null,
+      );
+      assert.equal(await page.locator(VOCI).count(), 0);
+
+      await page.setInputFiles('[data-importa-file]', {
+        name: 'quaderno.md',
+        mimeType: 'text/markdown',
+        buffer: Buffer.from(file),
+      });
+      await page.waitForFunction(() =>
+        /arrivate/.test(
+          document.querySelector('[data-quaderno-messaggio]').textContent,
+        ),
+      );
+      await page.waitForTimeout(600);
+      assert.deepEqual(perId(await letto()), prima);
+      assert.equal(await page.locator(VOCI).count(), 5);
+    },
+  );
+
+  await caso('quaderno: importare due volte non fa doppioni', async () => {
+    await page.setInputFiles('[data-importa-file]', {
+      name: 'quaderno.md',
+      mimeType: 'text/markdown',
+      buffer: Buffer.from(file),
+    });
+    await page.waitForFunction(() =>
+      /Nessuna annotazione nuova/.test(
+        document.querySelector('[data-quaderno-messaggio]').textContent,
+      ),
+    );
+    const msg = await page.locator('[data-quaderno-messaggio]').innerText();
+    assert.match(msg, /5 erano già nel quaderno/);
+    await page.waitForTimeout(600);
+    assert.equal((await letto()).annotazioni.length, 5);
+    assert.deepEqual(perId(await letto()), prima);
+  });
+
+  await caso('quaderno: un file rovinato non cambia il quaderno', async () => {
+    await page.setInputFiles('[data-importa-file]', {
+      name: 'rotto.md',
+      mimeType: 'text/markdown',
+      buffer: Buffer.from(
+        file.replace(/(pdb-quaderno 1 )\S{30}/, '$1AAAAAAAA'),
+      ),
+    });
+    await page.waitForFunction(() =>
+      /non sembra un file del quaderno/.test(
+        document.querySelector('[data-quaderno-messaggio]').textContent,
+      ),
+    );
+    await page.waitForTimeout(600);
+    assert.deepEqual(perId(await letto()), prima);
+  });
+
+  await caso(
+    'quaderno: un file più vecchio non riporta indietro una modifica',
+    async () => {
+      // Il file è del 2026-11-04; qui l'annotazione a1 è stata modificata dopo.
+      await inietta({
+        ...base,
+        annotazioni: base.annotazioni.map((a) =>
+          a.id === 'a1'
+            ? {
+                ...a,
+                nota: 'più recente',
+                modificata: '2026-11-20T10:00:00.000Z',
+              }
+            : a,
+        ),
+      });
+      await page.setInputFiles('[data-importa-file]', {
+        name: 'quaderno.md',
+        mimeType: 'text/markdown',
+        buffer: Buffer.from(file),
+      });
+      await page.waitForFunction(() =>
+        /già nel quaderno/.test(
+          document.querySelector('[data-quaderno-messaggio]').textContent,
+        ),
+      );
+      await page.waitForTimeout(600);
+      const a1 = (await letto()).annotazioni.find((a) => a.id === 'a1');
+      assert.equal(a1.nota, 'più recente');
+    },
+  );
+
+  // Dalla pagina alla lezione: sulla sandbox, con un'annotazione in fondo.
+  await caso(
+    '?annotazione=<id>: da /quaderno la lezione scorre al punto e apre la scheda',
+    async () => {
+      const ctx2 = await browser.newContext({
+        viewport: { width: 1440, height: 900 },
+      });
+      const p = await ctx2.newPage();
+      const errori = [];
+      p.on('pageerror', (e) => errori.push(e.message));
+      await apri(p);
+      await sonda(p, () => window.__quaderno.svuota());
+      const testo = await sonda(p, () => window.__quaderno.testo());
+      const o = una(testo, 'L’ultima riga della pagina chiude la sandbox.');
+      const a = await sonda(
+        p,
+        ([i, f]) => window.__quaderno.aggiungi(i, f, 'giallo', 'in fondo'),
+        [o.inizio, o.fine],
+      );
+      await p.waitForTimeout(600);
+      await p.goto(`${SERVER}/quaderno/`, { waitUntil: 'networkidle' });
+      await p.click(`[data-quaderno-voce="${a.id}"] a`);
+      await p.waitForFunction(() => window.__quaderno, null, { timeout: 5000 });
+      assert.match(p.url(), new RegExp(`\\?annotazione=${a.id}$`));
+      await p.waitForFunction(() => window.scrollY > 300, null, {
+        timeout: 5000,
+      });
+      await p.waitForSelector(`[data-note] [data-nota-id="${a.id}"]`, {
+        timeout: 3000,
+      });
+      await p.waitForTimeout(800);
+      const alto = await altoTesto(p, a.selettore);
+      assert.ok(alto !== null && alto > 60 && alto < 850, `alto = ${alto}`);
+
+      // Lo stesso con l'indirizzo scritto a mano (caricamento completo).
+      await p.goto(`${SERVER}${PAGINA}?annotazione=${a.id}`, {
+        waitUntil: 'networkidle',
+      });
+      await p.waitForFunction(() => window.scrollY > 300, null, {
+        timeout: 5000,
+      });
+      await p.waitForSelector(`[data-note] [data-nota-id="${a.id}"]`, {
+        timeout: 3000,
+      });
+      // Un id che non esiste non fa niente né rompe la pagina.
+      await p.goto(`${SERVER}${PAGINA}?annotazione=non-esiste`, {
+        waitUntil: 'networkidle',
+      });
+      await p.waitForTimeout(500);
+      assert.deepEqual(errori, []);
+      await sonda(p, () => window.__quaderno.svuota());
+      await ctx2.close();
+    },
+  );
+
+  await caso('quaderno: nessun errore in pagina', () => {
+    assert.deepEqual(erroriPagina, []);
+  });
+  await ctx.close();
+}
+
 async function main() {
   await proveUnione();
   try {
@@ -866,6 +1307,7 @@ async function main() {
     await proveBrowser(browser);
     await proveEvidenziatore(browser);
     await proveNote(browser);
+    await proveQuaderno(browser);
   } finally {
     await browser.close();
   }
