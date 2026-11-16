@@ -545,6 +545,7 @@ export default function Figura({
     <figure
       ref={radice}
       className={styles.figura}
+      data-quaderno-escludi
       data-figura={idFigura}
       data-figura-passo={poster.passo + 1}
       data-figura-fase={poster.fase}

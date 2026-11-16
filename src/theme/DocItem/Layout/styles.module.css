@@ -1,5 +1,5 @@
 /* Copia di theme-classic 3.10.1 (DocItem/Layout/styles.module.css) più le
-   regole della colonna destra (Archivio, Database) in coda. */
+   regole della colonna destra (Archivio, Database, Note) in coda. */
 
 .docItemContainer header + *,
 .docItemContainer article > *:first-child {
@@ -25,4 +25,18 @@
 .docItemColAperta,
 .colonnaAperta {
   --colonna-aperta: 45%;
+}
+
+/* Le Note sono schede di testo: bastano colonne più strette. Da 1280 px le
+   schede stanno accanto al loro testo e il testo ha bisogno di più spazio. */
+.docItemColNote,
+.colonnaNote {
+  --colonna-aperta: 36%;
+}
+
+@media (min-width: 1280px) {
+  .docItemColNote,
+  .colonnaNote {
+    --colonna-aperta: 30%;
+  }
 }

@@ -159,7 +159,7 @@ export default function Algorithm({
 
   return (
     <>
-      <div className={styles.card}>
+      <div className={styles.card} data-quaderno-escludi>
         <div className={styles.header}>
           <div className={styles.headerLeft}>
             <span className={styles.trafficLights} aria-hidden="true">

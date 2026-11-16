@@ -130,7 +130,7 @@ export default function Quiz({ children, bare = false, onSolved }: QuizProps) {
   }
 
   return (
-    <div className={bare ? styles.quizBare : styles.quiz}>
+    <div className={bare ? styles.quizBare : styles.quiz} data-quaderno-escludi>
       {!bare && (
         <div className={styles.kicker}>
           <QuizKicker />
@@ -287,7 +287,7 @@ export function QuizDeck({ children }: { children?: ReactNode }) {
   const firstTry = attempts.filter((a) => a === 1).length;
 
   return (
-    <div className={styles.deck}>
+    <div className={styles.deck} data-quaderno-escludi>
       <div className={styles.deckHeader}>
         <div className={styles.deckMeta}>
           <span className={styles.kicker}>

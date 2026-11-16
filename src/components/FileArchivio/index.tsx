@@ -29,8 +29,12 @@ export default function FileArchivio({ nome }: FileArchivioProps): ReactNode {
     );
   }
   return (
-    <CodeBlock language="json" title={nome}>
-      {testo.trimEnd()}
-    </CodeBlock>
+    // Il titolo del blocco sta fuori dal <pre>: senza questo attributo il nome
+    // del file finirebbe nel testo evidenziabile (quaderno).
+    <div data-quaderno-escludi>
+      <CodeBlock language="json" title={nome}>
+        {testo.trimEnd()}
+      </CodeBlock>
+    </div>
   );
 }

@@ -1,0 +1,123 @@
+---
+unlisted: true
+title: Quaderno — pagina di test
+description: Sandbox del quaderno (evidenziatore e note a margine) — frasi ripetute, virgolette curve, codice nella prosa, runner, Quiz, Spoiler, Tabs e una riscrittura simulata con ?variante=2.
+---
+
+import { useEffect, useState } from 'react';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+export function Variante({ n, children }) {
+  const [attiva, setAttiva] = useState(1);
+  useEffect(() => {
+    const v = new URLSearchParams(window.location.search).get('variante');
+    setAttiva(v === '2' ? 2 : 1);
+  }, []);
+  return attiva === n ? <div data-variante={n}>{children}</div> : null;
+}
+
+# Quaderno — pagina di test
+
+Sandbox del quaderno (piano `pm/piano-2026-11-quaderno.md`). La usa
+`npm run quaderno:prova`: non cambiare le frasi senza aggiornare lo script. Con
+`?variante=2` il paragrafo della sezione «Riscrittura» cambia come dopo una
+correzione della lezione.
+
+## Una citazione unica
+
+La biblioteca della scuola apre alle otto e chiude quando l'ultimo lettore se ne va.
+Madama Pince la chiama "il mio regno", e nessuno ha mai avuto il coraggio di
+contraddirla.
+
+## Frasi ripetute
+
+### Primo scaffale
+
+Sul primo scaffale stanno gli atlanti, rilegati in pelle verde.
+Ogni volume ha il suo posto e nessuno lo sposta.
+I più consultati sono quelli delle montagne.
+
+### Secondo scaffale
+
+Il secondo scaffale ospita i dizionari, dal più vecchio al più nuovo.
+Ogni volume ha il suo posto e nessuno lo sposta.
+Il dizionario di latino ha la copertina consumata agli angoli.
+
+### Terzo scaffale
+
+In fondo alla sala, il terzo scaffale raccoglie i quaderni degli studenti.
+Ogni volume ha il suo posto e nessuno lo sposta.
+Qualcuno, una volta, ci ha nascosto una lettera d'amore.
+
+## Codice nella prosa
+
+Per contare i libri basta `len(scaffale)`, e il valore `None` indica uno scaffale
+ancora vuoto. L'istruzione `print("ciao")` scrive sullo schermo.
+
+## Un runner in mezzo
+
+Prima del programma c'è questa frase, che si può evidenziare.
+
+```py live
+scaffale = ["atlante", "dizionario", "quaderno"]
+print(len(scaffale))
+```
+
+Dopo il programma c'è quest'altra frase, che si può evidenziare anche lei.
+
+## Spoiler
+
+La risposta alla domanda fondamentale è <Spoiler>quarantadue</Spoiler>, e si scopre con un clic.
+
+## Quiz
+
+<Quiz>
+  <QuizQuestion>
+    Quanti scaffali ha la biblioteca di questa pagina?
+  </QuizQuestion>
+  <QuizOption>
+    Due.
+    <QuizFeedback>No: rileggi la sezione «Frasi ripetute».</QuizFeedback>
+  </QuizOption>
+  <QuizOption correct>
+    Tre.
+    <QuizFeedback>Sì: atlanti, dizionari e quaderni.</QuizFeedback>
+  </QuizOption>
+</Quiz>
+
+## Tabs
+
+<Tabs>
+<TabItem value="giorno" label="Di giorno" default>
+
+Di giorno la sala è piena di studenti che ripassano a bassa voce.
+
+</TabItem>
+<TabItem value="notte" label="Di notte">
+
+Di notte resta accesa solo la lampada sul banco della bibliotecaria.
+
+</TabItem>
+</Tabs>
+
+## Riscrittura
+
+<Variante n={1}>
+
+Il bibliotecario segna ogni prestito su un registro di carta. Quando il registro si
+riempie, ne apre uno nuovo e ripone il vecchio in cantina. Le pagine ingiallite restano
+leggibili per decenni.
+
+</Variante>
+
+<Variante n={2}>
+
+Il bibliotecario segna ogni prestito su un registro di cartone. Le pagine ingiallite
+restano leggibili per decenni.
+
+</Variante>
+
+## Fine
+
+L'ultima riga della pagina chiude la sandbox.

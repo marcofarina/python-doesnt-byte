@@ -1,5 +1,5 @@
-/* Colonna destra delle lezioni: pulsanti «Archivio» e «Database», pannello
-   aperto al posto dell'indice, pannello dal basso su telefono. Le schede
+/* Colonna destra delle lezioni: pulsanti «Archivio», «Database» e «Note»,
+   pannello aperto al posto dell'indice, pannello dal basso su telefono. Le schede
    (.schede, .scheda) le usano anche i contenuti dei due pannelli. */
 
 /* ─────────────── Desktop: colonna dell'indice ─────────────── */
@@ -18,6 +18,19 @@
 
 .railAperto {
   height: calc(100vh - (var(--ifm-navbar-height) + 2rem));
+}
+
+/* Note accanto al testo (da 1280 px): in testa restano i soli pulsanti, e le
+   schede scorrono sotto di loro. Il vetro copre anche lo spazio fino alla
+   navbar, altrimenti le schede ci passerebbero in vista. */
+.railNote {
+  z-index: 2;
+  top: var(--ifm-navbar-height);
+  margin: -1rem calc(-1 * var(--ifm-spacing-horizontal)) 0;
+  padding: 1rem var(--ifm-spacing-horizontal) 0.75rem;
+  background: var(--at-bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .pulsanti {
@@ -220,6 +233,12 @@
   color: var(--at-accent);
 }
 
+/* Con tre pannelli i nomi non ci stanno accanto al «torna su»: solo icone
+   (il nome completo è nell'aria-label). */
+.flottanteIcone {
+  gap: 0.625rem;
+}
+
 .flottante:active {
   transform: scale(0.98);
 }
@@ -291,13 +310,15 @@
   color: var(--at-fg);
 }
 
-/* Le due sezioni nella testata: stesse schede, un po' più grandi al tocco. */
+/* Le sezioni nella testata: stesse schede, un po' più grandi al tocco. Tre
+   schede devono stare in 375 px accanto al pulsante di chiusura. */
 .sezioni {
   flex: 0 1 auto;
+  min-width: 0;
 }
 
 .sezioni .scheda {
-  padding: 6px 12px;
+  padding: 6px 8px;
   font-size: 13px;
   font-weight: 600;
 }
