@@ -4,7 +4,8 @@
  * quelli di destra. Il componente si nasconde da sé quando nessun percorso
  * è attivo, quindi di norma la navbar resta vuota al centro.
  * A destra, prima di GitHub, il pulsante del quaderno (/quaderno, fase Q3
- * del piano pm/piano-2026-11-quaderno.md).
+ * del piano pm/piano-2026-11-quaderno.md), con un pallino se lo zaino è
+ * offline o in errore (Q5).
  */
 import React, { type ReactNode } from 'react';
 import clsx from 'clsx';
@@ -26,6 +27,8 @@ import NavbarSearch from '@theme/Navbar/Search';
 
 import CurriculumIndicator from '@site/src/components/CurriculumIndicator';
 import NavbarIconButton from '@site/src/components/NavbarIconButton';
+import { haProblemi } from '@site/src/components/ZainoStato';
+import { useStatoZaino } from '@site/src/lib/zaino/sincronizza';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHighlighter } from '@fortawesome/free-solid-svg-icons';
 import MugSaucer from '@site/src/icons/mug-saucer.svg';
@@ -92,6 +95,7 @@ function NavbarContentLayout({
 
 export default function NavbarContent(): ReactNode {
   const mobileSidebar = useNavbarMobileSidebar();
+  const zaino = useStatoZaino();
 
   const items = useNavbarItems();
   const [leftItems, rightItems] = splitNavbarItems(items);
@@ -113,10 +117,15 @@ export default function NavbarContent(): ReactNode {
           <NavbarItems items={rightItems} />
           <NavbarIconButton
             to="/quaderno"
-            ariaLabel="Il tuo quaderno"
+            ariaLabel={
+              haProblemi(zaino)
+                ? 'Il tuo quaderno (lo zaino ha un problema)'
+                : 'Il tuo quaderno'
+            }
             tooltip="Quaderno"
             icon={<FontAwesomeIcon icon={faHighlighter} />}
             accent="amber"
+            pallino={haProblemi(zaino)}
           />
           <NavbarIconButton
             to="https://github.com/marcofarina/python-doesnt-byte"

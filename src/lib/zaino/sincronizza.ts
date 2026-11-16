@@ -27,7 +27,7 @@
  */
 import { useSyncExternalStore } from 'react';
 
-import { storageDi } from './area';
+import { areaCorrente, impostaTemporanea, storageDi } from './area';
 import {
   cifra,
   decifra,
@@ -190,6 +190,11 @@ function chiaviDi(codice: string): Promise<Chiavi> {
 /** Il codice dello zaino collegato, per «Mostra il codice» (Q5). */
 export function codiceZaino(): string | null {
   return leggiMemoria()?.codice ?? null;
+}
+
+/** Il codice collegato, che si aggiorna a ogni cambio di stato dello zaino. */
+export function useCodiceZaino(): string | null {
+  return useSyncExternalStore(iscriviti, codiceZaino, () => null);
 }
 
 /* ------------------------------------------------------------ sezioni */
@@ -531,8 +536,19 @@ export async function crea(): Promise<string> {
   return codice;
 }
 
+export interface OpzioniApri {
+  /**
+   * «Non è il mio computer»: codice, zaino e sezioni stanno in
+   * `sessionStorage` e spariscono con la scheda; `localStorage` non si tocca.
+   */
+  temporaneo?: boolean;
+}
+
 /** Collega questo dispositivo a uno zaino che esiste già. */
-export async function apri(scritto: string): Promise<EsitoApri> {
+export async function apri(
+  scritto: string,
+  opzioni: OpzioniApri = {},
+): Promise<EsitoApri> {
   if (!zainoSupportato()) return 'non-supportato';
   if (leggiMemoria()) return 'gia-collegato';
   const codice = normalizzaCodice(scritto);
@@ -547,6 +563,9 @@ export async function apri(scritto: string): Promise<EsitoApri> {
     return e instanceof ErroreServizio ? 'servizio' : 'offline';
   }
   if (!letto) return 'inesistente';
+  // Solo adesso, a zaino trovato: un codice sbagliato non lascia la scheda
+  // in modalità temporanea.
+  if (opzioni.temporaneo && !impostaTemporanea(true)) return 'non-supportato';
   salvaMemoria({ codice, versione: letto.versione, ultimo: null });
   fermaTimer();
   await sincronizza({ completa: true, letto });
@@ -565,6 +584,9 @@ export async function esci(): Promise<void> {
   salvaMemoria(null);
   chiaviCache = null;
   for (const tipo of sezioniRegistrate()) tipo.svuota();
+  // In modalità temporanea la scheda torna all'area normale: le note del
+  // profilo, mai toccate, riappaiono.
+  impostaTemporanea(false);
   cambiaStato({
     fase: 'scollegato',
     motivo: null,
@@ -615,6 +637,11 @@ export async function cancella(): Promise<boolean> {
   fermaTimer();
   salvaMemoria(null);
   chiaviCache = null;
+  // Su un computer non proprio non resta niente nemmeno in locale.
+  if (areaCorrente() === 'session') {
+    for (const tipo of sezioniRegistrate()) tipo.svuota();
+    impostaTemporanea(false);
+  }
   cambiaStato({
     fase: 'scollegato',
     motivo: null,
@@ -625,6 +652,105 @@ export async function cancella(): Promise<boolean> {
   return true;
 }
 
+export type EsitoCambia =
+  | { ok: true; codice: string; vecchioCancellato: boolean }
+  | {
+      ok: false;
+      motivo:
+        | 'non-collegato'
+        | 'non-sincronizzato'
+        | 'pieno'
+        | 'servizio'
+        | 'offline';
+    };
+
+/**
+ * «Cambia codice»: crea uno zaino nuovo con lo stesso contenuto, poi cancella
+ * il vecchio. L'ordine conta: se qualcosa va storto prima che il nuovo esista,
+ * il vecchio resta com'è. Gli altri dispositivi devono riaprire lo zaino con
+ * il codice nuovo.
+ */
+export async function cambiaCodice(): Promise<EsitoCambia> {
+  if (!leggiMemoria()) return { ok: false, motivo: 'non-collegato' };
+  if (corrente) await corrente.catch(() => undefined);
+  await sincronizza({ completa: true });
+  const m = leggiMemoria();
+  if (!m) return { ok: false, motivo: 'non-collegato' };
+  if (
+    stato.fase !== 'sincronizzato' ||
+    stato.inSospeso ||
+    !m.ultimo ||
+    m.versione === null
+  )
+    return {
+      ok: false,
+      motivo: stato.motivo === 'pieno' ? 'pieno' : 'non-sincronizzato',
+    };
+
+  const lavoro = (async (): Promise<EsitoCambia> => {
+    const vecchie = await chiaviDi(m.codice);
+    const contenuto = pota(
+      unisciContenuti(contenutoLocale(m.ultimo), m.ultimo ?? contenutoVuoto()),
+    );
+    const codice = nuovoCodice();
+    const nuove = await derivaChiavi(codice);
+    const blob = await cifra(contenuto, nuove.chiave);
+    if (blob.byteLength > MAX_BLOB) return { ok: false, motivo: 'pieno' };
+    let r: Response;
+    try {
+      r = await fetch(indirizzo(nuove.id), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'If-None-Match': '*',
+        },
+        body: blob,
+      });
+    } catch {
+      return { ok: false, motivo: 'offline' };
+    }
+    if (!r.ok) return { ok: false, motivo: 'servizio' };
+    // Il nuovo zaino esiste: da qui questo dispositivo usa il nuovo codice.
+    const versioneVecchia = m.versione;
+    chiaviCache = { codice, chiavi: Promise.resolve(nuove) };
+    salvaMemoria({ codice, versione: versioneDa(r), ultimo: contenuto });
+    cambiaStato({ byte: blob.byteLength });
+
+    let vecchioCancellato = false;
+    try {
+      let v: number | null = versioneVecchia;
+      for (let t = 0; t < 2 && !vecchioCancellato; t += 1) {
+        if (v === null) {
+          vecchioCancellato = true;
+          break;
+        }
+        const d = await fetch(indirizzo(vecchie.id), {
+          method: 'DELETE',
+          headers: { 'If-Match': `"${v}"` },
+        });
+        if (d.status === 412) v = await versioneRemota(vecchie.id);
+        else vecchioCancellato = d.ok || d.status === 404;
+        if (!d.ok && d.status !== 412 && d.status !== 404) break;
+      }
+    } catch {
+      /* il vecchio resta: l'interfaccia lo dice */
+    }
+    return { ok: true, codice, vecchioCancellato };
+  })();
+  corrente = lavoro.then(
+    () => undefined,
+    () => undefined,
+  );
+  try {
+    return await lavoro;
+  } finally {
+    corrente = null;
+    const dopo = ancora;
+    ancora = null;
+    if (dopo && leggiMemoria()) void sincronizza(dopo);
+  }
+}
+
 /* ------------------------------------------------------------- sonda */
 
 export interface AccessoZaino {
@@ -633,9 +759,10 @@ export interface AccessoZaino {
   /** L'id che vede il server, per gli script di verifica. */
   id(): Promise<string | null>;
   crea(): Promise<string>;
-  apri(codice: string): Promise<EsitoApri>;
+  apri(codice: string, opzioni?: OpzioniApri): Promise<EsitoApri>;
   esci(): Promise<void>;
   cancella(): Promise<boolean>;
+  cambiaCodice(): Promise<EsitoCambia>;
   /** Sincronizza adesso, rileggendo il server. */
   sincronizza(): Promise<StatoZaino>;
   /** Registra una sezione (per provare le sezioni che un client non conosce). */
@@ -667,6 +794,7 @@ export function avviaZaino(urlServizio: string): void {
     apri,
     esci,
     cancella,
+    cambiaCodice,
     async sincronizza() {
       await sincronizza({ completa: true });
       return stato;
@@ -680,6 +808,9 @@ export function avviaZaino(urlServizio: string): void {
   stato = { ...STATO_SERVER, supportato };
   for (const f of ascoltatori) f();
   if (!supportato) return;
+  // Un segno di modalità temporanea senza zaino (apertura interrotta) non
+  // deve nascondere il quaderno del profilo.
+  if (areaCorrente() === 'session' && !leggiMemoria()) impostaTemporanea(false);
   for (const tipo of sezioniRegistrate()) segui(tipo);
   document.addEventListener('visibilitychange', suVisibilita);
   window.addEventListener('storage', suStorage);

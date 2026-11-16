@@ -15,7 +15,7 @@
  */
 import { useMemo, useSyncExternalStore } from 'react';
 
-import { storageDi } from '../zaino/area';
+import { storageDi, suCambioArea } from '../zaino/area';
 import {
   COLORI,
   MAX_NOME_COLORE,
@@ -156,9 +156,20 @@ function suStorage(e: StorageEvent): void {
   avvisa();
 }
 
+/** Cambia l'area (modalità temporanea): riparte da ciò che c'è nella nuova. */
+function ricarica(): void {
+  if (timer) clearTimeout(timer);
+  timer = null;
+  bloccato = false;
+  idDispositivo = null;
+  stato = leggiDisco() ?? quadernoVuoto();
+  avvisa();
+}
+
 function carica(): Quaderno {
   if (!stato) {
     stato = leggiDisco() ?? quadernoVuoto();
+    suCambioArea(() => timer && scriviOra(), ricarica);
     window.addEventListener('storage', suStorage);
     window.addEventListener('pagehide', () => timer && scriviOra());
     document.addEventListener('visibilitychange', () => {

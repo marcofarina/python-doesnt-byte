@@ -11,8 +11,8 @@
  * - Scarica il quaderno (Markdown con i dati in coda), importa un quaderno
  *   (unione, non sostituzione), cancella le note da questo browser.
  *
- * Tutto è locale: finché non c'è lo zaino (fasi Q4–Q5) il quaderno vive solo in
- * questo browser, e la pagina lo dice.
+ * Finché lo zaino (`/zaino`) non è collegato il quaderno vive solo in questo
+ * browser, e la pagina lo dice; con lo zaino collegato mostra il suo stato.
  */
 import React, {
   useId,
@@ -58,6 +58,8 @@ import {
   type LezioneElenco,
 } from '@site/src/lib/quaderno/file';
 import { cancellaOrfane, useOrfane } from '@site/src/lib/quaderno/orfane';
+import ZainoStato from '@site/src/components/ZainoStato';
+import { useCodiceZaino } from '@site/src/lib/zaino/sincronizza';
 import {
   COLORI,
   MAX_NOME_COLORE,
@@ -214,6 +216,7 @@ function Strumenti({
   const [messaggio, setMessaggio] = useState<Messaggio>(null);
   const [conferma, setConferma] = useState(false);
   const file = useRef<HTMLInputElement>(null);
+  const collegato = useCodiceZaino() !== null;
 
   const scarica = () => {
     const testo = scrivi(leggiQuaderno(), lezioni, new Date());
@@ -309,7 +312,7 @@ function Strumenti({
           tabIndex={-1}
           onChange={scegli}
         />
-        {!conferma && (
+        {!conferma && !collegato && (
           <button
             type="button"
             className={clsx(styles.bottone, styles.pericolo)}
@@ -322,6 +325,13 @@ function Strumenti({
           </button>
         )}
       </div>
+      {collegato && (
+        <p className={styles.spiega} data-quaderno-niente-cancella="">
+          Con lo zaino collegato le note tornerebbero alla prossima
+          sincronizzazione: per toglierle da questo browser,{' '}
+          <Link to="/zaino">esci dallo zaino</Link>.
+        </p>
+      )}
       {conferma && (
         <div
           className={styles.conferma}
@@ -380,6 +390,7 @@ function Contenuto(): ReactNode {
   const lezioni = useLezioni();
   const permalink = usePermalink();
   const [filtro, setFiltro] = useState<Colore | null>(null);
+  const collegato = useCodiceZaino() !== null;
 
   const vive = q.annotazioni.filter((a) => !a.cancellata);
   const visibili = filtro ? vive.filter((a) => a.colore === filtro) : vive;
@@ -422,16 +433,29 @@ function Contenuto(): ReactNode {
 
   return (
     <>
-      <div className={styles.avviso} data-quaderno-avviso="" role="note">
-        <p>
-          {vive.length === 1
-            ? '1 annotazione salvata solo in questo browser.'
-            : `${vive.length} annotazioni salvate solo in questo browser.`}{' '}
-          Se cambi computer, o il browser cancella i suoi dati, non le ritrovi:
-          scarica il quaderno e tienilo da parte.
-        </p>
-        <p>Se questo computer non è tuo, cancella le note quando hai finito.</p>
-      </div>
+      {collegato ? (
+        <div className={styles.avviso} data-quaderno-zaino="" role="note">
+          <ZainoStato />
+          <p>
+            Le note sono anche nel tuo zaino.{' '}
+            <Link to="/zaino">Gestisci lo zaino</Link>.
+          </p>
+        </div>
+      ) : (
+        <div className={styles.avviso} data-quaderno-avviso="" role="note">
+          <p>
+            {vive.length === 1
+              ? '1 annotazione salvata solo in questo browser.'
+              : `${vive.length} annotazioni salvate solo in questo browser.`}{' '}
+            Se cambi computer, o il browser cancella i suoi dati, non le
+            ritrovi: scarica il quaderno e tienilo da parte, oppure{' '}
+            <Link to="/zaino">portale su altri dispositivi con lo zaino</Link>.
+          </p>
+          <p>
+            Se questo computer non è tuo, cancella le note quando hai finito.
+          </p>
+        </div>
+      )}
 
       <Strumenti vive={vive.length} lezioni={lezioni} />
       <Legenda legenda={q.legenda} />

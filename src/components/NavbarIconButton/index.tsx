@@ -20,6 +20,8 @@ interface Props {
   accent?: IconButtonAccent;
   target?: string;
   rel?: string;
+  /** Un pallino di attenzione sull'icona (lo zaino offline o in errore). */
+  pallino?: boolean;
 }
 
 export default function NavbarIconButton({
@@ -30,6 +32,7 @@ export default function NavbarIconButton({
   accent = 'cyan',
   target,
   rel,
+  pallino = false,
 }: Props): ReactNode {
   return (
     <Link
@@ -42,6 +45,7 @@ export default function NavbarIconButton({
       <span className={styles.icon} aria-hidden="true">
         {icon}
       </span>
+      {pallino && <span className={styles.pallino} data-pallino="" />}
       <span className={styles.tooltip} aria-hidden="true">
         <span className={styles.tooltipGlow} />
         <span className={styles.tooltipText}>{tooltip}</span>

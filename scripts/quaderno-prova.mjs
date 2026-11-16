@@ -25,6 +25,13 @@
  *   altro indirizzo ZAINO_SERVER). Il servizio vede solo blob cifrati: il banco
  *   controlla che il testo di una nota non ci sia.
  *
+ * - La pagina `/zaino` e la modalità temporanea (fase Q5): link `#codice=` che
+ *   compila il campo e sparisce dall'indirizzo, «Non è il mio computer»
+ *   (`localStorage` intatto, tutto in `sessionStorage`, niente dopo la chiusura
+ *   della scheda, note del profilo di nuovo visibili dopo «Esci»), «Cambia
+ *   codice» (il vecchio zaino risponde 404, il nuovo ha le stesse note), un 413
+ *   simulato che dà «zaino pieno» e il pallino sull'icona della navbar.
+ *
  * Lavora contro `npm start` sulla porta 3000. Il browser è il Chrome installato
  * (`channel: 'chrome'`); per usarne un altro, QUADERNO_CHROME=/percorso/chrome.
  * Per un dev server su un'altra porta, QUADERNO_SERVER=http://localhost:3001.
@@ -51,7 +58,11 @@ async function caso(nome, fn) {
     await fn();
     esiti.push({ nome, ok: true });
   } catch (e) {
-    esiti.push({ nome, ok: false, errore: e.message.split('\n')[0] });
+    esiti.push({
+      nome,
+      ok: false,
+      errore: e.message.split('\n').slice(0, 6).join(' | '),
+    });
   }
 }
 
@@ -1623,6 +1634,283 @@ async function proveZaino(browser) {
   }
 }
 
+/* ------------------------------------------------ pagina /zaino (Q5) */
+
+const istantanea = (page) =>
+  sonda(page, () => {
+    const o = {};
+    for (let i = 0; i < localStorage.length; i += 1) {
+      const k = localStorage.key(i);
+      o[k] = localStorage.getItem(k);
+    }
+    return o;
+  });
+
+const PAGINA_ZAINO = `${SERVER}/zaino/`;
+const collegato = (page) =>
+  page.waitForFunction(
+    () =>
+      window.__zaino?.codice() &&
+      window.__zaino.stato().fase === 'sincronizzato',
+  );
+
+async function proveZainoPagina(browser) {
+  const A = await dispositivo(browser);
+  const C = await dispositivo(browser);
+  const D = await dispositivo(browser);
+  const NOTA = 'nota per la pagina zaino';
+  await sonda(
+    A.page,
+    (n) => window.__quaderno.aggiungi(10, 40, 'giallo', n),
+    NOTA,
+  );
+  await sonda(A.page, () => window.__quaderno.aggiungi(60, 90, 'verde'));
+  const codice = await sonda(A.page, () => window.__zaino.crea());
+  const nelloZaino = await vive(A.page);
+  const quanteSessione = (page) =>
+    sonda(page, () => {
+      const q = JSON.parse(sessionStorage.getItem('pdb:quaderno') ?? 'null');
+      return q ? q.annotazioni.filter((a) => !a.cancellata).length : 0;
+    });
+  let ripristino = null;
+
+  await caso(
+    'zaino: link #codice= → campo compilato, frammento tolto, «Apri» collega',
+    async () => {
+      const B = await dispositivo(browser);
+      try {
+        await B.page.goto(`${PAGINA_ZAINO}#codice=${codice.toLowerCase()}`, {
+          waitUntil: 'networkidle',
+        });
+        await B.page.waitForSelector('[data-zaino-input]');
+        await B.page.waitForFunction(() => location.hash === '');
+        const campo = await B.page.inputValue('[data-zaino-input]');
+        assert.equal(campo.replace(/-/g, ''), codice);
+        assert.equal(campo.length, 24, 'codice a gruppi di quattro');
+        await B.page.click('[data-azione="apri"]');
+        await B.page.waitForSelector('[data-zaino-stato="sincronizzato"]');
+        await B.page.waitForTimeout(700); // la scrittura su disco ha 300 ms di ritardo
+        assert.equal(
+          await sonda(B.page, () => window.__zaino.codice()),
+          codice,
+        );
+        const n = await sonda(
+          B.page,
+          () =>
+            JSON.parse(localStorage.getItem('pdb:quaderno')).annotazioni.length,
+        );
+        assert.equal(n, nelloZaino.length);
+        assert.equal(
+          await B.page.locator('[data-zaino-contenuto]').innerText(),
+          `Quaderno: ${n} annotazioni`,
+        );
+        assert.deepEqual(B.errori, []);
+      } finally {
+        await sonda(B.page, () => window.__zaino.esci());
+        await B.ctx.close();
+      }
+    },
+  );
+
+  await caso(
+    'zaino: codice sbagliato dalla pagina → messaggio, niente collegamento',
+    async () => {
+      await D.page.goto(PAGINA_ZAINO, { waitUntil: 'networkidle' });
+      await D.page.fill('[data-zaino-input]', '0000-0000-0000-0000-0000');
+      await D.page.check('[data-zaino-temporaneo]');
+      await D.page.click('[data-azione="apri"]');
+      await D.page.waitForFunction(
+        () => document.querySelector('[data-zaino-messaggio]')?.textContent,
+      );
+      assert.equal(await sonda(D.page, () => window.__zaino.codice()), null);
+      assert.equal(
+        await sonda(D.page, () =>
+          sessionStorage.getItem('pdb:zaino-temporaneo'),
+        ),
+        null,
+        'la scheda non resta in modalità temporanea',
+      );
+    },
+  );
+
+  await caso(
+    'zaino: «Non è il mio computer» dalla pagina → localStorage intatto, quaderno in sessionStorage',
+    async () => {
+      // Una nota nel profilo di D, prima di collegare niente.
+      await apri(D.page);
+      await sonda(D.page, () =>
+        window.__quaderno.aggiungi(100, 130, 'rosa', 'del profilo'),
+      );
+      await D.page.waitForTimeout(600);
+      const prima = await istantanea(D.page);
+      assert.ok(prima['pdb:quaderno']);
+      await D.page.goto(PAGINA_ZAINO, { waitUntil: 'networkidle' });
+      await D.page.fill('[data-zaino-input]', codice);
+      await D.page.check('[data-zaino-temporaneo]');
+      await D.page.click('[data-azione="apri"]');
+      await D.page.waitForSelector('[data-zaino-stato="sincronizzato"]');
+      await D.page.waitForTimeout(700);
+      assert.deepEqual(await istantanea(D.page), prima);
+      assert.equal(await quanteSessione(D.page), nelloZaino.length);
+      const sessione = await sonda(D.page, () => [
+        sessionStorage.getItem('pdb:zaino') !== null,
+        sessionStorage.getItem('pdb:zaino-temporaneo'),
+      ]);
+      assert.deepEqual(sessione, [true, '1']);
+      assert.equal(
+        await D.page.locator('[data-barra-temporanea]').count(),
+        1,
+        'la barra sotto la navbar',
+      );
+      ripristino = prima;
+    },
+  );
+
+  await caso(
+    'zaino: scheda chiusa e riaperta → niente zaino, note del profilo al loro posto',
+    async () => {
+      const nuova = await D.ctx.newPage();
+      await nuova.goto(`${SERVER}${PAGINA}`, { waitUntil: 'networkidle' });
+      await nuova.waitForFunction(() => window.__quaderno);
+      assert.equal(await sonda(nuova, () => window.__zaino.codice()), null);
+      assert.deepEqual(
+        await vive(nuova).then((v) => v.map((x) => x.split('|')[2])),
+        ['del profilo'],
+      );
+      await nuova.close();
+    },
+  );
+
+  await caso(
+    'zaino: «Esci» da /zaino in modalità temporanea → note del profilo di nuovo visibili',
+    async () => {
+      await D.page.click('[data-azione="esci"]');
+      await D.page.click('[data-azione="conferma-esci"]');
+      await D.page.waitForSelector('[data-azione="crea"]');
+      const resto = await sonda(D.page, () => [
+        sessionStorage.getItem('pdb:zaino'),
+        sessionStorage.getItem('pdb:quaderno'),
+        sessionStorage.getItem('pdb:zaino-temporaneo'),
+      ]);
+      assert.deepEqual(resto, [null, null, null]);
+      assert.deepEqual(await istantanea(D.page), ripristino);
+      assert.equal(await D.page.locator('[data-barra-temporanea]').count(), 0);
+    },
+  );
+
+  await caso(
+    'zaino: modalità temporanea con il quaderno già in memoria → il quaderno del profilo non passa in sessionStorage',
+    async () => {
+      await sonda(C.page, () =>
+        window.__quaderno.aggiungi(100, 130, 'azzurro', 'del profilo C'),
+      );
+      await C.page.waitForTimeout(600);
+      const prima = await istantanea(C.page);
+      const esito = await sonda(
+        C.page,
+        (c) => window.__zaino.apri(c, { temporaneo: true }),
+        codice,
+      );
+      assert.equal(esito, 'aperto');
+      assert.deepEqual(await vive(C.page), nelloZaino);
+      await C.page.waitForTimeout(600);
+      assert.deepEqual(await istantanea(C.page), prima);
+      assert.equal(await quanteSessione(C.page), nelloZaino.length);
+      await sonda(C.page, () => window.__zaino.esci());
+      assert.deepEqual(
+        await vive(C.page).then((v) => v.map((x) => x.split('|')[2])),
+        ['del profilo C'],
+      );
+      assert.deepEqual(await istantanea(C.page), prima);
+    },
+  );
+
+  let vecchioId = null;
+  let nuovoCodice = null;
+  await caso(
+    'zaino: «Cambia codice» → il vecchio id risponde 404, il nuovo ha le stesse note',
+    async () => {
+      vecchioId = await sonda(A.page, () => window.__zaino.id());
+      await A.page.goto(PAGINA_ZAINO, { waitUntil: 'networkidle' });
+      await A.page.waitForSelector('[data-azione="cambia"]');
+      await A.page.click('[data-azione="cambia"]');
+      await A.page.click('[data-azione="conferma-cambia"]');
+      await A.page.waitForSelector('[data-zaino-cambiato]');
+      nuovoCodice = (
+        await A.page.locator('[data-zaino-codice]').innerText()
+      ).replace(/-/g, '');
+      assert.match(nuovoCodice, /^[0-9A-HJKMNP-TV-Z]{20}$/);
+      assert.notEqual(nuovoCodice, codice);
+      assert.equal((await fetch(`${ZAINO}/v1/zaino/${vecchioId}`)).status, 404);
+      const nuovoId = await sonda(A.page, () => window.__zaino.id());
+      assert.notEqual(nuovoId, vecchioId);
+      assert.equal((await fetch(`${ZAINO}/v1/zaino/${nuovoId}`)).status, 200);
+      assert.equal(
+        await sonda(A.page, () => window.__zaino.codice()),
+        nuovoCodice,
+      );
+      // Un dispositivo nuovo con il codice nuovo trova le stesse note.
+      const E = await dispositivo(browser);
+      try {
+        assert.equal(
+          await sonda(E.page, (c) => window.__zaino.apri(c), nuovoCodice),
+          'aperto',
+        );
+        assert.deepEqual(await vive(E.page), nelloZaino);
+        // …e con il vecchio non apre più niente.
+        await sonda(E.page, () => window.__zaino.esci());
+        assert.equal(
+          await sonda(E.page, (c) => window.__zaino.apri(c), codice),
+          'inesistente',
+        );
+      } finally {
+        await E.ctx.close();
+      }
+    },
+  );
+
+  await caso(
+    'zaino: risposta 413 simulata → «zaino pieno» in pagina e pallino sull’icona',
+    async () => {
+      await A.page.route(`${ZAINO}/**`, (rotta) =>
+        rotta.request().method() === 'PUT'
+          ? rotta.fulfill({ status: 413, body: 'troppo grande' })
+          : rotta.fallback(),
+      );
+      await apri(A.page);
+      await sonda(A.page, () =>
+        window.__quaderno.aggiungi(200, 230, 'giallo', 'una in più'),
+      );
+      await sonda(A.page, () => window.__zaino.sincronizza().catch(() => null));
+      const st = await sonda(A.page, () => window.__zaino.stato());
+      assert.equal(st.fase, 'errore');
+      assert.equal(st.motivo, 'pieno');
+      assert.equal(await A.page.locator('[data-pallino]').count(), 1);
+      await A.page.goto(PAGINA_ZAINO, { waitUntil: 'networkidle' });
+      await A.page.waitForSelector('[data-zaino-motivo="pieno"]');
+      assert.match(
+        await A.page.locator('[data-zaino-stato]').first().innerText(),
+        /pieno/,
+      );
+      await A.page.unroute(`${ZAINO}/**`);
+    },
+  );
+
+  await caso('zaino: pagina /zaino senza errori', () => {
+    assert.deepEqual([...A.errori, ...C.errori, ...D.errori], []);
+  });
+
+  // Pulizia: cancella lo zaino del banco e il quaderno dei dispositivi.
+  await sonda(A.page, () => window.__zaino.cancella()).catch(() => null);
+  for (const d of [A, C, D]) {
+    await sonda(d.page, () => {
+      localStorage.clear();
+      sessionStorage.clear();
+    }).catch(() => null);
+    await d.ctx.close();
+  }
+}
+
 async function main() {
   await proveUnione();
   await proveBuste();
@@ -1649,11 +1937,17 @@ async function main() {
       : { channel: 'chrome' },
   );
   try {
-    await proveBrowser(browser);
-    await proveEvidenziatore(browser);
-    await proveNote(browser);
-    await proveQuaderno(browser);
-    await proveZaino(browser);
+    // QUADERNO_SOLO=zaino,pagina-zaino per rilanciare solo alcuni gruppi.
+    const gruppi = {
+      browser: proveBrowser,
+      evidenziatore: proveEvidenziatore,
+      note: proveNote,
+      quaderno: proveQuaderno,
+      zaino: proveZaino,
+      'pagina-zaino': proveZainoPagina,
+    };
+    const scelti = process.env.QUADERNO_SOLO?.split(',') ?? Object.keys(gruppi);
+    for (const nome of scelti) await gruppi[nome](browser);
   } finally {
     await browser.close();
   }

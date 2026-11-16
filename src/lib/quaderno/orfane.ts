@@ -10,7 +10,7 @@
  */
 import { useSyncExternalStore } from 'react';
 
-import { storageDi } from '../zaino/area';
+import { storageDi, suCambioArea } from '../zaino/area';
 
 export const CHIAVE_ORFANE = 'pdb:quaderno-orfane';
 const EVENTO = 'pdb-quaderno-orfane';
@@ -85,9 +85,11 @@ function iscriviti(avvisa: () => void): () => void {
   };
   window.addEventListener(EVENTO, avvisa);
   window.addEventListener('storage', suStorage);
+  const smetti = suCambioArea(() => undefined, avvisa);
   return () => {
     window.removeEventListener(EVENTO, avvisa);
     window.removeEventListener('storage', suStorage);
+    smetti();
   };
 }
 
