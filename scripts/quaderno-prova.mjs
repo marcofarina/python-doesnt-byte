@@ -1,11 +1,15 @@
 /**
- * Banco di prova del quaderno (piano pm/piano-2026-11-quaderno.md, fase Q0):
- * ancoraggio, archivio locale e unione, contro la sandbox docs/quaderno-test.
+ * Banco di prova del quaderno (piano pm/piano-2026-11-quaderno.md, fasi Q0 e
+ * Q1): ancoraggio, archivio locale, unione ed evidenziatore in pagina, contro
+ * la sandbox docs/quaderno-test.
  *
  * - L'unione (`src/lib/quaderno/unisci.ts`) si prova in Node, caricata con jiti.
  * - Ancoraggio e archivio si provano nel browser attraverso `window.__quaderno`
  *   (`src/lib/quaderno/sonda.ts`), sulla sandbox e sulla sua `?variante=2`, che
  *   simula una riscrittura della lezione.
+ * - L'evidenziatore si prova come lo usa lo studente: selezione, clic sulla
+ *   barra e sul testo evidenziato, `CSS.highlights` per vedere che cosa è
+ *   disegnato.
  *
  * Lavora contro `npm start` sulla porta 3000. Il browser è il Chrome installato
  * (`channel: 'chrome'`); per usarne un altro, QUADERNO_CHROME=/percorso/chrome.
@@ -427,6 +431,206 @@ async function proveBrowser(browser) {
   await ctx.close();
 }
 
+/* ----------------------------------------------------------- evidenziatore */
+
+/** Seleziona una frase che sta in un solo nodo di testo della lezione. */
+async function seleziona(page, frase, dentro = '.theme-doc-markdown') {
+  const ok = await page.evaluate(
+    ([f, sel]) => {
+      const radice = document.querySelector(sel);
+      const w = document.createTreeWalker(radice, NodeFilter.SHOW_TEXT);
+      for (let n = w.nextNode(); n; n = w.nextNode()) {
+        const i = n.data.indexOf(f);
+        if (i < 0) continue;
+        window.getSelection().setBaseAndExtent(n, i, n, i + f.length);
+        return true;
+      }
+      return false;
+    },
+    [frase, dentro],
+  );
+  assert.ok(ok, `«${frase}» non trovata in ${dentro}`);
+}
+
+const misura = (page, nome) =>
+  page.evaluate((n) => CSS.highlights.get(n)?.size ?? 0, nome);
+
+const BARRA = '[data-quaderno-barra]';
+const MENU = '[data-quaderno-menu]';
+
+async function proveEvidenziatore(browser) {
+  const ctx = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+  });
+  const page = await ctx.newPage();
+  const erroriPagina = [];
+  page.on('pageerror', (e) => erroriPagina.push(e.message));
+  await apri(page);
+  await sonda(page, () => window.__quaderno.svuota());
+  await apri(page);
+  const frase = 'I più consultati sono quelli delle montagne.';
+
+  await caso(
+    'barra: selezione nella prosa → giallo → un highlight',
+    async () => {
+      await seleziona(page, frase);
+      await page.waitForSelector(BARRA, { timeout: 2000 });
+      assert.equal(
+        await page.locator(`${BARRA} [data-azione="togli"]`).count(),
+        0,
+      );
+      await page.click(`${BARRA} [data-colore="giallo"]`);
+      await page.waitForFunction(
+        () => CSS.highlights.get('pdb-giallo')?.size === 1,
+        null,
+        { timeout: 2000 },
+      );
+      await page.waitForSelector(BARRA, { state: 'detached', timeout: 2000 });
+      const [a] = await sonda(
+        page,
+        () => window.__quaderno.quaderno().annotazioni,
+      );
+      assert.equal(a.selettore.esatto, frase);
+      assert.equal(a.colore, 'giallo');
+    },
+  );
+
+  await caso(
+    'barra: ricaricata la pagina, l’highlight c’è ancora',
+    async () => {
+      await page.waitForTimeout(400);
+      await apri(page);
+      await page.waitForFunction(
+        () => CSS.highlights.get('pdb-giallo')?.size === 1,
+        null,
+        { timeout: 3000 },
+      );
+    },
+  );
+
+  await caso(
+    'barra: la stessa frase riselezionata → «Togli» e cambio di colore senza doppioni',
+    async () => {
+      await seleziona(page, frase);
+      await page.waitForSelector(BARRA, { timeout: 2000 });
+      assert.equal(
+        await page.getAttribute(
+          `${BARRA} [data-colore="giallo"]`,
+          'aria-pressed',
+        ),
+        'true',
+      );
+      assert.equal(
+        await page.locator(`${BARRA} [data-azione="togli"]`).count(),
+        1,
+      );
+      await page.click(`${BARRA} [data-colore="verde"]`);
+      await page.waitForFunction(
+        () =>
+          CSS.highlights.get('pdb-verde')?.size === 1 &&
+          CSS.highlights.get('pdb-giallo')?.size === 0,
+        null,
+        { timeout: 2000 },
+      );
+      const vive = await sonda(page, () =>
+        window.__quaderno.quaderno().annotazioni.filter((x) => !x.cancellata),
+      );
+      assert.equal(vive.length, 1);
+    },
+  );
+
+  await caso('barra: Esc la chiude, Tab ci entra', async () => {
+    await seleziona(page, 'Il dizionario di latino');
+    await page.waitForSelector(BARRA, { timeout: 2000 });
+    await page.keyboard.press('Tab');
+    assert.ok(
+      await page.evaluate(() =>
+        document.activeElement?.closest('[data-quaderno-barra]'),
+      ),
+      'il fuoco non è nella barra',
+    );
+    await page.keyboard.press('ArrowRight');
+    assert.equal(
+      await page.evaluate(() => document.activeElement?.dataset.colore),
+      'verde',
+    );
+    await page.keyboard.press('Escape');
+    await page.waitForSelector(BARRA, { state: 'detached', timeout: 1000 });
+    await page.evaluate(() => window.getSelection().removeAllRanges());
+  });
+
+  await caso(
+    'barra: selezione dentro il PyRunner → nessuna barra',
+    async () => {
+      await page.waitForSelector('[data-runner] .cm-line');
+      await seleziona(page, 'print', '[data-runner]');
+      await page.waitForTimeout(800);
+      assert.equal(await page.locator(BARRA).count(), 0);
+      await page.evaluate(() => window.getSelection().removeAllRanges());
+    },
+  );
+
+  await caso(
+    'menu: clic sull’evidenziazione → menu → «Togli» → 0',
+    async () => {
+      const p = await page.evaluate(() => {
+        const [r] = CSS.highlights.get('pdb-verde');
+        const q = r.getClientRects()[0];
+        return { x: q.left + q.width / 2, y: q.top + q.height / 2 };
+      });
+      await page.mouse.click(p.x, p.y);
+      await page.waitForSelector(MENU, { timeout: 2000 });
+      assert.equal(
+        await page.getAttribute(
+          `${MENU} [data-colore="verde"]`,
+          'aria-pressed',
+        ),
+        'true',
+      );
+      await page.click(`${MENU} [data-azione="togli"]`);
+      await page.waitForFunction(
+        () => CSS.highlights.get('pdb-verde')?.size === 0,
+        null,
+        { timeout: 2000 },
+      );
+      await page.waitForSelector(MENU, { state: 'detached', timeout: 1000 });
+    },
+  );
+
+  await caso('evidenziatore: nessun errore in pagina', () => {
+    assert.deepEqual(erroriPagina, []);
+  });
+  await sonda(page, () => window.__quaderno.svuota());
+  await ctx.close();
+
+  // Un browser senza la Custom Highlight API.
+  const vecchio = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+  });
+  await vecchio.addInitScript(() => {
+    Object.defineProperty(CSS, 'highlights', {
+      value: undefined,
+      configurable: true,
+    });
+  });
+  const p2 = await vecchio.newPage();
+  const errori2 = [];
+  p2.on('pageerror', (e) => errori2.push(e.message));
+  p2.on('console', (m) => m.type() === 'error' && errori2.push(m.text()));
+  await caso(
+    'senza CSS.highlights: niente barra, niente errori in console',
+    async () => {
+      await apri(p2);
+      assert.equal(await p2.evaluate(() => CSS.highlights), undefined);
+      await seleziona(p2, frase);
+      await p2.waitForTimeout(800);
+      assert.equal(await p2.locator(BARRA).count(), 0);
+      assert.deepEqual(errori2, []);
+    },
+  );
+  await vecchio.close();
+}
+
 async function main() {
   await proveUnione();
   try {
@@ -445,6 +649,7 @@ async function main() {
   );
   try {
     await proveBrowser(browser);
+    await proveEvidenziatore(browser);
   } finally {
     await browser.close();
   }

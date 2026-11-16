@@ -6,9 +6,10 @@
  * pm/piano-2026-10-pannello-database.md, fase T2), in src/components/Colonna/.
  * Le aggiunte sono marcate «Colonna».
  *
- * Quaderno (piano pm/piano-2026-11-quaderno.md, fase Q0): nelle pagine con
- * l'evidenziatore (`chiavePagina`) monta `window.__quaderno` per gli script di
- * verifica. Le aggiunte sono marcate «Quaderno».
+ * Quaderno (piano pm/piano-2026-11-quaderno.md, fasi Q0 e Q1): nelle pagine
+ * con l'evidenziatore (`chiavePagina`) monta <Evidenziatore>
+ * (src/components/Evidenziatore/), uno per pagina, e `window.__quaderno` per
+ * gli script di verifica. Le aggiunte sono marcate «Quaderno».
  *
  * Eject e non wrap: i pannelli devono stare DENTRO la colonna dell'indice, che
  * questo componente costruisce; la colonna deve esserci anche nelle pagine
@@ -39,6 +40,7 @@ import {
   ColonnaSheet,
   useColonna,
 } from '@site/src/components/Colonna';
+import Evidenziatore from '@site/src/components/Evidenziatore';
 import { chiavePagina } from '@site/src/lib/quaderno/pagine';
 import { useSondaQuaderno } from '@site/src/lib/quaderno/sonda';
 
@@ -73,7 +75,8 @@ export default function DocItemLayout({ children }: Props): ReactNode {
   const { metadata } = useDoc();
   // Quaderno: la chiave della pagina, null se non ha l'evidenziatore.
   const { pluginId } = useDocsVersion();
-  useSondaQuaderno(chiavePagina(pluginId, metadata.id));
+  const pagina = chiavePagina(pluginId, metadata.id);
+  useSondaQuaderno(pagina);
   // Colonna: su desktop (e in SSR, come l'indice) Archivio e Database stanno
   // nella colonna destra, su telefono in un pannello flottante fuori dalla
   // griglia. Un pannello aperto allarga la colonna.
@@ -119,6 +122,7 @@ export default function DocItemLayout({ children }: Props): ReactNode {
       {colonna !== null && windowSize === 'mobile' && (
         <ColonnaSheet colonna={colonna} />
       )}
+      {pagina && <Evidenziatore key={pagina} pagina={pagina} />}
     </div>
   );
 }

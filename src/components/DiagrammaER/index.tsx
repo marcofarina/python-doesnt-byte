@@ -32,7 +32,7 @@ export default function DiagrammaER(props: DiagrammaERProps): JSX.Element {
   const idTitolo = `er-${useId().replace(/[^\w-]/g, '')}`;
 
   return (
-    <figure className={styles.figura}>
+    <figure className={styles.figura} data-quaderno-escludi>
       <svg
         className={styles.diagramma}
         viewBox={`${vb.x} ${vb.y} ${vb.l} ${vb.a}`}

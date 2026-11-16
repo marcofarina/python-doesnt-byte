@@ -282,6 +282,7 @@ export default function Challenge({ children }: ChallengeProps): ReactNode {
         ref={rootRef}
         className={styles.challenge}
         data-challenge=""
+        data-quaderno-escludi
         data-esito={last?.esito ?? 'nuovo'}
         data-solved={solved || undefined}
       >

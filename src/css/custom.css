@@ -1541,6 +1541,50 @@ html[data-theme='dark'] {
     border-color 0.15s var(--ease-smooth);
 }
 
+/* ─────────────── Quaderno: evidenziatore ───────────────
+   Piano pm/piano-2026-11-quaderno.md, fase Q1. Le evidenziazioni sono
+   highlight della CSS Custom Highlight API (src/components/Evidenziatore),
+   non elementi del DOM: si colorano solo con ::highlight(). Campiture
+   semitrasparenti, così due evidenziazioni sovrapposte si sommano come su
+   carta. Le pastiglie (-pieno) sono i colori della barra. */
+:root,
+html[data-theme='light'] {
+  --quaderno-giallo: rgba(250, 204, 21, 0.42);
+  --quaderno-verde: rgba(74, 222, 128, 0.36);
+  --quaderno-azzurro: rgba(56, 189, 248, 0.32);
+  --quaderno-rosa: rgba(244, 114, 182, 0.32);
+  --quaderno-giallo-pieno: #facc15;
+  --quaderno-verde-pieno: #4ade80;
+  --quaderno-azzurro-pieno: #38bdf8;
+  --quaderno-rosa-pieno: #f472b6;
+  --quaderno-superficie: #ffffff;
+}
+
+html[data-theme='dark'] {
+  --quaderno-giallo: rgba(250, 204, 21, 0.36);
+  --quaderno-verde: rgba(74, 222, 128, 0.26);
+  --quaderno-azzurro: rgba(56, 189, 248, 0.3);
+  --quaderno-rosa: rgba(244, 114, 182, 0.3);
+  --quaderno-giallo-pieno: #fde047;
+  --quaderno-verde-pieno: #86efac;
+  --quaderno-azzurro-pieno: #7dd3fc;
+  --quaderno-rosa-pieno: #f9a8d4;
+  --quaderno-superficie: #1c1c20;
+}
+
+::highlight(pdb-giallo) {
+  background-color: var(--quaderno-giallo);
+}
+::highlight(pdb-verde) {
+  background-color: var(--quaderno-verde);
+}
+::highlight(pdb-azzurro) {
+  background-color: var(--quaderno-azzurro);
+}
+::highlight(pdb-rosa) {
+  background-color: var(--quaderno-rosa);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .v4v-beam::before,
   .v4v-ring::before,
