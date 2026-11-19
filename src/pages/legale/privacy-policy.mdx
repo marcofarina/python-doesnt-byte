@@ -13,7 +13,7 @@ import {
   icon="fingerprint"
   kicker="Privacy"
   title="Privacy policy"
-  updated="16 novembre 2026"
+  updated="19 novembre 2026"
 >
   Cosa succede ai tuoi dati quando visiti questo sito: in breve, quasi niente.
   Niente cookie di profilazione, nessuna registrazione, statistiche solo in
@@ -61,18 +61,18 @@ Sono memorizzazioni tecniche, necessarie alle funzioni che l'utente sceglie di u
 
 ### 2.4. Lo zaino (facoltativo)
 
-Lo zaino permette di ritrovare il quaderno su altri dispositivi, senza account. Esiste solo se l'utente lo crea: finché non lo crea, nessuno dei dati descritti al punto 2.3 lascia il suo browser.
+Lo zaino permette di ritrovare il quaderno su altri dispositivi, senza account. Lo stesso zaino, con lo stesso codice, si apre anche da SQL Academy, il portale di esercizi su SQL che accompagna il *Manuale dell'Archivista*, e porta con sé i progressi negli esercizi. Esiste solo se l'utente lo crea: finché non lo crea, nessuno dei dati descritti al punto 2.3 lascia il suo browser.
 
 Quando l'utente crea uno zaino:
 
 - **Dati conservati.** Il servizio conserva quattro informazioni: un identificativo ricavato dal codice (non il codice), un blocco di dati cifrati, un numero di versione e la data dell'ultimo aggiornamento. Non conserva nome, email, account né testi in chiaro.
-- **Contenuto del blocco.** Il blocco contiene oggi le annotazioni dell'utente: i testi evidenziati, le note, i colori, le date e i nomi dei colori. Se in futuro lo zaino porterà anche altri dati di stato del Sito, per esempio i progressi di un gioco, il titolare aggiornerà questa informativa prima di includerli.
+- **Contenuto del blocco.** Il blocco contiene le annotazioni dell'utente: i testi evidenziati, le note, i colori, le date e i nomi dei colori. Se l'utente apre lo zaino anche da SQL Academy, contiene inoltre i suoi progressi negli esercizi di ogni tema: esercizi risolti, numero di tentativi, suggerimenti e soluzioni aperti, punti guadagnati e spesi, l'ultima query scritta per ogni esercizio con l'ora in cui è stata scritta, e il numero di volte in cui l'utente ha azzerato i progressi. Se in futuro lo zaino porterà anche altri dati di stato del Sito, per esempio i progressi di un gioco, il titolare aggiornerà questa informativa prima di includerli.
 - **Accesso al contenuto.** Il browser cifra il contenuto prima di inviarlo, con una chiave ricavata dal codice di 20 caratteri. Il browser non invia mai il codice al servizio: il link per aprire lo zaino lo contiene dopo il simbolo `#`, parte dell'indirizzo che i browser non trasmettono ai server. Senza il codice nessuno può leggere lo zaino, titolare compreso. Il titolare non può quindi ricostruire il codice né aprire lo zaino: se l'utente perde il codice su tutti i dispositivi, lo zaino è perso. Chi possiede il codice può leggere e modificare lo zaino, perciò l'utente deve tenerlo riservato. Se il codice è finito a chi non deve averlo, l'utente può sostituirlo dalla pagina [Zaino](/zaino) con «Cambia codice».
 - **Luogo.** Lo zaino sta su Cloudflare (Workers e database D1), con area preferita in Europa orientale. L'area è una preferenza e non garantisce il luogo in cui i dati si trovano.
 - **Durata.** Lo zaino resta finché l'utente non lo cancella con «Cancella lo zaino». Il servizio cancella in automatico gli zaini non usati da 18 mesi. Dopo una cancellazione Cloudflare conserva i punti di ripristino del database per un massimo di 30 giorni (oggi 7): il contenuto cancellato può restare in quelle copie, in forma cifrata, fino alla loro scadenza.
 - **Registri e indirizzo IP.** Il servizio non tiene registri delle richieste. Cloudflare, come fornitore dell'infrastruttura, tratta l'indirizzo IP per consegnare la richiesta; il servizio lo usa solo per limitare il numero di richieste al minuto e non lo scrive nel database.
 
-Su un computer che non è proprio, l'utente può aprire lo zaino con l'opzione «Non è il mio computer»: il codice e le note restano solo nella scheda del browser in cui lo zaino è aperto e spariscono alla chiusura della scheda.
+Su un computer che non è proprio, l'utente può aprire lo zaino con l'opzione «Non è il mio computer»: il codice, le note e i progressi di SQL Academy restano solo nella scheda del browser in cui lo zaino è aperto e spariscono alla chiusura della scheda.
 
 ## 3. Cookie e strumenti di tracciamento
 
@@ -101,7 +101,7 @@ I dati raccolti attraverso il Sito sono trattati per le seguenti finalità:
 - **Gestione di eventuali comunicazioni** inviate volontariamente via email dall'utente, per fornire riscontro alle richieste.
   Base giuridica: esecuzione di misure precontrattuali o contrattuali (art. 6, par. 1, lett. b GDPR) e/o legittimo interesse del titolare a rispondere (art. 6, par. 1, lett. f GDPR), a seconda del contenuto della richiesta.
 
-- **Zaino** — conservare in forma cifrata il quaderno dell'utente che sceglie di creare uno zaino, per renderlo disponibile su altri dispositivi.
+- **Zaino** — conservare in forma cifrata il quaderno e i progressi di SQL Academy dell'utente che sceglie di creare uno zaino, per renderli disponibili su altri dispositivi.
   Base giuridica: il servizio richiesto dall'utente, che crea lo zaino di propria iniziativa (art. 6, par. 1, lett. b GDPR).
 
 - **Gestione dei contributi tramite GitHub** — ricezione, valutazione ed eventuale integrazione di segnalazioni, proposte di modifica (pull request) e commenti inviati volontariamente dagli utenti sul repository pubblico del progetto.
