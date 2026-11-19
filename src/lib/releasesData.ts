@@ -64,9 +64,29 @@ export const CATEGORY_META: Record<
 
 export const RELEASES: Release[] = [
   {
+    v: '0.24.0',
+    date: '19 novembre 2026',
+    latest: true,
+    feature: {
+      title: 'Il quaderno e lo zaino',
+      body: 'Nelle lezioni si può evidenziare il testo con quattro colori e scrivere note che compaiono nella colonna a destra, come i commenti di un documento condiviso. Lo zaino porta quaderno e note su un altro dispositivo, senza account.',
+    },
+    notes: {
+      new: [
+        'Evidenziatore: seleziona un passaggio di una lezione e scegli un colore. Le evidenziazioni restano nel browser e si ritrovano anche se la lezione viene riscritta.',
+        'Note a margine: ogni evidenziazione può avere una nota, che compare nel pannello «Note» della colonna destra (su telefono, in un foglio che sale dal basso).',
+        'Pagina «Quaderno»: tutte le annotazioni, per volume e lezione, con filtro per colore. Si possono scaricare in un file e reimportare.',
+        'Zaino: una copia cifrata del quaderno, apribile da un altro dispositivo con un codice di quattro parole, da un link o da un QR. Senza il codice nessuno può leggerla, nemmeno chi gestisce il sito.',
+        'Modalità temporanea: sul computer di qualcun altro, «Non è il mio computer» tiene tutto nella scheda e lo cancella alla chiusura.',
+      ],
+      improved: [
+        'La privacy policy descrive i dati salvati nel browser e lo zaino.',
+      ],
+    },
+  },
+  {
     v: '0.22.0',
     date: '3 novembre 2026',
-    latest: true,
     notes: {
       content: [
         'Volume 4, Biblioteca dell’Apprendista: il primo esercizio del Manuale dell’Archivista, «Onda, le dirette in streaming». Dal testo di una piattaforma di dirette video si ricava il modello E/R completo, fino alle generalizzazioni. La lezione «Generalizzazioni» lo elenca fra gli esercizi assegnati.',
