@@ -70,7 +70,7 @@ const TESTI_APRI: Record<Exclude<EsitoApri, 'aperto'>, string> = {
     'Questo browser non sa aprire lo zaino: serve una connessione https.',
   'gia-collegato': 'Questo browser ha già uno zaino aperto.',
   'codice-non-valido':
-    'Il codice non è scritto bene: sono 20 caratteri, fra lettere e numeri.',
+    'Il codice non è scritto bene: sono quattro parole, separate da spazi o trattini. Di ogni parola bastano le prime quattro lettere. I codici degli zaini più vecchi sono invece 20 caratteri, fra lettere e numeri.',
   inesistente:
     'Non trovo nessuno zaino con questo codice. Controlla di averlo scritto giusto.',
   offline: 'Non riesco a raggiungere il servizio: controlla la rete.',
@@ -222,9 +222,10 @@ function Crea({ onCreato }: { onCreato: (codice: string) => void }): ReactNode {
         Crea il tuo zaino
       </Heading>
       <p className={styles.spiega}>
-        Il sito genera un codice di 20 caratteri e ci mette dentro le note che
-        hai già in questo browser. Sugli altri dispositivi apri lo zaino con
-        quel codice.
+        Il sito sceglie a caso un codice di quattro parole, per esempio{' '}
+        <span translate="no">volpe-faro-miele-trono</span>, e ci mette dentro le
+        note che hai già in questo browser. Sugli altri dispositivi apri lo
+        zaino con quel codice.
       </p>
       <p className={styles.avvertenza}>
         Il codice non si può recuperare. Se lo perdi su tutti i dispositivi, lo
@@ -280,8 +281,10 @@ function Apri({ scrittoIniziale }: { scrittoIniziale: string }): ReactNode {
         Apri il tuo zaino qui
       </Heading>
       <p className={styles.spiega}>
-        Scrivi il codice che hai ricevuto quando hai creato lo zaino, oppure
-        apri da qui il link o il QR che ti sei mandato.
+        Scrivi le quattro parole del codice che hai ricevuto quando hai creato
+        lo zaino, oppure apri da qui il link o il QR che ti sei mandato. Di ogni
+        parola bastano le prime quattro lettere; maiuscole e accenti non
+        contano.
       </p>
       <form onSubmit={invia} className={styles.modulo}>
         <label className={styles.etichetta} htmlFor="zaino-codice">
@@ -294,9 +297,9 @@ function Apri({ scrittoIniziale }: { scrittoIniziale: string }): ReactNode {
           data-zaino-input=""
           value={scritto}
           onChange={(e) => setScritto(e.target.value)}
-          placeholder="XXXX-XXXX-XXXX-XXXX-XXXX"
+          placeholder="parola parola parola parola"
           autoComplete="off"
-          autoCapitalize="characters"
+          autoCapitalize="none"
           spellCheck={false}
           translate="no"
         />
@@ -464,8 +467,8 @@ function Collegato({
           </Heading>
           <p className={styles.avvertenza}>
             Salva il codice adesso. Senza di lui lo zaino è perso, e non c’è
-            modo di recuperarlo: mandati il link per email, oppure scrivi il
-            codice sul diario.
+            modo di recuperarlo: mandati il link per email, scrivi le parole sul
+            diario o imparale a memoria.
           </p>
           {cambiato && (
             <p className={styles.spiega} data-zaino-cambiato="">
@@ -536,8 +539,9 @@ function Collegato({
             <p className={styles.spiega}>
               Se il codice è finito a qualcuno che non deve averlo, cambialo: il
               sito crea uno zaino nuovo con le stesse note e cancella quello
-              vecchio. Sugli altri dispositivi riapri lo zaino con il codice
-              nuovo.
+              vecchio. Il codice nuovo è di quattro parole, anche se quello
+              vecchio era di 20 caratteri. Sugli altri dispositivi riapri lo
+              zaino con il codice nuovo.
             </p>
             {confermaCosa === 'cambia' ? (
               <div

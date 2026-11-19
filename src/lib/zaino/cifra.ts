@@ -2,21 +2,29 @@
  * Codice dello zaino e cifratura (piano pm/piano-2026-11-quaderno.md, tabella
  * dei default, «Codice dello zaino» e «Cifratura»).
  *
- * - Il codice: 20 caratteri base32 Crockford (100 bit casuali), mostrati a
- *   gruppi di quattro. È l'unica chiave: chi lo perde perde lo zaino.
+ * - Il codice: quattro parole da un elenco di 2048 (`parole.ts`), 44 bit
+ *   casuali, nella forma `volpe-faro-miele-trono`. È l'unica chiave: chi lo
+ *   perde perde lo zaino. I codici di prima, 20 caratteri base32 Crockford
+ *   (100 bit), aprono ancora il loro zaino (Marco, 2026-11-19).
  * - Dal codice, con HKDF-SHA-256, due valori indipendenti: l'`id` che vede il
  *   server (32 byte, base64url) e la chiave AES-GCM-256, che non lascia mai il
- *   browser.
+ *   browser. Sale ed etichette non cambiano: un valore diverso darebbe un
+ *   altro zaino.
  * - Il blob: IV casuale di 12 byte ‖ AES-GCM(gzip(JSON del contenuto)).
  *
  * Serve un contesto sicuro (`crypto.subtle`): https o localhost.
  */
+import { PAROLE } from './parole';
 import type { ContenutoZaino } from './tipi';
 
+const NUMERO_PAROLE = 4;
 const ALFABETO = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
-const LUNGHEZZA = 20;
+const LUNGHEZZA_VECCHIA = 20;
 const SALE = 'python-doesnt-byte/zaino/1';
 const LUNGHEZZA_IV = 12;
+
+/** Le prime quattro lettere riconoscono la parola. */
+const PER_PREFISSO = new Map(PAROLE.map((p) => [p.slice(0, 4), p]));
 
 const testo = (s: string) => new TextEncoder().encode(s);
 
@@ -30,31 +38,73 @@ export function zainoSupportato(): boolean {
   );
 }
 
-/** Un codice nuovo, 20 caratteri senza trattini. */
+/** Un codice nuovo: quattro parole separate da trattini. */
 export function nuovoCodice(): string {
-  // 256 è multiplo di 32: `byte & 31` è uniforme.
-  const b = crypto.getRandomValues(new Uint8Array(LUNGHEZZA));
-  return [...b].map((x) => ALFABETO[x & 31]).join('');
+  // 65536 è multiplo di 2048: `x & 2047` è uniforme.
+  const n = crypto.getRandomValues(new Uint16Array(NUMERO_PAROLE));
+  return [...n].map((x) => PAROLE[x & 2047]).join('-');
 }
 
 /**
- * Da quello che scrive lo studente al codice: maiuscole, senza spazi né
- * trattini, I e L lette come 1, O come 0 (regole di Crockford). null se non è
- * un codice.
+ * Le parole di un codice, senza maiuscole né accenti; per ognuna bastano le
+ * prime quattro lettere, il resto può avere errori di battitura. Fra una
+ * parola e l'altra va bene qualunque cosa non sia una lettera; senza niente
+ * in mezzo, solo parole intere. null se non sono quattro parole dell'elenco.
  */
-export function normalizzaCodice(scritto: string): string | null {
+function parole(scritto: string): string | null {
+  const pezzi = scritto
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .toLowerCase()
+    .split(/[^a-z]+/)
+    .filter(Boolean);
+  const trovate: string[] = [];
+  for (const pezzo of pezzi) {
+    if (pezzi.length === NUMERO_PAROLE) {
+      const p = pezzo.length >= 4 ? PER_PREFISSO.get(pezzo.slice(0, 4)) : null;
+      if (!p) return null;
+      trovate.push(p);
+      continue;
+    }
+    // Parole attaccate: ognuna si riconosce dalle prime quattro lettere.
+    let i = 0;
+    while (i < pezzo.length) {
+      const p = PER_PREFISSO.get(pezzo.slice(i, i + 4));
+      if (!p || !pezzo.startsWith(p, i)) return null;
+      trovate.push(p);
+      i += p.length;
+    }
+  }
+  return trovate.length === NUMERO_PAROLE ? trovate.join('-') : null;
+}
+
+/**
+ * Un codice di prima: maiuscole, senza spazi né trattini, I e L lette come 1,
+ * O come 0 (regole di Crockford).
+ */
+function vecchioCodice(scritto: string): string | null {
   const c = scritto
     .toUpperCase()
     .replace(/[\s-]/g, '')
     .replace(/[IL]/g, '1')
     .replace(/O/g, '0');
-  if (c.length !== LUNGHEZZA) return null;
+  if (c.length !== LUNGHEZZA_VECCHIA) return null;
   for (const x of c) if (!ALFABETO.includes(x)) return null;
   return c;
 }
 
-/** `XXXX-XXXX-XXXX-XXXX-XXXX`. */
+/**
+ * Da quello che scrive lo studente al codice che va a `derivaChiavi`: quattro
+ * parole (`volpe-faro-miele-trono`) o un codice di prima, di 20 caratteri.
+ * null se non è un codice.
+ */
+export function normalizzaCodice(scritto: string): string | null {
+  return parole(scritto) ?? vecchioCodice(scritto);
+}
+
+/** Le parole restano come sono; un codice di prima a gruppi: `XXXX-XXXX-…`. */
 export function formattaCodice(codice: string): string {
+  if (codice.includes('-')) return codice;
   return codice.match(/.{1,4}/g)?.join('-') ?? codice;
 }
 

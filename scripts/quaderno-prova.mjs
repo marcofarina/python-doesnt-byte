@@ -1429,7 +1429,7 @@ async function proveZaino(browser) {
   let codice = null;
 
   await caso(
-    'zaino: crea su A → sincronizzato, codice di 20 caratteri',
+    'zaino: crea su A → sincronizzato, codice di quattro parole',
     async () => {
       ann.a1 = await sonda(
         A.page,
@@ -1437,7 +1437,7 @@ async function proveZaino(browser) {
         TESTO_NOTA,
       );
       codice = await sonda(A.page, () => window.__zaino.crea());
-      assert.match(codice, /^[0-9A-HJKMNP-TV-Z]{20}$/);
+      assert.match(codice, /^[a-z]{4,9}(-[a-z]{4,9}){3}$/);
       const st = await sonda(A.page, () => window.__zaino.stato());
       assert.equal(st.fase, 'sincronizzato');
       assert.equal(st.inSospeso, false);
@@ -1456,9 +1456,12 @@ async function proveZaino(browser) {
   );
 
   await caso(
-    'zaino: apri su B (codice a gruppi, minuscolo) → stesse annotazioni',
+    'zaino: apri su B (prime quattro lettere, maiuscole) → stesse annotazioni',
     async () => {
-      const scritto = codice.toLowerCase().match(/.{4}/g).join('-');
+      const scritto = codice
+        .split('-')
+        .map((p) => p.slice(0, 4).toUpperCase())
+        .join(' ');
       const esito = await sonda(B.page, (c) => window.__zaino.apri(c), scritto);
       assert.equal(esito, 'aperto');
       assert.deepEqual(await vive(B.page), await vive(A.page));
@@ -1679,14 +1682,13 @@ async function proveZainoPagina(browser) {
     async () => {
       const B = await dispositivo(browser);
       try {
-        await B.page.goto(`${PAGINA_ZAINO}#codice=${codice.toLowerCase()}`, {
+        await B.page.goto(`${PAGINA_ZAINO}#codice=${codice.toUpperCase()}`, {
           waitUntil: 'networkidle',
         });
         await B.page.waitForSelector('[data-zaino-input]');
         await B.page.waitForFunction(() => location.hash === '');
         const campo = await B.page.inputValue('[data-zaino-input]');
-        assert.equal(campo.replace(/-/g, ''), codice);
-        assert.equal(campo.length, 24, 'codice a gruppi di quattro');
+        assert.equal(campo, codice, 'codice nella forma canonica');
         await B.page.click('[data-azione="apri"]');
         await B.page.waitForSelector('[data-zaino-stato="sincronizzato"]');
         await B.page.waitForTimeout(700); // la scrittura su disco ha 300 ms di ritardo
@@ -1838,8 +1840,8 @@ async function proveZainoPagina(browser) {
       await A.page.waitForSelector('[data-zaino-cambiato]');
       nuovoCodice = (
         await A.page.locator('[data-zaino-codice]').innerText()
-      ).replace(/-/g, '');
-      assert.match(nuovoCodice, /^[0-9A-HJKMNP-TV-Z]{20}$/);
+      ).trim();
+      assert.match(nuovoCodice, /^[a-z]{4,9}(-[a-z]{4,9}){3}$/);
       assert.notEqual(nuovoCodice, codice);
       assert.equal((await fetch(`${ZAINO}/v1/zaino/${vecchioId}`)).status, 404);
       const nuovoId = await sonda(A.page, () => window.__zaino.id());
