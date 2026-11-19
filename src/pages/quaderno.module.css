@@ -1,0 +1,374 @@
+.pagina {
+  width: 100%;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.titolo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-family: var(--font-mono-ui);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--at-fg-strong);
+}
+
+.icona {
+  color: var(--at-accent);
+  font-size: 0.8em;
+}
+
+.intro {
+  margin: 0.5rem 0 1.25rem;
+  color: var(--at-fg-body);
+  font-size: 1.15rem;
+}
+
+.avviso {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--at-accent-chip-border);
+  border-radius: var(--radius-md);
+  background: var(--at-accent-bg);
+  color: var(--at-fg-body);
+  font-size: 1rem;
+}
+
+.avviso p {
+  margin: 0 0 0.35rem;
+}
+
+.avviso p:last-child {
+  margin-bottom: 0;
+}
+
+.sezione {
+  margin: 0 0 1.75rem;
+}
+
+.titoletto {
+  margin: 0 0 0.25rem;
+  color: var(--at-fg-strong);
+  font-family: var(--font-mono-ui);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.spiega {
+  margin: 0 0 0.75rem;
+  color: var(--at-muted-soft);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.nascosto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─────────────── Pulsanti ─────────────── */
+
+.azioni {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bottone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid var(--at-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--at-bg);
+  color: var(--at-fg);
+  font-family: var(--font-mono-ui);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.bottone:hover:not(:disabled) {
+  background: var(--at-bg-chip);
+}
+
+.bottone:active:not(:disabled) {
+  transform: scale(0.98);
+  transition-duration: var(--dur-fast);
+}
+
+.bottone:focus-visible,
+.chip:focus-visible,
+.input:focus-visible {
+  outline: 2px solid var(--at-accent);
+  outline-offset: 2px;
+}
+
+.bottone:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.pericolo {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+html[data-theme='dark'] .pericolo {
+  color: #f87171;
+}
+
+.conferma {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--at-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--at-bg-subtle);
+}
+
+.conferma p {
+  margin: 0 0 0.6rem;
+  color: var(--at-fg-body);
+}
+
+.messaggio {
+  min-height: 1.4em;
+  margin: 0.6rem 0 0;
+  color: var(--at-fg-body);
+  font-size: 1rem;
+}
+
+.errore {
+  color: #dc2626;
+}
+
+html[data-theme='dark'] .errore {
+  color: #f87171;
+}
+
+/* ─────────────── Colori e legenda ─────────────── */
+
+.pastiglia {
+  flex: 0 0 auto;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-circle);
+  box-shadow: inset 0 0 0 1.5px var(--at-muted);
+}
+
+.pastiglia.giallo,
+.pastiglia.verde,
+.pastiglia.azzurro,
+.pastiglia.rosa {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.giallo {
+  background: var(--quaderno-giallo-pieno);
+}
+.verde {
+  background: var(--quaderno-verde-pieno);
+}
+.azzurro {
+  background: var(--quaderno-azzurro-pieno);
+}
+.rosa {
+  background: var(--quaderno-rosa-pieno);
+}
+
+.legenda {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 0.5rem;
+}
+
+.campo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--at-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--at-bg);
+  color: var(--at-fg-strong);
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+/* ─────────────── Filtro ─────────────── */
+
+.filtro {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.25rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.25rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--at-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--at-bg);
+  color: var(--at-fg);
+  font-family: var(--font-mono-ui);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.chip:hover {
+  background: var(--at-bg-chip);
+}
+
+.chip:active {
+  transform: scale(0.98);
+  transition-duration: var(--dur-fast);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--at-accent);
+  background: var(--at-accent-chip);
+  color: var(--at-accent-soft);
+  font-weight: 600;
+}
+
+.conto {
+  color: var(--at-muted);
+  font-weight: 400;
+}
+
+/* ─────────────── Annotazioni ─────────────── */
+
+.vuoto {
+  margin: 0;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: var(--at-bg-subtle);
+  color: var(--at-muted-soft);
+  font-size: 1.05rem;
+}
+
+.volume {
+  margin: 0 0 1.75rem;
+}
+
+.titoloVolume {
+  margin: 0 0 0.75rem;
+  color: var(--at-fg-strong);
+  font-family: var(--font-mono-ui);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.lezione {
+  margin: 0 0 1.25rem;
+}
+
+.titoloLezione {
+  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.elenco {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.voce {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--at-border);
+  border-radius: var(--radius-md);
+  background: var(--at-bg);
+}
+
+.testata {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-mono-ui);
+  font-size: 0.8rem;
+}
+
+.colore {
+  color: var(--at-fg);
+  font-weight: 600;
+}
+
+.data {
+  margin-left: auto;
+  color: var(--at-muted);
+}
+
+.dove {
+  margin: 0 0 0.4rem;
+  color: var(--at-muted-soft);
+  font-family: var(--font-mono-ui);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.citazione {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--at-bg-subtle);
+  color: var(--at-fg-body);
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+.nota {
+  margin: 0.6rem 0 0;
+  color: var(--at-fg-strong);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.vai {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-family: var(--font-mono-ui);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 480px) {
+  .azioni .bottone {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}

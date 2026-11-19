@@ -3,5 +3,7 @@
   "extends": "@docusaurus/tsconfig",
   "compilerOptions": {
     "baseUrl": "."
-  }
+  },
+  // servizi/ ha i suoi tsconfig (runtime dei Workers Cloudflare).
+  "exclude": ["node_modules", "build", "servizi"]
 }

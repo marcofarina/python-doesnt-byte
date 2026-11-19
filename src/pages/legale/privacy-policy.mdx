@@ -13,7 +13,7 @@ import {
   icon="fingerprint"
   kicker="Privacy"
   title="Privacy policy"
-  updated="22 ottobre 2026"
+  updated="19 novembre 2026"
 >
   Cosa succede ai tuoi dati quando visiti questo sito: in breve, quasi niente.
   Niente cookie di profilazione, nessuna registrazione, statistiche solo in
@@ -50,6 +50,30 @@ Eventuali comunicazioni inviate spontaneamente via email ai recapiti indicati co
 
 Il codice e i contenuti del progetto sono inoltre pubblicati su un repository pubblico ospitato su GitHub. Chi sceglie di contribuire — per esempio aprendo una segnalazione (issue), proponendo una modifica (pull request) o lasciando un commento — lo fa tramite il proprio account GitHub: in tal caso sono trattati i dati associati a quell'account e resi pubblici dalla piattaforma (per esempio nome utente, eventuale nome reale e il contenuto del contributo). Queste interazioni avvengono sulla piattaforma GitHub e sono soggette anche alla relativa informativa privacy.
 
+### 2.3. Dati salvati nel browser dell'utente
+
+Il Sito salva alcune informazioni nel browser dell'utente, con le tecnologie `localStorage` e `sessionStorage`. Queste informazioni restano sul dispositivo: il Sito non le riceve e non le usa per profilare l'utente né per seguirlo su altri siti. Sono:
+
+- le preferenze: tema chiaro o scuro, percorso scelto, preferenze del visualizzatore di algoritmi, dimensione del pannello dell'archivio, pannelli laterali aperti;
+- il **quaderno**, per chi lo usa: le parti di testo evidenziate, le note scritte dall'utente, i nomi dati ai colori e un identificativo casuale del dispositivo.
+
+Sono memorizzazioni tecniche, necessarie alle funzioni che l'utente sceglie di usare. L'utente può cancellarle dalle impostazioni del browser, e può cancellare le note anche dalla pagina [Quaderno](/quaderno).
+
+### 2.4. Lo zaino (facoltativo)
+
+Lo zaino permette di ritrovare il quaderno su altri dispositivi, senza account. Lo stesso zaino, con lo stesso codice, si apre anche da SQL Academy, il portale di esercizi su SQL che accompagna il *Manuale dell'Archivista*, e porta con sé i progressi negli esercizi. Esiste solo se l'utente lo crea: finché non lo crea, nessuno dei dati descritti al punto 2.3 lascia il suo browser.
+
+Quando l'utente crea uno zaino:
+
+- **Dati conservati.** Il servizio conserva quattro informazioni: un identificativo ricavato dal codice (non il codice), un blocco di dati cifrati, un numero di versione e la data dell'ultimo aggiornamento. Non conserva nome, email, account né testi in chiaro.
+- **Contenuto del blocco.** Il blocco contiene le annotazioni dell'utente: i testi evidenziati, le note, i colori, le date e i nomi dei colori. Se l'utente apre lo zaino anche da SQL Academy, contiene inoltre i suoi progressi negli esercizi di ogni tema: esercizi risolti, numero di tentativi, suggerimenti e soluzioni aperti, punti guadagnati e spesi, l'ultima query scritta per ogni esercizio con l'ora in cui è stata scritta, e il numero di volte in cui l'utente ha azzerato i progressi. Se in futuro lo zaino porterà anche altri dati di stato del Sito, per esempio i progressi di un gioco, il titolare aggiornerà questa informativa prima di includerli.
+- **Accesso al contenuto.** Il browser cifra il contenuto prima di inviarlo, con una chiave ricavata dal codice di 20 caratteri. Il browser non invia mai il codice al servizio: il link per aprire lo zaino lo contiene dopo il simbolo `#`, parte dell'indirizzo che i browser non trasmettono ai server. Senza il codice nessuno può leggere lo zaino, titolare compreso. Il titolare non può quindi ricostruire il codice né aprire lo zaino: se l'utente perde il codice su tutti i dispositivi, lo zaino è perso. Chi possiede il codice può leggere e modificare lo zaino, perciò l'utente deve tenerlo riservato. Se il codice è finito a chi non deve averlo, l'utente può sostituirlo dalla pagina [Zaino](/zaino) con «Cambia codice».
+- **Luogo.** Lo zaino sta su Cloudflare (Workers e database D1), con area preferita in Europa orientale. L'area è una preferenza e non garantisce il luogo in cui i dati si trovano.
+- **Durata.** Lo zaino resta finché l'utente non lo cancella con «Cancella lo zaino». Il servizio cancella in automatico gli zaini non usati da 18 mesi. Dopo una cancellazione Cloudflare conserva i punti di ripristino del database per un massimo di 30 giorni (oggi 7): il contenuto cancellato può restare in quelle copie, in forma cifrata, fino alla loro scadenza.
+- **Registri e indirizzo IP.** Il servizio non tiene registri delle richieste. Cloudflare, come fornitore dell'infrastruttura, tratta l'indirizzo IP per consegnare la richiesta; il servizio lo usa solo per limitare il numero di richieste al minuto e non lo scrive nel database.
+
+Su un computer che non è proprio, l'utente può aprire lo zaino con l'opzione «Non è il mio computer»: il codice, le note e i progressi di SQL Academy restano solo nella scheda del browser in cui lo zaino è aperto e spariscono alla chiusura della scheda.
+
 ## 3. Cookie e strumenti di tracciamento
 
 Il Sito **non utilizza cookie di profilazione** né altri strumenti di tracciamento per finalità di marketing, remarketing o pubblicitarie.
@@ -77,6 +101,9 @@ I dati raccolti attraverso il Sito sono trattati per le seguenti finalità:
 - **Gestione di eventuali comunicazioni** inviate volontariamente via email dall'utente, per fornire riscontro alle richieste.
   Base giuridica: esecuzione di misure precontrattuali o contrattuali (art. 6, par. 1, lett. b GDPR) e/o legittimo interesse del titolare a rispondere (art. 6, par. 1, lett. f GDPR), a seconda del contenuto della richiesta.
 
+- **Zaino** — conservare in forma cifrata il quaderno e i progressi di SQL Academy dell'utente che sceglie di creare uno zaino, per renderli disponibili su altri dispositivi.
+  Base giuridica: il servizio richiesto dall'utente, che crea lo zaino di propria iniziativa (art. 6, par. 1, lett. b GDPR).
+
 - **Gestione dei contributi tramite GitHub** — ricezione, valutazione ed eventuale integrazione di segnalazioni, proposte di modifica (pull request) e commenti inviati volontariamente dagli utenti sul repository pubblico del progetto.
   Base giuridica: legittimo interesse del titolare allo sviluppo collaborativo e al miglioramento del materiale didattico (art. 6, par. 1, lett. f GDPR).
 
@@ -86,6 +113,8 @@ I dati sono trattati con strumenti informatici e telematici, nel rispetto dei pr
 
 I dati tecnici e le statistiche aggregate sono conservati per il tempo strettamente necessario alle finalità indicate e comunque in forma tale da non consentire l'identificazione diretta dell'utente.
 
+I dati salvati nel browser (punto 2.3) restano sul dispositivo finché l'utente non li cancella. I dati dello zaino (punto 2.4) restano finché l'utente non cancella lo zaino e, in ogni caso, per non più di 18 mesi dall'ultimo utilizzo dello zaino.
+
 ## 6. Destinatari dei dati
 
 I dati possono essere trattati dal titolare e, se del caso, da fornitori che erogano servizi tecnici (per esempio hosting, piattaforma di analytics), limitatamente alle finalità sopra indicate.
@@ -94,7 +123,9 @@ Il codice e i contenuti del progetto sono ospitati su GitHub (GitHub, Inc.): le 
 
 GoatCounter tratta dati in forma aggregata e non conserva gli indirizzi IP nel database, secondo la propria informativa privacy, agendo come fornitore di un servizio di misurazione degli accessi privo di cookie.
 
-Non è previsto un trasferimento sistematico di dati personali identificativi verso Paesi extra SEE, tenuto conto che il sistema di analytics adottato opera su dati non riconducibili alla singola persona fisica.
+Lo zaino è ospitato da Cloudflare, Inc., che agisce come fornitore di servizi di infrastruttura (Workers e database D1). Il contenuto dello zaino è cifrato nel browser dell'utente e Cloudflare non dispone della chiave per leggere il contenuto. Cloudflare, Inc. è una società statunitense: il trattamento dei dati tecnici necessari a fornire il servizio può quindi comportare un trasferimento verso gli Stati Uniti. Cloudflare dichiara di fondare il trasferimento sulla propria certificazione al EU-U.S. Data Privacy Framework e, se la certificazione venisse meno, sulle clausole contrattuali standard della Commissione europea, che il suo accordo sul trattamento dei dati (DPA) richiama. Il DPA è incorporato nel contratto d'uso del servizio.
+
+Salvo il caso di Cloudflare, non è previsto un trasferimento sistematico di dati personali identificativi verso Paesi extra SEE, tenuto conto che il sistema di analytics adottato opera su dati non riconducibili alla singola persona fisica.
 
 ## 7. Diritti dell'interessato
 
@@ -107,6 +138,8 @@ L'utente, in qualità di interessato, può esercitare nei confronti del titolare
 - diritto di proporre reclamo al [Garante per la protezione dei dati personali](https://www.garanteprivacy.it).
 
 Le richieste possono essere inviate all'indirizzo [python@rainbowbits.cloud](mailto:python@rainbowbits.cloud).
+
+Il titolare non è in grado di leggere i dati del quaderno e dello zaino né di associarli a una persona. L'utente esercita quindi i diritti di accesso, rettifica e cancellazione direttamente dal Sito: legge, corregge e cancella le note dalla pagina [Quaderno](/quaderno) e cancella lo zaino dalla pagina [Zaino](/zaino).
 
 ## 8. Aggiornamenti
 
