@@ -13,7 +13,8 @@
  *   DELETE /v1/zaino/:id   If-Match: "<n>" · 204 · 412 · 428
  *
  * Protezioni: 256 KB per zaino, limite di frequenza per IP (binding
- * `LIMITE`), CORS solo per il sito del libro e per `npm start`, zaini fermi da
+ * `LIMITE`), CORS solo per il sito del libro, per `npm start` e per `npm run dev`
+ * di SQL Academy (che usa lo stesso zaino, sezione `sql-academy`), zaini fermi da
  * 18 mesi cancellati dal Cron Trigger giornaliero. Il Worker non scrive log.
  */
 
@@ -32,6 +33,9 @@ const DURATA_MS = 548 * 24 * 60 * 60 * 1000;
 const ORIGINI = new Set([
   'https://python.rainbowbits.cloud',
   'http://localhost:3000',
+  // SQL Academy in sviluppo (`npm run dev`); l'origine pubblicata si aggiunge
+  // quando il portale avrà il suo dominio.
+  'http://localhost:5173',
 ]);
 
 const PERCORSO = /^\/v1\/zaino\/([A-Za-z0-9_-]{43})$/;

@@ -13,6 +13,7 @@ import { randomBytes } from 'node:crypto';
 
 const BASE = (process.argv[2] ?? 'http://localhost:8787').replace(/\/$/, '');
 const LIBRO = 'https://python.rainbowbits.cloud';
+const PORTALE = 'http://localhost:5173';
 
 const esiti = [];
 async function caso(nome, fn) {
@@ -143,6 +144,22 @@ async function main() {
     assert.equal(r.status, 200);
     assert.equal(r.headers.get('Access-Control-Allow-Origin'), LIBRO);
     assert.match(r.headers.get('Access-Control-Expose-Headers'), /ETag/);
+  });
+
+  await caso('preflight e GET da SQL Academy in sviluppo → ammessi', async () => {
+    const p = await fetch(url(), {
+      method: 'OPTIONS',
+      headers: {
+        Origin: PORTALE,
+        'Access-Control-Request-Method': 'PUT',
+        'Access-Control-Request-Headers': 'if-match',
+      },
+    });
+    assert.equal(p.status, 204);
+    assert.equal(p.headers.get('Access-Control-Allow-Origin'), PORTALE);
+    const g = await fetch(url(), { headers: { Origin: PORTALE } });
+    assert.equal(g.status, 200);
+    assert.equal(g.headers.get('Access-Control-Allow-Origin'), PORTALE);
   });
 
   await caso('preflight e GET da https://example.com → rifiutati', async () => {
