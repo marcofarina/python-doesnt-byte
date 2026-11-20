@@ -33,8 +33,8 @@ const DURATA_MS = 548 * 24 * 60 * 60 * 1000;
 const ORIGINI = new Set([
   'https://python.rainbowbits.cloud',
   'http://localhost:3000',
-  // SQL Academy in sviluppo (`npm run dev`); l'origine pubblicata si aggiunge
-  // quando il portale avrà il suo dominio.
+  // SQL Academy, pubblicato e in sviluppo (`npm run dev`).
+  'https://sql.rainbowbits.cloud',
   'http://localhost:5173',
 ]);
 
